@@ -578,18 +578,32 @@
       button.textContent = 'Enviando…';
 
       try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const result = await response.json();
-        if (!response.ok || result.ok !== true) throw new Error('Envio não confirmado');
+        let result;
+
+        // Supabase integration
+        if (endpoint === '__supabase__' && window.PNMT_SUPABASE) {
+          result = kind === 'newsletter'
+            ? await window.PNMT_SUPABASE.submitNewsletter(payload)
+            : await window.PNMT_SUPABASE.submitForm(payload);
+          if (!result.ok) throw new Error(result.error || 'Envio não confirmado');
+        } else {
+          // Generic REST endpoint
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          result = await response.json();
+          if (!response.ok || result.ok !== true) throw new Error('Envio não confirmado');
+        }
+
         status.style.color = '#1b8f3a';
         status.textContent =
           kind === 'visita'
             ? 'Solicitação recebida. Aguarde a confirmação da data pela equipe.'
-            : 'Solicitação recebida. Obrigado pelo contato.';
+            : kind === 'newsletter'
+              ? 'Cadastro realizado! Você receberá novidades em breve.'
+              : 'Solicitação recebida. Obrigado pelo contato.';
         form.reset();
       } catch {
         status.style.color = '#a33022';
