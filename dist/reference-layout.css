@@ -1749,3 +1749,193 @@ body[data-route="inicio"] .reference-header nav a:first-child:before {
     top: 110px;
   }
 }
+
+/* === SCROLL ANIMATIONS === */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+.reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.08s; }
+.reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.16s; }
+.reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.24s; }
+.reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.32s; }
+.reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.40s; }
+.reveal-stagger.visible > *:nth-child(7) { transition-delay: 0.48s; }
+
+.reveal-stagger.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero parallax */
+.reference-hero img {
+  transition: transform 0.1s linear;
+}
+
+/* === SPLASH SCREEN === */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy, #0d2b4d);
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.splash.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash img {
+  width: 180px;
+  animation: splash-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes splash-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* === BACK TO TOP === */
+
+.back-to-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 100;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: var(--green, #1b8f3a);
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+  pointer-events: none;
+}
+
+.back-to-top.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--lime, #58b947);
+  transform: translateY(-2px);
+}
+
+/* === CARD HOVER IMPROVEMENTS === */
+
+.reference-space-card img {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reference-space-card:hover img,
+.reference-space-card:focus-within img {
+  transform: scale(1.08);
+}
+
+.reference-space-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13, 43, 77, 0.85) 0%, rgba(13, 43, 77, 0.15) 50%, transparent 100%);
+  clip-path: inherit;
+  opacity: 0.7;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.reference-space-card:hover::after,
+.reference-space-card:focus-within::after {
+  opacity: 1;
+}
+
+/* === MOBILE MENU ANIMATION === */
+
+@media (max-width: 900px) {
+  .reference-header nav {
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.35s ease;
+    opacity: 0;
+  }
+
+  .reference-header nav.open {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  /* Backdrop blur */
+  .reference-header nav.open::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 43, 77, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: -1;
+  }
+
+  /* Hamburger animation */
+  .mobile-toggle {
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-toggle[aria-expanded="true"] {
+    transform: rotate(90deg);
+  }
+}
+
+/* === REDUCED MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-stagger > *,
+  .reference-hero img,
+  .reference-space-card img,
+  .reference-space-card::after,
+  .back-to-top,
+  .splash img,
+  .reference-header nav {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+  }
+}

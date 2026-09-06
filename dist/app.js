@@ -778,4 +778,87 @@
   });
 
   render();
+
+  // === SCROLL REVEAL ANIMATIONS ===
+  function initReveal() {
+    const sections = main.querySelectorAll(
+      '.reference-hero, .reference-facts, .reference-spaces, .reference-statement, ' +
+      '.reference-film, .reference-signoff, .reference-about-title, .reference-origin, ' +
+      '.reference-values, .reference-about-aerial, .split, .catalog-grid, ' +
+      '.space-hero, .newsletter, .contact-grid, .gallery-grid, .steps, .faq'
+    );
+
+    const staggerContainers = main.querySelectorAll(
+      '.reference-values-grid, .reference-space-track'
+    );
+
+    sections.forEach((el) => el.classList.add('reveal'));
+    staggerContainers.forEach((el) => el.classList.add('reveal-stagger'));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
+    );
+
+    sections.forEach((el) => observer.observe(el));
+    staggerContainers.forEach((el) => observer.observe(el));
+  }
+
+  // Re-init reveal after each route change
+  const originalRender = render;
+
+  // === SPLASH SCREEN ===
+  const splash = document.getElementById('splash');
+  if (splash) {
+    window.addEventListener('load', () => {
+      setTimeout(() => splash.classList.add('hidden'), 400);
+      setTimeout(() => splash.remove(), 1000);
+    });
+  }
+
+  // === BACK TO TOP ===
+  const backToTop = document.getElementById('back-to-top');
+  if (backToTop) {
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('show', window.scrollY > 500);
+    }, { passive: true });
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // === WEBP SUPPORT ===
+  (function upgradeImages() {
+    const supportsWebP = document.createElement('canvas')
+      .toDataURL('image/webp')
+      .startsWith('data:image/webp');
+
+    if (!supportsWebP) return;
+
+    const observer = new MutationObserver(() => {
+      main.querySelectorAll('img[src$=".png"]').forEach((img) => {
+        const webpSrc = img.src.replace(/\.png$/, '.webp');
+        const test = new Image();
+        test.onload = () => { img.src = webpSrc; };
+        test.src = webpSrc;
+      });
+    });
+
+    observer.observe(main, { childList: true, subtree: true });
+  })();
+
+  // Init reveal on first render and after route changes
+  const _origHashHandler = window.onhashchange;
+  window.addEventListener('hashchange', () => {
+    requestAnimationFrame(() => initReveal());
+  });
+  requestAnimationFrame(() => initReveal());
 })();
