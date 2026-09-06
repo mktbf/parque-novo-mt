@@ -8,9 +8,26 @@
   const nav = document.getElementById('primary-nav');
 
   // === HELPER FUNCTIONS ===
-  const asset = (name) =>
-    window.PNMT_ASSETS?.[name] ||
-    `assets/${name}.${['autodromo-real', 'corrida-real', 'aerial-real'].includes(name) ? 'jpg' : 'png'}`;
+  const supportsWebP = (() => {
+    try {
+      return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    } catch {
+      return false;
+    }
+  })();
+
+  const webpAvailable = new Set([
+    'aerial', 'arena', 'circus', 'entrance', 'events',
+    'footer-left', 'footer-right', 'map', 'skate', 'track',
+    'wheel', 'wheel-cutout'
+  ]);
+
+  const asset = (name) => {
+    if (window.PNMT_ASSETS?.[name]) return window.PNMT_ASSETS[name];
+    if (['autodromo-real', 'corrida-real', 'aerial-real'].includes(name)) return `assets/${name}.jpg`;
+    if (supportsWebP && webpAvailable.has(name)) return `assets/${name}.webp`;
+    return `assets/${name}.png`;
+  };
 
   const esc = (s) =>
     String(s ?? '').replace(
@@ -123,8 +140,8 @@
     const fixed = [
       { id: 'autodromo', image: 'track', label: 'AUTÓDROMO', copy: 'INTERNACIONAL<br>DE MATO GROSSO' },
       { id: 'arena-show', image: 'arena', label: 'ARENA SHOW', copy: '45 MIL M² DE<br>ÁREA PARA<br>SHOWS' },
-      { id: 'skate-park', image: 'skate', label: 'ARENA SHOW', copy: 'MAIOR PISTA<br>DA AMÉRICA<br>LATINA' },
-      { id: 'circo-do-futuro', image: 'circus', label: 'CÍRCO DO FUTURO', copy: 'TEATRO ARENA' },
+      { id: 'skate-park', image: 'skate', label: 'COMPLEXO DE SKATE', copy: 'MAIOR PISTA<br>DA AMÉRICA<br>LATINA' },
+      { id: 'circo-do-futuro', image: 'circus', label: 'CIRCO DO FUTURO', copy: 'TEATRO ARENA' },
       { id: 'roda-gigante', image: 'wheel', label: 'RODA-GIGANTE', copy: 'MAIOR DA<br>AMÉRICA LATINA' },
       { id: 'centro-de-eventos', image: 'events', label: 'CENTRO DE EVENTOS', copy: 'A EXPERIÊNCIA<br>DE RECEBER<br>O MUNDO' },
     ];
@@ -146,8 +163,9 @@
 
   // === PAGES & VIEWS ===
   function home() {
+    const vid = config.videoId || config.youtubeId || 'plKmM21Rh0Q';
     return `<section class="reference-home">
-  <section class="reference-hero" aria-label="Apresentação do parque"><img src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso"><h1 class="reference-hero-title"><span>MAIOR COMPLEXO</span><span>MULTIEVENTOS</span><span>DA AMÉRICA LATINA.</span></h1><p class="reference-hero-text"><span>NO CENTRO GEODÉSICO DA</span><span>AMÉRICA DO SUL, UM PARQUE</span><span>CONSTRUÍDO PARA RECEBER O</span><span>BRASIL E O MUNDO.</span></p></section>
+  <section class="reference-hero" aria-label="Apresentação do parque"><img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso"><div class="hero-video-wrap"><iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" title="Vídeo institucional do Parque Novo Mato Grosso"></iframe></div><button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som"><span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span></button><h1 class="reference-hero-title"><span>MAIOR COMPLEXO</span><span>MULTIEVENTOS</span><span>DA AMÉRICA LATINA.</span></h1><p class="reference-hero-text"><span>NO CENTRO GEODÉSICO DA</span><span>AMÉRICA DO SUL, UM PARQUE</span><span>CONSTRUÍDO PARA RECEBER O</span><span>BRASIL E O MUNDO.</span></p></section>
   <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>500</strong><small>HECTARES</small></div><p class="reference-area-text">ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT</p></div></section>
   <section class="reference-spaces"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
   <div class="reference-statement"><p>O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO</p></div>
@@ -207,11 +225,11 @@
   }
 
   // === FORM BUILDERS ===
-  const field = (name, label, type = 'text', options) =>
-    `<label class="field">${label}${options ? `<select name="${name}" required><option value="">Selecione</option>${options.map((o) => `<option value="${esc(typeof o === 'string' ? o : o.id)}" ${state.selectedSpace === (o.id || o) ? 'selected' : ''}>${typeof o === 'string' ? o : o.name}</option>`).join('')}</select>` : type === 'textarea' ? `<textarea name="${name}" required maxlength="4000"></textarea>` : `<input name="${name}" type="${type}" required ${type === 'date' ? `min="${today()}"` : ''} ${type === 'number' ? 'min="1" max="1000000"' : type === 'tel' ? 'autocomplete="tel" minlength="8" maxlength="25"' : type === 'email' ? 'autocomplete="email" maxlength="254"' : 'maxlength="200"'}>`}</label>`;
+  const field = (name, label, type = 'text', options, isRequired = true) =>
+    `<label class="field">${label}${isRequired ? ' *' : ' <small style="font-weight:400;opacity:0.75">(opcional)</small>'}${options ? `<select name="${name}" ${isRequired ? 'required' : ''}><option value="">Selecione</option>${options.map((o) => `<option value="${esc(typeof o === 'string' ? o : o.id)}" ${state.selectedSpace === (o.id || o) ? 'selected' : ''}>${typeof o === 'string' ? o : o.name}</option>`).join('')}</select>` : type === 'textarea' ? `<textarea name="${name}" ${isRequired ? 'required' : ''} maxlength="4000"></textarea>` : `<input name="${name}" type="${type}" ${isRequired ? 'required' : ''} ${type === 'date' ? `min="${today()}"` : ''} ${type === 'number' ? 'min="1" max="1000000"' : type === 'tel' ? 'autocomplete="tel" minlength="8" maxlength="25"' : type === 'email' ? 'autocomplete="email" maxlength="254"' : 'maxlength="200"'}>`}</label>`;
 
   const formEnd = (kind, label) =>
-    `<label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
+    `<label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
 
   function newsletter(topic) {
     return `<section class="newsletter"><div><span class="kicker">FIQUE POR PERTO</span><h3>${topic === 'galeria' ? 'Não perca o próximo capítulo.' : 'Não encontrou o que procura?'}</h3><p>${topic === 'galeria' ? 'Acompanhe os novos registros do parque.' : 'Escolha o que você quer viver e deixe seu interesse registrado.'}</p></div><form data-form="newsletter"><input type="hidden" name="origem" value="${topic}">${field('nome', 'Seu nome')}${field('email', 'Seu e-mail', 'email')}${field('interesse', 'Tenho interesse em', 'text', ['Todos', 'Shows e Música', 'Automobilismo', 'Esporte', 'Cultura e Família', 'Corporativo', 'AgroPlace', 'Galeria'])}${formEnd('newsletter', 'Quero ser avisado')}</form></section>`;
@@ -254,7 +272,7 @@
         'Jornalistas, veículos e produtores encontram aqui informações para contar essa história com precisão.',
         'Imprensa'
       ) +
-      `<section class="wrap">${heading('NOTÍCIAS E COBERTURA', 'O que acontece<br>ganha o mundo.', 'Obras, eventos, automobilismo, esporte, cultura e institucional. Explore as coberturas publicadas.')}${filters(['Todos', 'Obras', 'Automobilismo'], state.newsFilter, 'notícias')}<div class="article-grid" id="news-results"></div><div class="kit"><div><span class="kicker">KIT DE IMPRENSA</span><h3>Material para conhecer a marca.</h3><p>Logos extraídos do manual, ficha institucional, créditos e orientações. Confira o conteúdo e as condições de uso no pacote.</p></div><a class="button light" href="${config.kit}" download>Baixar kit de imprensa <span>↓</span></a></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">FALE COM A ASSESSORIA</span><h2>Pauta, entrevista<br>e credenciamento.</h2><p>Solicitações de entrevista, agendamento de visita técnica e credenciamento para eventos passam por aqui.</p><p>A equipe responde em até dois dias úteis após o recebimento.</p></div><div class="service-form"><h3>Qual é a sua pauta?</h3><form data-form="imprensa">${field('nome', 'Nome')}${field('veiculo', 'Veículo')}${field('editoria', 'Editoria')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('tipo', 'Tipo de solicitação', 'text', ['Entrevista', 'Visita técnica', 'Credenciamento', 'Informações'])}${field('prazo', 'Prazo de fechamento', 'date')}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('imprensa', 'Enviar solicitação')}</form></div></div></section>`
+      `<section class="wrap">${heading('NOTÍCIAS E COBERTURA', 'O que acontece<br>ganha o mundo.', 'Obras, eventos, automobilismo, esporte, cultura e institucional. Explore as coberturas publicadas.')}${filters(['Todos', 'Obras', 'Automobilismo'], state.newsFilter, 'notícias')}<div class="article-grid" id="news-results"></div><div class="kit"><div><span class="kicker">KIT DE IMPRENSA</span><h3>Material para conhecer a marca.</h3><p>Logos extraídos do manual, ficha institucional, créditos e orientações. Confira o conteúdo e as condições de uso no pacote.</p></div><a class="button light" href="${config.kit}" download>Baixar kit de imprensa <span>↓</span></a></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">FALE COM A ASSESSORIA</span><h2>Pauta, entrevista<br>e credenciamento.</h2><p>Solicitações de entrevista, agendamento de visita técnica e credenciamento para eventos passam por aqui.</p><p>A equipe responde em até dois dias úteis após o recebimento.</p></div><div class="service-form"><h3>Qual é a sua pauta?</h3><form data-form="imprensa">${field('nome', 'Nome')}${field('veiculo', 'Veículo')}${field('editoria', 'Editoria', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('tipo', 'Tipo de solicitação', 'text', ['Entrevista', 'Visita técnica', 'Credenciamento', 'Informações'])}${field('prazo', 'Prazo de fechamento', 'date', null, false)}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('imprensa', 'Enviar solicitação')}</form></div></div></section>`
     );
   }
 
@@ -303,13 +321,13 @@
         'O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul.',
         'Quero visitar'
       ) +
-      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O parque está em obras em vários setores. O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa')}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária')}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea')}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
+      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O parque está em obras em vários setores. O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
     );
   }
 
   // === EVENTOS & CONTATO ===
   function eventForm() {
-    return `<div class="service-form"><h3>Vamos construir seu evento.</h3><form data-form="evento">${field('nome', 'Nome')}${field('empresa', 'Empresa')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('tipo', 'Tipo de evento', 'text', ['Show', 'Feira', 'Congresso ou convenção', 'Competição esportiva', 'Encontro corporativo', 'Outro'])}${field('espaco', 'Espaço desejado', 'text', data.spaces.map((s) => ({ id: s.id, name: s.name })))}${field('publico', 'Público estimado', 'number')}${field('data', 'Data pretendida', 'date')}<div class="full">${field('mensagem', 'Conte sobre o evento', 'textarea')}</div>${formEnd('evento', 'Enviar solicitação')}</form></div>`;
+    return `<div class="service-form"><h3>Vamos construir seu evento.</h3><form data-form="evento">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('tipo', 'Tipo de evento', 'text', ['Show', 'Feira', 'Congresso ou convenção', 'Competição esportiva', 'Encontro corporativo', 'Outro'])}${field('espaco', 'Espaço desejado', 'text', data.spaces.map((s) => ({ id: s.id, name: s.name })))}${field('publico', 'Público estimado', 'number')}${field('data', 'Data pretendida', 'date')}<div class="full">${field('mensagem', 'Conte sobre o evento', 'textarea', null, false)}</div>${formEnd('evento', 'Enviar solicitação')}</form></div>`;
   }
 
   function contact(event = false) {
@@ -326,7 +344,7 @@
   function otherContact() {
     return (
       intro('Vamos conversar.', 'Fornecedores, parcerias e institucional.', 'Outros assuntos') +
-      `<section class="wrap service-layout"><div class="service-copy"><h2>Novas conexões<br>começam aqui.</h2><p>Propostas comerciais, parcerias e assuntos institucionais também chegam por este canal.</p>${external(config.instagram, 'Acompanhe o parque')}</div><div class="service-form"><h3>Como podemos ajudar?</h3><form data-form="contato">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('assunto', 'Assunto', 'text', ['Fornecedor', 'Parceria', 'Institucional', 'Outro'])}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('contato', 'Enviar solicitação')}</form></div></section>`
+      `<section class="wrap service-layout"><div class="service-copy"><h2>Novas conexões<br>começam aqui.</h2><p>Propostas comerciais, parcerias e assuntos institucionais também chegam por este canal.</p>${external(config.instagram, 'Acompanhe o parque')}</div><div class="service-form"><h3>Como podemos ajudar?</h3><form data-form="contato">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('assunto', 'Assunto', 'text', ['Fornecedor', 'Parceria', 'Institucional', 'Outro'])}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('contato', 'Enviar solicitação')}</form></div></section>`
     );
   }
 
@@ -354,8 +372,11 @@
     }
 
     if (route === 'main') {
-      main.focus();
-      return;
+      route = 'inicio';
+      requestAnimationFrame(() => {
+        main.focus();
+        main.scrollIntoView({ behavior: 'smooth' });
+      });
     }
 
     state.route = route;
@@ -465,41 +486,81 @@
   }
 
   function showPhoto(index) {
+    state.currentPhotoIndex = index;
     const g = data.gallery[index];
     if (!g) return;
 
+    const total = data.gallery.length;
     document.getElementById('media-title').textContent = g.title;
-    document.getElementById('media-content').innerHTML =
-      `<img src="${asset(g.image)}" alt="${esc(g.title)}"><p>${g.type} · ${g.credit}</p>${g.source ? external(g.source, 'Consulte a fonte e os créditos') : ''}`;
-    document.getElementById('media-dialog').showModal();
+    document.getElementById('media-content').innerHTML = `
+      <div class="lightbox-viewer">
+        <img src="${asset(g.image)}" alt="${esc(g.title)}" style="width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;">
+        <div class="lightbox-controls" style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+          <button class="button secondary" data-action="photo-prev" aria-label="Foto anterior" style="padding:6px 14px;font-size:14px;">‹ Anterior</button>
+          <span style="font-size:13px;opacity:0.8;">${index + 1} de ${total}</span>
+          <button class="button secondary" data-action="photo-next" aria-label="Próxima foto" style="padding:6px 14px;font-size:14px;">Próxima ›</button>
+        </div>
+        <p>${g.type} · ${g.credit}</p>
+        ${g.source ? external(g.source, 'Consulte a fonte e os créditos') : ''}
+      </div>`;
+    const dlg = document.getElementById('media-dialog');
+    if (!dlg.open) dlg.showModal();
   }
 
   // === SEARCH ===
   function updateSearch() {
-    const q = normal(document.getElementById('search-input').value.trim());
+    const rawVal = document.getElementById('search-input').value.trim();
+    if (!rawVal) {
+      document.getElementById('search-results').innerHTML =
+        '<p class="search-hint" style="color:var(--muted);padding:14px 0;">Digite uma palavra-chave para buscar atrações, espaços, notícias e páginas.</p>';
+      return;
+    }
+
+    const q = normal(rawVal);
     const pages = [
-      ['O parque', 'quem-somos'],
-      ['Conheça os espaços', 'espacos'],
-      ['Agenda', 'agenda'],
-      ['Galeria de fotos', 'galeria'],
-      ['Imprensa', 'imprensa'],
-      ['Quero visitar', 'visitar'],
-      ['Contato e eventos', 'contato'],
-      ['Outros assuntos', 'outros-assuntos'],
-    ].map(([name, id]) => ({ name, id, category: 'Página' }));
+      ['O parque', 'quem-somos', 'institucional história valores'],
+      ['Conheça os espaços', 'espacos', 'catálogo todos os espaços atrações'],
+      ['Agenda', 'agenda', 'programação eventos corridas shows datas'],
+      ['Galeria de fotos', 'galeria', 'fotos imagens perspectivas registros'],
+      ['Imprensa', 'imprensa', 'notícias assessoria kit pauta'],
+      ['Quero visitar', 'visitar', 'visitas turismo escolas grupos agendamento'],
+      ['Contato e eventos', 'contato', 'shows eventos realização orçamento'],
+      ['Outros assuntos', 'outros-assuntos', 'comercial fornecedores parcerias'],
+    ].map(([name, id, extra]) => ({ name, id, category: 'Página', searchContent: extra }));
+
+    const spaceItems = data.spaces.map((s) => ({
+      name: s.name,
+      id: 'espaco/' + s.id,
+      category: s.category,
+      tagline: s.tagline,
+      searchContent: (s.text || []).join(' '),
+    }));
+
+    const eventItems = data.events.map((e) => ({
+      name: e.name,
+      id: 'agenda',
+      category: 'Evento',
+      tagline: `${e.category} · ${fmt(e.date)}`,
+      searchContent: `${e.location} ${e.ticket}`,
+    }));
+
+    const newsItems = data.news.map((n) => ({
+      name: n.title,
+      id: 'imprensa',
+      category: 'Notícia',
+      tagline: `${n.category} · ${fmt(n.date)}`,
+      searchContent: n.description,
+    }));
 
     const found = [
       ...pages,
-      ...data.spaces.map((s) => ({
-        name: s.name,
-        id: 'espaco/' + s.id,
-        category: s.category,
-        tagline: s.tagline,
-      })),
-    ].filter((x) => normal(x.name + ' ' + (x.tagline || '')).includes(q));
+      ...spaceItems,
+      ...eventItems,
+      ...newsItems,
+    ].filter((x) => normal(`${x.name} ${x.tagline || ''} ${x.searchContent || ''}`).includes(q));
 
     document.getElementById('search-results').innerHTML = found.length
-      ? found.map((x) => `<a href="#${x.id}">${x.name} ↗<small>${x.category}</small></a>`).join('')
+      ? found.map((x) => `<a href="#${x.id}">${x.name} ↗<small>${x.category}${x.tagline ? ' · ' + x.tagline : ''}</small></a>`).join('')
       : '<p>Nenhum resultado. Tente outro nome ou assunto.</p>';
   }
 
@@ -680,12 +741,31 @@
         document.getElementById('search-input').focus();
       } else if (action === 'video') {
         showVideo();
+      } else if (action === 'toggle-sound') {
+        const iframe = document.getElementById('hero-video');
+        if (!iframe) return;
+        state.heroMuted = state.heroMuted === undefined ? false : !state.heroMuted;
+        const cmd = state.heroMuted ? 'mute' : 'unMute';
+        iframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: cmd, args: [] }), '*');
+        const icon = b.querySelector('.sound-icon');
+        const label = b.querySelector('.sound-label');
+        if (icon) icon.textContent = state.heroMuted ? '🔇' : '🔊';
+        if (label) label.textContent = state.heroMuted ? 'Ativar som' : 'Desativar som';
+        b.setAttribute('aria-label', state.heroMuted ? 'Ativar som' : 'Desativar som');
       } else if (action === 'spaces-next' || action === 'spaces-previous') {
         const viewport = document.getElementById('reference-space-window');
         viewport.scrollBy({
-          left: (action === 'spaces-next' ? 1 : -1) * viewport.clientWidth,
+          left: (action === 'spaces-next' ? 1 : -1) * (viewport.clientWidth * 0.8),
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
         });
+      } else if (action === 'photo-prev') {
+        const total = data.gallery.length;
+        const prev = ((state.currentPhotoIndex ?? 0) - 1 + total) % total;
+        showPhoto(prev);
+      } else if (action === 'photo-next') {
+        const total = data.gallery.length;
+        const next = ((state.currentPhotoIndex ?? 0) + 1) % total;
+        showPhoto(next);
       } else if (action === 'reset-spaces') {
         state.spaceQuery = '';
         document.getElementById('space-search').value = '';
@@ -730,6 +810,18 @@
     if (e.target.id === 'header-search') {
       document.getElementById('search-input').value = e.target.value;
     }
+    if (e.target.type === 'tel') {
+      const v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 10) {
+        e.target.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+      } else if (v.length > 6) {
+        e.target.value = `(${v.slice(0, 2)}) ${v.slice(2, 6)}-${v.slice(6)}`;
+      } else if (v.length > 2) {
+        e.target.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+      } else if (v.length > 0) {
+        e.target.value = `(${v}`;
+      }
+    }
   });
 
   document.addEventListener('submit', (e) => {
@@ -746,6 +838,17 @@
     if (e.key === 'Enter' && e.target.id === 'header-search') {
       e.preventDefault();
       document.querySelector('[data-action=search]').click();
+    }
+    const mediaDlg = document.getElementById('media-dialog');
+    if (mediaDlg && mediaDlg.open && state.currentPhotoIndex !== undefined) {
+      const total = data.gallery.length;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        showPhoto((state.currentPhotoIndex - 1 + total) % total);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        showPhoto((state.currentPhotoIndex + 1) % total);
+      }
     }
   });
 
@@ -811,18 +914,6 @@
     staggerContainers.forEach((el) => observer.observe(el));
   }
 
-  // Re-init reveal after each route change
-  const originalRender = render;
-
-  // === SPLASH SCREEN ===
-  const splash = document.getElementById('splash');
-  if (splash) {
-    window.addEventListener('load', () => {
-      setTimeout(() => splash.classList.add('hidden'), 400);
-      setTimeout(() => splash.remove(), 1000);
-    });
-  }
-
   // === BACK TO TOP ===
   const backToTop = document.getElementById('back-to-top');
   if (backToTop) {
@@ -835,28 +926,7 @@
     });
   }
 
-  // === WEBP SUPPORT ===
-  (function upgradeImages() {
-    const supportsWebP = document.createElement('canvas')
-      .toDataURL('image/webp')
-      .startsWith('data:image/webp');
-
-    if (!supportsWebP) return;
-
-    const observer = new MutationObserver(() => {
-      main.querySelectorAll('img[src$=".png"]').forEach((img) => {
-        const webpSrc = img.src.replace(/\.png$/, '.webp');
-        const test = new Image();
-        test.onload = () => { img.src = webpSrc; };
-        test.src = webpSrc;
-      });
-    });
-
-    observer.observe(main, { childList: true, subtree: true });
-  })();
-
   // Init reveal on first render and after route changes
-  const _origHashHandler = window.onhashchange;
   window.addEventListener('hashchange', () => {
     requestAnimationFrame(() => initReveal());
   });

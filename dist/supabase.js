@@ -21,17 +21,16 @@
     return;
   }
 
-  // Load Supabase client from CDN
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-  script.onload = function () {
+  function initClient() {
+    if (!window.supabase) return false;
     const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Expose endpoints for app.js form handler
     const config = window.PNMT_CONFIG;
-
-    config.formsEndpoint = '__supabase__';
-    config.newsletterEndpoint = '__supabase__';
+    if (config) {
+      config.formsEndpoint = '__supabase__';
+      config.newsletterEndpoint = '__supabase__';
+    }
 
     // Supabase submit functions
     window.PNMT_SUPABASE = {
@@ -80,11 +79,18 @@
     };
 
     console.log('[PNMT] Supabase conectado.');
-  };
+    return true;
+  }
 
+  // If already loaded via script tag
+  if (initClient()) return;
+
+  // Otherwise load Supabase client from CDN dynamically
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+  script.onload = initClient;
   script.onerror = function () {
     console.warn('[PNMT] Falha ao carregar Supabase CDN. Formulários em modo local.');
   };
-
   document.head.appendChild(script);
 })();

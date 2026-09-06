@@ -172,12 +172,65 @@ h1, h2, h3, h4 {
   background: var(--navy);
 }
 
-.reference-hero > img {
+.reference-hero > img,
+.reference-hero .hero-fallback {
   width: 100%;
   height: 100%;
   object-fit: cover;
   position: absolute;
   inset: 0;
+  z-index: 1;
+}
+
+.hero-video-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-video-wrap iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%) scale(1.35);
+  transform-origin: center center;
+  pointer-events: none;
+  border: 0;
+}
+
+.hero-sound-btn {
+  position: absolute;
+  bottom: 24px;
+  left: 28px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(13, 43, 77, 0.85);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.hero-sound-btn:hover {
+  background: var(--navy);
+  transform: scale(1.05);
 }
 
 .reference-hero-title {
@@ -193,6 +246,7 @@ h1, h2, h3, h4 {
   line-height: 1.04;
   letter-spacing: -.02em;
   margin: 0;
+  z-index: 3;
 }
 
 .reference-hero-title span {
@@ -218,6 +272,7 @@ h1, h2, h3, h4 {
   font-size: clamp(14px, 1.55vw, 21px);
   font-weight: 400;
   line-height: 1.13;
+  z-index: 3;
 }
 
 .reference-hero-text span {
@@ -548,7 +603,8 @@ h1, h2, h3, h4 {
 .reference-film-label span {
   font: 600 18px/1 var(--condensed);
   letter-spacing: .2em;
-  color: var(--lime);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .reference-film-poster {
@@ -1408,6 +1464,19 @@ h1, h2, h3, h4 {
     line-height: 1.1;
   }
 
+  .hero-video-wrap iframe {
+    width: 630px;
+    height: 350px;
+    transform: translate(-50%, -50%) scale(1.4);
+  }
+
+  .hero-sound-btn {
+    bottom: 14px;
+    left: 14px;
+    padding: 5px 11px;
+    font-size: 11px;
+  }
+
   .reference-facts {
     width: 83%;
     max-width: 400px;
@@ -1473,49 +1542,56 @@ h1, h2, h3, h4 {
   }
 
   .reference-carousel {
-    grid-template-columns: 26px minmax(0, 1fr) 26px;
+    grid-template-columns: 38px minmax(0, 1fr) 38px;
     gap: 6px;
     margin-top: 25px;
+    align-items: center;
   }
 
   .reference-carousel-arrow {
-    width: 24px;
-    height: 24px;
-    font-size: 31px;
+    width: 38px;
+    height: 38px;
+    font-size: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
   }
 
   .reference-space-card {
-    flex-basis: calc(50% - 2px);
-    height: 272px;
+    flex-basis: calc(60% - 2px);
+    height: 280px;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
   }
 
   .reference-card-0 {
     margin-top: 24px;
-    height: 248px;
+    height: 260px;
   }
 
   .reference-card-1, .reference-card-3, .reference-card-5 {
     margin-top: 25px;
-    height: 272px;
+    height: 280px;
   }
 
   .reference-card-4 {
-    height: 267px;
+    height: 275px;
   }
 
   .reference-space-card-copy p {
     font-size: 13px;
+    line-height: 1.25;
   }
 
   .reference-space-card-copy h3 {
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: .08em;
   }
 
   .reference-space-card-copy {
-    left: 18%;
-    width: 58%;
-    bottom: 22px;
+    left: 12%;
+    width: 78%;
+    bottom: 20px;
   }
 
   .reference-statement {
@@ -1711,16 +1787,6 @@ h1, h2, h3, h4 {
 
 body[data-route="inicio"] .reference-footer-utility, body[data-route="quem-somos"] .reference-footer-utility {
   display: none;
-}
-
-body[data-route="inicio"] .reference-header nav a:first-child:before {
-  content: '';
-  position: absolute;
-  bottom: 1px;
-  left: 0;
-  width: calc(100% - 18px);
-  height: 3px;
-  background: var(--brand-line);
 }
 
 /* === ROUTE OVERRIDES — RESPONSIVE (max-width: 800px) === */
