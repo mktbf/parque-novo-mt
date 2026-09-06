@@ -1,0 +1,18 @@
+{
+  "name": "parque-novo-mt",
+  "version": "1.0.0",
+  "description": "Site oficial do Parque Novo Mato Grosso — maior complexo multieventos da América Latina.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dist",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite dist --port 8000"
+  },
+  "keywords": ["parque-novo-mato-grosso", "cuiaba", "eventos", "turismo"],
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "vite": "^6.3.0"
+  }
+}

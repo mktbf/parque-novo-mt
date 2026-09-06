@@ -1,0 +1,20 @@
+{
+  "name": "Parque Novo Mato Grosso",
+  "short_name": "PNMT",
+  "description": "Maior complexo multieventos da América Latina. Conheça os espaços, a agenda e as experiências.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0D2B4D",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "assets/symbol.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["entertainment", "travel"]
+}

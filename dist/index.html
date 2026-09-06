@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0D2B4D">
+    <meta
+      name="description"
+      content="Parque Novo Mato Grosso. Conheça os espaços, a agenda, as experiências e as possibilidades do maior complexo multieventos da América Latina."
+    >
+    <title>Parque Novo Mato Grosso</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/symbol.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/symbol.png">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Parque Novo Mato Grosso">
+    <meta
+      property="og:description"
+      content="Maior complexo multieventos da América Latina. Conheça os espaços, a agenda e as experiências."
+    >
+    <meta property="og:image" content="assets/aerial.png">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Parque Novo Mato Grosso">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Parque Novo Mato Grosso">
+    <meta
+      name="twitter:description"
+      content="Maior complexo multieventos da América Latina. Conheça os espaços, a agenda e as experiências."
+    >
+    <meta name="twitter:image" content="assets/aerial.png">
+
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="assets/barlow-reference-0.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="assets/barlow-reference-1.woff" as="font" type="font/woff" crossorigin>
+
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reference-layout.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TouristAttraction",
+      "name": "Parque Novo Mato Grosso",
+      "description": "Maior complexo multieventos da América Latina, com 500 hectares no centro geodésico da América do Sul.",
+      "url": "https://parquenovomt.com.br",
+      "image": "assets/aerial.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Rodovia Emanuel Pinheiro (MT-251), km 11",
+        "addressLocality": "Cuiabá",
+        "addressRegion": "MT",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -15.5989,
+        "longitude": -56.0949
+      },
+      "sameAs": [
+        "https://www.instagram.com/parquenovomt/"
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Pular para o conteúdo</a>
+
+    <!-- Header -->
+    <header class="site-header reference-header">
+      <a class="brand" href="#inicio" aria-label="Página inicial">
+        <img src="assets/logo.png" alt="Parque Novo Mato Grosso" width="200" height="123">
+      </a>
+
+      <nav id="primary-nav" aria-label="Navegação principal">
+        <a href="#quem-somos">Quem Somos</a>
+        <a href="#espacos">Conheça os Espaços</a>
+        <a href="#agenda">Agenda</a>
+        <a href="#imprensa">Imprensa</a>
+        <a href="#contato">Contato</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="reference-search-row">
+          <label class="sr-only" for="header-search">Buscar no site</label>
+          <input id="header-search" type="search" autocomplete="off">
+          <button class="icon-button reference-search-button" data-action="search" aria-label="Pesquisar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 5 5" />
+            </svg>
+          </button>
+        </div>
+
+        <a class="reference-instagram" href="https://www.instagram.com/parquenovomt/" target="_blank" rel="noopener">
+          <span class="reference-social-mark" aria-hidden="true">◎</span> @parquenovomt
+        </a>
+
+        <button
+          class="icon-button mobile-toggle"
+          data-action="menu"
+          aria-label="Abrir menu"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main" tabindex="-1"></main>
+
+    <!-- Footer -->
+    <footer class="reference-footer">
+      <div class="reference-footer-waves" aria-hidden="true">
+        <img src="assets/footer-left.png" alt="">
+        <img src="assets/footer-right.png" alt="">
+      </div>
+
+      <div class="reference-footer-bar">
+        <a href="#inicio" aria-label="Página inicial">
+          <img src="assets/footer-wordmark.png" alt="Parque Novo Mato Grosso">
+        </a>
+      </div>
+
+      <nav class="reference-footer-utility" aria-label="Mais páginas">
+        <a href="#galeria">Galeria de fotos</a>
+        <a href="#visitar">Quero visitar</a>
+        <a href="#creditos">Créditos e informações</a>
+      </nav>
+    </footer>
+
+    <!-- Search Dialog -->
+    <dialog id="search-dialog" aria-labelledby="search-title">
+      <div class="dialog-top">
+        <h2 id="search-title">Encontre seu próximo destino.</h2>
+        <button class="icon-button" data-close aria-label="Fechar busca">✕</button>
+      </div>
+
+      <label for="search-input">Busque espaços e páginas</label>
+      <input id="search-input" type="search" placeholder="Autódromo, visita, shows…" autocomplete="off">
+      <div id="search-results" aria-live="polite"></div>
+    </dialog>
+
+    <!-- Media Dialog -->
+    <dialog id="media-dialog" aria-labelledby="media-title">
+      <div class="dialog-top">
+        <h2 id="media-title">Conheça o parque</h2>
+        <button class="icon-button" data-close aria-label="Fechar">✕</button>
+      </div>
+
+      <div id="media-content"></div>
+    </dialog>
+
+    <!-- Request Dialog -->
+    <dialog id="request-dialog" aria-labelledby="request-title">
+      <div class="dialog-top">
+        <h2 id="request-title">Sua solicitação</h2>
+        <button class="icon-button" data-close aria-label="Fechar">✕</button>
+      </div>
+
+      <div id="request-content"></div>
+    </dialog>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="content.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
