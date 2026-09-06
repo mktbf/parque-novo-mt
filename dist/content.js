@@ -16,19 +16,17 @@ window.PNMT_CONTENT = {
     },
     {
       id: 'autodromo',
-      name: 'Autódromo Internacional de Mato Grosso',
+      name: 'Autódromo Internacional',
       short: 'Autódromo Internacional',
       category: 'Esportes',
       image: 'track',
       tagline: 'Velocidade em escala internacional.',
       numbers: [
         ['90', 'hectares'],
-        ['4,5 km', 'de circuito misto'],
+        ['4 km+', 'de circuito misto'],
       ],
       text: [
-        'Projetado para colocar Mato Grosso no mapa dos grandes eventos do automobilismo e do motociclismo, o Autódromo Internacional de Mato Grosso ocupa uma área de noventa hectares e oferece infraestrutura completa para competições regionais, nacionais e internacionais.',
-        'São quatro mil e quinhentos metros de circuito misto, além de pista de arrancada e circuito externo. A iluminação em padrão internacional permite receber competições também à noite.',
-        'A pista já recebeu Stock Car, Fórmula Truck, Nascar Brasil, Copa Truck e TCR South America. E está pronta para muito mais.',
+        'Com 90 hectares, é o primeiro autódromo iluminado do Brasil. Possui mais de 4 km de circuito misto e infraestrutura de padrão internacional para grandes competições.',
       ],
     },
     {
@@ -38,9 +36,7 @@ window.PNMT_CONTENT = {
       image: 'arena',
       tagline: 'Onde os maiores espetáculos encontram o maior público.',
       text: [
-        'A Arena Show foi criada para receber grandes eventos nacionais e internacionais. Sua ampla e moderna cobertura é um dos grandes diferenciais da estrutura, oferecendo mais conforto e proteção ao público.',
-        'O espaço conta com telões de LED, sistema de som, iluminação cênica, bilheterias, banheiros, bares e um backstage completo.',
-        'Em sua inauguração, a Arena Show reuniu mais de oitenta mil pessoas com shows de Alok e Gusttavo Lima. O palco está montado. O próximo grande momento é sempre aqui.',
+        'Criada para momentos épicos, com capacidade para 120 mil pessoas. Ampla cobertura, telas cênicas e infraestrutura completa de backstage.',
       ],
     },
     {
@@ -51,20 +47,17 @@ window.PNMT_CONTENT = {
       kind: 'Perspectiva do projeto',
       tagline: 'A experiência de receber o mundo.',
       text: [
-        'O Centro de Eventos foi projetado para receber feiras, congressos, convenções e grandes encontros de negócios.',
-        'Seus pavilhões interligados são pensados para usos simultâneos ou independentes. Flexibilidade para eventos de todos os formatos, com a estrutura que o mercado nacional e internacional exige.',
-        'Aqui, Mato Grosso recebe o mundo para fazer negócios.',
+        'Versatilidade com capacidade para mais de 26 mil pessoas. Cinco pavilhões interligados para usos simultâneos ou independentes.',
       ],
     },
     {
       id: 'kartodromo',
-      name: 'Kartódromo',
+      name: 'Cartódromo',
       category: 'Esportes',
       image: null,
       tagline: 'Velocidade que forma campeões.',
       text: [
-        'Projetado de acordo com as normas da FIA Kart, o kartódromo vai receber competições regionais, nacionais e internacionais.',
-        'Sua infraestrutura moderna e robusta já é reconhecida por especialistas do automobilismo como uma das mais completas do mundo. É aqui que nascem os próximos nomes das pistas.',
+        'Projetado sob as normas da FIA, conta com uma das infraestruturas mais completas do mundo para competições regionais e internacionais.',
       ],
     },
     {
@@ -74,9 +67,7 @@ window.PNMT_CONTENT = {
       image: null,
       tagline: 'Palco de marcos históricos do esporte.',
       text: [
-        'A pista de motocross já recebeu competições estaduais e duas edições do MX1 GP Brasil, o maior campeonato da América Latina.',
-        'Em 2026, reuniu mais de trezentos pilotos de vinte e dois países e protagonizou um marco histórico no Brasil: a primeira corrida noturna da categoria.',
-        'Terra, luz e adrenalina. O motocross tem casa em Mato Grosso.',
+        'Palco histórico do MXGP Brasil, o maior campeonato da América Latina. Já sediou a primeira corrida noturna da categoria no país.',
       ],
     },
     {
@@ -86,35 +77,32 @@ window.PNMT_CONTENT = {
       image: null,
       tagline: 'Onde novos atletas ganham o mundo.',
       text: [
-        'Moderna e funcional, a pista de BMX foi projetada para promover o esporte, o lazer e a formação de novos atletas.',
-        'O espaço já recebeu o Campeonato Brasileiro de BMX Racing, principal evento nacional da modalidade. A pista está pronta. A próxima geração também.',
+        'Moderna e funcional, projetada para o lazer e a formação de novos atletas. Casa do Campeonato Brasileiro de BMX Racing.',
       ],
     },
     {
       id: 'skate-park',
-      name: 'Skate Park',
+      name: 'Complexo de Skate',
       category: 'Esportes',
       image: 'skate',
-      tagline: 'O maior complexo de skate da América Latina.',
+      tagline: 'O maior da América Latina.',
       text: [
-        'O maior complexo de skate da América Latina está aqui. Um espaço projetado para receber desde a primeira manobra até as disputas de mais alto nível.',
-        'O Skate Park já foi palco de grandes competições nacionais, como o Campeonato Brasileiro e uma etapa do STU National, reunindo atletas olímpicos e campeões mundiais.',
+        'O maior da América Latina. Um espaço de nível global que já sediou etapas do STU National, reunindo atletas olímpicos e campeões mundiais.',
       ],
     },
     {
       id: 'wake-park',
-      name: 'Wake Park',
+      name: 'Splash Park e Wake Park',
       category: 'Esportes',
       image: null,
-      tagline: 'Esporte radical sobre o lago.',
+      tagline: 'Diversão e adrenalina na água.',
       text: [
-        'O Wake Park utiliza cabos suspensos em duas pistas sobre o lago. Uma no formato vai e vem, ideal para quem está começando. Outra circular, com rampas e obstáculos para os amantes dos esportes aquáticos radicais.',
-        'Do primeiro impulso à manobra perfeita, o lago é o palco.',
+        'O maior toboágua do mundo e um playground gigante no Splash Park, além de pistas com cabos suspensos no Wake Park para esportes aquáticos radicais.',
       ],
     },
     {
       id: 'arenas-beach',
-      name: 'Arenas Beach',
+      name: 'Quadras de Areia',
       category: 'Esportes',
       image: null,
       tagline: 'Areia, lago e competição de alto nível.',
@@ -122,8 +110,7 @@ window.PNMT_CONTENT = {
         ['5', 'quadras'],
       ],
       text: [
-        'Às margens do lago, o complexo reúne cinco quadras para beach tennis, vôlei de areia e futevôlei.',
-        'Com arquibancadas, camarotes e áreas de apoio, o espaço está preparado para receber disputas locais e grandes competições nacionais e internacionais. Esporte com vista para o pôr do sol de Mato Grosso.',
+        'Cinco quadras dedicadas a beach tennis, vôlei de areia e futevôlei às margens do lago, com arquibancadas para grandes competições.',
       ],
     },
     {
@@ -138,8 +125,7 @@ window.PNMT_CONTENT = {
         ['336', 'pessoas de capacidade total'],
       ],
       text: [
-        'A roda-gigante será a maior da América Latina. Serão quarenta e duas cabines, com capacidade total para trezentas e trinta e seis pessoas.',
-        'Lá de cima, o parque inteiro se revela: os lagos, as arenas, o cerrado no horizonte. Uma nova forma de ver Mato Grosso.',
+        'A maior da América Latina! Com 108 metros de altura, oferece uma vista panorâmica inesquecível para até 336 pessoas simultaneamente.',
       ],
     },
     {
@@ -152,8 +138,7 @@ window.PNMT_CONTENT = {
         ['65 m', 'de altura'],
       ],
       text: [
-        'Com sessenta e cinco metros de altura e revestida em LED, a Árvore da Vida foi projetada para ser a maior árvore artificial do mundo.',
-        'No alto, um mirante com vista panorâmica de todo o parque. Um símbolo que une natureza, tecnologia e a força de Mato Grosso, visível de todos os cantos do complexo.',
+        'A maior árvore artificial do mundo. Com 65 metros de altura e revestida em LED, conta com um mirante espatacular de todo o parque.',
       ],
     },
     {
@@ -174,8 +159,7 @@ window.PNMT_CONTENT = {
       image: null,
       tagline: 'Convivência e memória em família.',
       text: [
-        'O Parque da Família reúne mais de quarenta brinquedos temáticos em um espaço amplo, com áreas cobertas que garantem diversão em qualquer horário do dia.',
-        'Aqui, cada visita vira lembrança. Convivência e memória em família, tudo no mesmo lugar.',
+        'Diversão garantida! Um espaço amplo com áreas cobertas e mais de 40 brinquedos temáticos para todas as idades.',
       ],
     },
     {
@@ -184,13 +168,12 @@ window.PNMT_CONTENT = {
       category: 'Cultura',
       image: 'circus',
       kind: 'Imagem de referência da proposta',
-      tagline: 'Tecnologia que vira espetáculo.',
+      tagline: 'A tecnologia transformada em espetáculo.',
       numbers: [
         ['400', 'pessoas no teatro de arena'],
       ],
       text: [
-        'Sob um domo preparado para projeções mapeadas, o Circo do Futuro transforma tecnologia em espetáculo.',
-        'O teatro de arena recebe até quatrocentas pessoas em atrações culturais e eventos corporativos. Na área externa, um mirante integra o espaço à paisagem e oferece uma vista privilegiada do lago.',
+        'A tecnologia transformada em espetáculo. Um domo imersivo totalmente preparado para projeções mapeadas de tirar o fôlego.',
       ],
     },
     {
@@ -203,8 +186,7 @@ window.PNMT_CONTENT = {
         ['10 mil m²', 'de área aproximada'],
       ],
       text: [
-        'Com cerca de dez mil metros quadrados, o AgroPlace será um espaço inovador, com exposições interativas que celebram a história, a evolução e a transformação do cerrado mato-grossense no maior celeiro de produção de alimentos e fibra do mundo.',
-        'Um convite para entender, de perto, a importância de Mato Grosso na agricultura global.',
+        'Espaço inovador de 10.000 m² com exposições interativas que celebram a força e a evolução do agronegócio mato-grossense.',
       ],
     },
     {
@@ -224,14 +206,13 @@ window.PNMT_CONTENT = {
       name: 'Casa Cuiabana',
       category: 'Cultura',
       image: null,
-      tagline: 'Tradição por fora, inovação por dentro.',
+      tagline: 'A união entre tradição e modernidade.',
       numbers: [
         ['726 m²', 'de área'],
         ['250', 'pessoas'],
       ],
       text: [
-        'A Casa Cuiabana une tradição e modernidade em um espaço de setecentos e vinte e seis metros quadrados, com capacidade para duzentas e cinquenta pessoas.',
-        'Por fora, homenageia a arquitetura colonial de Cuiabá, com fachada rústica e referências mato-grossenses. Por dentro, apresenta uma linguagem contemporânea, marcada pelo conforto, pela tecnologia e pela inovação.',
+        'A união entre tradição e modernidade. Arquitetura colonial rústica por fora, com muito conforto, tecnologia e inovação por dentro.',
       ],
     },
     {
@@ -241,8 +222,7 @@ window.PNMT_CONTENT = {
       image: null,
       tagline: 'O mundo às margens do lago.',
       text: [
-        'Às margens do lago, a Vila das Nações dá vida a fachadas temáticas inspiradas em sete países: Alemanha, África do Sul, Espanha, Itália, Japão, Líbano e Portugal.',
-        'Culturas que influenciaram a formação da nossa identidade, agora reunidas em um passeio de gastronomia, arquitetura e experiências. Mato Grosso recebe o mundo. E o mundo se sente em casa.',
+        'Fachadas temáticas às margens do lago inspiradas nos sete países que influenciaram a cultura e a formação de Mato Grosso.',
       ],
     },
     {
