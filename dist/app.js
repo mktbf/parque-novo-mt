@@ -10,7 +10,7 @@
   // === HELPER FUNCTIONS ===
   const asset = (name) =>
     window.PNMT_ASSETS?.[name] ||
-    `assets/${name}.${['autodromo-real', 'corrida-real'].includes(name) ? 'jpg' : 'png'}`;
+    `assets/${name}.${['autodromo-real', 'corrida-real', 'aerial-real'].includes(name) ? 'jpg' : 'png'}`;
 
   const esc = (s) =>
     String(s ?? '').replace(
@@ -147,7 +147,7 @@
   // === PAGES & VIEWS ===
   function home() {
     return `<section class="reference-home">
-  <section class="reference-hero" aria-label="Apresentação do parque"><img src="${asset('aerial')}" alt="Vista aérea do Parque Novo Mato Grosso"><h1 class="reference-hero-title"><span>MAIOR COMPLEXO</span><span>MULTIEVENTOS</span><span>DA AMÉRICA LATINA.</span></h1><p class="reference-hero-text"><span>NO CENTRO GEODÉSICO DA</span><span>AMÉRICA DO SUL, UM PARQUE</span><span>CONSTRUÍDO PARA RECEBER O</span><span>BRASIL E O MUNDO.</span></p></section>
+  <section class="reference-hero" aria-label="Apresentação do parque"><img src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso"><h1 class="reference-hero-title"><span>MAIOR COMPLEXO</span><span>MULTIEVENTOS</span><span>DA AMÉRICA LATINA.</span></h1><p class="reference-hero-text"><span>NO CENTRO GEODÉSICO DA</span><span>AMÉRICA DO SUL, UM PARQUE</span><span>CONSTRUÍDO PARA RECEBER O</span><span>BRASIL E O MUNDO.</span></p></section>
   <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>500</strong><small>HECTARES</small></div><p class="reference-area-text">ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT</p></div></section>
   <section class="reference-spaces"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
   <div class="reference-statement"><p>O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO</p></div>
