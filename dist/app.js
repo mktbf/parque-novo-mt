@@ -156,7 +156,7 @@
     return list
       .map(
         (s, i) =>
-          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(byId(s.id).name)}">${s.image ? `<img src="${asset(s.image)}" alt="" loading="lazy">` : ''}<div class="reference-space-card-copy"><h3>— ${s.label}</h3><p>${s.copy}</p></div></a>`
+          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(byId(s.id)?.name || s.label)}">${s.image ? `<img src="${asset(s.image)}" alt="${esc(byId(s.id)?.name || s.label)}" loading="lazy">` : ''}<div class="reference-space-card-copy"><h3>— ${s.label}</h3><p>${s.copy}</p></div></a>`
       )
       .join('');
   }
@@ -165,9 +165,43 @@
   function home() {
     const vid = config.videoId || config.youtubeId || 'plKmM21Rh0Q';
     return `<section class="reference-home">
-  <section class="reference-hero" aria-label="Apresentação do parque"><img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso"><div class="hero-video-wrap"><iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" title="Vídeo institucional do Parque Novo Mato Grosso"></iframe></div><button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som"><span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span></button><h1 class="reference-hero-title"><span>MAIOR COMPLEXO</span><span>MULTIEVENTOS</span><span>DA AMÉRICA LATINA.</span></h1><p class="reference-hero-text"><span>NO CENTRO GEODÉSICO DA</span><span>AMÉRICA DO SUL, UM PARQUE</span><span>CONSTRUÍDO PARA RECEBER O</span><span>BRASIL E O MUNDO.</span></p></section>
+  <!-- Hero Editorial Header -->
+  <header class="hero-editorial-header">
+    <div class="hero-editorial-left">
+      <div class="hero-pill-badge">
+        <span class="hero-pulse-dot"></span>
+        <span>CENTRO GEODÉSICO DA AMÉRICA DO SUL · CUIABÁ, MT</span>
+      </div>
+      <h1 class="hero-headline-clean">
+        MAIOR COMPLEXO <span class="hero-highlight">MULTIEVENTOS</span><br>DA AMÉRICA LATINA.
+      </h1>
+    </div>
+    <div class="hero-editorial-right">
+      <p class="hero-lead-clean">
+        Um parque construído para receber o Brasil e o mundo. Onde esporte, cultura, entretenimento e inovação se encontram em escala continental.
+      </p>
+      <div class="hero-quick-meta">
+        <span class="meta-item"><strong>500</strong> Hectares</span>
+        <span class="meta-sep">·</span>
+        <span class="meta-item"><strong>15+</strong> Atrações</span>
+        <span class="meta-sep">·</span>
+        <span class="meta-item">Em Obras · Já em Movimento</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cinematic Hero Video Frame (100% unobstructed) -->
+  <section class="reference-hero cinematic-hero" aria-label="Vídeo oficial do Parque Novo Mato Grosso">
+    <img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso">
+    <div class="hero-video-wrap">
+      <iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" title="Vídeo institucional do Parque Novo Mato Grosso"></iframe>
+    </div>
+    <button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som do vídeo">
+      <span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span>
+    </button>
+  </section>
   <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>500</strong><small>HECTARES</small></div><p class="reference-area-text">ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT</p></div></section>
-  <section class="reference-spaces"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
+  <section class="reference-spaces" aria-label="Espaços do parque"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel" role="region" aria-roledescription="carousel" aria-label="Carrossel de espaços do complexo"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window" tabindex="0" aria-label="Navegue pelos espaços com as setas do teclado ou deslizando"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
   <div class="reference-statement"><p>O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO</p></div>
   <section class="reference-film"><div class="reference-film-label"><span>— CONHEÇA O PARQUE</span></div><button class="reference-film-poster" data-action="video" aria-label="Assistir ao vídeo de apresentação do Parque Novo Mato Grosso"><img src="${asset('entrance')}" alt="Pórtico de entrada do Parque Novo Mato Grosso"><span class="reference-play" aria-hidden="true">▶</span></button></section>
   <p class="reference-signoff">AINDA EM OBRAS. JÁ EM MOVIMENTO.</p>
@@ -294,7 +328,7 @@
         'Cada imagem é um capítulo em construção. Acompanhe de perto o que está sendo erguido para Mato Grosso e para o mundo.',
         'Galeria de fotos'
       ) +
-      `<section class="wrap">${filters(['Todas', 'Obras e estrutura', 'Vista aérea', 'Eventos', 'Espaços', 'Gente'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
+      `<section class="wrap">${filters(['Todas', 'Obras e estrutura', 'Vista aérea', 'Eventos', 'Espaços'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
     );
   }
 
@@ -307,7 +341,7 @@
       ? entries
           .map(
             (g) =>
-              `<button class="gallery-item" data-photo="${g.index}" aria-label="Ampliar ${g.title}"><img loading="lazy" src="${asset(g.image)}" alt="${g.title}"><strong>${g.title} ↗</strong><small>${g.type} · ${g.credit}</small></button>`
+              `<button class="gallery-item" data-photo="${g.index}" aria-label="Ampliar foto ${esc(g.title)}"><img loading="lazy" src="${asset(g.image)}" alt="${esc(g.title)}"><strong>${esc(g.title)}</strong><small>${g.type} · ${g.credit}</small></button>`
           )
           .join('')
       : `<div class="empty-state"><h3>Novos capítulos em breve.</h3><p>Ainda não há fotos publicadas nesta coleção. Explore as outras categorias.</p><button class="button secondary" data-filter="galeria" data-value="Todas">Ver todas as imagens</button></div>`;
@@ -344,7 +378,7 @@
   function otherContact() {
     return (
       intro('Vamos conversar.', 'Fornecedores, parcerias e institucional.', 'Outros assuntos') +
-      `<section class="wrap service-layout"><div class="service-copy"><h2>Novas conexões<br>começam aqui.</h2><p>Propostas comerciais, parcerias e assuntos institucionais também chegam por este canal.</p>${external(config.instagram, 'Acompanhe o parque')}</div><div class="service-form"><h3>Como podemos ajudar?</h3><form data-form="contato">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('assunto', 'Assunto', 'text', ['Fornecedor', 'Parceria', 'Institucional', 'Outro'])}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('contato', 'Enviar solicitação')}</form></div></section>`
+      `<section class="wrap service-layout"><div class="service-copy"><h2>Novas conexões<br>começam aqui.</h2><p>Propostas comerciais, parcerias e assuntos institucionais também chegam por este canal.</p><div class="service-social-channels"><span class="kicker">CANAIS OFICIAIS</span><div class="service-social-grid"><a class="service-social-card" href="${config.instagram}" target="_blank" rel="noopener"><div class="card-icon instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div><span>Instagram<br><small>@parquenovomt</small></span>↗</a><a class="service-social-card" href="${config.facebook}" target="_blank" rel="noopener"><div class="card-icon facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div><span>Facebook<br><small>Parque Novo MT</small></span>↗</a><a class="service-social-card" href="${config.youtube}" target="_blank" rel="noopener"><div class="card-icon youtube"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><span>YouTube<br><small>Canal Oficial</small></span>↗</a></div></div></div><div class="service-form"><h3>Como podemos ajudar?</h3><form data-form="contato">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('assunto', 'Assunto', 'text', ['Fornecedor', 'Parceria', 'Institucional', 'Outro'])}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('contato', 'Enviar solicitação')}</form></div></section>`
     );
   }
 
@@ -438,7 +472,39 @@
       }
     });
 
-    closeMenu();
+    if (route === 'inicio') {
+      const carWindow = document.getElementById('reference-space-window');
+      const prevBtn = document.querySelector('[data-action="spaces-previous"]');
+      const nextBtn = document.querySelector('[data-action="spaces-next"]');
+
+      const updateArrows = () => {
+        if (!carWindow || !prevBtn || !nextBtn) return;
+        const atStart = carWindow.scrollLeft <= 5;
+        const atEnd = carWindow.scrollLeft + carWindow.clientWidth >= carWindow.scrollWidth - 5;
+        prevBtn.disabled = atStart;
+        prevBtn.setAttribute('aria-disabled', String(atStart));
+        prevBtn.style.opacity = atStart ? '0.35' : '1';
+        prevBtn.style.cursor = atStart ? 'default' : 'pointer';
+        nextBtn.disabled = atEnd;
+        nextBtn.setAttribute('aria-disabled', String(atEnd));
+        nextBtn.style.opacity = atEnd ? '0.35' : '1';
+        nextBtn.style.cursor = atEnd ? 'default' : 'pointer';
+      };
+
+      if (carWindow) {
+        carWindow.addEventListener('scroll', updateArrows, { passive: true });
+        carWindow.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            carWindow.scrollBy({ left: -carWindow.clientWidth * 0.8, behavior: 'smooth' });
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            carWindow.scrollBy({ left: carWindow.clientWidth * 0.8, behavior: 'smooth' });
+          }
+        });
+        requestAnimationFrame(updateArrows);
+      }
+    }
 
     if (route === 'espacos') updateSpaces();
     if (route === 'agenda') updateAgenda();
@@ -450,9 +516,12 @@
 
   function closeMenu() {
     nav.classList.remove('open');
+    document.body.classList.remove('menu-open');
     const t = document.querySelector('[data-action=menu]');
-    t.setAttribute('aria-expanded', 'false');
-    t.setAttribute('aria-label', 'Abrir menu');
+    if (t) {
+      t.setAttribute('aria-expanded', 'false');
+      t.setAttribute('aria-label', 'Abrir menu');
+    }
   }
 
   // === FILTERS ===
@@ -464,6 +533,12 @@
       'notícias': 'newsFilter',
     }[type];
     if (!key) return;
+
+    // Toggle: if clicking the currently active filter, reset to all
+    const defaultVal = type === 'galeria' ? 'Todas' : 'Todos';
+    if (state[key] === value && value !== defaultVal) {
+      value = defaultVal;
+    }
 
     state[key] = value;
 
@@ -508,6 +583,13 @@
   }
 
   // === SEARCH ===
+  const highlight = (text, query) => {
+    if (!query || !text) return esc(text);
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'gi');
+    return esc(text).replace(regex, '<mark class="search-highlight">$1</mark>');
+  };
+
   function updateSearch() {
     const rawVal = document.getElementById('search-input').value.trim();
     if (!rawVal) {
@@ -560,7 +642,7 @@
     ].filter((x) => normal(`${x.name} ${x.tagline || ''} ${x.searchContent || ''}`).includes(q));
 
     document.getElementById('search-results').innerHTML = found.length
-      ? found.map((x) => `<a href="#${x.id}">${x.name} ↗<small>${x.category}${x.tagline ? ' · ' + x.tagline : ''}</small></a>`).join('')
+      ? found.map((x) => `<a href="#${x.id}"><span>${highlight(x.name, rawVal)}</span><small>${x.category}${x.tagline ? ' · ' + highlight(x.tagline, rawVal) : ''}</small></a>`).join('')
       : '<p>Nenhum resultado. Tente outro nome ou assunto.</p>';
   }
 
@@ -636,7 +718,7 @@
       const button = form.querySelector('[type=submit]');
       button.disabled = true;
       const original = button.innerHTML;
-      button.textContent = 'Enviando…';
+      button.innerHTML = '<span class="button-spinner"></span> Enviando…';
 
       try {
         let result;
@@ -733,6 +815,7 @@
         const open = nav.classList.toggle('open');
         b.setAttribute('aria-expanded', String(open));
         b.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+        document.body.classList.toggle('menu-open', open);
       } else if (action === 'search') {
         document.getElementById('search-input').value =
           document.getElementById('header-search')?.value || '';
@@ -788,6 +871,11 @@
       }
     }
 
+    // Close mobile menu when clicking outside
+    if (nav.classList.contains('open') && !e.target.closest('#primary-nav') && !e.target.closest('[data-action=menu]')) {
+      closeMenu();
+    }
+
     const link = e.target.closest('a');
     if (link && link.getAttribute('href')?.startsWith('#')) {
       const dlg = link.closest('dialog');
@@ -799,13 +887,18 @@
     }
   });
 
+  let searchDebounceTimer;
+  let spaceDebounceTimer;
+
   document.addEventListener('input', (e) => {
     if (e.target.id === 'space-search') {
       state.spaceQuery = e.target.value;
-      updateSpaces();
+      clearTimeout(spaceDebounceTimer);
+      spaceDebounceTimer = setTimeout(updateSpaces, 200);
     }
     if (e.target.id === 'search-input') {
-      updateSearch();
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(updateSearch, 200);
     }
     if (e.target.id === 'header-search') {
       document.getElementById('search-input').value = e.target.value;
@@ -852,9 +945,22 @@
     }
   });
 
+  // Manage dialog open/close state and body scroll lock
+  const _origShowModal = HTMLDialogElement.prototype.showModal;
+  HTMLDialogElement.prototype.showModal = function () {
+    document.body.classList.add('modal-open');
+    _origShowModal.call(this);
+  };
+
   document.querySelectorAll('dialog').forEach((d) => {
-    d.addEventListener('click', (e) => {
-      if (e.target === d) {
+    let backdropMouseDown = false;
+
+    d.addEventListener('mousedown', (e) => {
+      backdropMouseDown = (e.target === d);
+    });
+
+    d.addEventListener('mouseup', (e) => {
+      if (backdropMouseDown && e.target === d) {
         const r = d.getBoundingClientRect();
         if (
           e.clientX < r.left ||
@@ -865,9 +971,11 @@
           d.close();
         }
       }
+      backdropMouseDown = false;
     });
 
     d.addEventListener('close', () => {
+      document.body.classList.remove('modal-open');
       if (d.id === 'media-dialog') {
         document.getElementById('media-content').innerHTML = '';
       }
@@ -885,7 +993,7 @@
   // === SCROLL REVEAL ANIMATIONS ===
   function initReveal() {
     const sections = main.querySelectorAll(
-      '.reference-hero, .reference-facts, .reference-spaces, .reference-statement, ' +
+      '.hero-editorial-header, .reference-hero, .reference-facts, .reference-spaces, .reference-statement, ' +
       '.reference-film, .reference-signoff, .reference-about-title, .reference-origin, ' +
       '.reference-values, .reference-about-aerial, .split, .catalog-grid, ' +
       '.space-hero, .newsletter, .contact-grid, .gallery-grid, .steps, .faq'

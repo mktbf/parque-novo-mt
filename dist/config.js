@@ -8,6 +8,8 @@ window.PNMT_CONFIG = {
   videoId: 'plKmM21Rh0Q',
   youtubeId: 'plKmM21Rh0Q',
   instagram: 'https://www.instagram.com/parquenovomt/',
+  facebook: 'https://www.facebook.com/profile.php?id=61591199398539',
+  youtube: 'https://www.youtube.com/@ParqueNovoMatoGrosso',
   map: 'https://www.google.com/maps/search/?api=1&query=Parque+Novo+Mato+Grosso+Cuiaba',
   kit: 'downloads/kit-pnmt.zip',
 };
