@@ -170,6 +170,11 @@
     <div class="hero-video-wrap">
       <iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Vídeo institucional do Parque Novo Mato Grosso"></iframe>
     </div>
+    <button class="hero-play-overlay" data-action="video" aria-label="Assistir ao vídeo em tela cheia">
+      <span class="hero-play-circle" title="Clique para assistir ao vídeo completo com áudio">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg>
+      </span>
+    </button>
     <button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som">
       <span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span>
     </button>
@@ -208,7 +213,7 @@
         '',
         'Conheça os espaços'
       ) +
-      `<section class="wrap"><div class="catalog-tools"><h2>Encontre seu espaço.</h2><label class="sr-only" for="space-search">Buscar um espaço</label><input id="space-search" type="search" placeholder="Busque pelo nome do espaço" value="${esc(state.spaceQuery)}"></div>${filters(['Todos', 'Esportes', 'Eventos', 'Cultura', 'Família', 'Experiências', 'Convivência'], state.spaceFilter, 'espaços')}<p class="result-count" id="space-count" aria-live="polite"></p><div class="catalog-grid" id="space-results"></div></section>${visitStrip()}`
+      `<section class="wrap"><div class="catalog-tools"><h2>Cada espaço nasce com um propósito. Conheça o que está sendo construído.</h2><label class="sr-only" for="space-search">Buscar um espaço</label><input id="space-search" type="search" placeholder="Busque pelo nome do espaço" value="${esc(state.spaceQuery)}"></div>${filters(['Todos', 'Esportes', 'Eventos', 'Cultura', 'Família', 'Experiências', 'Convivência'], state.spaceFilter, 'espaços')}<p class="result-count" id="space-count" aria-live="polite"></p><div class="catalog-grid" id="space-results"></div></section>${visitStrip()}`
     );
   }
 

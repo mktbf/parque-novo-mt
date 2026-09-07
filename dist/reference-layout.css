@@ -3099,7 +3099,7 @@ form.was-validated .field select:invalid {
 
 .reference-hero-text {
   position: absolute;
-  bottom: 30px;
+  bottom: 72px;
   right: 28px;
   display: flex;
   flex-direction: column;
@@ -3120,11 +3120,47 @@ form.was-validated .field select:invalid {
   margin-top: 3px;
 }
 
+/* Hero play overlay — click to open video popup modal with audio */
+.hero-play-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  outline: none;
+}
+
+.hero-play-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(13, 43, 77, 0.72);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.hero-play-overlay:hover .hero-play-circle {
+  transform: scale(1.12);
+  background: rgba(13, 43, 77, 0.92);
+  border-color: #ffffff;
+}
+
 .hero-sound-btn {
   position: absolute;
   bottom: 24px;
   left: 28px;
-  z-index: 4;
+  z-index: 6;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -3174,8 +3210,8 @@ form.was-validated .field select:invalid {
   }
 
   .reference-hero-text {
-    bottom: 12px;
-    right: 12px;
+    bottom: 42px;
+    right: 14px;
     font-size: clamp(8.5px, 2.4vw, 11.5px);
   }
 
@@ -3185,11 +3221,21 @@ form.was-validated .field select:invalid {
   }
 
   .hero-sound-btn {
-    bottom: 12px;
-    left: 12px;
+    bottom: 14px;
+    left: 14px;
     padding: 4px 10px;
     font-size: 11px;
     gap: 5px;
+  }
+
+  .hero-play-circle {
+    width: 50px;
+    height: 50px;
+  }
+
+  .hero-play-circle svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
