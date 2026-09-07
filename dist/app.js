@@ -557,8 +557,11 @@
   function closeMenu() {
     nav.classList.remove('open');
     const t = document.querySelector('[data-action=menu]');
-    t.setAttribute('aria-expanded', 'false');
-    t.setAttribute('aria-label', 'Abrir menu');
+    if (t) {
+      t.setAttribute('aria-expanded', 'false');
+      t.setAttribute('aria-label', 'Abrir menu');
+      t.textContent = '☰';
+    }
   }
 
   // === FILTERS ===
@@ -874,6 +877,7 @@
         const open = nav.classList.toggle('open');
         b.setAttribute('aria-expanded', String(open));
         b.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+        b.textContent = open ? '✕' : '☰';
       } else if (action === 'search') {
         document.getElementById('search-input').value =
           document.getElementById('header-search')?.value || '';
@@ -927,6 +931,10 @@
           'text/plain;charset=utf-8'
         );
       }
+    }
+
+    if (nav.classList.contains('open') && !e.target.closest('#primary-nav') && !e.target.closest('[data-action=menu]')) {
+      closeMenu();
     }
 
     const link = e.target.closest('a');
