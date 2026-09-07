@@ -556,6 +556,7 @@
 
   function closeMenu() {
     nav.classList.remove('open');
+    document.body.classList.remove('nav-open');
     const t = document.querySelector('[data-action=menu]');
     if (t) {
       t.setAttribute('aria-expanded', 'false');
@@ -878,6 +879,10 @@
         b.setAttribute('aria-expanded', String(open));
         b.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
         b.textContent = open ? '✕' : '☰';
+        document.body.classList.toggle('nav-open', open);
+      } else if (action === 'close-menu') {
+        closeMenu();
+        return;
       } else if (action === 'search') {
         document.getElementById('search-input').value =
           document.getElementById('header-search')?.value || '';
