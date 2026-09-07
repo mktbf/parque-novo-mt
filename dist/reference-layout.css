@@ -258,13 +258,13 @@ h1, h2, h3, h4 {
 
 .hero-video-wrap iframe {
   position: absolute;
-  top: 50%;
+  top: 44%;
   left: 50%;
   width: 100%;
-  height: 100%;
+  height: 124%;
   min-width: 100%;
-  min-height: 100%;
-  transform: translate(-50%, -50%) scale(1.05);
+  min-height: 124%;
+  transform: translate(-50%, -44%) scale(1.08);
   transform-origin: center center;
   pointer-events: none;
   border: 0;
@@ -3048,13 +3048,13 @@ form.was-validated .field select:invalid {
 
 .hero-video-wrap iframe {
   position: absolute;
-  top: 50%;
+  top: 44%;
   left: 50%;
   width: 100%;
-  height: 100%;
+  height: 124%;
   min-width: 100%;
-  min-height: 100%;
-  transform: translate(-50%, -50%) scale(1.05);
+  min-height: 124%;
+  transform: translate(-50%, -44%) scale(1.08);
   transform-origin: center center;
   pointer-events: none;
   border: 0;
@@ -3074,6 +3074,7 @@ form.was-validated .field select:invalid {
   letter-spacing: -0.02em;
   margin: 0;
   z-index: 3;
+  pointer-events: none;
 }
 
 .reference-hero-title span {
@@ -3110,6 +3111,7 @@ form.was-validated .field select:invalid {
   line-height: 1.15;
   z-index: 3;
   margin: 0;
+  pointer-events: none;
 }
 
 .reference-hero-text span {
@@ -3124,10 +3126,14 @@ form.was-validated .field select:invalid {
 .hero-play-overlay {
   position: absolute;
   inset: 0;
+  width: 100% !important;
+  height: 100% !important;
   z-index: 4;
-  display: flex;
+  display: flex !important;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   cursor: pointer;
   background: transparent !important;
   border: 0 !important;
@@ -3136,24 +3142,60 @@ form.was-validated .field select:invalid {
 }
 
 .hero-play-circle {
-  width: 68px;
-  height: 68px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  background: rgba(13, 43, 77, 0.72);
-  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(13, 43, 77, 0.82);
+  border: 2.5px solid rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-play-circle svg {
+  margin-left: 4px;
+}
+
+.hero-play-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(13, 43, 77, 0.88);
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-family: var(--body, 'Barlow', sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+}
+
+.hero-play-badge .play-mini-icon {
+  color: #58b947;
+  font-size: 11px;
 }
 
 .hero-play-overlay:hover .hero-play-circle {
   transform: scale(1.12);
-  background: rgba(13, 43, 77, 0.92);
+  background: #1b8f3a;
   border-color: #ffffff;
+  box-shadow: 0 12px 36px rgba(27, 143, 58, 0.5);
+}
+
+.hero-play-overlay:hover .hero-play-badge {
+  background: #0d2b4d;
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .hero-sound-btn {
@@ -3236,6 +3278,11 @@ form.was-validated .field select:invalid {
   .hero-play-circle svg {
     width: 20px;
     height: 20px;
+  }
+
+  .hero-play-badge {
+    font-size: 11px;
+    padding: 4px 12px;
   }
 }
 

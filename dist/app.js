@@ -168,11 +168,14 @@
   <section class="reference-hero" aria-label="Apresentação do parque">
     <img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso">
     <div class="hero-video-wrap">
-      <iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Vídeo institucional do Parque Novo Mato Grosso"></iframe>
+      <iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=3&cc_lang_pref=none&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Vídeo institucional do Parque Novo Mato Grosso"></iframe>
     </div>
-    <button class="hero-play-overlay" data-action="video" aria-label="Assistir ao vídeo em tela cheia">
+    <button class="hero-play-overlay" data-action="video" aria-label="Assistir ao vídeo completo com áudio">
       <span class="hero-play-circle" title="Clique para assistir ao vídeo completo com áudio">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white" aria-hidden="true"><polygon points="6,4 20,12 6,20"/></svg>
+      </span>
+      <span class="hero-play-badge">
+        <span class="play-mini-icon">▶</span> Assistir com áudio
       </span>
     </button>
     <button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som">
@@ -524,22 +527,27 @@
     if (route === 'imprensa') updateNews();
     if (route === 'galeria') updateGallery();
 
+  function disableCaptionsOnIframe(iframe) {
+    if (!iframe || !iframe.contentWindow) return;
+    const send = (func, args) => {
+      try {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+      } catch (e) {}
+    };
+    send('unloadModule', ['captions']);
+    send('unloadModule', ['cc']);
+    send('setOption', ['captions', 'track', {}]);
+    send('setOption', ['captions', 'reload', false]);
+    send('setOption', ['cc', 'track', {}]);
+  }
+
     // Disable YouTube auto-captions via postMessage after player loads
     if (route === 'inicio') {
       const heroIframe = document.getElementById('hero-video');
       if (heroIframe) {
-        const disableCaptions = () => {
-          try {
-            heroIframe.contentWindow?.postMessage(JSON.stringify({
-              event: 'command', func: 'setOption', args: ['captions', { track: {}, reload: true }]
-            }), '*');
-            heroIframe.contentWindow?.postMessage(JSON.stringify({
-              event: 'command', func: 'unloadModule', args: ['captions']
-            }), '*');
-          } catch (e) { /* cross-origin safe */ }
-        };
-        setTimeout(disableCaptions, 1500);
-        setTimeout(disableCaptions, 3000);
+        [300, 800, 1500, 2500, 4000].forEach((ms) => {
+          setTimeout(() => disableCaptionsOnIframe(heroIframe), ms);
+        });
       }
     }
 
@@ -577,10 +585,36 @@
 
   // === MEDIA MODALS ===
   function showVideo() {
-    document.getElementById('media-title').textContent = 'Vídeo de apresentação';
+    const dlg = document.getElementById('media-dialog');
+    if (!dlg) return;
+
+    // Pause hero background video while modal is open
+    const heroIframe = document.getElementById('hero-video');
+    if (heroIframe) {
+      try {
+        heroIframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+      } catch (e) {}
+    }
+
+    const vid = config.videoId || config.youtubeId || 'ncTJbHQNq6M';
+    document.getElementById('media-title').textContent = 'Vídeo de apresentação — Parque Novo Mato Grosso';
     document.getElementById('media-content').innerHTML =
-      `<iframe src="https://www.youtube-nocookie.com/embed/${config.videoId}?autoplay=1&rel=0" title="Vídeo de apresentação — Parque Novo Mato Grosso" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><p>Vídeo do canal Parque Novo Mato Grosso. Requer conexão com a internet.</p>${external('https://www.youtube.com/watch?v=' + config.videoId, 'Abrir diretamente no YouTube')}`;
-    document.getElementById('media-dialog').showModal();
+      `<div class="modal-video-wrap"><iframe id="modal-video-iframe" src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&cc_load_policy=3&iv_load_policy=3&hl=pt-BR&enablejsapi=1" title="Vídeo de apresentação — Parque Novo Mato Grosso" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><p style="margin-top:14px;color:#52687a;font-size:14px;">Vídeo institucional do canal Parque Novo Mato Grosso.</p>${external('https://www.youtube.com/watch?v=' + vid, 'Abrir diretamente no YouTube')}`;
+
+    if (!dlg.open) {
+      if (typeof dlg.showModal === 'function') {
+        dlg.showModal();
+      } else {
+        dlg.setAttribute('open', '');
+      }
+    }
+
+    const modalIframe = document.getElementById('modal-video-iframe');
+    if (modalIframe) {
+      [400, 1000, 2200].forEach((ms) => {
+        setTimeout(() => disableCaptionsOnIframe(modalIframe), ms);
+      });
+    }
   }
 
   function showPhoto(index) {
@@ -801,6 +835,14 @@
       return;
     }
 
+    // Hero video click: allow clicking the play button OR anywhere on the hero card (except sound button)
+    const heroCard = e.target.closest('.reference-hero');
+    if (heroCard && !e.target.closest('.hero-sound-btn')) {
+      e.preventDefault();
+      showVideo();
+      return;
+    }
+
     const b = e.target.closest('button');
     if (b) {
       if (b.dataset.filter) {
@@ -969,6 +1011,12 @@
     d.addEventListener('close', () => {
       if (d.id === 'media-dialog') {
         document.getElementById('media-content').innerHTML = '';
+        const heroIframe = document.getElementById('hero-video');
+        if (heroIframe) {
+          try {
+            heroIframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
+          } catch (e) {}
+        }
       }
     });
   });
