@@ -163,34 +163,28 @@
 
   // === PAGES & VIEWS ===
   function home() {
-    const vid = config.videoId || config.youtubeId || 'plKmM21Rh0Q';
+    const vid = config.videoId || config.youtubeId || 'ncTJbHQNq6M';
     return `<section class="reference-home">
-  <!-- Hero Editorial Header (Exibido no Mobile para UX limpa e desobstruída) -->
-  <header class="hero-editorial-header" aria-label="Apresentação do Parque Novo Mato Grosso">
-    <div class="hero-editorial-left">
-      <div class="hero-pill-badge">
-        <span class="hero-pulse-dot"></span>
-        <span>CENTRO GEODÉSICO DA AMÉRICA DO SUL · CUIABÁ, MT</span>
-      </div>
-      <h1 class="hero-headline-clean">
-        MAIOR COMPLEXO <span class="hero-highlight">MULTIEVENTOS</span><br>DA AMÉRICA LATINA.
-      </h1>
+  <section class="reference-hero" aria-label="Apresentação do parque">
+    <img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso">
+    <div class="hero-video-wrap">
+      <iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Vídeo institucional do Parque Novo Mato Grosso"></iframe>
     </div>
-    <div class="hero-editorial-right">
-      <p class="hero-lead-clean">
-        Um parque construído para receber o Brasil e o mundo. Onde esporte, cultura, entretenimento e inovação se encontram em escala continental.
-      </p>
-      <div class="hero-quick-meta">
-        <span class="meta-item"><strong>500</strong> Hectares</span>
-        <span class="meta-sep">·</span>
-        <span class="meta-item"><strong>15+</strong> Atrações</span>
-        <span class="meta-sep">·</span>
-        <span class="meta-item">Em Obras · Já em Movimento</span>
-      </div>
-    </div>
-  </header>
-
-  <section class="reference-hero" aria-label="Apresentação do parque"><img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso"><div class="hero-video-wrap"><iframe id="hero-video" src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1&cc_load_policy=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" title="Vídeo institucional do Parque Novo Mato Grosso"></iframe></div><button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som"><span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span></button><h1 class="reference-hero-title"><span>MAIOR COMPLEXO</span><span>MULTIEVENTOS</span><span>DA AMÉRICA LATINA.</span></h1><p class="reference-hero-text"><span>NO CENTRO GEODÉSICO DA</span><span>AMÉRICA DO SUL, UM PARQUE</span><span>CONSTRUÍDO PARA RECEBER O</span><span>BRASIL E O MUNDO.</span></p></section>
+    <button class="hero-sound-btn" data-action="toggle-sound" aria-label="Ativar som">
+      <span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span>
+    </button>
+    <h1 class="reference-hero-title">
+      <span>MAIOR COMPLEXO</span>
+      <span>MULTIEVENTOS</span>
+      <span>DA AMÉRICA LATINA.</span>
+    </h1>
+    <p class="reference-hero-text">
+      <span>NO CENTRO GEODÉSICO DA</span>
+      <span>AMÉRICA DO SUL, UM PARQUE</span>
+      <span>CONSTRUÍDO PARA RECEBER O</span>
+      <span>BRASIL E O MUNDO.</span>
+    </p>
+  </section>
   <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>500</strong><small>HECTARES</small></div><p class="reference-area-text">ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT</p></div></section>
   <section class="reference-spaces" aria-label="Espaços do parque"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel" role="region" aria-roledescription="carousel" aria-label="Carrossel de espaços do complexo"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window" tabindex="0" aria-label="Navegue pelos espaços com as setas do teclado ou deslizando"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
   <div class="reference-statement"><p>O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO</p></div>
@@ -524,6 +518,25 @@
     if (route === 'agenda') updateAgenda();
     if (route === 'imprensa') updateNews();
     if (route === 'galeria') updateGallery();
+
+    // Disable YouTube auto-captions via postMessage after player loads
+    if (route === 'inicio') {
+      const heroIframe = document.getElementById('hero-video');
+      if (heroIframe) {
+        const disableCaptions = () => {
+          try {
+            heroIframe.contentWindow?.postMessage(JSON.stringify({
+              event: 'command', func: 'setOption', args: ['captions', { track: {}, reload: true }]
+            }), '*');
+            heroIframe.contentWindow?.postMessage(JSON.stringify({
+              event: 'command', func: 'unloadModule', args: ['captions']
+            }), '*');
+          } catch (e) { /* cross-origin safe */ }
+        };
+        setTimeout(disableCaptions, 1500);
+        setTimeout(disableCaptions, 3000);
+      }
+    }
 
     window.scrollTo({ top: 0, behavior: 'instant' });
   }

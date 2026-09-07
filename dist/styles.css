@@ -123,7 +123,8 @@ button {
 /* === SITE HEADER & NAVIGATION === */
 
 .site-header {
-  height: 105px;
+  min-height: 90px;
+  height: auto;
   background: #fff;
   position: sticky;
   top: 0;
