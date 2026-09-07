@@ -169,8 +169,10 @@
   <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>500</strong><small>HECTARES</small></div><p class="reference-area-text">ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT</p></div></section>
   <section class="reference-spaces" aria-label="Espaços do parque"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel" role="region" aria-roledescription="carousel" aria-label="Carrossel de espaços do complexo"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window" tabindex="0" aria-label="Navegue pelos espaços com as setas do teclado ou deslizando"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
   <div class="reference-statement"><p>O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO</p></div>
-  <figure class="reference-aerial-panoramic"><img src="assets/aerial-panoramic.jpg" alt="Vista aérea panorâmica da construção do Parque Novo Mato Grosso" loading="lazy"></figure>
-  <p class="reference-signoff">AINDA EM OBRAS. JÁ EM MOVIMENTO.</p>
+  <div class="reference-closing">
+    <p class="reference-signoff">AINDA EM OBRAS. JÁ EM MOVIMENTO.</p>
+    <figure class="reference-aerial-panoramic"><img src="assets/aerial-sunset.jpg" alt="Vista aérea do Parque Novo Mato Grosso ao pôr do sol" loading="lazy"></figure>
+  </div>
 </section>
 `;
   }

@@ -745,13 +745,33 @@ h1, h2, h3, h4 {
   color: white;
 }
 
-.reference-signoff {
+/* Closing section — signoff bar + aerial photo */
+.reference-closing {
+  margin-top: 60px;
+}
+
+.reference-closing .reference-signoff {
   text-align: center;
-  font: 400 16px/1.4 var(--body);
+  font: 600 16px/1 var(--body);
   letter-spacing: .18em;
-  color: var(--green);
-  margin: 27px auto 0;
-  padding: 0 20px;
+  color: white;
+  margin: 0;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--green) 0%, var(--navy) 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.reference-closing .reference-aerial-panoramic {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+
+.reference-closing .reference-aerial-panoramic img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* === REFERENCE FOOTER === */
