@@ -360,44 +360,6 @@ h1, h2, h3, h4 {
   appearance: none;
 }
 
-/* Hero play overlay — click to open video popup */
-.hero-play-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  padding: 0;
-}
-
-.hero-play-circle {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(13, 43, 77, 0.7);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: background 0.25s, transform 0.25s, border-color 0.25s;
-}
-
-.hero-play-overlay:hover .hero-play-circle {
-  background: rgba(13, 43, 77, 0.9);
-  border-color: white;
-  transform: scale(1.1);
-}
-
-.hero-play-circle svg {
-  margin-left: 4px;
-}
-
 /* Aerial panoramic section — replaces old video poster */
 .reference-aerial-panoramic {
   width: 73%;
@@ -3220,69 +3182,85 @@ form.was-validated .field select:invalid {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   cursor: pointer;
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
   outline: none;
+  opacity: 0.88;
+  transition: opacity 0.3s ease;
 }
 
 .hero-play-circle {
-  width: 76px;
-  height: 76px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: rgba(13, 43, 77, 0.82);
-  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  background: rgba(13, 43, 77, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .hero-play-circle svg {
-  margin-left: 4px;
+  width: 22px;
+  height: 22px;
+  margin-left: 3px;
+  fill: rgba(255, 255, 255, 0.95);
+  transition: transform 0.25s ease;
 }
 
 .hero-play-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(13, 43, 77, 0.88);
-  color: #ffffff;
-  padding: 6px 16px;
+  background: rgba(13, 43, 77, 0.36);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 4px 13px;
   border-radius: 20px;
   font-family: var(--body, 'Barlow', sans-serif);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   transition: all 0.25s ease;
 }
 
 .hero-play-badge .play-mini-icon {
-  color: #58b947;
-  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 9.5px;
 }
 
-.hero-play-overlay:hover .hero-play-circle {
-  transform: scale(1.12);
-  background: #1b8f3a;
-  border-color: #ffffff;
-  box-shadow: 0 12px 36px rgba(27, 143, 58, 0.5);
+@media (hover: hover) {
+  .hero-play-overlay:hover {
+    opacity: 1;
+  }
+
+  .hero-play-overlay:hover .hero-play-circle {
+    transform: scale(1.08);
+    background: rgba(13, 43, 77, 0.52);
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
+  }
+
+  .hero-play-overlay:hover .hero-play-badge {
+    background: rgba(13, 43, 77, 0.58);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+    color: #ffffff;
+  }
 }
 
-.hero-play-overlay:hover .hero-play-badge {
-  background: #0d2b4d;
-  border-color: rgba(255, 255, 255, 0.7);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+.hero-play-overlay:active .hero-play-circle {
+  transform: scale(0.95);
 }
 
 .hero-sound-btn {
@@ -3360,19 +3338,26 @@ form.was-validated .field select:invalid {
     z-index: 10;
   }
 
+  .hero-play-overlay {
+    gap: 6px;
+  }
+
   .hero-play-circle {
-    width: 50px;
-    height: 50px;
+    width: 44px;
+    height: 44px;
+    border-width: 1.5px;
   }
 
   .hero-play-circle svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    margin-left: 2px;
   }
 
   .hero-play-badge {
-    font-size: 11px;
-    padding: 4px 12px;
+    font-size: 10px;
+    padding: 3px 10px;
+    letter-spacing: 0.1px;
   }
 }
 
