@@ -220,7 +220,7 @@ h1, h2, h3, h4 {
 .reference-hero {
   position: relative;
   margin: 0 30px;
-  aspect-ratio: 2.15/1;
+  aspect-ratio: 16/9;
   border-radius: 25px;
   overflow: hidden;
   background: var(--navy);
@@ -254,7 +254,7 @@ h1, h2, h3, h4 {
   height: 100%;
   min-width: 100%;
   min-height: 100%;
-  transform: translate(-50%, -50%) scale(1.35);
+  transform: translate(-50%, -50%) scale(1.05);
   transform-origin: center center;
   pointer-events: none;
   border: 0;
@@ -335,6 +335,59 @@ h1, h2, h3, h4 {
   color: white;
   padding: 2px 4px;
   margin-top: 3px;
+}
+
+/* Hero play overlay — click to open video popup */
+.hero-play-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.hero-play-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(13, 43, 77, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.25s, transform 0.25s, border-color 0.25s;
+}
+
+.hero-play-overlay:hover .hero-play-circle {
+  background: rgba(13, 43, 77, 0.9);
+  border-color: white;
+  transform: scale(1.1);
+}
+
+.hero-play-circle svg {
+  margin-left: 4px;
+}
+
+/* Aerial panoramic section — replaces old video poster */
+.reference-aerial-panoramic {
+  width: 73%;
+  max-width: 920px;
+  margin: 88px auto 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.reference-aerial-panoramic img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* === REFERENCE FACTS & ADDRESS === */
@@ -1275,7 +1328,7 @@ h1, h2, h3, h4 {
   .reference-hero {
     margin: 0 18px;
     border-radius: 18px;
-    aspect-ratio: 1.9;
+    aspect-ratio: 16/9;
   }
 
   .reference-hero-title {
@@ -1493,8 +1546,7 @@ h1, h2, h3, h4 {
   .reference-hero {
     margin: 0 12px;
     border-radius: 16px;
-    aspect-ratio: auto;
-    height: 350px;
+    aspect-ratio: 16/9;
   }
 
   .reference-hero > img {
@@ -1519,9 +1571,7 @@ h1, h2, h3, h4 {
   }
 
   .hero-video-wrap iframe {
-    width: 630px;
-    height: 350px;
-    transform: translate(-50%, -50%) scale(1.4);
+    transform: translate(-50%, -50%) scale(1.05);
   }
 
   .hero-sound-btn {
