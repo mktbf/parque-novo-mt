@@ -101,6 +101,11 @@ h1, h2, h3, h4 {
   height: auto;
 }
 
+.reference-header nav a:last-of-type:after {
+  content: none !important;
+  display: none !important;
+}
+
 .reference-header nav a[aria-current]:before {
   content: '';
   position: absolute;
@@ -111,7 +116,8 @@ h1, h2, h3, h4 {
   background: var(--brand-line);
 }
 
-.reference-header nav a:last-child[aria-current]:before {
+.reference-header nav a:last-child[aria-current]:before,
+.reference-header nav a:last-of-type[aria-current]:before {
   width: 100%;
 }
 
@@ -3570,6 +3576,108 @@ form.was-validated .field select:invalid {
     letter-spacing: 0.1px;
   }
 }
+
+/* === TRABALHE CONOSCO & VAGAS === */
+
+.careers-linkedin-banner {
+  background: linear-gradient(135deg, #12365b 0%, #0d2b4d 100%);
+  border-radius: 16px;
+  padding: 36px 40px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 24px rgba(13, 43, 77, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+.careers-linkedin-copy {
+  max-width: 650px;
+}
+
+.careers-linkedin-badge {
+  display: inline-block;
+  background: rgba(30, 163, 75, 0.25);
+  border: 1px solid rgba(30, 163, 75, 0.5);
+  color: #4ade80;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.careers-linkedin-copy h3 {
+  font-size: clamp(20px, 2.5vw, 26px);
+  font-weight: 700;
+  color: white;
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.careers-linkedin-copy p {
+  font-size: 15px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.career-card {
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.career-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(13, 43, 77, 0.1);
+}
+
+.career-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.careers-note-box {
+  background: #f1f5f9;
+  border-left: 4px solid var(--green);
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 24px;
+}
+
+.careers-note-box strong {
+  display: block;
+  color: var(--navy);
+  font-size: 13.5px;
+  margin-bottom: 4px;
+}
+
+.careers-note-box p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .careers-linkedin-banner {
+    padding: 24px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .careers-linkedin-banner .button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
 
 
 
