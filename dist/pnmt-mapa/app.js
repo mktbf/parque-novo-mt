@@ -168,7 +168,7 @@ async function init(){
  mapApi={render,focus,overview};overview();updateLayers();
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
- if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').hidden=true;renderer.shadowMap.needsUpdate=true;render();reportMapReady();
+ if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
  const requested=new URLSearchParams(location.search).get('espaco');if(places.some(p=>p.id===requested))selectPlace(requested);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
