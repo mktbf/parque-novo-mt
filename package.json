@@ -9,10 +9,16 @@
     "preview": "vite preview",
     "serve": "vite dist --port 8000"
   },
-  "keywords": ["parque-novo-mato-grosso", "cuiaba", "eventos", "turismo"],
+  "keywords": [
+    "parque-novo-mato-grosso",
+    "cuiaba",
+    "eventos",
+    "turismo"
+  ],
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
+    "puppeteer-core": "^25.10.0",
     "vite": "^6.3.0"
   }
 }

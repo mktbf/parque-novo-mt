@@ -1,72 +1,86 @@
--- =============================================
--- Parque Novo Mato Grosso — Supabase Schema
--- Tabelas para formulários do site
--- =============================================
+-- ==============================================================================
+-- PARQUE NOVO MATO GROSSO — SUPABASE DATABASE & STORAGE SETUP
+-- Execute este script no SQL Editor do seu projeto Supabase (Dashboard -> SQL Editor)
+-- ==============================================================================
 
--- 1. Solicitações de formulários (visita, evento, imprensa, contato)
-CREATE TABLE IF NOT EXISTS form_submissions (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  kind TEXT NOT NULL CHECK (kind IN ('visita', 'evento', 'imprensa', 'contato')),
-  fields JSONB NOT NULL DEFAULT '{}',
-  submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  status TEXT NOT NULL DEFAULT 'novo' CHECK (status IN ('novo', 'lido', 'respondido', 'arquivado')),
-  notes TEXT
+-- 1. Tabela para Conteúdo do Site (CMS)
+CREATE TABLE IF NOT EXISTS public.site_content (
+  id TEXT PRIMARY KEY DEFAULT 'main',
+  content JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_by TEXT
 );
 
--- 2. Newsletter / cadastro de interesse
-CREATE TABLE IF NOT EXISTS newsletter_subscribers (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  nome TEXT NOT NULL,
-  email TEXT NOT NULL,
-  interesse TEXT NOT NULL DEFAULT 'Todos',
+-- Habilitar RLS (Row Level Security)
+ALTER TABLE public.site_content ENABLE ROW LEVEL SECURITY;
+
+-- Permitir que qualquer visitante leia o conteúdo público do site
+DROP POLICY IF EXISTS "Public Read Site Content" ON public.site_content;
+CREATE POLICY "Public Read Site Content"
+  ON public.site_content FOR SELECT
+  USING (true);
+
+-- Permitir escrita (insert / update)
+DROP POLICY IF EXISTS "Allow Write Site Content" ON public.site_content;
+CREATE POLICY "Allow Write Site Content"
+  ON public.site_content FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- 2. Tabela para Formulários de Contato e Solicitações
+CREATE TABLE IF NOT EXISTS public.form_submissions (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  kind TEXT NOT NULL,
+  fields JSONB NOT NULL,
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  status TEXT DEFAULT 'novo'
+);
+
+ALTER TABLE public.form_submissions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Insert Form Submissions" ON public.form_submissions;
+CREATE POLICY "Public Insert Form Submissions"
+  ON public.form_submissions FOR INSERT
+  WITH CHECK (true);
+
+-- 3. Tabela para Assinantes da Newsletter
+CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  nome TEXT,
+  email TEXT UNIQUE NOT NULL,
+  interesse TEXT,
   origem TEXT,
-  subscribed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  active BOOLEAN NOT NULL DEFAULT TRUE,
-  UNIQUE (email)
+  subscribed_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Índices para consultas frequentes
-CREATE INDEX idx_submissions_kind ON form_submissions (kind);
-CREATE INDEX idx_submissions_status ON form_submissions (status);
-CREATE INDEX idx_submissions_created ON form_submissions (created_at DESC);
-CREATE INDEX idx_newsletter_email ON newsletter_subscribers (email);
-CREATE INDEX idx_newsletter_active ON newsletter_subscribers (active) WHERE active = TRUE;
+ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 
--- RLS (Row Level Security) — Público pode inserir, apenas autenticados leem
-ALTER TABLE form_submissions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public Upsert Newsletter" ON public.newsletter_subscribers;
+CREATE POLICY "Public Upsert Newsletter"
+  ON public.newsletter_subscribers FOR ALL
+  USING (true)
+  WITH CHECK (true);
 
--- Permitir INSERT anônimo (visitantes do site)
-CREATE POLICY "Visitantes podem enviar formulários"
-  ON form_submissions FOR INSERT
-  TO anon
-  WITH CHECK (TRUE);
+-- 4. Storage Bucket para Fotos e Mídia
+-- Cria o bucket 'pnmt-media' caso não exista
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('pnmt-media', 'pnmt-media', true)
+ON CONFLICT (id) DO NOTHING;
 
-CREATE POLICY "Visitantes podem se inscrever na newsletter"
-  ON newsletter_subscribers FOR INSERT
-  TO anon
-  WITH CHECK (TRUE);
+-- Políticas de acesso público para o bucket de mídia
+DROP POLICY IF EXISTS "Public Media Read" ON storage.objects;
+CREATE POLICY "Public Media Read"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'pnmt-media');
 
--- Apenas usuários autenticados (admin) podem ler/atualizar
-CREATE POLICY "Admins podem ler formulários"
-  ON form_submissions FOR SELECT
-  TO authenticated
-  USING (TRUE);
+DROP POLICY IF EXISTS "Public Media Upload" ON storage.objects;
+CREATE POLICY "Public Media Upload"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'pnmt-media');
 
-CREATE POLICY "Admins podem atualizar status"
-  ON form_submissions FOR UPDATE
-  TO authenticated
-  USING (TRUE)
-  WITH CHECK (TRUE);
+DROP POLICY IF EXISTS "Public Media Update" ON storage.objects;
+CREATE POLICY "Public Media Update"
+  ON storage.objects FOR UPDATE
+  USING (bucket_id = 'pnmt-media');
 
-CREATE POLICY "Admins podem ler newsletter"
-  ON newsletter_subscribers FOR SELECT
-  TO authenticated
-  USING (TRUE);
-
-CREATE POLICY "Admins podem atualizar newsletter"
-  ON newsletter_subscribers FOR UPDATE
-  TO authenticated
-  USING (TRUE)
-  WITH CHECK (TRUE);
+-- Pronto! O banco de dados e o bucket de storage estão configurados.

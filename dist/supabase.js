@@ -32,49 +32,77 @@
       config.newsletterEndpoint = '__supabase__';
     }
 
+    window.PNMT_SUPABASE_CLIENT = client;
+
+    function saveOfflineSubmission(payload) {
+      try {
+        const stored = JSON.parse(localStorage.getItem('pnmt_form_submissions') || '[]');
+        stored.unshift({ ...payload, id: 'offline_' + Date.now() });
+        localStorage.setItem('pnmt_form_submissions', JSON.stringify(stored.slice(0, 100)));
+        console.log('[PNMT] Submissão preservada localmente:', payload.kind);
+      } catch (e) {
+        console.error('[PNMT] Erro ao salvar localmente:', e);
+      }
+    }
+
     // Supabase submit functions
     window.PNMT_SUPABASE = {
+      client,
       /**
        * Submit a form to form_submissions table
        * @param {Object} payload - {kind, submittedAt, fields}
-       * @returns {Promise<{ok: boolean, error?: string}>}
+       * @returns {Promise<{ok: boolean, error?: string, offline?: boolean}>}
        */
       async submitForm(payload) {
-        const { error } = await client
-          .from('form_submissions')
-          .insert({
-            kind: payload.kind,
-            fields: payload.fields,
-            submitted_at: payload.submittedAt,
-          });
+        try {
+          const { error } = await client
+            .from('form_submissions')
+            .insert({
+              kind: payload.kind,
+              fields: payload.fields,
+              submitted_at: payload.submittedAt,
+            });
 
-        if (error) {
-          console.error('[PNMT] Erro ao enviar formulário:', error);
-          return { ok: false, error: error.message };
+          if (error) {
+            console.warn('[PNMT] Supabase não respondeu. Armazenando offline:', error);
+            saveOfflineSubmission(payload);
+            return { ok: true, offline: true };
+          }
+          return { ok: true };
+        } catch (err) {
+          console.warn('[PNMT] Falha de conexão Supabase. Armazenando offline:', err);
+          saveOfflineSubmission(payload);
+          return { ok: true, offline: true };
         }
-        return { ok: true };
       },
 
       /**
        * Subscribe to newsletter
        * @param {Object} payload - {kind, submittedAt, fields: {nome, email, interesse, origem}}
-       * @returns {Promise<{ok: boolean, error?: string}>}
+       * @returns {Promise<{ok: boolean, error?: string, offline?: boolean}>}
        */
       async submitNewsletter(payload) {
-        const { nome, email, interesse, origem } = payload.fields;
+        try {
+          const { nome, email, interesse, origem } = payload.fields;
 
-        const { error } = await client
-          .from('newsletter_subscribers')
-          .upsert(
-            { nome, email, interesse, origem },
-            { onConflict: 'email' }
-          );
+          const { error } = await client
+            .from('newsletter_subscribers')
+            .upsert(
+              { nome, email, interesse, origem },
+              { onConflict: 'email' }
+            );
 
-        if (error) {
-          console.error('[PNMT] Erro ao cadastrar newsletter:', error);
-          return { ok: false, error: error.message };
+          if (error) {
+            console.warn('[PNMT] Supabase newsletter indisponível. Armazenando offline:', error);
+            saveOfflineSubmission({ kind: 'newsletter', submittedAt: payload.submittedAt, fields: payload.fields });
+            return { ok: true, offline: true };
+          }
+          return { ok: true };
+        } catch (err) {
+          console.warn('[PNMT] Falha de conexão newsletter. Armazenando offline:', err);
+          saveOfflineSubmission({ kind: 'newsletter', submittedAt: payload.submittedAt, fields: payload.fields });
+          return { ok: true, offline: true };
         }
-        return { ok: true };
       },
     };
 

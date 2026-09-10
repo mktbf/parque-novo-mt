@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | Parque Novo Mato Grosso</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="admin.css">
+  </head>
+  <body>
+    <!-- Login Screen -->
+    <div id="admin-login-screen" class="admin-login-overlay">
+      <div class="admin-login-card">
+        <div class="login-brand">
+          <img src="assets/footer-wordmark.png" alt="Parque Novo Mato Grosso" class="login-logo">
+          <h1>Painel de Controle</h1>
+          <p>Gerenciador de Conteúdo e Mídia do Site</p>
+        </div>
+
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="login-pass">Senha de Acesso</label>
+            <input type="password" id="login-pass" placeholder="Digite a senha..." autocomplete="current-password" required autofocus>
+          </div>
+          <p id="login-error" class="login-error" role="alert" style="display: none;"></p>
+          <button type="submit" class="btn btn-primary btn-block">Acessar Painel <span>→</span></button>
+          <p class="login-hint">Senha padrão inicial: <code>admin</code> ou <code>pnmt2026</code></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin App Shell -->
+    <div id="admin-app" class="admin-layout" style="display: none;">
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <a href="#geral" class="admin-brand">
+            <img src="assets/footer-wordmark.png" alt="PNMT" class="brand-logo">
+            <span class="admin-badge">CMS ADMIN</span>
+          </a>
+        </div>
+
+        <div class="topbar-center">
+          <div id="sync-status" class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">Verificando sincronização...</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <a href="index.html#inicio" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+            🌐 Ver Site ao Vivo ↗
+          </a>
+          <button id="btn-logout" class="btn btn-ghost btn-sm" title="Encerrar sessão">
+            Sair ⎋
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Layout Body -->
+      <div class="admin-body">
+        <!-- Sidebar Navigation -->
+        <nav class="admin-sidebar" aria-label="Navegação do Painel">
+          <div class="nav-section-title">SEÇÕES DO SITE</div>
+          <button class="nav-tab active" data-tab="tab-general">
+            <span class="nav-icon">🏠</span> Geral & Home
+          </button>
+          <button class="nav-tab" data-tab="tab-spaces">
+            <span class="nav-icon">🏛️</span> Espaços do Parque
+            <span class="count-badge" id="badge-spaces-count">21</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-events">
+            <span class="nav-icon">📅</span> Agenda & Eventos
+            <span class="count-badge" id="badge-events-count">0</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-news">
+            <span class="nav-icon">📰</span> Notícias & Imprensa
+            <span class="count-badge" id="badge-news-count">0</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-gallery">
+            <span class="nav-icon">🖼️</span> Galeria de Fotos
+            <span class="count-badge" id="badge-gallery-count">0</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-about">
+            <span class="nav-icon">🏢</span> Quem Somos
+          </button>
+          <div class="nav-divider"></div>
+          <div class="nav-section-title">SISTEMA</div>
+          <button class="nav-tab" data-tab="tab-settings">
+            <span class="nav-icon">⚙️</span> Configurações & Backup
+          </button>
+        </nav>
+
+        <!-- Tab Content Area -->
+        <main class="admin-main">
+          <!-- TAB 1: GERAL & HOME -->
+          <section id="tab-general" class="tab-pane active">
+            <div class="pane-header">
+              <div>
+                <h2>Informações Gerais e Página Inicial</h2>
+                <p>Altere o vídeo de apresentação, títulos de destaque, dados de localização e redes sociais.</p>
+              </div>
+              <button class="btn btn-primary" data-action="save-general">Salvar Alterações</button>
+            </div>
+
+            <div class="form-cards-grid">
+              <!-- Card: Vídeo do Hero -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>🎬 Vídeo de Abertura (YouTube)</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="gen-video-id">ID do Vídeo do YouTube</label>
+                    <div class="input-with-action">
+                      <input type="text" id="gen-video-id" placeholder="ex: ncTJbHQNq6M ou link completo do YouTube">
+                      <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-video">Visualizar</button>
+                    </div>
+                    <small class="hint">Cole o código do vídeo ou a URL completa (ex: <code>https://www.youtube.com/watch?v=ncTJbHQNq6M</code>).</small>
+                  </div>
+                  <div id="video-preview-box" class="video-preview-container"></div>
+                </div>
+              </div>
+
+              <!-- Card: Textos do Hero -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>✨ Título Principal do Hero</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="gen-hero-title-1">Linha 1 (Branco)</label>
+                    <input type="text" id="gen-hero-title-1" placeholder="MAIOR COMPLEXO">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-hero-title-2">Linha 2 (Verde)</label>
+                    <input type="text" id="gen-hero-title-2" placeholder="MULTIEVENTOS">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-hero-title-3">Linha 3 (Ciano / Azul)</label>
+                    <input type="text" id="gen-hero-title-3" placeholder="DA AMÉRICA LATINA.">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Subtítulo do Hero -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>📝 Frases Descritivas do Hero (Canto Inferior Direito)</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="gen-hero-text-1">Linha 1</label>
+                    <input type="text" id="gen-hero-text-1" placeholder="NO CENTRO GEODÉSICO DA">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-hero-text-2">Linha 2</label>
+                    <input type="text" id="gen-hero-text-2" placeholder="AMÉRICA DO SUL, UM PARQUE">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-hero-text-3">Linha 3</label>
+                    <input type="text" id="gen-hero-text-3" placeholder="CONSTRUÍDO PARA RECEBER O">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-hero-text-4">Linha 4</label>
+                    <input type="text" id="gen-hero-text-4" placeholder="BRASIL E O MUNDO.">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Fatos e Números da Home -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>📍 Área Total e Localização (Barra de Fatos)</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-row">
+                    <div class="form-group col-6">
+                      <label for="gen-area-total">Área Total (Número)</label>
+                      <input type="text" id="gen-area-total" placeholder="500">
+                    </div>
+                    <div class="form-group col-6">
+                      <label for="gen-area-unit">Unidade</label>
+                      <input type="text" id="gen-area-unit" placeholder="HECTARES">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-area-text">Texto Descritivo da Área</label>
+                    <textarea id="gen-area-text" rows="2" placeholder="ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-address">Endereço Exibido</label>
+                    <input type="text" id="gen-address" placeholder="RODOVIA EMANUEL PINHEIRO (MT-251), KM 11, CUIABÁ-MT">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-map-url">Link do Google Maps (Como chegar)</label>
+                    <input type="url" id="gen-map-url" placeholder="https://www.google.com/maps/search/?api=1&query=Parque+Novo+Mato+Grosso+Cuiaba">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Frases de Impacto & Rodapé -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>🏷️ Frase de Impacto e Fechamento</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="gen-statement">Frase Central em Destaque</label>
+                    <textarea id="gen-statement" rows="2" placeholder="O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-signoff">Frase de Fechamento (Barra Verde)</label>
+                    <input type="text" id="gen-signoff" placeholder="AINDA EM OBRAS. JÁ EM MOVIMENTO.">
+                  </div>
+                  <div class="form-group">
+                    <label>Foto Panorâmica Aérea do Rodapé</label>
+                    <div class="media-upload-widget" data-target="gen-sunset-photo">
+                      <div class="media-preview" id="preview-sunset-photo"></div>
+                      <div class="media-actions">
+                        <label class="btn btn-secondary btn-sm file-upload-btn">
+                          <span>📁 Escolher Nova Foto</span>
+                          <input type="file" accept="image/*" class="file-input" data-target="gen-sunset-photo">
+                        </label>
+                        <input type="text" id="gen-sunset-photo" class="url-input" placeholder="assets/aerial-sunset.jpg ou URL">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Redes Sociais -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>🌐 Redes Sociais Oficiais</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="gen-instagram">Instagram</label>
+                    <input type="url" id="gen-instagram" placeholder="https://www.instagram.com/parquenovomt/">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-facebook">Facebook</label>
+                    <input type="url" id="gen-facebook" placeholder="https://www.facebook.com/profile.php?id=61591199398539">
+                  </div>
+                  <div class="form-group">
+                    <label for="gen-youtube">Canal do YouTube</label>
+                    <input type="url" id="gen-youtube" placeholder="https://www.youtube.com/@ParqueNovoMatoGrosso">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- TAB 2: ESPAÇOS -->
+          <section id="tab-spaces" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Gerenciador de Espaços</h2>
+                <p>Edite os textos, fotos, números de destaque e categorias de cada um dos espaços do parque.</p>
+              </div>
+              <div class="pane-header-actions">
+                <div class="search-box">
+                  <input type="search" id="search-spaces-input" placeholder="Filtrar espaços...">
+                </div>
+                <button class="btn btn-primary" id="btn-add-space">+ Novo Espaço</button>
+              </div>
+            </div>
+
+            <!-- Spaces List Grid -->
+            <div id="spaces-list" class="spaces-admin-grid"></div>
+          </section>
+
+          <!-- TAB 3: AGENDA & EVENTOS -->
+          <section id="tab-events" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Programação e Agenda de Eventos</h2>
+                <p>Cadastre eventos oficiais, etapas de corridas, shows e eventos esportivos.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-add-event">+ Novo Evento</button>
+            </div>
+
+            <div class="table-card">
+              <div id="events-table-container"></div>
+            </div>
+          </section>
+
+          <!-- TAB 4: NOTÍCIAS & IMPRENSA -->
+          <section id="tab-news" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Notícias e Imprensa</h2>
+                <p>Gerencie as matérias publicadas na mídia sobre o Parque Novo Mato Grosso.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-add-news">+ Nova Notícia</button>
+            </div>
+
+            <div class="table-card">
+              <div id="news-table-container"></div>
+            </div>
+          </section>
+
+          <!-- TAB 5: GALERIA DE FOTOS -->
+          <section id="tab-gallery" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Galeria de Fotos do Parque</h2>
+                <p>Faça upload de fotos em alta qualidade, adicione legendas, créditos e categorias.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-add-photo">+ Adicionar Foto</button>
+            </div>
+
+            <div id="gallery-grid-container" class="admin-gallery-grid"></div>
+          </section>
+
+          <!-- TAB 6: QUEM SOMOS -->
+          <section id="tab-about" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Página Quem Somos e Valores</h2>
+                <p>Edite os textos institucionais e os 6 valores fundamentais da marca.</p>
+              </div>
+              <button class="btn btn-primary" data-action="save-about">Salvar Textos Institucionais</button>
+            </div>
+
+            <div class="form-cards-grid">
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>📜 Textos Históricos e Origem</h3>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="about-title">Título Principal</label>
+                    <input type="text" id="about-title" placeholder="Mato Grosso já Nasceu Grande">
+                  </div>
+                  <div class="form-group">
+                    <label for="about-lead">Chamada de Abertura (Lead)</label>
+                    <textarea id="about-lead" rows="3"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="about-copy-1">Primeiro Parágrafo</label>
+                    <textarea id="about-copy-1" rows="4"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="about-copy-2">Segundo Parágrafo (Propósito)</label>
+                    <textarea id="about-copy-2" rows="4"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>⭐ Nossos 6 Valores</h3>
+                </div>
+                <div class="card-body" id="values-editor-container">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- TAB 7: CONFIGURAÇÕES & BACKUP -->
+          <section id="tab-settings" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Configurações do Sistema e Backups</h2>
+                <p>Gerencie a segurança de acesso, exporte ou importe dados completos e verifique a integração.</p>
+              </div>
+            </div>
+
+            <div class="form-cards-grid">
+              <!-- Card: Senha de Acesso -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>🔒 Alterar Senha de Acesso</h3>
+                </div>
+                <div class="card-body">
+                  <form id="form-change-password">
+                    <div class="form-group">
+                      <label for="old-pass">Senha Atual</label>
+                      <input type="password" id="old-pass" required placeholder="Digite a senha atual">
+                    </div>
+                    <div class="form-group">
+                      <label for="new-pass">Nova Senha</label>
+                      <input type="password" id="new-pass" required minlength="4" placeholder="Mínimo de 4 caracteres">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Atualizar Senha</button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Card: Backup e Restauração -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>💾 Backup e Restauração de Dados</h3>
+                </div>
+                <div class="card-body">
+                  <p>Baixe uma cópia completa de todos os textos, configurações, fotos e espaços editados no formato JSON.</p>
+                  <div class="backup-actions">
+                    <button class="btn btn-primary" id="btn-export-backup">
+                      📥 Baixar Backup JSON
+                    </button>
+                    <label class="btn btn-secondary file-upload-btn">
+                      <span>📤 Restaurar de Backup JSON</span>
+                      <input type="file" id="input-import-backup" accept=".json">
+                    </label>
+                  </div>
+                  <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+                  <button class="btn btn-danger-outline btn-sm" id="btn-reset-defaults">
+                    ⚠️ Restaurar Conteúdo Original de Fábrica
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card: Status Supabase Cloud -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>☁️ Conexão Supabase Cloud</h3>
+                </div>
+                <div class="card-body">
+                  <p>O painel funciona automaticamente em <strong>Modo Local Seguro</strong> no seu navegador e sincroniza em tempo real na nuvem quando o Supabase estiver conectado.</p>
+                  <div class="supabase-info-box">
+                    <div class="info-row">
+                      <strong>Script SQL:</strong>
+                      <span>Disponível na raiz do projeto como <code>supabase-schema.sql</code></span>
+                    </div>
+                    <div class="info-row">
+                      <strong>Bucket de Fotos:</strong>
+                      <span><code>pnmt-media</code> (com permissão pública)</span>
+                    </div>
+                    <div class="info-row">
+                      <strong>Tabela de Conteúdo:</strong>
+                      <span><code>site_content</code> (registro único <code>main</code>)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- MODAL: EDITAR / NOVO ESPAÇO -->
+    <dialog id="modal-space" class="admin-modal">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3 id="modal-space-title">Editar Espaço</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-space" class="modal-body">
+          <input type="hidden" id="space-orig-id">
+
+          <div class="form-row">
+            <div class="form-group col-8">
+              <label for="space-name">Nome do Espaço *</label>
+              <input type="text" id="space-name" required placeholder="Ex: Autódromo Internacional">
+            </div>
+            <div class="form-group col-4">
+              <label for="space-id">Identificador (Slug) *</label>
+              <input type="text" id="space-id" required placeholder="autodromo">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="space-category">Categoria *</label>
+              <select id="space-category" required>
+                <option value="Esportes">Esportes</option>
+                <option value="Eventos">Eventos</option>
+                <option value="Cultura">Cultura</option>
+                <option value="Família">Família</option>
+                <option value="Experiências">Experiências</option>
+                <option value="Convivência">Convivência</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="space-short">Nome Curto (Opcional)</label>
+              <input type="text" id="space-short" placeholder="Ex: Autódromo">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="space-tagline">Frase de Destaque (Tagline) *</label>
+            <input type="text" id="space-tagline" required placeholder="Velocidade em escala internacional.">
+          </div>
+
+          <!-- Space Image Section -->
+          <div class="form-group">
+            <label>Foto do Espaço</label>
+            <div class="media-upload-widget">
+              <div class="media-preview" id="space-image-preview"></div>
+              <div class="media-actions">
+                <label class="btn btn-secondary btn-sm file-upload-btn">
+                  <span>📁 Fazer Upload de Foto</span>
+                  <input type="file" accept="image/*" id="space-file-input">
+                </label>
+                <input type="text" id="space-image" class="url-input" placeholder="Nome do arquivo ou URL da foto">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="space-credit">Crédito da Foto</label>
+              <input type="text" id="space-credit" placeholder="Ex: Secom-MT · 2025">
+            </div>
+            <div class="form-group col-6">
+              <label for="space-kind">Tipo / Legenda da Imagem</label>
+              <input type="text" id="space-kind" placeholder="Ex: Perspectiva do projeto">
+            </div>
+          </div>
+
+          <!-- Numbers / Highlights -->
+          <div class="form-group">
+            <div class="label-with-action">
+              <label>Números de Destaque</label>
+              <button type="button" class="btn btn-secondary btn-xs" id="btn-add-space-number">+ Adicionar Número</button>
+            </div>
+            <div id="space-numbers-list" class="dynamic-numbers-list"></div>
+          </div>
+
+          <!-- Description Paragraphs -->
+          <div class="form-group">
+            <label for="space-texts">Textos Descritivos (um parágrafo por linha)</label>
+            <textarea id="space-texts" rows="4" placeholder="Digite os parágrafos de apresentação..."></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Espaço</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- MODAL: EDITAR / NOVO EVENTO -->
+    <dialog id="modal-event" class="admin-modal">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3 id="modal-event-title">Cadastrar Evento</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-event" class="modal-body">
+          <input type="hidden" id="event-orig-id">
+          <div class="form-group">
+            <label for="event-name">Nome do Evento *</label>
+            <input type="text" id="event-name" required placeholder="Ex: Stock Car — etapa de Cuiabá">
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="event-category">Categoria *</label>
+              <input type="text" id="event-category" required placeholder="Ex: Automobilismo, Shows, etc">
+            </div>
+            <div class="form-group col-6">
+              <label for="event-date">Data do Evento *</label>
+              <input type="date" id="event-date" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="event-location">Local no Parque *</label>
+            <input type="text" id="event-location" required placeholder="Ex: Autódromo Internacional de Mato Grosso">
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="event-ticket">Status dos Ingressos *</label>
+              <input type="text" id="event-ticket" required placeholder="Ex: Em breve, Vendas abertas, Gratuito">
+            </div>
+            <div class="form-group col-6">
+              <label for="event-url">Link Oficial / Ingressos</label>
+              <input type="url" id="event-url" placeholder="https://...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Evento</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- MODAL: EDITAR / NOVA NOTÍCIA -->
+    <dialog id="modal-news" class="admin-modal">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3 id="modal-news-title">Cadastrar Notícia</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-news" class="modal-body">
+          <input type="hidden" id="news-index">
+          <div class="form-group">
+            <label for="news-title">Título da Notícia *</label>
+            <input type="text" id="news-title" required placeholder="Ex: Autódromo recebe a Stock Car em etapa noturna">
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="news-category">Categoria *</label>
+              <input type="text" id="news-category" required placeholder="Ex: Automobilismo, Obras, etc">
+            </div>
+            <div class="form-group col-6">
+              <label for="news-date">Data da Matéria *</label>
+              <input type="date" id="news-date" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="news-source">Veículo / Fonte *</label>
+              <input type="text" id="news-source" required placeholder="Ex: Band, G1, Primeira Página">
+            </div>
+            <div class="form-group col-6">
+              <label for="news-url">Link da Matéria *</label>
+              <input type="url" id="news-url" required placeholder="https://...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="news-desc">Resumo / Descrição *</label>
+            <textarea id="news-desc" rows="3" required placeholder="Breve resumo da matéria..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Notícia</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- MODAL: ADICIONAR / EDITAR FOTO DA GALERIA -->
+    <dialog id="modal-photo" class="admin-modal">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3 id="modal-photo-title">Adicionar Foto à Galeria</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-photo" class="modal-body">
+          <input type="hidden" id="photo-index">
+
+          <div class="form-group">
+            <label>Foto *</label>
+            <div class="media-upload-widget">
+              <div class="media-preview" id="photo-preview-box"></div>
+              <div class="media-actions">
+                <label class="btn btn-secondary btn-sm file-upload-btn">
+                  <span>📁 Selecionar Imagem</span>
+                  <input type="file" accept="image/*" id="gallery-file-input">
+                </label>
+                <input type="text" id="photo-image" class="url-input" required placeholder="URL ou nome da imagem">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="photo-title">Título / Legenda da Foto *</label>
+            <input type="text" id="photo-title" required placeholder="Ex: O parque visto de cima">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="photo-category">Categoria *</label>
+              <select id="photo-category" required>
+                <option value="Vista aérea">Vista aérea</option>
+                <option value="Espaços">Espaços</option>
+                <option value="Obras e estrutura">Obras e estrutura</option>
+                <option value="Eventos">Eventos</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="photo-type">Tipo de Imagem *</label>
+              <input type="text" id="photo-type" required placeholder="Ex: Fotografia, Perspectiva do projeto">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="photo-credit">Crédito da Imagem *</label>
+              <input type="text" id="photo-credit" required placeholder="Ex: Secom-MT · 2025">
+            </div>
+            <div class="form-group col-6">
+              <label for="photo-source">Link da Fonte (Opcional)</label>
+              <input type="url" id="photo-source" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Foto</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Toast Notifications -->
+    <div id="admin-toast" class="admin-toast" role="alert" aria-live="assertive"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="config.js?v=20260909-1"></script>
+    <script src="content.js?v=20260909-1"></script>
+    <script src="supabase.js?v=20260909-1"></script>
+    <script src="admin-data.js?v=20260909-1"></script>
+    <script src="admin.js?v=20260909-1"></script>
+  </body>
+</html>
