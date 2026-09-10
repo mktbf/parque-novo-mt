@@ -1,0 +1,81 @@
+{
+  "hdri": {
+    "16k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/16k%2B/qwantani_noon_puresky_16k.exr",
+        "md5": "4c135680f69b2aa698cfd1ea4a00f3b9",
+        "size": 1051959513
+      },
+      "hdr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/16k%2B/qwantani_noon_puresky_16k.hdr",
+        "md5": "5a9a68deb4ec9a7dc5c3f365cd2e9266",
+        "size": 231511832
+      }
+    },
+    "24k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/16k%2B/qwantani_noon_puresky_24k.exr",
+        "md5": "dc466fafafb7092bb1b81f53a84fd27a",
+        "size": 2373157185
+      },
+      "hdr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/16k%2B/qwantani_noon_puresky_24k.hdr",
+        "md5": "31d0cab8a41433457f9df9f794d1ba6c",
+        "size": 491185629
+      }
+    },
+    "1k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/qwantani_noon_puresky_1k.exr",
+        "md5": "c2287eeebd4b493101c84ee8fbef4504",
+        "size": 4994869
+      },
+      "hdr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/qwantani_noon_puresky_1k.hdr",
+        "md5": "ecd559633c4a70e069ab3bdd2e9a58f8",
+        "size": 1089069
+      }
+    },
+    "2k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/2k/qwantani_noon_puresky_2k.exr",
+        "md5": "b972a2c173d971e02bec0d7dd26a60b1",
+        "size": 18342886
+      },
+      "hdr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/qwantani_noon_puresky_2k.hdr",
+        "md5": "a316dccf04a17de5581240ed172790f0",
+        "size": 4184949
+      }
+    },
+    "4k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/qwantani_noon_puresky_4k.exr",
+        "md5": "d88759d7badbff7c9088c26bc2baa59a",
+        "size": 70185754
+      },
+      "hdr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/qwantani_noon_puresky_4k.hdr",
+        "md5": "bc1b8591bb17f5e3896729ff92b2e74d",
+        "size": 17857544
+      }
+    },
+    "8k": {
+      "exr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/8k/qwantani_noon_puresky_8k.exr",
+        "md5": "05b1cc86e03eac32baf39e963ed5b266",
+        "size": 274440522
+      },
+      "hdr": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/8k/qwantani_noon_puresky_8k.hdr",
+        "md5": "22f62cbb7b06c46ee9166fc0e9037822",
+        "size": 71808293
+      }
+    }
+  },
+  "tonemapped": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/qwantani_noon_puresky.jpg",
+    "md5": "3fe80fac290d4417837b5cb8bf5cb189",
+    "size": 20889944
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "autodromo": "#espaco/autodromo",
+  "arena-show": "#espaco/arena-show",
+  "roda-gigante": "#espaco/roda-gigante",
+  "centro-de-eventos": "#espaco/centro-de-eventos",
+  "kartodromo": "#espaco/kartodromo",
+  "bmx": "#espaco/bmx",
+  "skate-park": "#espaco/skate-park",
+  "wake-park": "#espaco/wake-park",
+  "arenas-beach": "#espaco/arenas-beach",
+  "arvore-da-vida": "#espaco/arvore-da-vida",
+  "parque-da-familia": "#espaco/parque-da-familia",
+  "splash-parque": "#espaco/splash-parque",
+  "museus": "#espaco/museus",
+  "praca-de-alimentacao": "#espaco/praca-de-alimentacao",
+  "vila-das-nacoes": "#espaco/vila-das-nacoes",
+  "casa-cuiabana": "#espaco/casa-cuiabana",
+  "agroplace": "#espaco/agroplace",
+  "portico-de-entrada": "#espaco/portico-de-entrada",
+  "estrutura-e-acesso": "#espaco/estrutura-e-acesso",
+  "perola-do-cerrado": null,
+  "motocross": "#espaco/motocross"
+}

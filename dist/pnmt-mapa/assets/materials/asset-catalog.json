@@ -1,0 +1,125 @@
+{
+  "verified_date": "2026-09-10",
+  "assets": [
+    {
+      "id": "qwantani_noon_puresky",
+      "title": "Qwantani Noon (Pure Sky)",
+      "source": "https://polyhaven.com/a/qwantani_noon_puresky",
+      "authors": [
+        "Greg Zaal (photography)",
+        "Jarod Guest (processing)"
+      ],
+      "purpose": "Clear midday outdoor HDR lighting with a sky-only horizon. Suitable as a bright daylight starting point, not a location-specific PNMT capture.",
+      "tile_width_m": null,
+      "license": "CC0 1.0 Universal",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {
+          "asset": "qwantani_noon_puresky",
+          "kind": "hdri",
+          "format": "hdr",
+          "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/qwantani_noon_puresky_1k.hdr",
+          "md5": "ecd559633c4a70e069ab3bdd2e9a58f8",
+          "size": 1089069,
+          "path": "/workspace/scratch/69f451678e5c/render-assets/qwantani_noon_puresky_1k.hdr",
+          "actual_size": 1089069,
+          "verified_md5": "ecd559633c4a70e069ab3bdd2e9a58f8"
+        }
+      ]
+    },
+    {
+      "id": "clean_asphalt",
+      "title": "Clean Asphalt",
+      "source": "https://polyhaven.com/a/clean_asphalt",
+      "authors": [
+        "Dimitrios Savva"
+      ],
+      "purpose": "Fine-grain dark gray asphalt for paved roads and paths.",
+      "tile_width_m": 2.1,
+      "license": "CC0 1.0 Universal",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {
+          "asset": "clean_asphalt",
+          "kind": "Diffuse",
+          "format": "jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clean_asphalt/clean_asphalt_diff_1k.jpg",
+          "md5": "7edccb95cbf72e63889baade8455f9e5",
+          "size": 697630,
+          "path": "/workspace/scratch/69f451678e5c/render-assets/clean_asphalt_diff_1k.jpg",
+          "actual_size": 697630,
+          "verified_md5": "7edccb95cbf72e63889baade8455f9e5"
+        },
+        {
+          "asset": "clean_asphalt",
+          "kind": "Rough",
+          "format": "jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clean_asphalt/clean_asphalt_rough_1k.jpg",
+          "md5": "4238f2eab76530f4b0c66ddb929b142d",
+          "size": 641634,
+          "path": "/workspace/scratch/69f451678e5c/render-assets/clean_asphalt_rough_1k.jpg",
+          "actual_size": 641634,
+          "verified_md5": "4238f2eab76530f4b0c66ddb929b142d"
+        },
+        {
+          "asset": "clean_asphalt",
+          "kind": "nor_gl",
+          "format": "jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clean_asphalt/clean_asphalt_nor_gl_1k.jpg",
+          "md5": "24dadd366637a722b59c19a672cbbcf6",
+          "size": 776360,
+          "path": "/workspace/scratch/69f451678e5c/render-assets/clean_asphalt_nor_gl_1k.jpg",
+          "actual_size": 776360,
+          "verified_md5": "24dadd366637a722b59c19a672cbbcf6"
+        }
+      ]
+    },
+    {
+      "id": "leafy_grass",
+      "title": "Leafy Grass",
+      "source": "https://polyhaven.com/a/leafy_grass",
+      "authors": [
+        "Charlotte Baglioni"
+      ],
+      "purpose": "Matte green ground growth with brown leaves, twigs, and soil.",
+      "tile_width_m": 2.0,
+      "license": "CC0 1.0 Universal",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {
+          "asset": "leafy_grass",
+          "kind": "Diffuse",
+          "format": "jpg",
+          "size": 1195394,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_diff_1k.jpg",
+          "md5": "0dbc071e91d6905edfcfbe8eb785a1ab",
+          "path": "/workspace/scratch/69f451678e5c/render-assets/leafy_grass_diff_1k.jpg",
+          "actual_size": 1195394,
+          "verified_md5": "0dbc071e91d6905edfcfbe8eb785a1ab"
+        },
+        {
+          "asset": "leafy_grass",
+          "kind": "Rough",
+          "format": "jpg",
+          "size": 511385,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_rough_1k.jpg",
+          "md5": "05f6bb1383e12b327727d313c5899cf2",
+          "path": "/workspace/scratch/69f451678e5c/render-assets/leafy_grass_rough_1k.jpg",
+          "actual_size": 511385,
+          "verified_md5": "05f6bb1383e12b327727d313c5899cf2"
+        },
+        {
+          "asset": "leafy_grass",
+          "kind": "nor_gl",
+          "format": "jpg",
+          "size": 1466049,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_nor_gl_1k.jpg",
+          "md5": "8279e096e204ea326d57a318869f99df",
+          "path": "/workspace/scratch/69f451678e5c/render-assets/leafy_grass_nor_gl_1k.jpg",
+          "actual_size": 1466049,
+          "verified_md5": "8279e096e204ea326d57a318869f99df"
+        }
+      ]
+    }
+  ]
+}

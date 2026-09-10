@@ -1,0 +1,16 @@
+/* Ajustes da maquete para ocupar o bloco da página, sem outro cabeçalho. */
+:root{--ink:#0c2340;--green:#20894b}
+html,body,#explore{height:100%;overflow:hidden}
+body .explorer{height:100%;min-height:0;max-height:none}
+.embedded-list-title{font-size:25px;line-height:1.12;margin:17px 0 20px;letter-spacing:-.025em}
+.browse-panel{padding-top:24px}
+.list-note{font-size:13px}
+.eyebrow,.map-credit{font-size:12px}
+.map-caption div>span{font-size:14px}
+@media(min-width:761px){body .explorer{grid-template-columns:286px minmax(0,1fr)}}
+@media(max-width:760px){
+ body .explorer{display:block;min-height:0;height:100%}
+ .embedded-list-title{font-size:27px;margin:13px 0 18px}
+ .map-credit{font-size:11px;max-width:calc(100% - 34px)}
+ .selection-photo-label{font-size:12px}
+}

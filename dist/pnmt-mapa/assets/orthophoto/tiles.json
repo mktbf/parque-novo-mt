@@ -1,0 +1,296 @@
+{
+  "source": "GOV_U_ParqueNovoMT_ARQ_Implantação_R84.pdf",
+  "method": "Original embedded RGB and alpha; PDF image matrix and page rotation; 1600 / 3370 plan scale. PDF drawing order retained.",
+  "tiles": [
+    {
+      "url": "./assets/orthophoto/ortho-01.webp",
+      "corners": [
+        [
+          945.88957,
+          1119.4493
+        ],
+        [
+          945.88957,
+          12.45827
+        ],
+        [
+          1164.83795,
+          1119.4493
+        ],
+        [
+          1164.83795,
+          12.45827
+        ]
+      ],
+      "xref": 6,
+      "mask": 5,
+      "order": 0,
+      "sourcePixels": [
+        9715,
+        1922
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-01-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-02.webp",
+      "corners": [
+        [
+          726.99821,
+          1119.4493
+        ],
+        [
+          726.99821,
+          12.45827
+        ],
+        [
+          945.9466,
+          1119.4493
+        ],
+        [
+          945.9466,
+          12.45827
+        ]
+      ],
+      "xref": 10,
+      "mask": 9,
+      "order": 1,
+      "sourcePixels": [
+        9715,
+        1922
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-02-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-03.webp",
+      "corners": [
+        [
+          508.1068,
+          1119.4493
+        ],
+        [
+          508.1068,
+          12.45827
+        ],
+        [
+          727.05519,
+          1119.4493
+        ],
+        [
+          727.05519,
+          12.45827
+        ]
+      ],
+      "xref": 13,
+      "mask": 12,
+      "order": 2,
+      "sourcePixels": [
+        9715,
+        1922
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-03-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-04.webp",
+      "corners": [
+        [
+          289.21545,
+          1119.4493
+        ],
+        [
+          289.21545,
+          12.45827
+        ],
+        [
+          508.16383,
+          1119.4493
+        ],
+        [
+          508.16383,
+          12.45827
+        ]
+      ],
+      "xref": 16,
+      "mask": 15,
+      "order": 3,
+      "sourcePixels": [
+        9715,
+        1922
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-04-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-05.webp",
+      "corners": [
+        [
+          70.32405,
+          1119.4493
+        ],
+        [
+          70.32405,
+          12.45827
+        ],
+        [
+          289.27242,
+          1119.4493
+        ],
+        [
+          289.27242,
+          12.45827
+        ]
+      ],
+      "xref": 19,
+      "mask": 18,
+      "order": 4,
+      "sourcePixels": [
+        9715,
+        1922
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-05-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-06.webp",
+      "corners": [
+        [
+          963.89315,
+          1119.4493
+        ],
+        [
+          963.89315,
+          78.26236
+        ],
+        [
+          1176.23261,
+          1119.4493
+        ],
+        [
+          1176.23261,
+          78.26236
+        ]
+      ],
+      "xref": 26,
+      "mask": 25,
+      "order": 5,
+      "sourcePixels": [
+        9137,
+        1864
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-06-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-07.webp",
+      "corners": [
+        [
+          751.61072,
+          1119.4493
+        ],
+        [
+          751.61072,
+          78.26236
+        ],
+        [
+          963.95018,
+          1119.4493
+        ],
+        [
+          963.95018,
+          78.26236
+        ]
+      ],
+      "xref": 29,
+      "mask": 28,
+      "order": 6,
+      "sourcePixels": [
+        9137,
+        1864
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-07-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-08.webp",
+      "corners": [
+        [
+          539.32823,
+          1119.4493
+        ],
+        [
+          539.32823,
+          78.26236
+        ],
+        [
+          751.66769,
+          1119.4493
+        ],
+        [
+          751.66769,
+          78.26236
+        ]
+      ],
+      "xref": 32,
+      "mask": 31,
+      "order": 7,
+      "sourcePixels": [
+        9137,
+        1864
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-08-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-09.webp",
+      "corners": [
+        [
+          327.04574,
+          1119.4493
+        ],
+        [
+          327.04574,
+          78.26236
+        ],
+        [
+          539.3852,
+          1119.4493
+        ],
+        [
+          539.3852,
+          78.26236
+        ]
+      ],
+      "xref": 35,
+      "mask": 34,
+      "order": 8,
+      "sourcePixels": [
+        9137,
+        1864
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-09-mobile.webp"
+    },
+    {
+      "url": "./assets/orthophoto/ortho-10.webp",
+      "corners": [
+        [
+          114.76319,
+          1119.4493
+        ],
+        [
+          114.76319,
+          78.26236
+        ],
+        [
+          327.10265,
+          1119.4493
+        ],
+        [
+          327.10265,
+          78.26236
+        ]
+      ],
+      "xref": 38,
+      "mask": 37,
+      "order": 9,
+      "sourcePixels": [
+        9137,
+        1864
+      ],
+      "mobileUrl": "./assets/orthophoto/ortho-10-mobile.webp"
+    }
+  ]
+}
