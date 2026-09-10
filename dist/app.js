@@ -7,6 +7,31 @@
   const main = document.getElementById('main');
   const nav = document.getElementById('primary-nav');
 
+  let adminData = window.PNMT_ADMIN_DATA?.getData();
+
+  function syncDataFromAdmin() {
+    adminData = window.PNMT_ADMIN_DATA?.getData();
+    if (adminData) {
+      if (adminData.spaces && adminData.spaces.length) data.spaces = adminData.spaces;
+      if (adminData.events) data.events = adminData.events;
+      if (adminData.news) data.news = adminData.news;
+      if (adminData.gallery) data.gallery = adminData.gallery;
+      if (adminData.values) data.values = adminData.values;
+      if (adminData.general) {
+        const g = adminData.general;
+        if (g.videoId) {
+          config.videoId = g.videoId;
+          config.youtubeId = g.videoId;
+        }
+        if (g.instagram) config.instagram = g.instagram;
+        if (g.facebook) config.facebook = g.facebook;
+        if (g.youtube) config.youtube = g.youtube;
+        if (g.mapUrl) config.map = g.mapUrl;
+      }
+    }
+  }
+  syncDataFromAdmin();
+
   // === HELPER FUNCTIONS ===
   const supportsWebP = (() => {
     try {
@@ -23,6 +48,10 @@
   ]);
 
   const asset = (name) => {
+    if (!name) return '';
+    if (typeof name === 'string' && (name.startsWith('data:image/') || name.startsWith('http://') || name.startsWith('https://') || name.startsWith('assets/'))) {
+      return name;
+    }
     if (window.PNMT_ASSETS?.[name]) return window.PNMT_ASSETS[name];
     if (['autodromo-real', 'corrida-real', 'aerial-real'].includes(name)) return `assets/${name}.jpg`;
     if (supportsWebP && webpAvailable.has(name)) return `assets/${name}.webp`;
@@ -163,7 +192,27 @@
 
   // === PAGES & VIEWS ===
   function home() {
+    const g = adminData?.general || {};
     const vid = config.videoId || config.youtubeId || 'ncTJbHQNq6M';
+    const heroTitles = g.heroTitles || [
+      'MAIOR COMPLEXO',
+      'MULTIEVENTOS',
+      'DA AMÉRICA LATINA.',
+    ];
+    const heroTexts = g.heroTexts || [
+      'NO CENTRO GEODÉSICO DA',
+      'AMÉRICA DO SUL, UM PARQUE',
+      'CONSTRUÍDO PARA RECEBER O',
+      'BRASIL E O MUNDO.',
+    ];
+    const areaTotal = g.areaTotal || '500';
+    const areaUnit = g.areaUnit || 'HECTARES';
+    const areaText = g.areaText || 'ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS';
+    const address = g.address || 'RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT';
+    const statement = g.statement || 'O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO';
+    const signoff = g.signoff || 'AINDA EM OBRAS. JÁ EM MOVIMENTO.';
+    const sunsetPhoto = g.sunsetPhoto || 'assets/aerial-sunset.jpg';
+
     return `<section class="reference-home">
   <section class="reference-hero" aria-label="Apresentação do parque">
     <img class="hero-fallback" src="${asset('aerial-real')}" alt="Vista aérea do Parque Novo Mato Grosso">
@@ -182,30 +231,31 @@
       <span class="sound-icon" aria-hidden="true">🔇</span> <span class="sound-label">Ativar som</span>
     </button>
     <h1 class="reference-hero-title">
-      <span>MAIOR COMPLEXO</span>
-      <span>MULTIEVENTOS</span>
-      <span>DA AMÉRICA LATINA.</span>
+      ${heroTitles.map((t) => `<span>${esc(t)}</span>`).join('\n      ')}
     </h1>
     <p class="reference-hero-text">
-      <span>NO CENTRO GEODÉSICO DA</span>
-      <span>AMÉRICA DO SUL, UM PARQUE</span>
-      <span>CONSTRUÍDO PARA RECEBER O</span>
-      <span>BRASIL E O MUNDO.</span>
+      ${heroTexts.map((t) => `<span>${esc(t)}</span>`).join('\n      ')}
     </p>
   </section>
-  <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>500</strong><small>HECTARES</small></div><p class="reference-area-text">ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT</p></div></section>
+  <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>${esc(areaTotal)}</strong><small>${esc(areaUnit)}</small></div><p class="reference-area-text">${areaText}</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>${address}</p></div></section>
   <section class="reference-spaces" aria-label="Espaços do parque"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel" role="region" aria-roledescription="carousel" aria-label="Carrossel de espaços do complexo"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window" tabindex="0" aria-label="Navegue pelos espaços com as setas do teclado ou deslizando"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
-  <div class="reference-statement"><p>O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO</p></div>
+  <div class="reference-statement"><p>${statement}</p></div>
   <div class="reference-closing">
-    <p class="reference-signoff">AINDA EM OBRAS. JÁ EM MOVIMENTO.</p>
-    <figure class="reference-aerial-panoramic"><img src="assets/aerial-sunset.jpg" alt="Vista aérea do Parque Novo Mato Grosso ao pôr do sol" loading="lazy"></figure>
+    <p class="reference-signoff">${signoff}</p>
+    <figure class="reference-aerial-panoramic"><img src="${asset(sunsetPhoto)}" alt="Vista aérea do Parque Novo Mato Grosso ao pôr do sol" loading="lazy"></figure>
   </div>
 </section>
 `;
   }
 
   function about() {
-    return `<section class="reference-about"><section class="reference-about-title"><h1>Mato Grosso já Nasceu Grande</h1><p><a href="#inicio">Página Principal</a> / Quem Somos</p></section><section class="reference-origin"><div class="reference-origin-heading"><h2>NO CENTRO DO CONTINENTE,<br>GRANDEZA NUNCA FOI AMBIÇÃO.<br><span>FOI ORIGEM. FOI DESTINO. FOI VOCAÇÃO.</span></h2></div><div class="reference-origin-copy"><p>É aqui que Amazônia, Cerrado e Pantanal se encontram, e a própria natureza<br class="desktop-break"> se expressa em sua maior escala. O agro fez de Mato Grosso uma potência.<br class="desktop-break"> Por meio da coragem de um povo hospitaleiro que transforma horizonte em futuro.</p><p><strong>FOI DESSA GRANDEZA QUE NASCEU O PARQUE NOVO MATO GROSSO:</strong></p><p>para transformar o centro geográfico em centro de encontro.<br>O lugar onde o Brasil e o mundo vêm celebrar grandes eventos,<br>fazer negócios e viver experiências à altura de Mato Grosso.</p></div><img class="reference-map" src="${asset('map')}" alt="Mato Grosso, sua natureza e sua produção"><img class="reference-wheel" src="${asset('wheel-cutout')}" alt="Roda-gigante, imagem de referência da proposta"></section><section class="reference-values"><h2><span aria-hidden="true">—</span> NOSSOS VALORES</h2><div class="reference-values-grid">${data.values.map((v, i) => `<article class="reference-value value-${i}"><h3>${v[0]}</h3><p>${v[1]}</p></article>`).join('')}</div></section><figure class="reference-about-aerial"><img src="${asset('aerial')}" alt="Vista panorâmica do Parque Novo Mato Grosso"></figure></section>
+    const g = adminData?.general || {};
+    const aboutTitle = g.aboutTitle || 'Mato Grosso já Nasceu Grande';
+    const aboutLead = g.aboutLead || 'NO CENTRO DO CONTINENTE,<br>GRANDEZA NUNCA FOI AMBIÇÃO.<br><span>FOI ORIGEM. FOI DESTINO. FOI VOCAÇÃO.</span>';
+    const aboutCopy1 = g.aboutCopy1 || 'É aqui que Amazônia, Cerrado e Pantanal se encontram, e a própria natureza<br class="desktop-break"> se expressa em sua maior escala. O agro fez de Mato Grosso uma potência.<br class="desktop-break"> Por meio da coragem de um povo hospitaleiro que transforma horizonte em futuro.';
+    const aboutCopy2 = g.aboutCopy2 || 'para transformar o centro geográfico em centro de encontro.<br>O lugar onde o Brasil e o mundo vêm celebrar grandes eventos,<br>fazer negócios e viver experiências à altura de Mato Grosso.';
+
+    return `<section class="reference-about"><section class="reference-about-title"><h1>${esc(aboutTitle)}</h1><p><a href="#inicio">Página Principal</a> / Quem Somos</p></section><section class="reference-origin"><div class="reference-origin-heading"><h2>${aboutLead}</h2></div><div class="reference-origin-copy"><p>${aboutCopy1}</p><p><strong>FOI DESSA GRANDEZA QUE NASCEU O PARQUE NOVO MATO GROSSO:</strong></p><p>${aboutCopy2}</p></div><img class="reference-map" src="${asset('map')}" alt="Mato Grosso, sua natureza e sua produção"><img class="reference-wheel" src="${asset('wheel-cutout')}" alt="Roda-gigante, imagem de referência da proposta"></section><section class="reference-values"><h2><span aria-hidden="true">—</span> NOSSOS VALORES</h2><div class="reference-values-grid">${data.values.map((v, i) => `<article class="reference-value value-${i}"><h3>${esc(v[0])}</h3><p>${esc(v[1])}</p></article>`).join('')}</div></section><figure class="reference-about-aerial"><img src="${asset('aerial')}" alt="Vista panorâmica do Parque Novo Mato Grosso"></figure></section>
 `;
   }
 
@@ -391,6 +441,88 @@
     </section>`;
   }
 
+  function eventMapCard() {
+    return `
+      <div class="event-map-card">
+        <div class="event-map-header">
+          <div class="event-map-kicker-row">
+            <span class="event-map-badge">PLANTA OFICIAL R81 · 500 HECTARES</span>
+            <span class="event-map-live-tag"><span class="event-map-live-dot"></span> 21 ESPAÇOS</span>
+          </div>
+          <h3>Mapa Geral do Complexo</h3>
+          <p>Conheça a distribuição dos polos de eventos, shows, convenções e competições.</p>
+        </div>
+
+        <a href="#mapa" class="event-map-preview" title="Abrir visualizador interativo em perspectiva 3D" aria-label="Abrir mapa interativo do Parque Novo Mato Grosso">
+          <img src="assets/map-masterplan.webp" alt="Planta de Implantação e Mapa de Eventos do Parque Novo Mato Grosso" loading="lazy" width="600" height="400">
+          
+          <div class="event-map-pin pin-arena" style="top: 47%; left: 38%;">
+            <span class="pin-pulse"></span>
+            <span class="pin-icon">🏟️</span>
+            <span class="pin-label">Arena Show · 120k</span>
+          </div>
+          <div class="event-map-pin pin-events" style="top: 56%; left: 22%;">
+            <span class="pin-pulse"></span>
+            <span class="pin-icon">🏛️</span>
+            <span class="pin-label">Centro de Eventos</span>
+          </div>
+          <div class="event-map-pin pin-track" style="top: 36%; left: 62%;">
+            <span class="pin-pulse"></span>
+            <span class="pin-icon">🏎️</span>
+            <span class="pin-label">Autódromo FIA</span>
+          </div>
+          <div class="event-map-pin pin-circus" style="top: 48%; left: 16%;">
+            <span class="pin-pulse"></span>
+            <span class="pin-icon">🎪</span>
+            <span class="pin-label">Circo do Futuro</span>
+          </div>
+
+          <div class="event-map-overlay">
+            <span class="event-map-overlay-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              Explorar Mapa Interativo 3D
+            </span>
+          </div>
+        </a>
+
+        <div class="event-venues-pills">
+          <div class="venue-pill">
+            <span class="venue-pill-icon">🏟️</span>
+            <div class="venue-pill-info">
+              <span class="venue-pill-name">Arena Show</span>
+              <span class="venue-pill-cap">Até 120 mil pessoas</span>
+            </div>
+          </div>
+          <div class="venue-pill">
+            <span class="venue-pill-icon">🏛️</span>
+            <div class="venue-pill-info">
+              <span class="venue-pill-name">Centro de Eventos</span>
+              <span class="venue-pill-cap">5 pavilhões · 26 mil</span>
+            </div>
+          </div>
+          <div class="venue-pill">
+            <span class="venue-pill-icon">🏎️</span>
+            <div class="venue-pill-info">
+              <span class="venue-pill-name">Autódromo</span>
+              <span class="venue-pill-cap">3.500m padrão FIA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-map-footer">
+          <a href="#mapa" class="event-map-cta-btn">
+            <span>Explorar no Mapa 3D</span>
+            <span class="arrow">→</span>
+          </a>
+          <a href="${config.map}" target="_blank" rel="noopener" class="event-map-geo-link" title="Abrir localização no Google Maps">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>MT-251, km 11 · Como chegar</span>
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
   function contact(event = false) {
     return (
       intro(
@@ -398,7 +530,7 @@
         'Cada assunto tem um caminho direto. Escolha o que você precisa.',
         'Contato'
       ) +
-      `<section class="wrap service-layout"><div class="service-copy"><span class="kicker">QUERO REALIZAR MEU EVENTO</span><h2>Shows, feiras,<br>competições e<br>grandes encontros.</h2><p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para o seu formato, do espaço à operação.</p><p>Retorno previsto em até dois dias úteis após o recebimento.</p><div class="map-panel"><span class="kicker">ONDE ESTAMOS</span><h3>No km 11 da Emanuel Pinheiro.</h3><p>Rodovia Emanuel Pinheiro (MT-251), km 11, Jardim Vitória, Cuiabá, Mato Grosso.</p>${external(config.map, 'Ver no mapa', 'button light')}</div></div>${eventForm()}</section><section class="wrap" style="padding-top:0"><h2>Outros caminhos.</h2><div class="contact-paths"><a href="#visitar"><h3>Quero visitar o parque.</h3><p>Visitas guiadas para grupos escolares, de turismo e corporativos.</p><span>Ir para visitas ↗</span></a><a href="#imprensa"><h3>Pauta e entrevista.</h3><p>Solicitações da imprensa e acesso ao material oficial.</p><span>Ir para imprensa ↗</span></a><a href="#outros-assuntos"><h3>Vamos conversar.</h3><p>Fornecedores, propostas comerciais, parcerias e assuntos institucionais.</p><span>Outros assuntos ↗</span></a></div></section>`
+      `<section class="wrap service-layout"><div class="service-copy"><span class="kicker">QUERO REALIZAR MEU EVENTO</span><h2>Shows, feiras,<br>competições e<br>grandes encontros.</h2><p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para o seu formato, do espaço à operação.</p><p>Retorno previsto em até dois dias úteis após o recebimento.</p>${eventMapCard()}</div>${eventForm()}</section><section class="wrap" style="padding-top:0"><h2>Outros caminhos.</h2><div class="contact-paths"><a href="#visitar"><h3>Quero visitar o parque.</h3><p>Visitas guiadas para grupos escolares, de turismo e corporativos.</p><span>Ir para visitas ↗</span></a><a href="#imprensa"><h3>Pauta e entrevista.</h3><p>Solicitações da imprensa e acesso ao material oficial.</p><span>Ir para imprensa ↗</span></a><a href="#outros-assuntos"><h3>Vamos conversar.</h3><p>Fornecedores, propostas comerciais, parcerias e assuntos institucionais.</p><span>Outros assuntos ↗</span></a></div></section>`
     );
   }
 
@@ -406,6 +538,132 @@
     return (
       intro('Vamos conversar.', 'Fornecedores, parcerias e institucional.', 'Outros assuntos') +
       `<section class="wrap service-layout"><div class="service-copy"><h2>Novas conexões<br>começam aqui.</h2><p>Propostas comerciais, parcerias e assuntos institucionais também chegam por este canal.</p>${external(config.instagram, 'Acompanhe o parque')}</div><div class="service-form"><h3>Como podemos ajudar?</h3><form data-form="contato">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('assunto', 'Assunto', 'text', ['Fornecedor', 'Parceria', 'Institucional', 'Outro'])}<div class="full">${field('mensagem', 'Mensagem', 'textarea')}</div>${formEnd('contato', 'Enviar solicitação')}</form></div></section>`
+    );
+  }
+
+  // === TRABALHE CONOSCO / VAGAS ===
+  function careers() {
+    const areas = [
+      {
+        icon: '🏟️',
+        title: 'Operações & Eventos',
+        desc: 'Produção técnica, logística de grandes públicos, controle de acessos, coordenação de arenas e montagem de megaeventos.',
+        tag: 'Área Operacional',
+      },
+      {
+        icon: '🏗️',
+        title: 'Engenharia & Manutenção',
+        desc: 'Manutenção da pista do Autódromo, sistemas elétricos e iluminação, climatização dos pavilhões e infraestrutura geral.',
+        tag: 'Engenharia & Obras',
+      },
+      {
+        icon: '🤝',
+        title: 'Hospitalidade & Atendimento',
+        desc: 'Recepção a delegações e turistas, guias de turismo e visitas escolares, operação de bilheteria e atendimento ao público.',
+        tag: 'Atendimento',
+      },
+      {
+        icon: '📢',
+        title: 'Comunicação & Marketing',
+        desc: 'Produção de conteúdo audiovisual, mídias sociais, assessoria de imprensa, relacionamento com marcas e parceiros.',
+        tag: 'Comunicação & Mídia',
+      },
+      {
+        icon: '💼',
+        title: 'Administrativo & Finanças',
+        desc: 'Gestão de contratos, controladoria financeira, suprimentos, recursos humanos e suporte executivo ao parque.',
+        tag: 'Gestão & Negócios',
+      },
+      {
+        icon: '🌿',
+        title: 'Sustentabilidade & Paisagismo',
+        desc: 'Preservação das áreas verdes do Cerrado, gestão dos lagos, manejo ambiental, reciclagem e sustentabilidade operacional.',
+        tag: 'Meio Ambiente',
+      },
+    ];
+
+    const areaOptions = [
+      'Operações e Produção de Eventos',
+      'Engenharia, Elétrica e Manutenção Predial',
+      'Hospitalidade, Recepção e Atendimento',
+      'Comunicação, Mídia e Marketing',
+      'Administrativo, Suprimentos e Financeiro',
+      'Sustentabilidade e Paisagismo',
+      'Segurança Operacional e Patrimonial',
+      'Outra área de atuação',
+    ];
+
+    return (
+      intro(
+        'Construa o futuro com a gente.',
+        'Faça parte da equipe que está construindo e operando o maior complexo multieventos da América Latina no coração de Mato Grosso.',
+        'Trabalhe Conosco'
+      ) +
+      `<section class="wrap">
+        ${heading(
+          'OPORTUNIDADES',
+          'Talentos que movem<br>grandes experiências.',
+          'Buscamos profissionais dedicados e com paixão por fazer história. Conheça as principais áreas do parque e candidate-se às oportunidades ou envie seu currículo para nosso banco de talentos.'
+        )}
+
+        <!-- Banner de Vagas Oficiais no LinkedIn -->
+        <div class="careers-linkedin-banner">
+          <div class="careers-linkedin-copy">
+            <span class="careers-linkedin-badge">📢 VAGAS & PROCESSOS SELETIVOS</span>
+            <h3>Acompanhe as vagas abertas no LinkedIn Oficial</h3>
+            <p>Confira os requisitos, atribuições e etapas dos processos seletivos ativos do Parque Novo Mato Grosso em nossa página corporativa.</p>
+          </div>
+          <a class="button light" href="https://www.linkedin.com/company/parque-novo-mato-grosso/" target="_blank" rel="noopener">
+            Ver Vagas no LinkedIn <span>↗</span>
+          </a>
+        </div>
+
+        <!-- Cards das Áreas -->
+        <div class="service-cards">
+          ${areas
+            .map(
+              (a) =>
+                `<article class="service-card career-card"><span class="career-icon" aria-hidden="true">${a.icon}</span><span class="kicker">${a.tag}</span><h3>${a.title}</h3><p>${a.desc}</p></article>`
+            )
+            .join('')}
+        </div>
+      </section>
+
+      <!-- Formulário de Cadastro de Currículo -->
+      <section class="related">
+        <div class="wrap service-layout">
+          <div class="service-copy">
+            <span class="kicker">BANCO DE TALENTOS</span>
+            <h2>Cadastre seu currículo<br>para novas oportunidades.</h2>
+            <p>Mesmo que você não encontre uma vaga imediata para o seu perfil hoje, nosso banco de talentos é consultado continuamente à medida que novas fases e atrações entram em operação.</p>
+            <div class="service-steps">
+              <p>Preencha seus dados de contato e trajetória profissional.</p>
+              <p>Indique sua área de interesse e adicione o link do seu LinkedIn ou currículo online.</p>
+              <p>Nosso time de Gente & Gestão entrará em contato quando surgirem vagas compatíveis com seu perfil.</p>
+            </div>
+            <div class="careers-note-box">
+              <strong>📍 Oportunidades presenciais e operacionais em Cuiabá-MT.</strong>
+              <p>Todas as vagas do Parque Novo Mato Grosso seguem critérios de igualdade de oportunidades e respeito à diversidade.</p>
+            </div>
+          </div>
+
+          <div class="service-form">
+            <h3>Envie sua candidatura espontânea</h3>
+            <form data-form="trabalhe-conosco">
+              ${field('nome', 'Nome completo')}
+              ${field('email', 'Seu melhor e-mail', 'email')}
+              ${field('telefone', 'Telefone / WhatsApp', 'tel')}
+              ${field('cidade', 'Cidade onde reside (ex: Cuiabá-MT)')}
+              ${field('area', 'Área de maior interesse', 'text', areaOptions)}
+              ${field('linkedin', 'Link do LinkedIn ou Currículo online (opcional)', 'url', null, false)}
+              <div class="full">
+                ${field('mensagem', 'Conte brevemente sobre sua trajetória e por que quer fazer parte do Parque Novo MT', 'textarea')}
+              </div>
+              ${formEnd('trabalhe-conosco', 'Cadastrar no Banco de Talentos')}
+            </form>
+          </div>
+        </div>
+      </section>`
     );
   }
 
@@ -462,11 +720,17 @@
       'imprensa': 'Imprensa',
       'galeria': 'Galeria',
       'visitar': 'Quero visitar',
+      'trabalhe-conosco': 'Trabalhe Conosco',
       'contato': 'Contato',
       'evento': 'Realize seu evento',
       'outros-assuntos': 'Outros assuntos',
       'creditos': 'Créditos',
     };
+
+    if (route === 'admin') {
+      window.location.href = 'admin.html';
+      return;
+    }
 
     let html;
     if (route === 'inicio') {
@@ -487,6 +751,8 @@
       html = gallery();
     } else if (route === 'visitar') {
       html = visits();
+    } else if (route === 'trabalhe-conosco') {
+      html = careers();
     } else if (route === 'contato' || route === 'evento' || route.startsWith('evento/')) {
       html = contact(route === 'evento' || route.startsWith('evento/') || params.get('tipo') === 'evento');
     } else if (route === 'outros-assuntos') {
@@ -661,6 +927,7 @@
       ['Imprensa', 'imprensa', 'notícias assessoria kit pauta'],
       ['Quero visitar', 'visitar', 'visitas turismo escolas grupos agendamento'],
       ['Contato e eventos', 'contato', 'shows eventos realização orçamento'],
+      ['Trabalhe Conosco', 'trabalhe-conosco', 'vagas empregos carreiras currículo oportunidades banco talentos processo seletivo'],
       ['Outros assuntos', 'outros-assuntos', 'comercial fornecedores parcerias'],
     ].map(([name, id, extra]) => ({ name, id, category: 'Página', searchContent: extra }));
 
@@ -801,7 +1068,9 @@
             ? 'Solicitação recebida. Aguarde a confirmação da data pela equipe.'
             : kind === 'newsletter'
               ? 'Cadastro realizado! Você receberá novidades em breve.'
-              : 'Solicitação recebida. Obrigado pelo contato.';
+              : kind === 'trabalhe-conosco'
+                ? '✓ Candidatura cadastrada com sucesso no Banco de Talentos! Nossa equipe de Gente & Gestão entrará em contato.'
+                : 'Solicitação recebida. Obrigado pelo contato.';
         form.reset();
       } catch {
         status.style.color = '#a33022';
@@ -1035,6 +1304,11 @@
   });
 
   // === INITIALIZATION ===
+  window.addEventListener('pnmt:content-updated', () => {
+    syncDataFromAdmin();
+    render();
+  });
+
   window.addEventListener('hashchange', () => {
     render();
     main.focus({ preventScroll: true });
