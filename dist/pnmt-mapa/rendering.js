@@ -26,18 +26,18 @@ export function createRendering(scene,camera,smallScreen){
  ao.updatePdMaterial({radius:6,samples:10,rings:3});
  composer.addPass(ao);
  composer.addPass(new OutputPass());
- const sun=new T.DirectionalLight('#fff5e4',2.35);
- const sunOffset=new T.Vector3(-540,460,340);sun.position.copy(sunOffset);
+ const sun=new T.DirectionalLight('#fff8ee',2.55);
+ const sunOffset=new T.Vector3(-560,520,380);sun.position.copy(sunOffset);
  sun.castShadow=true;
- sun.shadow.radius=2.0;
+ sun.shadow.radius=1.8;
  sun.shadow.mapSize.set(smallScreen?2048:4096,smallScreen?2048:4096);
- Object.assign(sun.shadow.camera,{left:-870,right:870,top:840,bottom:-840,near:1,far:2300});
+ Object.assign(sun.shadow.camera,{left:-870,right:870,top:840,bottom:-840,near:1,far:2500});
  sun.shadow.bias=-.0001;sun.shadow.normalBias=.18;
- scene.add(sun,sun.target,new T.HemisphereLight('#a4ccf0','#324822',.62));
- const sky=new Sky();sky.scale.setScalar(40000);sky.material.uniforms.turbidity.value=2.0;sky.material.uniforms.rayleigh.value=1.0;sky.material.uniforms.mieCoefficient.value=.003;sky.material.uniforms.mieDirectionalG.value=.8;sky.material.uniforms.sunPosition.value.copy(sunOffset.clone().normalize());scene.add(sky);
- const atmosphere=new T.Fog('#b6cedc',2200,7500);
- scene.environmentIntensity=0.85;
- scene.background=new T.Color('#b6cedc');
+ scene.add(sun,sun.target,new T.HemisphereLight('#9ec8ea','#3a4e2a',.72));
+ const sky=new Sky();sky.scale.setScalar(40000);sky.material.uniforms.turbidity.value=2.4;sky.material.uniforms.rayleigh.value=1.15;sky.material.uniforms.mieCoefficient.value=.0035;sky.material.uniforms.mieDirectionalG.value=.82;sky.material.uniforms.sunPosition.value.copy(sunOffset.clone().normalize());scene.add(sky);
+ const atmosphere=new T.Fog('#a8c5d8',2500,9000);
+ scene.environmentIntensity=0.95;
+ scene.background=new T.Color('#a8c5d8');
  let environment=null,disposed=false;
  function setCamera(next){
   beauty.camera=next;ao.camera=next;

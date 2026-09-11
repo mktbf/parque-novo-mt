@@ -93,12 +93,20 @@ server.listen(PORT, async () => {
     console.log('Saved view_planta_tecnica.png');
   }
 
+  // Restore 3D Perspective Mode
+  const view3dBtn = await page.$('[data-view="3d"]');
+  if (view3dBtn) {
+    await view3dBtn.click();
+    await new Promise(r => setTimeout(r, 2000));
+    console.log('Restored 3D perspective view');
+  }
+
   // 4. Focus on Roda-gigante (Pilot Sector)
   await page.evaluate(() => {
     const btn = document.querySelector('[data-locate="roda-gigante"]');
     if (btn) btn.click();
   });
-  await new Promise(r => setTimeout(r, 1500));
+  await new Promise(r => setTimeout(r, 2500));
   await page.screenshot({ path: path.join(artifactsDir, 'view_focus_roda_gigante.png') });
   console.log('Saved view_focus_roda_gigante.png');
 
@@ -107,7 +115,7 @@ server.listen(PORT, async () => {
     const btn = document.querySelector('[data-locate="arena-show"]');
     if (btn) btn.click();
   });
-  await new Promise(r => setTimeout(r, 1500));
+  await new Promise(r => setTimeout(r, 2500));
   await page.screenshot({ path: path.join(artifactsDir, 'view_focus_arena_show.png') });
   console.log('Saved view_focus_arena_show.png');
 
@@ -116,7 +124,7 @@ server.listen(PORT, async () => {
     const btn = document.querySelector('[data-locate="autodromo"]');
     if (btn) btn.click();
   });
-  await new Promise(r => setTimeout(r, 1500));
+  await new Promise(r => setTimeout(r, 2500));
   await page.screenshot({ path: path.join(artifactsDir, 'view_focus_autodromo.png') });
   console.log('Saved view_focus_autodromo.png');
 
@@ -125,7 +133,7 @@ server.listen(PORT, async () => {
     const btn = document.querySelector('[data-locate="portico-de-entrada"]');
     if (btn) btn.click();
   });
-  await new Promise(r => setTimeout(r, 1500));
+  await new Promise(r => setTimeout(r, 2500));
   await page.screenshot({ path: path.join(artifactsDir, 'view_focus_portico.png') });
   console.log('Saved view_focus_portico.png');
 

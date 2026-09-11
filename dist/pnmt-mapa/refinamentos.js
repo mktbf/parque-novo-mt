@@ -21,18 +21,20 @@ export const referencias = [
   {id:'estrutura-e-acesso',nome:'Estacionamentos',foto:'04-estacionamentos.png',centro:[789,982],vista:[.4,1.5,1],ajustes:['Pavimento cinza e marcações legíveis','Vias internas e ilhas verdes','Vagas conforme as áreas existentes']}
 ];
 
-const PAL={white:'#f5f7f8',concrete:'#c7c6bd',steel:'#424f56',dark:'#182026',glass:'#365f70',blue:'#0060c0',yellow:'#f2c808',grass:'#466934',earth:'#9a5332',road:'#25292c',green:'#2c4c23'};
+const PAL={white:'#f8fafc',concrete:'#c9c8bd',steel:'#3d4b53',dark:'#182228',glass:'#386072',blue:'#0062cc',yellow:'#f2c808',grass:'#466b32',earth:'#9a5332',road:'#24282b',green:'#2d5222',magenta:'#d81b60',purple:'#ab47bc',terracotta:'#a84838'};
 const materialCache=new Map();
 function material(c,metalness=0,roughness=.72){
-  const isGlass=c===PAL.glass;
-  const isSteel=[PAL.steel,PAL.dark,'#bdc7ca'].includes(c);
-  const m=metalness||(isSteel?.65:0);
-  const r=roughness||(isSteel?.26:isGlass?.12:.72);
+  const isGlass=c===PAL.glass||c==='#365f70'||c==='#345868'||c==='#4a6878';
+  const isSteel=[PAL.steel,PAL.dark,'#bdc7ca','#424f56','#37474f'].includes(c);
+  const isWhiteRoof=[PAL.white,'#f8fafc','#f5f7f8','#e2e6e5','#ffffff'].includes(c);
+  const isConcrete=[PAL.concrete,'#c7c6bd','#c9c8bd','#cfd2cc'].includes(c);
+  const m=metalness||(isSteel?.7:isGlass?.08:isWhiteRoof?.05:0);
+  const r=roughness||(isSteel?.22:isGlass?.05:isWhiteRoof?.38:isConcrete?.82:.72);
   const key=[c,m,r].join('|');
   if(!materialCache.has(key)){
     const mat=isGlass
-      ? new T.MeshPhysicalMaterial({color:c,metalness:.2,roughness:.1,clearcoat:1,clearcoatRoughness:.06,envMapIntensity:2})
-      : new T.MeshStandardMaterial({color:c,metalness:m,roughness:r,envMapIntensity:isSteel?1.5:.85});
+      ? new T.MeshPhysicalMaterial({color:c,metalness:.05,roughness:.06,transmission:.85,ior:1.52,clearcoat:1,clearcoatRoughness:.04,transparent:true,opacity:.92,envMapIntensity:2.4})
+      : new T.MeshStandardMaterial({color:c,metalness:m,roughness:r,envMapIntensity:isSteel?1.6:isWhiteRoof?1.1:.85});
     mat.name=c; materialCache.set(key,mat);
   }
   return materialCache.get(key);
@@ -57,62 +59,110 @@ function path(g,points,width,color=PAL.road,y=.3,closed=false,smooth=true){
 function lamp(g,x,z,h=7){beam(g,[x,.2,z],[x,h,z],.055,PAL.steel);beam(g,[x,h,z],[x+1,h+.15,z],.045,PAL.steel);box(g,x+1,h,z,.9,.12,.35,PAL.white);}
 function canopy(g,x,z,w,d,h=5){const q=group(g,x,z);box(q,0,h,0,w,.22,d,PAL.white);for(const a of [-1,1])for(const b of [-1,1])beam(q,[a*(w/2-.4),.2,b*(d/2-.4)],[a*(w/2-.4),h,b*(d/2-.4)],.075,PAL.steel);for(let i=-w/2;i<=w/2;i+=.75)box(q,i,h+.23,0,.045,.035,d,PAL.concrete);return q;}
 function stand(g,x,z,w,d,angle=0){const s=group(g,x,z,angle);for(let k=0;k<6;k++){box(s,0,.2+k*.45,-d/2+k*d/6,w,.45,d/6,PAL.concrete);for(let j=-w/2+1;j<w/2;j+=1.1)box(s,j,.69+k*.45,-d/2+(k+.3)*d/6,.7,.18,.6,'#4a6471');}canopy(s,0,0,w+1,d+1,6);return s;}
-function shrub(g,x,z,r=1){const m=mesh(g,new T.IcosahedronGeometry(r,1),PAL.green,x,.6+r*.55,z);m.scale.y=.65;}
+function shrub(g,x,z,r=1,c=PAL.green){const m=mesh(g,new T.IcosahedronGeometry(r,1),c,x,.6+r*.55,z);m.scale.y=.65;}
 function archWindow(g,x,y,z,w,h,c=PAL.glass){
   const s=new T.Shape();s.moveTo(-w/2,0);s.lineTo(w/2,0);s.lineTo(w/2,h-w/2);s.absarc(0,h-w/2,w/2,0,Math.PI,false);s.closePath();mesh(g,new T.ShapeGeometry(s),c,x,y,z);
   const ps=[[-w/2,0],[-w/2,h-w/2],...Array.from({length:15},(_,i)=>{const a=Math.PI-i/14*Math.PI;return [Math.cos(a)*w/2,h-w/2+Math.sin(a)*w/2];}),[w/2,0]];tube(g,ps.map(([a,b])=>[x+a,y+b,z+.03]),.065,PAL.white);
 }
+function royalPalm(g,x,z,h=10){
+  cylinder(g,x,.2,z,.28,h,'#5d4037',.18);
+  for(let i=1;i<h;i+=.8)ring(g,x,i,z,.28,.02,'#4e342e');
+  cylinder(g,x,h,z,.2,1.2,'#33691e');
+  for(let j=0;j<10;j++){
+    const a=j/10*Math.PI*2;
+    const pts=[];
+    for(let k=0;k<=8;k++){
+      const t=k/8,r=t*4.2,yy=h+1.2+Math.sin(t*Math.PI)*1.1-t*t*1.6;
+      pts.push([x+Math.cos(a)*r,yy,z+Math.sin(a)*r]);
+    }
+    tube(g,pts,.08,'#2e7d32');
+  }
+}
 
 export function buildPortico(g){
-  g.name='Pórtico · duas asas';
-  // Canteiro central oval e ajardinado no encontro das duas cascas
-  const islandCurbs=mesh(g,new T.CylinderGeometry(1,1,.32,48),PAL.concrete,0,.2,0);
-  islandCurbs.scale.set(3.8,1,11);
-  const islandLawn=mesh(g,new T.CylinderGeometry(1,1,.36,48),PAL.grass,0,.22,0);
-  islandLawn.scale.set(3.2,1,10.2);
-  for(let i=0;i<16;i++){
-    const a=i*Math.PI*2/16;
-    shrub(g,Math.cos(a)*2.4,Math.sin(a)*8.5,.9);
+  g.name='Pórtico · Duas Asas Arqueadas Monumentais';
+
+  // 1. CANTEIRO CENTRAL OVAL AJARDINADO (Conforme o render oficial)
+  const islandCurbs=mesh(g,new T.CylinderGeometry(1,1,.38,48),PAL.white,0,.15,0);
+  islandCurbs.scale.set(4.2,1,12.5);
+  const islandLawn=mesh(g,new T.CylinderGeometry(1,1,.42,48),PAL.grass,0,.2,0);
+  islandLawn.scale.set(3.6,1,11.8);
+
+  // Espécies botânicas do canteiro central: agaves, maciço vermelho central e arbustos
+  shrub(g,0,0,1.8,PAL.magenta);
+  shrub(g,0,-3,1.4,'#880e4f');
+  shrub(g,0,3,1.4,'#880e4f');
+  for(let i=0;i<18;i++){
+    const a=i*Math.PI*2/18;
+    shrub(g,Math.cos(a)*2.6,Math.sin(a)*9.2,.9,i%2?'#2e7d32':'#558b2f');
   }
 
-  // Duas cascas arqueadas de concreto com envoltória fanning e encontro escalonado
+  // 2. DUAS CASCAS ARQUEADAS DE CONCRETO COM ENCONTRO ESCALONADO
   for(const side of [-1,1]){
     const zOffset=side*3.2; // Escalonamento entre as asas conforme a implantação
-    const span=27.5; // Vão livre cruzando a pista até a base externa no meio-fio
+    const span=28.5; // Vão livre cruzando a pista até a base externa
     const n=64,v=[],ix=[];
-    const y=t=>.5+16.5*Math.pow(Math.sin(Math.PI*t),.84);
-    const halfW=t=>3.4+3.8*t; // Mais estreito no canteiro central e expande na guia externa
+    const y=t=>.5+17.5*Math.pow(Math.sin(Math.PI*t),.82);
+    const halfW=t=>3.2+4.0*t; // Expande suavemente até a base externa
     
     for(let i=0;i<=n;i++){
       const t=i/n,x=side*(1.2+span*t),w=halfW(t);
-      v.push(x,y(t),zOffset-w,x,y(t)+.75,zOffset+w);
+      v.push(x,y(t),zOffset-w,x,y(t)+.85,zOffset+w);
       if(i<n){const k=2*i;ix.push(k,k+1,k+2,k+1,k+3,k+2);}
     }
-    const skin=surface(g,v,ix,'#dce2df');
-    skin.material=material('#dce2df').clone();skin.material.side=T.DoubleSide;
+    const skin=surface(g,v,ix,PAL.white);
+    skin.material=material(PAL.white).clone();skin.material.side=T.DoubleSide;
 
-    // Bordas tubulares e vigas longitudinais
+    // Bordas tubulares brancas
     for(const factor of [-1,-.5,0,.5,1]){
       const pts=Array.from({length:65},(_,i)=>{
         const t=i/64,w=halfW(t);
-        return[side*(1.2+span*t),y(t)+.08*(1-t)+(factor*w)/18,zOffset+factor*w];
+        return[side*(1.2+span*t),y(t)+.1*(1-t)+(factor*w)/18,zOffset+factor*w];
       });
-      tube(g,pts,Math.abs(factor)===1?.32:.18,PAL.white);
+      tube(g,pts,Math.abs(factor)===1?.35:.2,PAL.white);
     }
 
-    // Travamentos transversais e nervuras estruturais sob a cobertura
-    for(let i=2;i<span;i+=2.5){
+    // Grelhas estruturais e CANAIS DE ILUMINAÇÃO LINEAR MAGENTA/PURPLE NO INTRADORSO
+    // Conforme exatamente visto em portico-de-entrada.webp
+    for(let i=2;i<span;i+=2.2){
       const t=i/span,x=side*(1.2+span*t),w=halfW(t);
-      beam(g,[x,y(t)-.12,zOffset-w],[x,y(t)+.62,zOffset+w],.075,PAL.white);
+      beam(g,[x,y(t)-.1,zOffset-w],[x,y(t)+.65,zOffset+w],.08,PAL.white);
+      // Fita LED arquitetônica magenta sob o arco
+      beam(g,[x,y(t)-.18,zOffset-w*.9],[x,y(t)+.58,zOffset+w*.9],.045,i%4===0?PAL.magenta:PAL.purple);
     }
 
-    // Blocos de fundação e pilares de engaste: no canteiro central e no meio-fio
-    box(g,side*1.5,.3,zOffset,1.8,1.2,7.6,PAL.concrete);
-    box(g,side*(1.2+span),.3,zOffset,2.2,1.3,15.2,PAL.concrete);
+    // Blocos maciços de fundação no canteiro central e na guia externa
+    box(g,side*1.5,.3,zOffset,2.0,1.4,8.0,PAL.concrete);
+    box(g,side*(1.2+span),.3,zOffset,2.6,1.5,16.5,PAL.concrete);
   }
 
-  // Postes de iluminação viária nas margens do acesso
-  for(const z of [-18,0,18])lamp(g,-34,z,6);
+  // 3. PISTAS BOULEVARD E CICLOVIA LATERAL (Em vermelho terracota conforme o render)
+  for(const side of [-1,1]){
+    const xCenter=side*16.5;
+    // Ciclovia externa em asfalto vermelho
+    box(g,side*31,.14,0,3.2,.02,60,PAL.terracotta);
+    path(g,[[side*29.4,-30],[side*29.4,30]],.18,PAL.white,.16,false,false);
+    // Linha de palmeiras imperiais ao longo do bulevar de entrada
+    for(let pz=-25;pz<=25;pz+=12.5){
+      royalPalm(g,side*33.5,pz,11);
+    }
+  }
+
+  // Faixas termoplásticas zebradas no pavimento de aproximação
+  for(let z=-16;z<=16;z+=4){
+    box(g,-15,.15,z,4.5,.02,.7,PAL.white);
+    box(g,15,.15,z,4.5,.02,.7,PAL.white);
+  }
+
+  // Postes de iluminação de rodovia com braço duplo
+  for(const z of [-24,0,24]){
+    cylinder(g,-34,.2,z,.18,9,PAL.steel);
+    beam(g,[-34,9,z],[-32,9.6,z],.09,PAL.steel);
+    box(g,-31.8,9.55,z,1.2,.2,.45,PAL.white);
+    cylinder(g,34,.2,z,.18,9,PAL.steel);
+    beam(g,[34,9,z],[32,9.6,z],.09,PAL.steel);
+    box(g,31.8,9.55,z,1.2,.2,.45,PAL.white);
+  }
 }
 
 function rampStrip(g,x,z0,z1,w,heightAt,c){
@@ -197,109 +247,158 @@ export function buildMotocross(g){
 }
 
 export function buildWheel(g){
-  g.name='Roda-gigante (Setor 25) · Praça, Plataforma 25.3 e Passarela 25.2';
+  g.name='Roda-gigante (Setor 25) · Pavilhão Envidraçado, Praça e Roda Panorâmica';
 
-  // 1. PRAÇA CIRCULAR DO SETOR 25 (Diâmetro 68m, raio 34)
-  mesh(g,new T.CylinderGeometry(34,34,.22,64),PAL.concrete,0,.1,0);
-  ring(g,0,.23,0,32,.5,'#b8c2be');
-  ring(g,0,.23,0,24,.35,'#c9d1cc');
-  ring(g,0,.23,0,16,.25,'#b8c2be');
+  // 1. PRAÇA CIRCULAR DO SETOR 25 (Diâmetro 72m, raio 36m)
+  mesh(g,new T.CylinderGeometry(36,36,.22,64),PAL.concrete,0,.1,0);
+  ring(g,0,.23,0,34,.5,'#c9d3cc');
+  ring(g,0,.23,0,26,.4,'#b8c2be');
+  ring(g,0,.23,0,18,.35,'#c9d3cc');
 
-  // Canteiros radiais e iluminação
-  for(let k=0;k<6;k++){
-    const a=k/6*Math.PI*2+Math.PI/6,qx=Math.cos(a)*27,qz=Math.sin(a)*27;
-    mesh(g,new T.CylinderGeometry(3.5,3.5,.25,24),PAL.grass,qx,.24,qz);
-    shrub(g,qx,qz,1.2);
-    lamp(g,Math.cos(a)*32,Math.sin(a)*32,7);
+  // Canteiros concêntricos com folhagem ornamental roxa/vinho conforme roda-gigante.webp
+  for(let k=0;k<8;k++){
+    const a=k/8*Math.PI*2+Math.PI/8,qx=Math.cos(a)*28,qz=Math.sin(a)*28;
+    // Base de terra/adubo escura
+    mesh(g,new T.CylinderGeometry(4.2,4.2,.26,24),'#3e2723',qx,.24,qz);
+    // Borda de concreto
+    ring(g,qx,.26,qz,4.2,.25,PAL.white);
+    // Maciço de folhagem arroxeada e arbustos
+    shrub(g,qx,qz,1.6,'#4a1525');
+    shrub(g,qx+.8,qz+.8,1.1,'#311b24');
+    shrub(g,qx-.8,qz-.8,1.1,'#2e7d32');
+    lamp(g,Math.cos(a)*34,Math.sin(a)*34,7);
   }
 
-  // 2. FUNDAÇÃO E PYLONS EM "A" DA RODA-GIGANTE
-  const r=23.5,cy=28.5; // Raio 23.5m, centro a 28.5m de altura
-  for(const s of [-1,1])for(const z of [-5.5,5.5]){
-    box(g,s*13.5,.25,z,4.2,.8,4.2,PAL.concrete);
-    box(g,s*13.5,.85,z,3.2,.4,3.2,PAL.steel);
-    beam(g,[s*13.5,1.0,z],[0,cy,z*.4],.65,PAL.white);
-    beam(g,[s*13.5,1.0,z*.8],[0,cy,z*.4],.45,PAL.steel);
+  // 2. MONUMENTAL PAVILHÃO DA BASE (Setor 25.1) - Conforme a foto roda-gigante.webp
+  // Edifício envidraçado de 2 pavimentos com envoltória curva e iluminação arquitetônica
+  const basePav=group(g,0,0);
+  box(basePav,0,.25,0,28,.3,18,PAL.concrete);
+  // Pele de vidro structural glazing do térreo e mezanino
+  box(basePav,0,1.8,0,26,7.5,16,PAL.glass);
+  for(let x=-12;x<=12;x+=4){
+    beam(basePav,[x,.3,-8],[x,9.2,-8],.12,PAL.white);
+    beam(basePav,[x,.3,8],[x,9.2,8],.12,PAL.white);
   }
-  beam(g,[-13.5,6,-5.5],[-13.5,6,5.5],.35,PAL.white);
-  beam(g,[13.5,6,-5.5],[13.5,6,5.5],.35,PAL.white);
-  beam(g,[-13.5,14,-3.8],[-13.5,14,3.8],.3,PAL.white);
-  beam(g,[13.5,14,-3.8],[13.5,14,3.8],.3,PAL.white);
+  for(const y of [1.8,5.2,9.2]){
+    beam(basePav,[-13,y,-8],[13,y,-8],.09,PAL.white);
+    beam(basePav,[-13,y,8],[13,y,8],.09,PAL.white);
+  }
+
+  // Envoltória escultural em arco translúcido/iridescente na fachada da base
+  const archPts=[];
+  for(let i=0;i<=32;i++){
+    const t=i/32*Math.PI,ax=Math.cos(t)*13.5,ay=1.0+8.5*Math.sin(t);
+    archPts.push([ax,ay,8.4]);
+  }
+  tube(basePav,archPts,.35,PAL.white);
+  // Marquise em arco translúcida
+  const archShape=new T.Shape();
+  archShape.moveTo(-13.5,1.0);
+  for(let i=1;i<=32;i++){
+    const t=i/32*Math.PI;
+    archShape.lineTo(Math.cos(t)*13.5,1.0+8.5*Math.sin(t));
+  }
+  archShape.closePath();
+  const archMesh=mesh(basePav,new T.ShapeGeometry(archShape),PAL.glass,0,0,8.3);
+  archMesh.material=material(PAL.glass).clone();
+  archMesh.material.color.set('#b388ff'); // Tom suave iridescente/magenta
+  archMesh.material.opacity=0.75;
+  archMesh.material.transparent=true;
+
+  // 3. FUNDAÇÃO E PYLONS EM "A" DA RODA-GIGANTE
+  const r=24.5,cy=30.0; // Raio 24.5m, centro a 30m de altura
+  for(const s of [-1,1])for(const z of [-6.0,6.0]){
+    // Sapata maciça de concreto chanfrada
+    box(g,s*14.0,.25,z,4.5,1.0,4.5,PAL.concrete);
+    box(g,s*14.0,1.0,z,3.4,.5,3.4,PAL.steel);
+    // Pernas tubulares principais de grande bitola
+    beam(g,[s*14.0,1.2,z],[0,cy,z*.35],.85,PAL.white);
+    beam(g,[s*14.0,1.2,z*.75],[0,cy,z*.35],.55,PAL.steel);
+  }
+  // Travamentos horizontais entre os mastros em "A"
+  beam(g,[-14.0,7,-6.0],[-14.0,7,6.0],.45,PAL.white);
+  beam(g,[14.0,7,-6.0],[14.0,7,6.0],.45,PAL.white);
+  beam(g,[-14.0,16,-4.2],[-14.0,16,4.2],.38,PAL.white);
+  beam(g,[14.0,16,-4.2],[14.0,16,4.2],.38,PAL.white);
 
   // Eixo central fixo de alta robustez com mancal
-  beam(g,[0,cy,-4.5],[0,cy,4.5],1.2,PAL.steel);
-  cylinder(g,0,cy,-2.8,1.8,.9,PAL.white);
-  cylinder(g,0,cy,2.8,1.8,.9,PAL.white);
+  beam(g,[0,cy,-5.0],[0,cy,5.0],1.4,PAL.steel);
+  cylinder(g,0,cy,-3.2,2.0,1.1,PAL.white);
+  cylinder(g,0,cy,3.2,2.0,1.1,PAL.white);
 
-  // 3. AROS DUPLOS E TRELIÇAS EM ZIG-ZAG
-  for(const z of [-2.8,2.8]){
-    ring(g,0,cy,z,r,.24,PAL.white,true);
-    ring(g,0,cy,z,r-1.1,.16,PAL.white,true);
+  // 4. AROS DUPLOS E TRELIÇAS ESPACIAIS EM ZIG-ZAG
+  for(const z of [-3.0,3.0]){
+    ring(g,0,cy,z,r,.28,PAL.white,true);
+    ring(g,0,cy,z,r-1.2,.18,PAL.white,true);
   }
   for(let i=0;i<42;i++){
     const a=i/42*Math.PI*2,x=Math.cos(a)*r,y=cy+Math.sin(a)*r;
-    beam(g,[x,y,-2.8],[x,y,2.8],.11,PAL.white);
+    beam(g,[x,y,-3.0],[x,y,3.0],.14,PAL.white);
     const aNext=(i+1)/42*Math.PI*2,nx=Math.cos(aNext)*r,ny=cy+Math.sin(aNext)*r;
-    beam(g,[x,y,-2.8],[nx,ny,2.8],.075,PAL.white);
-    beam(g,[x,y,2.8],[nx,ny,-2.8],.075,PAL.white);
-    for(const z of [-2.8,2.8]){
-      beam(g,[0,cy,z*.45],[x,y,z],.055,'#c4cfd2');
+    beam(g,[x,y,-3.0],[nx,ny,3.0],.085,PAL.white);
+    beam(g,[x,y,3.0],[nx,ny,-3.0],.085,PAL.white);
+    // Cabos radiais tensores esbeltos
+    for(const z of [-3.0,3.0]){
+      beam(g,[0,cy,z*.45],[x,y,z],.055,'#cfd8dc');
     }
   }
 
-  // 4. EXATAMENTE 42 CABINES CLIMATIZADAS COM ORIENTAÇÃO GRAVITACIONAL VERTICAL
+  // 5. EXATAMENTE 42 CABINES PANORÂMICAS CLIMATIZADAS
   for(let i=0;i<42;i++){
     const a=i/42*Math.PI*2,x=Math.cos(a)*r,y=cy+Math.sin(a)*r;
-    beam(g,[x,y,0],[x,y-1.1,0],.1,PAL.steel);
+    beam(g,[x,y,0],[x,y-1.2,0],.11,PAL.steel);
     const c=group(g,x,0);
-    c.position.y=y-1.2;
+    c.position.y=y-1.3;
     c.name='Cabine '+String(i+1).padStart(2,'0')+' (Setor 25)';
-    const baseCap=mesh(c,new T.SphereGeometry(1.1,14,8),PAL.white,0,.42,0);
-    baseCap.scale.set(1.05,.4,1.3);
-    cylinder(c,0,.45,0,.98,1.25,PAL.glass);
-    const roofCap=mesh(c,new T.SphereGeometry(1.08,14,8),PAL.white,0,1.65,0);
-    roofCap.scale.set(1.05,.35,1.25);
-    for(const sx of [-.85,.85])beam(c,[sx,.5,.6],[sx,1.65,.6],.035,PAL.white);
-    beam(c,[0,1.85,0],[0,2.15,0],.1,PAL.steel);
+    // Base aerodinâmica
+    const baseCap=mesh(c,new T.SphereGeometry(1.15,16,10),PAL.white,0,.45,0);
+    baseCap.scale.set(1.1,.42,1.35);
+    // Corpo envidraçado 360°
+    cylinder(c,0,.48,0,1.05,1.35,PAL.glass);
+    // Teto aerodinâmico
+    const roofCap=mesh(c,new T.SphereGeometry(1.12,16,10),PAL.white,0,1.75,0);
+    roofCap.scale.set(1.1,.38,1.3);
+    for(const sx of [-.9,.9])beam(c,[sx,.5,.65],[sx,1.75,.65],.04,PAL.white);
+    beam(c,[0,1.95,0],[0,2.25,0],.1,PAL.steel);
   }
 
-  // 5. PLATAFORMA DE EMBARQUE/DESEMBARQUE (SETOR 25.3)
-  const plat=group(g,0,14);
+  // 6. PLATAFORMA DE EMBARQUE/DESEMBARQUE (SETOR 25.3)
+  const plat=group(g,0,15);
   plat.name='Plataforma de Embarque 25.3';
-  box(plat,0,.3,0,32,1.8,12,PAL.concrete);
-  box(plat,0,2.1,0,33,.2,13,'#37474f');
-  box(plat,0,6.2,0,35,.35,14,PAL.white);
-  for(const px of [-14,-7,0,7,14])for(const pz of [-5.5,5.5]){
-    beam(plat,[px,2.1,pz],[px,6.2,pz],.16,PAL.steel);
+  box(plat,0,.3,0,34,1.9,13,PAL.concrete);
+  box(plat,0,2.2,0,35,.25,14,'#263238');
+  box(plat,0,6.5,0,36,.38,15,PAL.white);
+  for(const px of [-15,-7.5,0,7.5,15])for(const pz of [-6.0,6.0]){
+    beam(plat,[px,2.2,pz],[px,6.5,pz],.18,PAL.steel);
   }
-  box(plat,0,3.2,6.3,32,2.0,.08,PAL.glass);
-  box(plat,0,3.2,-6.3,32,2.0,.08,PAL.glass);
+  box(plat,0,3.3,6.8,34,2.2,.08,PAL.glass);
+  box(plat,0,3.3,-6.8,34,2.2,.08,PAL.glass);
   for(let step=0;step<5;step++){
-    box(plat,0,.2+step*.35,6.8+step*1.1,16,.36,1.2,PAL.concrete);
+    box(plat,0,.2+step*.35,7.2+step*1.1,18,.36,1.2,PAL.concrete);
   }
 
-  // 6. PASSARELA ELEVADA DE PEDESTRES (SETOR 25.2)
-  const walkway=group(g,-24,14);
+  // 7. PASSARELA ELEVADA DE PEDESTRES (SETOR 25.2)
+  const walkway=group(g,-25,15);
   walkway.name='Passarela Elevada de Pedestres 25.2';
-  box(walkway,0,3.8,0,38,.4,4.8,'#c4cec9');
-  box(walkway,0,4.1,0,38,.18,4.2,'#4e6572');
-  for(const side of [-2.2,2.2]){
-    box(walkway,0,4.9,side,38,1.2,.06,PAL.glass);
-    beam(walkway,[-19,5.5,side],[19,5.5,side],.08,PAL.steel);
-    for(let x=-18;x<=18;x+=3){
-      beam(walkway,[x,4.2,side],[x,5.5,side],.055,PAL.steel);
+  box(walkway,0,3.9,0,40,.42,5.0,'#cfd8dc');
+  box(walkway,0,4.2,0,40,.18,4.4,'#37474f');
+  for(const side of [-2.3,2.3]){
+    box(walkway,0,5.0,side,40,1.3,.06,PAL.glass);
+    beam(walkway,[-20,5.7,side],[20,5.7,side],.08,PAL.steel);
+    for(let x=-19;x<=19;x+=3){
+      beam(walkway,[x,4.3,side],[x,5.7,side],.055,PAL.steel);
     }
   }
-  for(const wx of [-12,8]){
-    beam(walkway,[wx,.2,-1.8],[wx-1.2,3.8,-1.8],.2,PAL.steel);
-    beam(walkway,[wx,.2,1.8],[wx-1.2,3.8,1.8],.2,PAL.steel);
-    beam(walkway,[wx,.2,-1.8],[wx+1.2,3.8,-1.8],.2,PAL.steel);
-    beam(walkway,[wx,.2,1.8],[wx+1.2,3.8,1.8],.2,PAL.steel);
+  for(const wx of [-13,9]){
+    beam(walkway,[wx,.2,-1.9],[wx-1.2,3.9,-1.9],.22,PAL.steel);
+    beam(walkway,[wx,.2,1.9],[wx-1.2,3.9,1.9],.22,PAL.steel);
+    beam(walkway,[wx,.2,-1.9],[wx+1.2,3.9,-1.9],.22,PAL.steel);
+    beam(walkway,[wx,.2,1.9],[wx+1.2,3.9,1.9],.22,PAL.steel);
   }
-  const tower=group(g,-43,14);
-  box(tower,0,.3,0,5.6,11.2,5.6,'#2c3d46');
-  box(tower,0,5.5,0,5.8,4.5,5.8,PAL.glass);
-  box(tower,0,11.4,0,6.2,.4,6.2,PAL.white);
+  const tower=group(g,-45,15);
+  box(tower,0,.3,0,5.8,11.5,5.8,'#263238');
+  box(tower,0,5.8,0,6.0,4.8,6.0,PAL.glass);
+  box(tower,0,11.8,0,6.4,.45,6.4,PAL.white);
 }
 
 export function buildAgroPlace(g){

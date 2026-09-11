@@ -7,13 +7,20 @@ import {applyPhotoRefinements} from './refinamentos.js?v=prints-1';
 export const origin=[620,570];
 export const world=(p,y=0)=>new T.Vector3(p[0]-origin[0],y,p[1]-origin[1]);
 const mats=new Map();
-const C={stone:'#cfd2cc',white:'#f5f7f8',glass:'#345868',dark:'#182026',roof:'#e2e6e5',wood:'#724d35',gold:'#b8af8d',green:'#2d4e23',grass:'#466934',water:'#1a4146',road:'#25292c',blue:'#0062cc'};
+const C={stone:'#cfd2cc',white:'#f8fafc',glass:'#345868',dark:'#182026',roof:'#f1f5f4',wood:'#6d4c41',gold:'#b8af8d',green:'#2d4e23',grass:'#486e34',water:'#163e46',road:'#24282b',blue:'#0062cc'};
 function material(color,metalness=0,roughness=.72){
  const key=[color,metalness,roughness].join();
  if(!mats.has(key)){
-  const glass=color===C.glass,water=color===C.water;
-  const m=glass||water?new T.MeshPhysicalMaterial({color,metalness:glass?.35:.05,roughness:glass?.12:.1,clearcoat:1,clearcoatRoughness:.06,ior:glass?1.52:1.333,reflectivity:water?.9:.5,envMapIntensity:glass?1.8:2.0}):new T.MeshStandardMaterial({color,metalness,roughness});
-  if(['#152b37','#315265'].includes(color)){m.metalness=.6;m.roughness=.24;m.envMapIntensity=1.2;}if(water){m.transparent=true;m.opacity=.94;m.depthWrite=false;}m.name=color;mats.set(key,m);
+  const glass=color===C.glass||color==='#345868'||color==='#365f70';
+  const water=color===C.water||color==='#163e46'||color==='#1a4146';
+  const isSteel=[C.dark,'#182026','#212121','#37474f','#455a64','#424f56'].includes(color);
+  const isWhiteRoof=[C.white,'#f8fafc','#f5f7f8','#f1f5f4','#ffffff'].includes(color);
+  const m=glass
+   ? new T.MeshPhysicalMaterial({color,transmission:.86,roughness:.05,metalness:.05,clearcoat:1,clearcoatRoughness:.04,ior:1.52,envMapIntensity:2.4,transparent:true,opacity:.92})
+   : water
+   ? new T.MeshPhysicalMaterial({color,transmission:.65,roughness:.04,metalness:.12,clearcoat:1,clearcoatRoughness:.03,ior:1.333,reflectivity:.92,envMapIntensity:2.8,transparent:true,opacity:.95,depthWrite:false})
+   : new T.MeshStandardMaterial({color,metalness:metalness||(isSteel?.68:isWhiteRoof?.05:0),roughness:roughness||(isSteel?.24:isWhiteRoof?.38:.74),envMapIntensity:isSteel?1.5:isWhiteRoof?1.1:.85});
+  m.name=color;mats.set(key,m);
  }
  return mats.get(key);
 }
@@ -24,18 +31,16 @@ export async function loadMaterials(renderer){
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of mats.values()){
-   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6','#1a1e21','#1e2225','#23292d','#101214','#25292c'].includes(m.name);
-   const grass=[C.grass,'#b7c49a','#82986a','#b0ad82'].includes(m.name);
-   // Concreto e cobertura branca preservam seus materiais próprios.
-   if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.28);m.color.set('#25292c');m.needsUpdate=true;}
-   // Verde uniforme e fosco: só o relevo fino da grama, sem manchas de terra.
-   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.2);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
+   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
+   const grass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934'].includes(m.name);
+   if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);m.color.set('#24282b');m.needsUpdate=true;}
+   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
   }
  }
  const size=256,data=new Uint8Array(size*size*4);
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;const dx=Math.cos(u*4+v*2)*16+Math.cos(u*8-v*6)*8+Math.cos(u*14+v*10)*4,dy=Math.sin(v*4+u*2)*16+Math.sin(v*8-u*6)*8+Math.sin(v*14+u*10)*4;data[i]=Math.min(255,Math.max(0,128+dx));data[i+1]=Math.min(255,Math.max(0,128+dy));data[i+2]=254;data[i+3]=255;}
- const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(8,8);normal.needsUpdate=true;textures.push(normal);
- for(const m of mats.values())if(m.name===C.water){m.normalMap=normal;m.normalScale.setScalar(.45);m.needsUpdate=true;}
+ const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(12,12);normal.needsUpdate=true;textures.push(normal);
+ for(const m of mats.values())if(m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'){m.normalMap=normal;m.normalScale.setScalar(.55);m.needsUpdate=true;}
  return textures;
 }
 function add(g,geo,color,x=0,y=0,z=0,metal=0,rough=.72){const m=new T.Mesh(geo,material(color,metal,rough));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
@@ -55,7 +60,9 @@ function court(g,x,z,w,d){box(g,x,.7,z,w,1,d,'#e2cc9b');path(g,[[x-w/2+1,z-d/2+1
 
 function buildAutodromo(auto,circuits){
  const ag=groupAt(auto,689,521,.77);
- // 1. RETA PRINCIPAL - GRID FIA E PÓRTICO
+ ag.name='Autódromo Internacional · Circuito e Instalações FIA';
+
+ // 1. RETA PRINCIPAL - GRID FIA, PÓRTICO E SINALIZAÇÃO
  for(let z=-5.7;z<=5.7;z+=.95){const isW=Math.round((z+6)/.95)%2===0;box(ag,-10,.72,z,.95,.02,.95,isW?C.white:C.dark);}
  for(let row=0;row<12;row++){
   const x=-75+row*5.2,zSlot=(row%2===0)?-2.8:2.8;
@@ -66,13 +73,33 @@ function buildAutodromo(auto,circuits){
   box(ag,x,.71,-5.9,3.6,.08,.8,isRed?'#bc5942':C.white);
   box(ag,x,.71,5.9,3.6,.08,.8,isRed?'#bc5942':C.white);
  }
+ // Carros de competição na pista conforme autodromo.webp
+ const raceCars=[
+  {x:-52,z:-2.8,c:'#d32f2f'}, // Vermelho Ferrari
+  {x:-40,z:2.8,c:'#ff9800'},  // Laranja McLaren
+  {x:-22,z:-2.8,c:'#0288d1'}, // Azul Alpine
+  {x:-10,z:2.8,c:'#2e7d32'},  // Verde Aston
+  {x:25,z:-1.6,c:'#ffffff'},  // Branco Porsche
+  {x:55,z:1.8,c:'#ffd600'}    // Amarelo GT
+ ];
+ for(const rc of raceCars){
+  const car=groupAt(ag,rc.x,rc.z);
+  box(car,0,.74,0,4.6,.68,2.0,rc.c);
+  box(car,-.4,1.18,0,1.9,.48,1.4,C.glass);
+  box(car,-2.1,1.25,0,.45,.08,1.9,C.dark); // Asa traseira aerodinâmica
+  beam(car,[-2.1,.76,-.65],[-2.1,1.25,-.65],.05,C.dark);
+  beam(car,[-2.1,.76,.65],[-2.1,1.25,.65],.05,C.dark);
+  box(car,2.1,.75,0,.5,.06,2.0,C.dark); // Splitter dianteiro
+ }
+
+ // Pórtico de Largada com semáforo oficial de 5 pares vermelhos
  for(const zSide of [-6.8,6.8]){beam(ag,[-10,.7,zSide],[-10,8.5,zSide],.22,C.dark);beam(ag,[-10,.7,zSide+.6*Math.sign(zSide)],[-10,8.5,zSide],.15,C.dark);}
  beam(ag,[-10,8.2,-6.8],[-10,8.2,6.8],.25,C.dark);beam(ag,[-10,7.2,-6.8],[-10,7.2,6.8],.18,C.dark);
  for(let z=-6;z<=6;z+=1.5){beam(ag,[-10,7.2,z],[-10,8.2,z+.75],.08,C.white);beam(ag,[-10,8.2,z],[-10,7.2,z+.75],.08,C.white);}
  for(let i=-2;i<=2;i++){box(ag,-10,7.7,i*.9,.35,.6,.5,C.dark);cylinder(ag,-9.8,7.7,i*.9,.18,.1,'#e53935',.18);}
  box(ag,-10,9.1,0,.3,1.2,7.5,'#102027');box(ag,-9.8,9.1,0,.05,.8,7.0,'#37474f');
 
- // 2. PISTA DE ARRANCADA ("Dragstrip" - 23 | PISTA DE ARRANCADA em Print 2)
+ // 2. PISTA DE ARRANCADA ("Dragstrip")
  box(ag,-5,.69,-21,180,.03,10.2,'#1a1e21');
  box(ag,-84,.71,-18.7,16,.02,3.8,'#101214');box(ag,-84,.71,-23.3,16,.02,3.8,'#101214');
  path(ag,[[-94,-21],[80,-21]],.25,C.white,.72,false,false);path(ag,[[-94,-16.2],[80,-16.2]],.2,C.white,.72,false,false);path(ag,[[-94,-25.8],[80,-25.8]],.2,C.white,.72,false,false);
@@ -92,14 +119,15 @@ function buildAutodromo(auto,circuits){
  box(ag,55,6.2,-21,.4,1.4,6.5,'#102027');box(ag,78,.7,-21,22,.35,9.6,'#c4b595');
  box(ag,-5,.68,-10.8,180,.02,8.8,C.grass);
 
- // 3. ARQUIBANCADA PRINCIPAL (23 | ARQUIBANCADA em Print 2)
+ // 3. ARQUIBANCADA PRINCIPAL COBERTA (Com assentos esportivos conforme autodromo.webp)
  const standLen=155;
  for(let r=0;r<10;r++){
   const tZ=-28-r*1.4,tY=.7+r*.75;
   box(ag,-2.5,tY,tZ,standLen,.8,1.45,C.stone);
   for(let sx=-78;sx<73;sx+=1.35){
    if(Math.abs((sx+3)%26)<1.8)continue;
-   const cSeat=(Math.abs(Math.sin(sx*.15+r))>.45)?'#1d5ba8':(r%3===0?C.white:'#455a64');
+   // Padrão vibrante de assentos esportivos em laranja, vermelho e branco
+   const cSeat=(Math.abs(Math.sin(sx*.14+r))>.4)?'#e64a19':(r%2===0?'#d32f2f':C.white);
    box(ag,sx,tY+.8,tZ-.25,.95,.2,.65,cSeat);box(ag,sx,tY+.95,tZ-.55,.95,.55,.15,cSeat);
   }
  }
@@ -108,13 +136,14 @@ function buildAutodromo(auto,circuits){
  for(let sx=-75;sx<70;sx+=12.5){
   box(ag,sx+5.5,7.8,-41.6,11,2.8,1.8,C.glass);box(ag,sx+5.5,9.3,-41.6,11.5,.2,2.0,C.white);box(ag,sx,7.8,-41.5,.4,3.0,2.0,C.dark);
  }
- box(ag,-2.5,11.6,-34.5,standLen+6,.5,19,'#252e35');box(ag,-2.5,11.9,-34.5,standLen+6,.12,19,'#37474f');
+ // Cobertura metálica escura em balanço
+ box(ag,-2.5,11.6,-34.5,standLen+6,.5,19,'#212b30');box(ag,-2.5,11.9,-34.5,standLen+6,.12,19,'#37474f');
  box(ag,-2.5,11.6,-25.2,standLen+6,.6,.35,C.white);box(ag,-2.5,11.6,-43.8,standLen+6,.6,.35,C.white);
  for(let sx=-78;sx<=73;sx+=13){
   cylinder(ag,sx,.7,-43.5,.45,11.2,C.dark);beam(ag,[sx,10.5,-43.5],[sx,11.4,-26.0],.18,C.white);beam(ag,[sx,8.5,-43.5],[sx,11.3,-33.0],.14,C.white);
  }
 
- // 4. ESPLANADA DA ARQUIBANCADA (Concourse com escadarias e quiosques)
+ // 4. ESPLANADA E PAVILHÃO DE ACESSO DA ARQUIBANCADA
  box(ag,-2.5,.68,-51,170,.04,15,'#b0b8b8');
  for(const sx of [-60,-20,20,60]){
   for(let st=0;st<6;st++)box(ag,sx,.7+st*.45,-44.5-st*1.1,9,.5,1.2,C.stone);
@@ -124,6 +153,7 @@ function buildAutodromo(auto,circuits){
  for(let sx=-80;sx<=75;sx+=15.5){ring(ag,sx,.7,-59,1.8,.35,C.stone);palm(ag,sx,-59,8.5);}
 
  // 5. COMPLEXO DE BOXES & PADDOCK (INFIELD)
+ // Mureta dos boxes e telemetry stands voltados para a pista
  box(ag,0,.7,7.5,150,1.15,.5,C.stone);box(ag,0,1.85,7.5,150,.06,.25,C.dark);
  for(let x=-72;x<=72;x+=9){beam(ag,[x,1.85,7.5],[x,3.4,7.5],.05,C.dark);if(x+9<=72)beam(ag,[x,3.3,7.5],[x+9,3.3,7.5],.03,C.white);}
  for(const px of [-55,-35,-15,5,25,45,65]){
@@ -134,25 +164,36 @@ function buildAutodromo(auto,circuits){
  for(let b=0;b<24;b++){
   const bx=-70+b*6.0;box(ag,bx,.71,14.5,5.4,.02,3.8,'#bcc4c7');box(ag,bx,.72,12.7,5.2,.02,.15,'#fbc02d');box(ag,bx,.72,16.3,5.2,.02,.15,'#fbc02d');
  }
+
+ // Edifício dos Boxes (Térreo com 30 garagens e piso superior VIP envidraçado)
  const pitLen=150;
  box(ag,0,.7,23.5,pitLen,9.2,13,C.white);
  for(let bay=0;bay<30;bay++){
   const gx=-72.5+bay*5.0;
-  box(ag,gx,.7,16.9,4.4,3.8,.35,'#1e252b');
+  box(ag,gx,.7,16.9,4.4,3.8,.35,'#1e252b'); // Portão de enrolar escuro
   for(let sy=1.3;sy<4.2;sy+=.55)box(ag,gx,sy,16.8,4.3,.05,.2,'#37474f');
   box(ag,gx,4.3,16.8,4.6,.7,.25,C.white);box(ag,gx,4.3,16.7,1.8,.45,.1,'#bc5942');
   box(ag,gx+2.45,.7,17.0,.55,4.5,.6,C.stone);
  }
+ // Mezanino VIP panorâmico no 2º andar com vidro structural glazing
  box(ag,0,5.2,17.1,pitLen,4.0,.4,C.glass);
  for(let fx=-75;fx<=75;fx+=5.0)box(ag,fx,5.2,17.0,.25,4.0,.6,C.dark);
  box(ag,0,5.2,16.0,pitLen,.25,2.0,C.stone);box(ag,0,5.5,15.0,pitLen,.9,.08,C.glass);box(ag,0,6.4,15.0,pitLen,.06,.12,C.white);
- box(ag,0,10.0,23.5,pitLen+6,.6,15.5,C.white);box(ag,0,10.3,23.5,pitLen+4,.15,12,'#b0bec5');
- box(ag,-75,.7,23.5,12,15.5,13,'#263238');box(ag,-75,11.5,23.5,14,3.8,15,C.glass);box(ag,-75,15.3,23.5,15,.6,16,C.white);
+ box(ag,0,10.0,23.5,pitLen+6,.6,15.5,'#263238');box(ag,0,10.3,23.5,pitLen+4,.15,12,'#b0bec5');
+
+ // TORRE DE CRONOMETRAGEM E CONTROLE COM ALETAS LARANJAS CONFORME AUTODROMO.WEBP
+ box(ag,-75,.7,23.5,12,15.5,13,'#1c252a');
+ box(ag,-75,11.5,23.5,14,3.8,15,C.glass);
+ box(ag,-75,15.3,23.5,15,.6,16,C.white);
+ // Aletas arquitetônicas verticais laranjas/vermelhas características na fachada da torre
+ for(let fin=-4.5;fin<=4.5;fin+=2.25){
+  box(ag,-75+fin,1.2,30.3,.28,14.2,.75,'#ff5722');
+ }
  cylinder(ag,-75,15.9,23.5,.15,7.5,C.white);beam(ag,[-75,21.0,23.5],[-73,21.0,23.5],.06,C.white);
  box(ag,-71,5.2,16.5,6.5,.3,3.5,C.stone);box(ag,-71,5.5,14.8,6.5,.9,.1,C.glass);
-  box(ag,-71,5.5,16.0,1.4,.7,1.2,C.white);box(ag,-72.6,5.5,16.0,1.2,.45,1.2,'#cfd8dc');box(ag,-69.4,5.5,16.0,1.2,.3,1.2,'#b0bec5');box(ag,-71,6.5,17.5,6.0,2.2,.15,'#1e88e5');
+ box(ag,-71,5.5,16.0,1.4,.7,1.2,C.white);box(ag,-72.6,5.5,16.0,1.2,.45,1.2,'#cfd8dc');box(ag,-69.4,5.5,16.0,1.2,.3,1.2,'#b0bec5');box(ag,-71,6.5,17.5,6.0,2.2,.15,'#1e88e5');
 
- // Pit Exit Signal Gantry (Semáforo de Saída dos Boxes)
+ // Semáforo de Saída dos Boxes (Pit Exit Gantry)
  beam(ag,[76,.7,12.5],[76,5.5,12.5],.1,C.dark);beam(ag,[76,.7,15.5],[76,5.5,15.5],.1,C.dark);beam(ag,[76,5.2,12.5],[76,5.2,15.5],.12,C.dark);
  box(ag,76,5.2,14,.3,.8,1.4,'#102027');cylinder(ag,76.2,5.2,13.6,.18,.08,'#43a047');cylinder(ag,76.2,5.2,14.4,.18,.08,'#e53935');
 
@@ -162,13 +203,10 @@ function buildAutodromo(auto,circuits){
   beam(ag,[mx,1.8,-15.6],[mx,3.5,-15.6],.04,C.dark);box(ag,mx+.3,3.3,-15.6,.6,.4,.02,'#fbc02d');
  }
 
- // Passarelas de pedestres conectando o estacionamento E6 à esplanada
  for(const wx of [-50,-10,30])box(ag,wx,.67,-66,4.5,.02,15,'#cfd5d4');
-
- // Torres de iluminação no topo da cobertura da arquibancada
  for(const lx of [-65,-20,25,65]){cylinder(ag,lx,11.8,-43.5,.25,5.5,C.dark);box(ag,lx,17.2,-43.0,3.6,.8,.8,C.white);}
 
- // PADDOCK (Infield)
+ // PADDOCK (Infield - Carretas de equipes de corrida)
  box(ag,0,.68,44,165,.03,27,'#23292d');
  const truckLiveries=['#d32f2f','#ff9800','#212121','#1565c0','#43a047','#f44336','#37474f','#00acc1'];
  for(let t=0;t<8;t++){
@@ -182,7 +220,7 @@ function buildAutodromo(auto,circuits){
  ring(ag,-10,.72,51,6.5,.35,C.white);box(ag,-10,.72,51,.6,.02,5.0,C.white);box(ag,-11.8,.72,51,3.0,.02,.6,C.white);box(ag,-8.2,.72,51,3.0,.02,.6,C.white);
  for(const lx of [-70,0,70]){cylinder(ag,lx,.7,56,.3,18,C.dark);box(ag,lx,18.2,56,4.2,1.2,1.0,C.white);}
 
- // 6. MONUMENTO & PRAÇA DO HAIRPIN ("CASA INDÍGENA" em Print 2)
+ // 6. MONUMENTO & PRAÇA DO HAIRPIN ("CASA INDÍGENA")
  const hp=groupAt(auto,665,705,.25);
  polygon(hp,[[-18,-18],[18,-18],[18,18],[-18,18]],C.stone,.7,.15);polygon(hp,[[-13,-13],[13,-13],[13,13],[-13,13]],'#b8c0ba',.85,.12);
  cylinder(hp,0,.9,0,7.5,.6,C.stone);cylinder(hp,0,1.4,0,6.5,.2,C.water);cylinder(hp,0,1.5,0,1.2,2.5,C.gold);
@@ -205,14 +243,21 @@ function buildAutodromo(auto,circuits){
 export function createMiniatures(){
  const root=new T.Group();root.position.set(-origin[0],0,-origin[1]);const modelLayer=new T.Group();root.add(modelLayer);
  const landscape=new T.Group();root.add(landscape);const vegetation=new T.Group(),infrastructure=new T.Group(),water=new T.Group();root.add(vegetation,infrastructure,water);
+
+ // 1. BACIAS HIDROGRÁFICAS NATURAIS (Laguna das Nações e Lago das Palmeiras)
  for(const ps of terrain.lakes){
-  polygon(landscape,ps,'#8a5035',-.02,.05);
-  const lake=polygon(water,ps,C.water,.02,.06);lake.castShadow=false;
+  // Leito escavado com talude de terra/areia
+  polygon(landscape,ps,'#6d4c41',-.32,.35);
+  // Faixa de praia/enrocamento pedregoso na orla
+  path(landscape,ps,3.5,'#a1887f',-.04,true,true);
+  // Espelho d'água ligeiramente rebaixado (-0.05m)
+  const lake=polygon(water,ps,C.water,-.05,.03);
+  lake.castShadow=false;
  }
- polygon(landscape,terrain.outline,'#314725',-5,4.75);
- // A base fica abaixo das praças e dos pisos modelados, inclusive a bilheteria.
- polygon(landscape,terrain.outline,C.grass,-.25,.15);
- for(const ps of terrain.greens)polygon(landscape,ps,'#355225',-.04,.02);
+
+ // 2. TERRENO CONTÍNUO NIVELADO (Sem paredes verticais de maquete)
+ polygon(landscape,terrain.outline,C.grass,0,.05);
+ for(const ps of terrain.greens)polygon(landscape,ps,'#355225',.01,.02);
  for(const ps of terrain.parking){polygon(landscape,ps,'#4c5257',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f0f4f7',.023,false,false);}}
  for(const ps of terrain.roads){path(landscape,ps,19,'#875438',.045);path(landscape,ps,16,C.stone,.055);path(landscape,ps,13,C.road,.07);roadMarks(landscape,ps);}
  if(terrain.roundabouts){
@@ -299,7 +344,7 @@ function batchStatic(g){
 
 export function inPolygon([x,y],vs){let inside=false;for(let i=0,j=vs.length-1;i<vs.length;j=i++){const [xi,yi]=vs[i],[xj,yj]=vs[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;}return inside;}
 function addVegetation(g){
- let seed=237;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};const positions=[];
+ let seed=237;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};const positions=[],palms=[];
  function nearRoad(x,z,minDist=14){
   for(const pts of terrain.roads){
    for(let i=0;i<pts.length-1;i++){
@@ -314,22 +359,59 @@ function addVegetation(g){
   for(const rb of(terrain.roundabouts||[])){if(Math.hypot(x-rb.center[0],z-rb.center[1])<rb.outerRadius+4)return true;}
   return false;
  }
+
+ // Palmeiras Imperiais ao longo das avenidas principais (bulevares)
+ for(const road of terrain.roads.slice(0,3)){
+  const c=new T.CatmullRomCurve3(road.map(([x,z])=>new T.Vector3(x,0,z)),false,'centripetal'),length=c.getLength();
+  for(let d=35;d<length-25;d+=42){
+   const p=c.getPointAt(d/length),t=c.getTangentAt(d/length);
+   for(const s of [-1,1]){
+    const px=p.x-t.z*10.5*s,pz=p.z+t.x*10.5*s;
+    if(!nearRoad(px,pz,7))palms.push([px,pz,10+rand()*3]);
+   }
+  }
+ }
+
  for(const poly of terrain.greens){
   const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);
-  for(let i=0;i<400;i++){
+  for(let i=0;i<450;i++){
    const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));
-   if(inPolygon([x,z],poly)&&!nearRoad(x,z))positions.push([x,z,2.8+rand()*3]);
+   if(inPolygon([x,z],poly)&&!nearRoad(x,z))positions.push([x,z,2.8+rand()*3.2]);
   }
  }
  for(let i=0;i<terrain.outline.length;i++){
   const a=terrain.outline[i],b=terrain.outline[(i+1)%terrain.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);
-  for(let d=8;d<len;d+=14){
+  for(let d=8;d<len;d+=13){
    const t=d/len,x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;
-   if(!nearRoad(x,z,16))positions.push([x,z,3+rand()*3]);
+   if(!nearRoad(x,z,16))positions.push([x,z,3+rand()*3.4]);
   }
  }
- const crown=new T.InstancedMesh(new T.SphereGeometry(1,12,9),material('#2b4721',0,.85),positions.length*4),trunk=new T.InstancedMesh(new T.CylinderGeometry(.18,.32,1,7),material('#4a3826',0,.88),positions.length);
- const dummy=new T.Object3D();positions.forEach(([x,z,s],i)=>{for(let j=0;j<4;j++){const a=j/3*Math.PI*2;dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2+s*(j?.8:1.23),z+(j?Math.sin(a)*s*.48:0));dummy.scale.set(s*(j?.69:.78),s*(j?.77:.95),s*(j?.75:.8));dummy.rotation.y=rand()*Math.PI;dummy.updateMatrix();crown.setMatrixAt(i*4+j,dummy.matrix);crown.setColorAt(i*4+j,new T.Color().setHSL(.25+rand()*.06,.52+rand()*.18,.16+rand()*.10));}dummy.position.set(x,2.5,z);dummy.scale.set(s*.7,5,s*.7);dummy.updateMatrix();trunk.setMatrixAt(i,dummy.matrix);});crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
+
+ // Árvores com copas facetadas de visualização paisagística
+ const crownGeo=new T.IcosahedronGeometry(1.25,1);
+ const crown=new T.InstancedMesh(crownGeo,material('#2d5022',0,.82),positions.length*4);
+ const trunk=new T.InstancedMesh(new T.CylinderGeometry(.2,.38,1,8),material('#4a3826',0,.88),positions.length);
+ const dummy=new T.Object3D();
+ positions.forEach(([x,z,s],i)=>{
+  for(let j=0;j<4;j++){
+   const a=j/3*Math.PI*2;
+   dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2.2+s*(j?.85:1.3),z+(j?Math.sin(a)*s*.48:0));
+   dummy.scale.set(s*(j?.68:.82),s*(j?.78:.98),s*(j?.74:.82));
+   dummy.rotation.set(rand()*.3,rand()*Math.PI,rand()*.3);
+   dummy.updateMatrix();
+   crown.setMatrixAt(i*4+j,dummy.matrix);
+   // Variação tonal do cerrado/tropical: verde oliva, verde folha, dourado suave
+   crown.setColorAt(i*4+j,new T.Color().setHSL(.23+rand()*.12,.52+rand()*.2,.17+rand()*.11));
+  }
+  dummy.position.set(x,2.6,z);dummy.scale.set(s*.65,5.2,s*.65);dummy.rotation.set(0,0,0);dummy.updateMatrix();
+  trunk.setMatrixAt(i,dummy.matrix);
+ });
+ crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
+
+ // Adiciona palmeiras imperiais nas vias
+ for(const [px,pz,ph] of palms){
+  palm(g,px,pz,ph);
+ }
 }
 
 function roadMarks(g,points){
