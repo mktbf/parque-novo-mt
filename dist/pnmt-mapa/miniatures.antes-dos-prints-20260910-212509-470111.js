@@ -1,7 +1,6 @@
 import * as T from 'three';
 import {terrain,places} from './park-data.js?v=7';
 import {buildArenaShow} from './arena-show.js?v=7';
-import {applyPhotoRefinements} from './refinamentos.js?v=prints-1';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
@@ -26,7 +25,7 @@ export async function loadMaterials(renderer){
   for(const m of mats.values()){
    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6'].includes(m.name);
    const grass=[C.grass,'#b7c49a','#82986a','#b0ad82'].includes(m.name);
-   // Concreto e cobertura branca preservam seus materiais próprios.
+   if(name==='clean_asphalt'&&[C.stone,C.white].includes(m.name)){m.normalMap=maps[2];m.normalScale.setScalar(.07);m.roughnessMap=maps[1];m.needsUpdate=true;}
    if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.28);m.color.set('#c4c8cd');m.needsUpdate=true;}
    // Verde uniforme e fosco: só o relevo fino da grama, sem manchas de terra.
    if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.18);m.roughness=.96;m.color.set(m.name===C.grass?C.grass:'#799361');m.needsUpdate=true;}
@@ -60,19 +59,15 @@ export function createMiniatures(){
  // A base fica abaixo das praças e dos pisos modelados, inclusive a bilheteria.
  polygon(landscape,terrain.outline,C.grass,-.25,.15);
  for(const ps of terrain.greens)polygon(landscape,ps,'#82986a',-.04,.02);
- for(const ps of terrain.parking){polygon(landscape,ps,'#646c70',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f2ebd2',.023,false,false);}}
+ for(const ps of terrain.parking){polygon(landscape,ps,'#cccab4',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f2ebd2',.023,false,false);}}
  for(const ps of terrain.roads){path(landscape,ps,18,C.stone,.055);path(landscape,ps,11,C.road,.07);roadMarks(landscape,ps);}
  for(const ps of terrain.paths)path(landscape,ps,5.2,'#e4ddc2',.095);
  // Pista e ligação usam as mesmas camadas, sem bordas atravessando as junções.
  const circuits=new T.Group();root.add(circuits);
- for(const [width,color,y] of [[17.3,'#788576',.5],[12.3,'#eeeae0',.6],[11.3,'#4a554e',.7]]){
+ for(const [width,color,y] of [[22,'#287da9',.5],[12.3,'#eeeae0',.6],[11.3,'#4a554e',.7]]){
   path(circuits,terrain.raceTrack,width,color,y,true);
   for(const link of terrain.raceConnections)path(circuits,link,width,color,y,false,false);
  }
-
- // Escape azul interpretado a partir da foto; validar o limite com a sinalização oficial.
- polygon(circuits,[[799,451],[817,430],[838,431],[848,449],[853,464],[831,456]],'#0876d5',.71,.01);
- polygon(circuits,[[751,725],[743,743],[726,748],[709,736],[720,718]],'#0876d5',.71,.01);
  const models=new Map();
  for(const p of places){const g=new T.Group();g.userData.placeId=p.id;modelLayer.add(g);models.set(p.id,g);}
  const auto=models.get('autodromo');
@@ -119,7 +114,6 @@ export function createMiniatures(){
  kerbs(circuits,terrain.raceTrack,terrain.raceConnections);roadFurniture(infrastructure);addVegetation(vegetation);
  buildInfrastructure(infrastructure);
  // Batch static architecture by material: fine detail without thousands of draw calls.
- applyPhotoRefinements(models,{terrain});
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});
