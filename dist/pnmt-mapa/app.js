@@ -45,7 +45,7 @@ async function init(){
  Object.assign(controls,{enableDamping:false,minPolarAngle:.22,maxPolarAngle:1.36,rotateSpeed:.45,zoomSpeed:.8,minDistance:60,maxDistance:5000,minZoom:.65,maxZoom:10,enablePan:true,screenSpacePanning:true});
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
  const built=createMiniatures();scene.add(built.root);
- const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),new T.MeshStandardMaterial({color:'#4e6554',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-5.3;floor.receiveShadow=true;scene.add(floor);
+ const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),new T.MeshStandardMaterial({color:'#46643c',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-5.3;floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null;const texturePromises=new Map();
  async function loadTexture(url){if(texturePromises.has(url))return texturePromises.get(url);const promise=textureLoader.loadAsync(url).then(tex=>{tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),16);textures.push(tex);return tex;});texturePromises.set(url,promise);return promise;}

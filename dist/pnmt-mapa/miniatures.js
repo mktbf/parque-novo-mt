@@ -7,13 +7,13 @@ import {applyPhotoRefinements} from './refinamentos.js?v=prints-1';
 export const origin=[620,570];
 export const world=(p,y=0)=>new T.Vector3(p[0]-origin[0],y,p[1]-origin[1]);
 const mats=new Map();
-const C={stone:'#cccec9',white:'#f6f7f4',glass:'#7f9ba2',dark:'#263037',roof:'#dbe2df',wood:'#86614a',gold:'#aba281',green:'#64834a',grass:'#91aa78',water:'#315b59',road:'#757a7d',blue:'#2474a6'};
+const C={stone:'#d2d4cf',white:'#f7f8f6',glass:'#5e8c9c',dark:'#1d272f',roof:'#dde3e1',wood:'#825d46',gold:'#b8af8d',green:'#4a7c3b',grass:'#6c9454',water:'#1d6b7d',road:'#464c50',blue:'#1e78bb'};
 function material(color,metalness=0,roughness=.72){
  const key=[color,metalness,roughness].join();
  if(!mats.has(key)){
   const glass=color===C.glass,water=color===C.water;
-  const m=glass||water?new T.MeshPhysicalMaterial({color,metalness:glass?.38:.18,roughness:glass?.15:.16,clearcoat:1,clearcoatRoughness:.12,ior:glass?1.5:1.333,envMapIntensity:glass?1.65:1.2}):new T.MeshStandardMaterial({color,metalness,roughness});
-  if(['#152b37','#315265'].includes(color)){m.metalness=.6;m.roughness=.24;m.envMapIntensity=1.2;}if(water){m.transparent=true;m.opacity=.88;m.depthWrite=false;}m.name=color;mats.set(key,m);
+  const m=glass||water?new T.MeshPhysicalMaterial({color,metalness:glass?.35:.08,roughness:glass?.12:.08,clearcoat:1,clearcoatRoughness:.06,ior:glass?1.52:1.333,reflectivity:water?.95:.5,envMapIntensity:glass?1.8:2.2}):new T.MeshStandardMaterial({color,metalness,roughness});
+  if(['#152b37','#315265'].includes(color)){m.metalness=.6;m.roughness=.24;m.envMapIntensity=1.2;}if(water){m.transparent=true;m.opacity=.92;m.depthWrite=false;}m.name=color;mats.set(key,m);
  }
  return mats.get(key);
 }
@@ -29,13 +29,13 @@ export async function loadMaterials(renderer){
    // Concreto e cobertura branca preservam seus materiais próprios.
    if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.28);m.color.set('#c4c8cd');m.needsUpdate=true;}
    // Verde uniforme e fosco: só o relevo fino da grama, sem manchas de terra.
-   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.18);m.roughness=.96;m.color.set(m.name===C.grass?C.grass:'#799361');m.needsUpdate=true;}
+   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.2);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#5e8548');m.needsUpdate=true;}
   }
  }
- const size=128,data=new Uint8Array(size*size*4);
- for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;data[i]=128+Math.sin(u*3+Math.cos(v*2)) *16;data[i+1]=128+Math.cos(v*3+Math.sin(u*2))*16;data[i+2]=252;data[i+3]=255;}
- const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.needsUpdate=true;textures.push(normal);
- for(const m of mats.values())if(m.name===C.water){m.normalMap=normal;m.normalScale.setScalar(.4);m.needsUpdate=true;}
+ const size=256,data=new Uint8Array(size*size*4);
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;const dx=Math.cos(u*4+v*2)*16+Math.cos(u*8-v*6)*8+Math.cos(u*14+v*10)*4,dy=Math.sin(v*4+u*2)*16+Math.sin(v*8-u*6)*8+Math.sin(v*14+u*10)*4;data[i]=Math.min(255,Math.max(0,128+dx));data[i+1]=Math.min(255,Math.max(0,128+dy));data[i+2]=254;data[i+3]=255;}
+ const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(8,8);normal.needsUpdate=true;textures.push(normal);
+ for(const m of mats.values())if(m.name===C.water){m.normalMap=normal;m.normalScale.setScalar(.45);m.needsUpdate=true;}
  return textures;
 }
 function add(g,geo,color,x=0,y=0,z=0,metal=0,rough=.72){const m=new T.Mesh(geo,material(color,metal,rough));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
@@ -56,13 +56,13 @@ function court(g,x,z,w,d){box(g,x,.7,z,w,1,d,'#e2cc9b');path(g,[[x-w/2+1,z-d/2+1
 export function createMiniatures(){
  const root=new T.Group();root.position.set(-origin[0],0,-origin[1]);const modelLayer=new T.Group();root.add(modelLayer);
  const landscape=new T.Group();root.add(landscape);const vegetation=new T.Group(),infrastructure=new T.Group(),water=new T.Group();root.add(vegetation,infrastructure,water);for(const ps of terrain.lakes){const lake=polygon(water,ps,C.water,.02,.06);lake.castShadow=false;}
- polygon(landscape,terrain.outline,'#637651',-5,4.75);
+ polygon(landscape,terrain.outline,'#49653a',-5,4.75);
  // A base fica abaixo das praças e dos pisos modelados, inclusive a bilheteria.
  polygon(landscape,terrain.outline,C.grass,-.25,.15);
- for(const ps of terrain.greens)polygon(landscape,ps,'#82986a',-.04,.02);
- for(const ps of terrain.parking){polygon(landscape,ps,'#646c70',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f2ebd2',.023,false,false);}}
+ for(const ps of terrain.greens)polygon(landscape,ps,'#567d42',-.04,.02);
+ for(const ps of terrain.parking){polygon(landscape,ps,'#42484c',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f2ebd2',.023,false,false);}}
  for(const ps of terrain.roads){path(landscape,ps,18,C.stone,.055);path(landscape,ps,11,C.road,.07);roadMarks(landscape,ps);}
- for(const ps of terrain.paths)path(landscape,ps,5.2,'#e4ddc2',.095);
+ for(const ps of terrain.paths)path(landscape,ps,5.2,'#ded6be',.095);
  // Pista e ligação usam as mesmas camadas, sem bordas atravessando as junções.
  const circuits=new T.Group();root.add(circuits);
  for(const [width,color,y] of [[17.3,'#788576',.5],[12.3,'#eeeae0',.6],[11.3,'#4a554e',.7]]){
@@ -140,8 +140,8 @@ function addVegetation(g){
  for(const poly of terrain.greens.slice(0,3)){const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);for(let i=0;i<550;i++){const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));if(inPolygon([x,z],poly))positions.push([x,z,2.8+rand()*3]);}}
  // Trees follow the actual park perimeter, away from the main roads and facilities.
  for(let i=0;i<terrain.outline.length;i++){const a=terrain.outline[i],b=terrain.outline[(i+1)%terrain.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let d=8;d<len;d+=13){const t=d/len;positions.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,3+rand()*3]);}}
- const crown=new T.InstancedMesh(new T.SphereGeometry(1,12,9),material('#b0c48e'),positions.length*4),trunk=new T.InstancedMesh(new T.CylinderGeometry(.18,.32,1,7),material('#766049'),positions.length);
- const dummy=new T.Object3D();positions.forEach(([x,z,s],i)=>{for(let j=0;j<4;j++){const a=j/3*Math.PI*2;dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2+s*(j?.8:1.23),z+(j?Math.sin(a)*s*.48:0));dummy.scale.set(s*(j?.69:.78),s*(j?.77:.95),s*(j?.75:.8));dummy.rotation.y=rand()*Math.PI;dummy.updateMatrix();crown.setMatrixAt(i*4+j,dummy.matrix);crown.setColorAt(i*4+j,new T.Color().setHSL(.22+rand()*.07,.28+rand()*.12,.30+rand()*.15));}dummy.position.set(x,2.5,z);dummy.scale.set(s*.7,5,s*.7);dummy.updateMatrix();trunk.setMatrixAt(i,dummy.matrix);});crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
+ const crown=new T.InstancedMesh(new T.SphereGeometry(1,12,9),material('#4d7a38',0,.8),positions.length*4),trunk=new T.InstancedMesh(new T.CylinderGeometry(.18,.32,1,7),material('#5c4735',0,.85),positions.length);
+ const dummy=new T.Object3D();positions.forEach(([x,z,s],i)=>{for(let j=0;j<4;j++){const a=j/3*Math.PI*2;dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2+s*(j?.8:1.23),z+(j?Math.sin(a)*s*.48:0));dummy.scale.set(s*(j?.69:.78),s*(j?.77:.95),s*(j?.75:.8));dummy.rotation.y=rand()*Math.PI;dummy.updateMatrix();crown.setMatrixAt(i*4+j,dummy.matrix);crown.setColorAt(i*4+j,new T.Color().setHSL(.25+rand()*.07,.48+rand()*.2,.23+rand()*.12));}dummy.position.set(x,2.5,z);dummy.scale.set(s*.7,5,s*.7);dummy.updateMatrix();trunk.setMatrixAt(i,dummy.matrix);});crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
 }
 
 function roadMarks(g,points){
@@ -168,10 +168,10 @@ function waveRoof(g,w,d,base,amplitude){
  const p=new T.Shape();p.moveTo(-d/2,0);p.bezierCurveTo(-d*.35,amplitude,-d*.12,amplitude,-d*.02,.5);p.bezierCurveTo(d*.08,-1,d*.26,-.5,d/2,1.3);p.lineTo(d/2,.4);p.bezierCurveTo(d*.26,-1.4,d*.08,-1.9,-d*.02,-.4);p.bezierCurveTo(-d*.12,amplitude-.9,-d*.35,amplitude-.9,-d/2,-.9);p.closePath();const mesh=add(g,new T.ExtrudeGeometry(p,{depth:w,bevelEnabled:false,curveSegments:32}),C.white,-w/2,base,0);mesh.rotation.y=Math.PI/2;
 }
 function palm(g,x,z,h){
- cylinder(g,x,1,z,.32,h,C.wood,.2);ring(g,x,.8,z,2.6,.6,C.stone);
+ cylinder(g,x,1,z,.32,h,'#584432',.2);ring(g,x,.8,z,2.6,.6,C.stone);
  const leaves=[];
  for(let j=0;j<10;j++){const a=j/10*Math.PI*2;for(let k=0;k<7;k++){const t=k/6,r=t*5.2,yy=1+h+Math.sin(t*Math.PI)*1.4-t*t*2,w=Math.sin(t*Math.PI)*.6;leaves.push(x+Math.cos(a)*r-Math.sin(a)*w,yy,z+Math.sin(a)*r+Math.cos(a)*w,x+Math.cos(a)*r+Math.sin(a)*w,yy-.1,z+Math.sin(a)*r-Math.cos(a)*w);}}
- const indices=[];for(let j=0;j<10;j++)for(let k=0;k<6;k++){const n=j*14+k*2;indices.push(n,n+2,n+1,n+1,n+2,n+3);}const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(leaves,3));geo.setIndex(indices);geo.computeVertexNormals();const m=add(g,geo,'#4c773f');m.material.side=T.DoubleSide;
+ const indices=[];for(let j=0;j<10;j++)for(let k=0;k<6;k++){const n=j*14+k*2;indices.push(n,n+2,n+1,n+1,n+2,n+3);}const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(leaves,3));geo.setIndex(indices);geo.computeVertexNormals();const m=add(g,geo,'#36662e');m.material.side=T.DoubleSide;
 }
 
 function solarCanopy(g,x,z,width,depth){
