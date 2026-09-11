@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Parque Novo Mato Grosso — Visualizador de Mapa Interativo (Three.js 2.5D)
  * Arquitetura modular isolada, compatível com SPA vanilla.
  */
@@ -8,6 +8,13 @@
   // CDN URLs for Three.js & OrbitControls
   const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
   const ORBIT_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js';
+
+  function esc(s) {
+    return String(s ?? '').replace(
+      /[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+    );
+  }
 
   let threeLoaded = false;
   let loadingPromise = null;
@@ -211,7 +218,7 @@
           <span class="pin-beacon"></span>
           <span class="pin-bubble">
             <span class="pin-icon">${this.getCategoryIcon(pt.category)}</span>
-            <span class="pin-label">${pt.name}</span>
+            <span class="pin-label">${esc(pt.name)}</span>
           </span>
         `;
 
@@ -345,20 +352,20 @@
 
       drawer.innerHTML = `
         <div class="drawer-header">
-          <span class="drawer-cat-badge">${pt.category}</span>
+          <span class="drawer-cat-badge">${esc(pt.category)}</span>
           ${pt.status === 'conferido' ? '<span class="drawer-status-badge">✓ Validado na Planta R81</span>' : '<span class="drawer-status-badge pending">Demarcação em confirmação</span>'}
           <button class="drawer-close-btn" data-action="close-drawer" aria-label="Fechar ficha">✕</button>
         </div>
         <div class="drawer-body">
           <div class="drawer-image-wrap">
-            <img src="${imgSrc}" alt="${pt.name}" loading="lazy" onerror="this.src='assets/aerial-real.jpg'">
-            ${pt.badge ? `<span class="drawer-badge">${pt.badge}</span>` : ''}
+            <img src="${imgSrc}" alt="${esc(pt.name)}" loading="lazy" onerror="this.src='assets/aerial-real.jpg'">
+            ${pt.badge ? `<span class="drawer-badge">${esc(pt.badge)}</span>` : ''}
           </div>
-          <h3 class="drawer-title">${pt.name}</h3>
-          <p class="drawer-desc">${pt.summary || spaceData.tagline || ''}</p>
+          <h3 class="drawer-title">${esc(pt.name)}</h3>
+          <p class="drawer-desc">${esc(pt.summary || spaceData.tagline || '')}</p>
           <div class="drawer-actions">
-            <a href="#espaco/${pt.id}" class="button cta-primary drawer-btn">Ver ficha completa <span>↗</span></a>
-            <a href="#contato?tipo=evento&espaco=${pt.id}" class="button cta-secondary drawer-btn-secondary">Realizar evento aqui</a>
+            <a href="#espaco/${esc(pt.id)}" class="button cta-primary drawer-btn">Ver ficha completa <span>↗</span></a>
+            <a href="#contato?tipo=evento&espaco=${esc(pt.id)}" class="button cta-secondary drawer-btn-secondary">Realizar evento aqui</a>
           </div>
         </div>
       `;

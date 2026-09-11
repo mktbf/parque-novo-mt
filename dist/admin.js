@@ -42,21 +42,29 @@
     }, 4000);
   }
 
+  // Helper: Escape HTML to prevent XSS
+  function esc(s) {
+    return String(s ?? '').replace(
+      /[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+    );
+  }
+
   // Helper: Extract YouTube ID from link or plain ID
   function extractYouTubeId(urlOrId) {
     if (!urlOrId) return '';
     const clean = urlOrId.trim();
-    if (clean.length === 11 && !clean.includes('/') && !clean.includes('?')) {
+    if (/^[\w-]{11}$/.test(clean)) {
       return clean;
     }
     const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-    return match ? match[1] : clean;
+    return match ? match[1] : '';
   }
 
   // Helper: Resolve asset/image preview URL
   function resolveImgUrl(val) {
     if (!val) return '';
-    if (val.startsWith('data:') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('assets/')) {
+    if (val.startsWith('data:image/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('assets/')) {
       return val;
     }
     return `assets/${val}.jpg`;
@@ -84,18 +92,29 @@
     }
   }
 
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginError.style.display = 'none';
     const pass = loginPass.value.trim();
-    if (adminStore.login(pass)) {
-      loginPass.value = '';
-      checkAuth();
-      showToast('Bem-vindo ao Painel de Controle!', 'success');
-    } else {
-      loginError.textContent = 'Senha incorreta. Tente novamente.';
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const res = await adminStore.login(pass);
+      if (res.ok) {
+        loginPass.value = '';
+        checkAuth();
+        showToast('Bem-vindo ao Painel de Controle!', 'success');
+      } else {
+        loginError.textContent = res.message || 'Senha incorreta. Tente novamente.';
+        loginError.style.display = 'block';
+        loginPass.select();
+      }
+    } catch (err) {
+      loginError.textContent = 'Erro ao processar autenticação.';
       loginError.style.display = 'block';
-      loginPass.select();
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 
@@ -295,18 +314,18 @@
     }
 
     container.innerHTML = filtered.map((s) => `
-      <div class="space-admin-card" data-id="${s.id}">
+      <div class="space-admin-card" data-id="${esc(s.id)}">
         <div class="space-card-thumb">
-          <img src="${resolveImgUrl(s.image)}" alt="${s.name}" onerror="this.src='assets/aerial.png'">
-          <span class="space-category-badge">${s.category || 'Atração'}</span>
+          <img src="${resolveImgUrl(s.image)}" alt="${esc(s.name)}" onerror="this.src='assets/aerial.png'">
+          <span class="space-category-badge">${esc(s.category || 'Atração')}</span>
         </div>
         <div class="space-card-info">
-          <h4>${s.name}</h4>
-          <p class="space-card-tagline">${s.tagline || 'Sem descrição resumida'}</p>
+          <h4>${esc(s.name)}</h4>
+          <p class="space-card-tagline">${esc(s.tagline || 'Sem descrição resumida')}</p>
         </div>
         <div class="space-card-footer">
-          <button class="btn btn-secondary btn-xs" data-action="edit-space" data-id="${s.id}">✏️ Editar</button>
-          <button class="btn btn-danger-outline btn-xs" data-action="delete-space" data-id="${s.id}">🗑️ Excluir</button>
+          <button class="btn btn-secondary btn-xs" data-action="edit-space" data-id="${esc(s.id)}">✏️ Editar</button>
+          <button class="btn btn-danger-outline btn-xs" data-action="delete-space" data-id="${esc(s.id)}">🗑️ Excluir</button>
         </div>
       </div>
     `).join('');
@@ -357,8 +376,8 @@
     const row = document.createElement('div');
     row.className = 'dynamic-number-row';
     row.innerHTML = `
-      <input type="text" class="space-num-val" placeholder="Ex: 90 hectares" value="${num}">
-      <input type="text" class="space-num-lbl" placeholder="Ex: de circuito misto" value="${label}">
+      <input type="text" class="space-num-val" placeholder="Ex: 90 hectares" value="${esc(num)}">
+      <input type="text" class="space-num-lbl" placeholder="Ex: de circuito misto" value="${esc(label)}">
       <button type="button" class="btn btn-secondary btn-xs" onclick="this.parentElement.remove()">✕</button>
     `;
     list.appendChild(row);
@@ -477,11 +496,11 @@
         <tbody>
           ${list.map((e, idx) => `
             <tr>
-              <td><strong>${formatDateBR(e.date)}</strong></td>
-              <td><strong>${e.name}</strong></td>
-              <td><span class="count-badge">${e.category}</span></td>
-              <td>${e.location || '—'}</td>
-              <td>${e.ticket || '—'}</td>
+              <td><strong>${esc(formatDateBR(e.date))}</strong></td>
+              <td><strong>${esc(e.name)}</strong></td>
+              <td><span class="count-badge">${esc(e.category)}</span></td>
+              <td>${esc(e.location || '—')}</td>
+              <td>${esc(e.ticket || '—')}</td>
               <td style="text-align: right;">
                 <button class="btn btn-secondary btn-xs" data-action="edit-event" data-idx="${idx}">Editar</button>
                 <button class="btn btn-danger-outline btn-xs" data-action="delete-event" data-idx="${idx}">Excluir</button>
@@ -597,10 +616,10 @@
         <tbody>
           ${list.map((n, idx) => `
             <tr>
-              <td><strong>${formatDateBR(n.date)}</strong></td>
-              <td><strong>${n.title}</strong></td>
-              <td>${n.source || '—'}</td>
-              <td><span class="count-badge">${n.category}</span></td>
+              <td><strong>${esc(formatDateBR(n.date))}</strong></td>
+              <td><strong>${esc(n.title)}</strong></td>
+              <td>${esc(n.source || '—')}</td>
+              <td><span class="count-badge">${esc(n.category)}</span></td>
               <td style="text-align: right;">
                 <button class="btn btn-secondary btn-xs" data-action="edit-news" data-idx="${idx}">Editar</button>
                 <button class="btn btn-danger-outline btn-xs" data-action="delete-news" data-idx="${idx}">Excluir</button>
@@ -703,11 +722,11 @@
     container.innerHTML = list.map((g, idx) => `
       <div class="gallery-admin-card">
         <div class="gallery-thumb">
-          <img src="${resolveImgUrl(g.image)}" alt="${g.title}" onerror="this.src='assets/aerial.png'">
+          <img src="${resolveImgUrl(g.image)}" alt="${esc(g.title)}" onerror="this.src='assets/aerial.png'">
         </div>
         <div class="gallery-info">
-          <h5>${g.title}</h5>
-          <p>${g.category} · ${g.type || 'Foto'}</p>
+          <h5>${esc(g.title)}</h5>
+          <p>${esc(g.category)} · ${esc(g.type || 'Foto')}</p>
           <div class="gallery-actions">
             <button class="btn btn-secondary btn-xs" data-action="edit-photo" data-idx="${idx}">Editar</button>
             <button class="btn btn-danger-outline btn-xs" data-action="delete-photo" data-idx="${idx}">Excluir</button>
@@ -811,11 +830,11 @@
       <div class="value-edit-item" data-idx="${i}">
         <div class="form-group">
           <label>Valor #${i + 1} — Nome</label>
-          <input type="text" class="value-title-input" value="${title}">
+          <input type="text" class="value-title-input" value="${esc(title)}">
         </div>
         <div class="form-group">
           <label>Descrição do Valor</label>
-          <textarea class="value-desc-input" rows="2">${desc}</textarea>
+          <textarea class="value-desc-input" rows="2">${esc(desc)}</textarea>
         </div>
       </div>
     `).join('');
@@ -922,11 +941,23 @@
     });
 
     // Settings: Password Change
-    document.getElementById('form-change-password')?.addEventListener('submit', (e) => {
+    document.getElementById('form-change-password')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const oldP = document.getElementById('old-pass').value;
       const newP = document.getElementById('new-pass').value;
-      const res = adminStore.changePassword(oldP, newP);
+      const confirmP = document.getElementById('confirm-pass')?.value;
+
+      if (confirmP && newP !== confirmP) {
+        showToast('A nova senha e a confirmação não conferem.', 'error');
+        return;
+      }
+
+      if (newP.length < 8) {
+        showToast('A nova senha deve ter no mínimo 8 caracteres.', 'error');
+        return;
+      }
+
+      const res = await adminStore.changePassword(oldP, newP);
       if (res.ok) {
         showToast('Senha alterada com sucesso!');
         e.target.reset();

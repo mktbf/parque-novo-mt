@@ -36,9 +36,14 @@
 
     function saveOfflineSubmission(payload) {
       try {
+        const str = JSON.stringify(payload);
+        if (str.length > 65536) {
+          console.warn('[PNMT] Submissão offline excede limite seguro de 64KB.');
+          return;
+        }
         const stored = JSON.parse(localStorage.getItem('pnmt_form_submissions') || '[]');
         stored.unshift({ ...payload, id: 'offline_' + Date.now() });
-        localStorage.setItem('pnmt_form_submissions', JSON.stringify(stored.slice(0, 100)));
+        localStorage.setItem('pnmt_form_submissions', JSON.stringify(stored.slice(0, 30)));
         console.log('[PNMT] Submissão preservada localmente:', payload.kind);
       } catch (e) {
         console.error('[PNMT] Erro ao salvar localmente:', e);
@@ -55,12 +60,17 @@
        */
       async submitForm(payload) {
         try {
+          if (!payload || !payload.fields || typeof payload.fields !== 'object') {
+            return { ok: false, error: 'Dados inválidos.' };
+          }
+          const cleanKind = String(payload.kind || 'contato').slice(0, 50);
+
           const { error } = await client
             .from('form_submissions')
             .insert({
-              kind: payload.kind,
+              kind: cleanKind,
               fields: payload.fields,
-              submitted_at: payload.submittedAt,
+              submitted_at: payload.submittedAt || new Date().toISOString(),
             });
 
           if (error) {
@@ -83,14 +93,22 @@
        */
       async submitNewsletter(payload) {
         try {
+          if (!payload || !payload.fields) return { ok: false, error: 'Dados ausentes.' };
           const { nome, email, interesse, origem } = payload.fields;
+
+          const cleanEmail = String(email || '').trim().toLowerCase().slice(0, 254);
+          if (!cleanEmail || !cleanEmail.includes('@') || cleanEmail.length < 5) {
+            return { ok: false, error: 'E-mail inválido.' };
+          }
 
           const { error } = await client
             .from('newsletter_subscribers')
-            .upsert(
-              { nome, email, interesse, origem },
-              { onConflict: 'email' }
-            );
+            .insert({
+              nome: String(nome || '').slice(0, 150),
+              email: cleanEmail,
+              interesse: String(interesse || '').slice(0, 100),
+              origem: String(origem || '').slice(0, 100)
+            });
 
           if (error) {
             console.warn('[PNMT] Supabase newsletter indisponível. Armazenando offline:', error);

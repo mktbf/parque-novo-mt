@@ -152,11 +152,11 @@
       .join('')}</div>`;
 
   function featured(s) {
-    return `<a class="space-card" href="#espaco/${s.id}"><img src="${asset(s.image)}" alt="${esc(s.name)}" loading="lazy"><div><span class="kicker">${s.category}</span><h3>${s.short || s.name}</h3><p>${s.tagline}</p><span class="circle-arrow" aria-hidden="true">↗</span></div></a>`;
+    return `<a class="space-card" href="#espaco/${esc(s.id)}"><img src="${asset(s.image)}" alt="${esc(s.name)}" loading="lazy"><div><span class="kicker">${esc(s.category)}</span><h3>${esc(s.short || s.name)}</h3><p>${esc(s.tagline)}</p><span class="circle-arrow" aria-hidden="true">↗</span></div></a>`;
   }
 
   function catalogCard(s) {
-    return `<a class="catalog-card ${s.image ? '' : 'text-only'}" href="#espaco/${s.id}">${s.image ? `<div class="catalog-image"><img loading="lazy" src="${asset(s.image)}" alt="${esc(s.name)}">${s.kind ? `<span class="image-note">${s.kind}</span>` : ''}</div>` : ''}<div class="catalog-copy"><span class="kicker">${s.category}</span><h3>${s.name}</h3><p>${s.tagline}</p><span>Conheça o espaço ↗</span></div></a>`;
+    return `<a class="catalog-card ${s.image ? '' : 'text-only'}" href="#espaco/${esc(s.id)}">${s.image ? `<div class="catalog-image"><img loading="lazy" src="${asset(s.image)}" alt="${esc(s.name)}">${s.kind ? `<span class="image-note">${esc(s.kind)}</span>` : ''}</div>` : ''}<div class="catalog-copy"><span class="kicker">${esc(s.category)}</span><h3>${esc(s.name)}</h3><p>${esc(s.tagline)}</p><span>Conheça o espaço ↗</span></div></a>`;
   }
 
   const videoBlock = () =>
@@ -291,15 +291,15 @@
     if (!s) return notFound();
 
     const hero = s.image
-      ? `<section class="space-hero"><img src="${asset(s.image)}" alt="${esc(s.name)}"><div class="space-hero-copy">${crumb(`<a href="#espacos">Espaços</a> / ${s.name}`)}<span class="kicker">${s.category}</span><h1>${s.name}</h1><p class="image-note">${s.credit || s.kind || 'Imagem da proposta do parque'}</p></div></section>`
-      : intro(s.name, s.tagline, `<a href="#espacos">Espaços</a> / ${s.name}`);
+      ? `<section class="space-hero"><img src="${asset(s.image)}" alt="${esc(s.name)}"><div class="space-hero-copy">${crumb(`<a href="#espacos">Espaços</a> / ${esc(s.name)}`)}<span class="kicker">${esc(s.category)}</span><h1>${esc(s.name)}</h1><p class="image-note">${esc(s.credit || s.kind || 'Imagem da proposta do parque')}</p></div></section>`
+      : intro(esc(s.name), esc(s.tagline), `<a href="#espacos">Espaços</a> / ${esc(s.name)}`);
 
     let related = data.spaces.filter((x) => x.category === s.category && x.id !== s.id).slice(0, 3);
     if (!related.length) related = data.spaces.filter((x) => x.id !== s.id).slice(0, 3);
 
     return (
       hero +
-      `<section class="wrap detail-layout"><article class="prose">${s.id === 'autodromo' ? `<img class="endorsement" src="${asset('autodromo-logo')}" alt="Autódromo Internacional de Mato Grosso — submarca do parque">` : ''}${s.image ? `<h2>${s.tagline}</h2>` : ''}${s.text.map((p) => `<p>${p}</p>`).join('')}${s.numbers ? `<div class="detail-numbers">${s.numbers.map((n) => `<div><strong>${n[0]}</strong><p>${n[1]}</p></div>`).join('')}</div>` : ''}</article><aside class="detail-aside"><span class="kicker">SUA PRÓXIMA EXPERIÊNCIA</span><h3>Viva o parque de perto.</h3><p>Visitas mediante agendamento e confirmação das áreas liberadas.</p><a class="button" href="#visitar">Quero visitar <span>↗</span></a><a class="button secondary" href="#evento/${s.id}">Realize seu evento <span>↗</span></a><a class="text-link" href="#agenda">Confira a agenda ↗</a></aside></section><section class="related"><div class="wrap">${heading('CONTINUE EXPLORANDO', 'Outros espaços.<br>Novas descobertas.')}<div class="catalog-grid">${related.map(catalogCard).join('')}</div></div></section>`
+      `<section class="wrap detail-layout"><article class="prose">${s.id === 'autodromo' ? `<img class="endorsement" src="${asset('autodromo-logo')}" alt="Autódromo Internacional de Mato Grosso — submarca do parque">` : ''}${s.image ? `<h2>${esc(s.tagline)}</h2>` : ''}${s.text.map((p) => `<p>${esc(p)}</p>`).join('')}${s.numbers ? `<div class="detail-numbers">${s.numbers.map((n) => `<div><strong>${esc(n[0])}</strong><p>${esc(n[1])}</p></div>`).join('')}</div>` : ''}</article><aside class="detail-aside"><span class="kicker">SUA PRÓXIMA EXPERIÊNCIA</span><h3>Viva o parque de perto.</h3><p>Visitas mediante agendamento e confirmação das áreas liberadas.</p><a class="button" href="#visitar">Quero visitar <span>↗</span></a><a class="button secondary" href="#evento/${esc(s.id)}">Realize seu evento <span>↗</span></a><a class="text-link" href="#agenda">Confira a agenda ↗</a></aside></section><section class="related"><div class="wrap">${heading('CONTINUE EXPLORANDO', 'Outros espaços.<br>Novas descobertas.')}<div class="catalog-grid">${related.map(catalogCard).join('')}</div></div></section>`
     );
   }
 
@@ -308,7 +308,7 @@
     `<label class="field">${label}${isRequired ? ' *' : ' <small style="font-weight:400;opacity:0.75">(opcional)</small>'}${options ? `<select name="${name}" ${isRequired ? 'required' : ''}><option value="">Selecione</option>${options.map((o) => `<option value="${esc(typeof o === 'string' ? o : o.id)}" ${state.selectedSpace === (o.id || o) ? 'selected' : ''}>${typeof o === 'string' ? o : o.name}</option>`).join('')}</select>` : type === 'textarea' ? `<textarea name="${name}" ${isRequired ? 'required' : ''} maxlength="4000"></textarea>` : `<input name="${name}" type="${type}" ${isRequired ? 'required' : ''} ${type === 'date' ? `min="${today()}"` : ''} ${type === 'number' ? 'min="1" max="1000000"' : type === 'tel' ? 'autocomplete="tel" minlength="8" maxlength="25"' : type === 'email' ? 'autocomplete="email" maxlength="254"' : 'maxlength="200"'}>`}</label>`;
 
   const formEnd = (kind, label) =>
-    `<label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
+    `<input type="text" name="_gotcha_honey" style="display:none !important; opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true"><label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
 
   function newsletter(topic) {
     return `<section class="newsletter"><div><span class="kicker">FIQUE POR PERTO</span><h3>${topic === 'galeria' ? 'Não perca o próximo capítulo.' : 'Não encontrou o que procura?'}</h3><p>${topic === 'galeria' ? 'Acompanhe os novos registros do parque.' : 'Escolha o que você quer viver e deixe seu interesse registrado.'}</p></div><form data-form="newsletter"><input type="hidden" name="origem" value="${topic}">${field('nome', 'Seu nome')}${field('email', 'Seu e-mail', 'email')}${field('interesse', 'Tenho interesse em', 'text', ['Todos', 'Shows e Música', 'Automobilismo', 'Esporte', 'Cultura e Família', 'Corporativo', 'AgroPlace', 'Galeria'])}${formEnd('newsletter', 'Quero ser avisado')}</form></section>`;
@@ -337,7 +337,7 @@
       ? list
           .map(
             (e) =>
-              `<article class="event-card"><div class="event-date">${fmt(e.date)}</div><div><span class="kicker">${e.category}</span><h3>${e.name}</h3><p>${e.location}</p><p>${e.ticket}</p>${external(e.url, 'Ver informações na fonte')}${e.date >= today() ? `<button class="button secondary" data-calendar="${e.id}">Salvar no calendário</button>` : ''}</div></article>`
+              `<article class="event-card"><div class="event-date">${fmt(e.date)}</div><div><span class="kicker">${esc(e.category)}</span><h3>${esc(e.name)}</h3><p>${esc(e.location)}</p><p>${esc(e.ticket)}</p>${external(e.url, 'Ver informações na fonte')}${e.date >= today() ? `<button class="button secondary" data-calendar="${esc(e.id)}">Salvar no calendário</button>` : ''}</div></article>`
           )
           .join('')
       : `<div class="empty-state"><span class="kicker">${state.agendaPeriod === 'past' ? 'MEMÓRIAS DO PARQUE' : 'NOVOS ENCONTROS VÊM AÍ'}</span><h3>${state.agendaPeriod === 'past' ? 'Nenhum registro nesta categoria.' : 'A próxima experiência está a caminho.'}</h3><p>${state.agendaPeriod === 'past' ? 'Escolha outra categoria para explorar os eventos registrados.' : 'Ainda não há datas cadastradas nesta seleção. Acompanhe os canais oficiais para a programação confirmada.'}</p>${external(config.instagram, 'Acompanhe o parque', 'button secondary')}</div>`;
@@ -866,7 +866,8 @@
       } catch (e) {}
     }
 
-    const vid = config.videoId || config.youtubeId || 'ncTJbHQNq6M';
+    const rawVid = String(config.videoId || config.youtubeId || 'ncTJbHQNq6M').trim();
+    const vid = /^[\w-]{11}$/.test(rawVid) ? rawVid : 'ncTJbHQNq6M';
     document.getElementById('media-title').textContent = 'Vídeo de apresentação — Parque Novo Mato Grosso';
     document.getElementById('media-content').innerHTML =
       `<div class="modal-video-wrap"><iframe id="modal-video-iframe" src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&cc_load_policy=3&iv_load_policy=3&hl=pt-BR&enablejsapi=1" title="Vídeo de apresentação — Parque Novo Mato Grosso" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><p style="margin-top:14px;color:#52687a;font-size:14px;">Vídeo institucional do canal Parque Novo Mato Grosso.</p>${external('https://www.youtube.com/watch?v=' + vid, 'Abrir diretamente no YouTube')}`;
@@ -902,7 +903,7 @@
           <span style="font-size:13px;opacity:0.8;">${index + 1} de ${total}</span>
           <button class="button secondary" data-action="photo-next" aria-label="Próxima foto" style="padding:6px 14px;font-size:14px;">Próxima ›</button>
         </div>
-        <p>${g.type} · ${g.credit}</p>
+        <p>${esc(g.type)} · ${esc(g.credit)}</p>
         ${g.source ? external(g.source, 'Consulte a fonte e os créditos') : ''}
       </div>`;
     const dlg = document.getElementById('media-dialog');
@@ -963,7 +964,7 @@
     ].filter((x) => normal(`${x.name} ${x.tagline || ''} ${x.searchContent || ''}`).includes(q));
 
     document.getElementById('search-results').innerHTML = found.length
-      ? found.map((x) => `<a href="#${x.id}">${x.name} ↗<small>${x.category}${x.tagline ? ' · ' + x.tagline : ''}</small></a>`).join('')
+      ? found.map((x) => `<a href="#${esc(x.id)}">${esc(x.name)} ↗<small>${esc(x.category)}${x.tagline ? ' · ' + esc(x.tagline) : ''}</small></a>`).join('')
       : '<p>Nenhum resultado. Tente outro nome ou assunto.</p>';
   }
 
@@ -1010,8 +1011,21 @@
     const kind = form.dataset.form;
     const fields = Object.fromEntries(new FormData(form).entries());
 
+    // Intercept automated bots via honeypot
+    if (fields._gotcha_honey) {
+      console.warn('[PNMT] Bot interceptado silenciosamente via honeypot.');
+      form.reset();
+      const st = form.querySelector('.form-status');
+      if (st) {
+        st.style.color = '#1b8f3a';
+        st.textContent = 'Solicitação recebida. Obrigado.';
+      }
+      return;
+    }
+    delete fields._gotcha_honey;
+
     for (const [key, value] of Object.entries(fields)) {
-      if (typeof value === 'string') fields[key] = value.trim();
+      if (typeof value === 'string') fields[key] = value.trim().slice(0, 4000);
     }
 
     for (const [key, value] of Object.entries(fields)) {

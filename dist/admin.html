@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Painel Administrativo | Parque Novo Mato Grosso</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="fonts.css">
@@ -25,7 +26,6 @@
           </div>
           <p id="login-error" class="login-error" role="alert" style="display: none;"></p>
           <button type="submit" class="btn btn-primary btn-block">Acessar Painel <span>→</span></button>
-          <p class="login-hint">Senha padrão inicial: <code>admin</code> ou <code>pnmt2026</code></p>
         </form>
       </div>
     </div>
@@ -380,11 +380,15 @@
                   <form id="form-change-password">
                     <div class="form-group">
                       <label for="old-pass">Senha Atual</label>
-                      <input type="password" id="old-pass" required placeholder="Digite a senha atual">
+                      <input type="password" id="old-pass" required placeholder="Digite a senha atual" autocomplete="current-password">
                     </div>
                     <div class="form-group">
-                      <label for="new-pass">Nova Senha</label>
-                      <input type="password" id="new-pass" required minlength="4" placeholder="Mínimo de 4 caracteres">
+                      <label for="new-pass">Nova Senha (mínimo 8 caracteres)</label>
+                      <input type="password" id="new-pass" required minlength="8" placeholder="Digite uma senha forte" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm-pass">Confirmar Nova Senha</label>
+                      <input type="password" id="confirm-pass" required minlength="8" placeholder="Repita a nova senha" autocomplete="new-password">
                     </div>
                     <button type="submit" class="btn btn-secondary">Atualizar Senha</button>
                   </form>

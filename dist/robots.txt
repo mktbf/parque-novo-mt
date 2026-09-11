@@ -1,4 +1,6 @@
 User-agent: *
+Disallow: /admin
+Disallow: /admin.html
 Allow: /
 
 Sitemap: https://www.parquenovomt.com/sitemap.xml

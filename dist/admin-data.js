@@ -8,19 +8,28 @@
   'use strict';
 
   const STORAGE_KEY = 'pnmt_site_content_v1';
-  const AUTH_KEY = 'pnmt_admin_session';
-  const PASSWORD_KEY = 'pnmt_admin_password_hash';
-  const DEFAULT_PASSWORD = 'admin'; // Senha padrão inicial configurável
+  const AUTH_KEY = 'pnmt_admin_session_v2';
+  const PASSWORD_KEY = 'pnmt_admin_password_hash_v2';
+  const ATTEMPTS_KEY = 'pnmt_admin_attempts_v2';
+  const SALT = 'PNMT_SEC_2026_V2$';
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutos
+  const SESSION_TTL_MS = 4 * 60 * 60 * 1000; // 4 horas
 
-  // Simple hash for password storage
-  function hashStr(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash |= 0;
+  async function sha256(str) {
+    if (window.crypto && window.crypto.subtle) {
+      const buffer = new TextEncoder().encode(SALT + str);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
     }
-    return 'h_' + Math.abs(hash).toString(36);
+    let h1 = 0xdeadbeef, h2 = 0x41c64e6d;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    return 'fb_' + (Math.abs(h1).toString(16) + Math.abs(h2).toString(16));
   }
 
   // Get initial default state combining PNMT_CONTENT and PNMT_CONFIG
@@ -203,19 +212,37 @@
     });
   }
 
-  // Upload media (either Supabase Storage or optimized DataURL)
+  // Upload media (either Supabase Storage or optimized DataURL) with strict security validation
+  const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+  const ALLOWED_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif']);
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
   async function uploadMedia(file) {
+    if (!file) throw new Error('Nenhum arquivo informado.');
+
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error('O arquivo excede o limite máximo de 10 MB.');
+    }
+
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      throw new Error(`Extensão de arquivo não permitida (.${ext}). Envie apenas imagens JPG, PNG, WEBP ou GIF.`);
+    }
+
+    if (file.type && !ALLOWED_MIME_TYPES.has(file.type)) {
+      throw new Error(`Tipo de mídia não permitido (${file.type}). Envie apenas imagens.`);
+    }
+
     try {
       const client = window.PNMT_SUPABASE?.client || window.PNMT_SUPABASE_CLIENT;
       if (client && client.storage) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `media_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+        const cleanName = `media_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
         const { error } = await client.storage
           .from('pnmt-media')
-          .upload(fileName, file, { cacheControl: '3600', upsert: true });
+          .upload(cleanName, file, { cacheControl: '3600', contentType: file.type || 'image/jpeg', upsert: true });
 
         if (!error) {
-          const { data } = client.storage.from('pnmt-media').getPublicUrl(fileName);
+          const { data } = client.storage.from('pnmt-media').getPublicUrl(cleanName);
           if (data?.publicUrl) return data.publicUrl;
         }
       }
@@ -227,32 +254,105 @@
     return await optimizeImage(file);
   }
 
-  // Authentication & Security
-  function isAuthenticated() {
-    return sessionStorage.getItem(AUTH_KEY) === 'true';
+  // Authentication & Security with SHA-256 and brute-force lockout
+  async function getStoredHash() {
+    let saved = localStorage.getItem(PASSWORD_KEY);
+    if (!saved) {
+      saved = await sha256('pnmt2026');
+      localStorage.setItem(PASSWORD_KEY, saved);
+    }
+    return saved;
   }
 
-  function login(pass) {
-    const savedHash = localStorage.getItem(PASSWORD_KEY) || hashStr(DEFAULT_PASSWORD);
-    if (hashStr(pass) === savedHash || pass === 'pnmt2026' || pass === 'admin') {
-      sessionStorage.setItem(AUTH_KEY, 'true');
-      return true;
+  function getAttemptsInfo() {
+    try {
+      const raw = localStorage.getItem(ATTEMPTS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { count: 0, lockedUntil: 0 };
+  }
+
+  function recordFailedAttempt() {
+    const info = getAttemptsInfo();
+    info.count = (info.count || 0) + 1;
+    if (info.count >= MAX_ATTEMPTS) {
+      info.lockedUntil = Date.now() + LOCKOUT_MS;
     }
+    localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(info));
+    return info;
+  }
+
+  function resetAttempts() {
+    localStorage.removeItem(ATTEMPTS_KEY);
+  }
+
+  function isLocked() {
+    const info = getAttemptsInfo();
+    if (info.lockedUntil && info.lockedUntil > Date.now()) {
+      const remainingMin = Math.ceil((info.lockedUntil - Date.now()) / 60000);
+      return { locked: true, remainingMin };
+    }
+    if (info.lockedUntil && info.lockedUntil <= Date.now()) {
+      resetAttempts();
+    }
+    return { locked: false };
+  }
+
+  function isAuthenticated() {
+    try {
+      const raw = sessionStorage.getItem(AUTH_KEY);
+      if (!raw) return false;
+      const session = JSON.parse(raw);
+      if (session && session.auth && (Date.now() - session.timestamp < SESSION_TTL_MS)) {
+        session.timestamp = Date.now();
+        sessionStorage.setItem(AUTH_KEY, JSON.stringify(session));
+        return true;
+      }
+    } catch (e) {}
+    sessionStorage.removeItem(AUTH_KEY);
     return false;
+  }
+
+  async function login(pass) {
+    const lock = isLocked();
+    if (lock.locked) {
+      return { ok: false, locked: true, message: `Muitas tentativas incorretas. Bloqueado por mais ${lock.remainingMin} minuto(s).` };
+    }
+
+    const inputHash = await sha256(pass);
+    const expectedHash = await getStoredHash();
+
+    if (inputHash === expectedHash) {
+      resetAttempts();
+      const session = { auth: true, timestamp: Date.now() };
+      sessionStorage.setItem(AUTH_KEY, JSON.stringify(session));
+      return { ok: true };
+    }
+
+    const info = recordFailedAttempt();
+    if (info.count >= MAX_ATTEMPTS) {
+      return { ok: false, locked: true, message: 'Limite de 5 tentativas excedido. Painel bloqueado por 15 minutos.' };
+    }
+
+    const remaining = MAX_ATTEMPTS - info.count;
+    return { ok: false, remaining, message: `Senha incorreta. Você tem mais ${remaining} tentativa(s).` };
   }
 
   function logout() {
     sessionStorage.removeItem(AUTH_KEY);
   }
 
-  function changePassword(oldPass, newPass) {
-    if (!login(oldPass)) {
+  async function changePassword(oldPass, newPass) {
+    const expectedHash = await getStoredHash();
+    const oldHash = await sha256(oldPass);
+    if (oldHash !== expectedHash) {
       return { ok: false, error: 'Senha atual incorreta.' };
     }
-    if (!newPass || newPass.length < 4) {
-      return { ok: false, error: 'A nova senha deve ter no mínimo 4 caracteres.' };
+    if (!newPass || newPass.length < 8) {
+      return { ok: false, error: 'A nova senha deve ter no mínimo 8 caracteres.' };
     }
-    localStorage.setItem(PASSWORD_KEY, hashStr(newPass));
+    const newHash = await sha256(newPass);
+    localStorage.setItem(PASSWORD_KEY, newHash);
     return { ok: true };
   }
 
@@ -270,9 +370,15 @@
 
   async function importBackup(jsonString) {
     try {
+      if (typeof jsonString !== 'string' || jsonString.length > 25 * 1024 * 1024) {
+        throw new Error('Arquivo de backup inválido ou muito grande.');
+      }
       const parsed = JSON.parse(jsonString);
-      if (!parsed || typeof parsed !== 'object') {
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
         throw new Error('Formato JSON inválido.');
+      }
+      if (!parsed.general && !parsed.spaces && !parsed.events) {
+        throw new Error('O arquivo JSON não possui a estrutura esperada do PNMT.');
       }
       return await saveContent(parsed);
     } catch (err) {
