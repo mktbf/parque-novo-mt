@@ -59,7 +59,7 @@ function stand(g,x,z,w,d,angle=0){const s=groupAt(g,x,z,angle);for(let j=0;j<6;j
 function court(g,x,z,w,d){box(g,x,.7,z,w,1,d,'#e2cc9b');path(g,[[x-w/2+1,z-d/2+1],[x+w/2-1,z-d/2+1],[x+w/2-1,z+d/2-1],[x-w/2+1,z+d/2-1]],.3,C.white,1.75,true,false);beam(g,[x-w/2-1,1,z],[x-w/2-1,6,z],.18,C.dark);beam(g,[x+w/2+1,1,z],[x+w/2+1,6,z],.18,C.dark);for(let h=3;h<=5;h+=.5)beam(g,[x-w/2, h,z],[x+w/2,h,z],.045,C.white);}
 
 function buildAutodromo(auto,circuits){
- const ag=groupAt(auto,689,521,.77);
+ const ag=groupAt(auto,705,520,.77);
  ag.name='Autódromo Internacional · Circuito e Instalações FIA';
 
  // 1. RETA PRINCIPAL - GRID FIA, PÓRTICO E SINALIZAÇÃO
