@@ -12,7 +12,7 @@ export function createRendering(scene,camera,smallScreen){
  renderer.setPixelRatio(Math.min(devicePixelRatio||1,smallScreen?1.5:2));
  renderer.outputColorSpace=T.SRGBColorSpace;
  renderer.toneMapping=T.ACESFilmicToneMapping;
- renderer.toneMappingExposure=1.04;
+ renderer.toneMappingExposure=0.92;
  renderer.shadowMap.enabled=true;
  renderer.shadowMap.type=T.PCFSoftShadowMap;
  renderer.shadowMap.autoUpdate=false;
@@ -26,18 +26,18 @@ export function createRendering(scene,camera,smallScreen){
  ao.updatePdMaterial({radius:6,samples:10,rings:3});
  composer.addPass(ao);
  composer.addPass(new OutputPass());
- const sun=new T.DirectionalLight('#fff8eb',3.75);
+ const sun=new T.DirectionalLight('#fff5e4',2.35);
  const sunOffset=new T.Vector3(-540,460,340);sun.position.copy(sunOffset);
  sun.castShadow=true;
- sun.shadow.radius=2.2;
+ sun.shadow.radius=2.0;
  sun.shadow.mapSize.set(smallScreen?2048:4096,smallScreen?2048:4096);
  Object.assign(sun.shadow.camera,{left:-870,right:870,top:840,bottom:-840,near:1,far:2300});
- sun.shadow.bias=-.0001;sun.shadow.normalBias=.2;
- scene.add(sun,sun.target,new T.HemisphereLight('#c6e4fa','#456436',.95));
- const sky=new Sky();sky.scale.setScalar(40000);sky.material.uniforms.turbidity.value=2.0;sky.material.uniforms.rayleigh.value=1.05;sky.material.uniforms.mieCoefficient.value=.003;sky.material.uniforms.mieDirectionalG.value=.8;sky.material.uniforms.sunPosition.value.copy(sunOffset.clone().normalize());scene.add(sky);
- const atmosphere=new T.Fog('#c1d9e5',1800,6500);
- scene.environmentIntensity=1.15;
- scene.background=new T.Color('#c1d9e5');
+ sun.shadow.bias=-.0001;sun.shadow.normalBias=.18;
+ scene.add(sun,sun.target,new T.HemisphereLight('#a4ccf0','#324822',.62));
+ const sky=new Sky();sky.scale.setScalar(40000);sky.material.uniforms.turbidity.value=2.0;sky.material.uniforms.rayleigh.value=1.0;sky.material.uniforms.mieCoefficient.value=.003;sky.material.uniforms.mieDirectionalG.value=.8;sky.material.uniforms.sunPosition.value.copy(sunOffset.clone().normalize());scene.add(sky);
+ const atmosphere=new T.Fog('#b6cedc',2200,7500);
+ scene.environmentIntensity=0.85;
+ scene.background=new T.Color('#b6cedc');
  let environment=null,disposed=false;
  function setCamera(next){
   beauty.camera=next;ao.camera=next;
@@ -56,7 +56,7 @@ export function createRendering(scene,camera,smallScreen){
   resize(w,h){renderer.setSize(w,h,false);composer.setSize(w,h);},
   render(mode,overlay){
    // The photo and technical drawing retain their source colors.
-   scene.background.set(mode==='3d'?'#c1d9e5':mode==='plan'?'#eeeee9':'#27332c');sky.visible=mode==='3d';const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.near=Math.max(1400,distance*1.12);atmosphere.far=Math.max(5000,distance+3800);scene.fog=mode==='3d'?atmosphere:null;
+   scene.background.set(mode==='3d'?'#b6cedc':mode==='plan'?'#eeeee9':'#27332c');sky.visible=mode==='3d';const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.near=Math.max(1400,distance*1.12);atmosphere.far=Math.max(5000,distance+3800);scene.fog=mode==='3d'?atmosphere:null;
    const useAO=mode==='3d'&&!smallScreen&&renderer.extensions.has('EXT_color_buffer_float');
    if(useAO){ao.enabled=true;composer.render();}else renderer.render(scene,beauty.camera);
    if(overlay){renderer.autoClear=false;renderer.clearDepth();renderer.render(overlay,beauty.camera);renderer.autoClear=true;}

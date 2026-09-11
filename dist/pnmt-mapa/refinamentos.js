@@ -20,7 +20,7 @@ export const referencias = [
   {id:'estrutura-e-acesso',nome:'Estacionamentos',foto:'04-estacionamentos.png',centro:[789,982],vista:[.4,1.5,1],ajustes:['Pavimento cinza e marcações legíveis','Vias internas e ilhas verdes','Vagas conforme as áreas existentes']}
 ];
 
-const PAL={white:'#f6f8f5',concrete:'#c7c6bd',steel:'#4d5c64',dark:'#1d272f',glass:'#467b8c',blue:'#0876d5',yellow:'#f1cc08',grass:'#68914f',earth:'#b86e45',road:'#464c50',green:'#366238'};
+const PAL={white:'#f5f7f8',concrete:'#c7c6bd',steel:'#424f56',dark:'#182026',glass:'#365f70',blue:'#0060c0',yellow:'#f2c808',grass:'#466934',earth:'#9a5332',road:'#25292c',green:'#2c4c23'};
 const materialCache=new Map();
 function material(c,metalness=0,roughness=.72){
   const isGlass=c===PAL.glass;

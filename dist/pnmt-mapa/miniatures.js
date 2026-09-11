@@ -7,13 +7,13 @@ import {applyPhotoRefinements} from './refinamentos.js?v=prints-1';
 export const origin=[620,570];
 export const world=(p,y=0)=>new T.Vector3(p[0]-origin[0],y,p[1]-origin[1]);
 const mats=new Map();
-const C={stone:'#d2d4cf',white:'#f7f8f6',glass:'#5e8c9c',dark:'#1d272f',roof:'#dde3e1',wood:'#825d46',gold:'#b8af8d',green:'#4a7c3b',grass:'#6c9454',water:'#1d6b7d',road:'#464c50',blue:'#1e78bb'};
+const C={stone:'#cfd2cc',white:'#f5f7f8',glass:'#345868',dark:'#182026',roof:'#e2e6e5',wood:'#724d35',gold:'#b8af8d',green:'#2d4e23',grass:'#466934',water:'#1a4146',road:'#25292c',blue:'#0062cc'};
 function material(color,metalness=0,roughness=.72){
  const key=[color,metalness,roughness].join();
  if(!mats.has(key)){
   const glass=color===C.glass,water=color===C.water;
-  const m=glass||water?new T.MeshPhysicalMaterial({color,metalness:glass?.35:.08,roughness:glass?.12:.08,clearcoat:1,clearcoatRoughness:.06,ior:glass?1.52:1.333,reflectivity:water?.95:.5,envMapIntensity:glass?1.8:2.2}):new T.MeshStandardMaterial({color,metalness,roughness});
-  if(['#152b37','#315265'].includes(color)){m.metalness=.6;m.roughness=.24;m.envMapIntensity=1.2;}if(water){m.transparent=true;m.opacity=.92;m.depthWrite=false;}m.name=color;mats.set(key,m);
+  const m=glass||water?new T.MeshPhysicalMaterial({color,metalness:glass?.35:.05,roughness:glass?.12:.1,clearcoat:1,clearcoatRoughness:.06,ior:glass?1.52:1.333,reflectivity:water?.9:.5,envMapIntensity:glass?1.8:2.0}):new T.MeshStandardMaterial({color,metalness,roughness});
+  if(['#152b37','#315265'].includes(color)){m.metalness=.6;m.roughness=.24;m.envMapIntensity=1.2;}if(water){m.transparent=true;m.opacity=.94;m.depthWrite=false;}m.name=color;mats.set(key,m);
  }
  return mats.get(key);
 }
@@ -27,9 +27,9 @@ export async function loadMaterials(renderer){
    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6'].includes(m.name);
    const grass=[C.grass,'#b7c49a','#82986a','#b0ad82'].includes(m.name);
    // Concreto e cobertura branca preservam seus materiais próprios.
-   if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.28);m.color.set('#c4c8cd');m.needsUpdate=true;}
+   if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.28);m.color.set('#25292c');m.needsUpdate=true;}
    // Verde uniforme e fosco: só o relevo fino da grama, sem manchas de terra.
-   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.2);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#5e8548');m.needsUpdate=true;}
+   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.2);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
   }
  }
  const size=256,data=new Uint8Array(size*size*4);
@@ -55,24 +55,28 @@ function court(g,x,z,w,d){box(g,x,.7,z,w,1,d,'#e2cc9b');path(g,[[x-w/2+1,z-d/2+1
 
 export function createMiniatures(){
  const root=new T.Group();root.position.set(-origin[0],0,-origin[1]);const modelLayer=new T.Group();root.add(modelLayer);
- const landscape=new T.Group();root.add(landscape);const vegetation=new T.Group(),infrastructure=new T.Group(),water=new T.Group();root.add(vegetation,infrastructure,water);for(const ps of terrain.lakes){const lake=polygon(water,ps,C.water,.02,.06);lake.castShadow=false;}
- polygon(landscape,terrain.outline,'#49653a',-5,4.75);
+ const landscape=new T.Group();root.add(landscape);const vegetation=new T.Group(),infrastructure=new T.Group(),water=new T.Group();root.add(vegetation,infrastructure,water);
+ for(const ps of terrain.lakes){
+  polygon(landscape,ps,'#8a5035',-.02,.05);
+  const lake=polygon(water,ps,C.water,.02,.06);lake.castShadow=false;
+ }
+ polygon(landscape,terrain.outline,'#314725',-5,4.75);
  // A base fica abaixo das praças e dos pisos modelados, inclusive a bilheteria.
  polygon(landscape,terrain.outline,C.grass,-.25,.15);
- for(const ps of terrain.greens)polygon(landscape,ps,'#567d42',-.04,.02);
- for(const ps of terrain.parking){polygon(landscape,ps,'#42484c',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f2ebd2',.023,false,false);}}
- for(const ps of terrain.roads){path(landscape,ps,18,C.stone,.055);path(landscape,ps,11,C.road,.07);roadMarks(landscape,ps);}
- for(const ps of terrain.paths)path(landscape,ps,5.2,'#ded6be',.095);
+ for(const ps of terrain.greens)polygon(landscape,ps,'#355225',-.04,.02);
+ for(const ps of terrain.parking){polygon(landscape,ps,'#4c5257',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f0f4f7',.023,false,false);}}
+ for(const ps of terrain.roads){path(landscape,ps,18,'#875438',.045);path(landscape,ps,15,C.stone,.055);path(landscape,ps,11,C.road,.07);roadMarks(landscape,ps);}
+ for(const ps of terrain.paths)path(landscape,ps,5.2,'#d5ceb8',.095);
  // Pista e ligação usam as mesmas camadas, sem bordas atravessando as junções.
  const circuits=new T.Group();root.add(circuits);
- for(const [width,color,y] of [[17.3,'#788576',.5],[12.3,'#eeeae0',.6],[11.3,'#4a554e',.7]]){
+ for(const [width,color,y] of [[17.3,'#8a5236',.48],[13.2,'#e6e6de',.58],[11.3,'#222629',.68]]){
   path(circuits,terrain.raceTrack,width,color,y,true);
   for(const link of terrain.raceConnections)path(circuits,link,width,color,y,false,false);
  }
 
- // Escape azul interpretado a partir da foto; validar o limite com a sinalização oficial.
- polygon(circuits,[[799,451],[817,430],[838,431],[848,449],[853,464],[831,456]],'#0876d5',.71,.01);
- polygon(circuits,[[751,725],[743,743],[726,748],[709,736],[720,718]],'#0876d5',.71,.01);
+ // Escape azul oficial FIA no Autódromo conforme os prints e foto aérea
+ polygon(circuits,[[799,451],[817,430],[838,431],[848,449],[853,464],[831,456]],'#0060c0',.70,.01);
+ polygon(circuits,[[751,725],[743,743],[726,748],[709,736],[720,718]],'#0060c0',.70,.01);
  const models=new Map();
  for(const p of places){const g=new T.Group();g.userData.placeId=p.id;modelLayer.add(g);models.set(p.id,g);}
  const auto=models.get('autodromo');
@@ -140,8 +144,8 @@ function addVegetation(g){
  for(const poly of terrain.greens.slice(0,3)){const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);for(let i=0;i<550;i++){const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));if(inPolygon([x,z],poly))positions.push([x,z,2.8+rand()*3]);}}
  // Trees follow the actual park perimeter, away from the main roads and facilities.
  for(let i=0;i<terrain.outline.length;i++){const a=terrain.outline[i],b=terrain.outline[(i+1)%terrain.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let d=8;d<len;d+=13){const t=d/len;positions.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,3+rand()*3]);}}
- const crown=new T.InstancedMesh(new T.SphereGeometry(1,12,9),material('#4d7a38',0,.8),positions.length*4),trunk=new T.InstancedMesh(new T.CylinderGeometry(.18,.32,1,7),material('#5c4735',0,.85),positions.length);
- const dummy=new T.Object3D();positions.forEach(([x,z,s],i)=>{for(let j=0;j<4;j++){const a=j/3*Math.PI*2;dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2+s*(j?.8:1.23),z+(j?Math.sin(a)*s*.48:0));dummy.scale.set(s*(j?.69:.78),s*(j?.77:.95),s*(j?.75:.8));dummy.rotation.y=rand()*Math.PI;dummy.updateMatrix();crown.setMatrixAt(i*4+j,dummy.matrix);crown.setColorAt(i*4+j,new T.Color().setHSL(.25+rand()*.07,.48+rand()*.2,.23+rand()*.12));}dummy.position.set(x,2.5,z);dummy.scale.set(s*.7,5,s*.7);dummy.updateMatrix();trunk.setMatrixAt(i,dummy.matrix);});crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
+ const crown=new T.InstancedMesh(new T.SphereGeometry(1,12,9),material('#2b4721',0,.85),positions.length*4),trunk=new T.InstancedMesh(new T.CylinderGeometry(.18,.32,1,7),material('#4a3826',0,.88),positions.length);
+ const dummy=new T.Object3D();positions.forEach(([x,z,s],i)=>{for(let j=0;j<4;j++){const a=j/3*Math.PI*2;dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2+s*(j?.8:1.23),z+(j?Math.sin(a)*s*.48:0));dummy.scale.set(s*(j?.69:.78),s*(j?.77:.95),s*(j?.75:.8));dummy.rotation.y=rand()*Math.PI;dummy.updateMatrix();crown.setMatrixAt(i*4+j,dummy.matrix);crown.setColorAt(i*4+j,new T.Color().setHSL(.25+rand()*.06,.52+rand()*.18,.16+rand()*.10));}dummy.position.set(x,2.5,z);dummy.scale.set(s*.7,5,s*.7);dummy.updateMatrix();trunk.setMatrixAt(i,dummy.matrix);});crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
 }
 
 function roadMarks(g,points){
