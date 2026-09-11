@@ -48,9 +48,9 @@ async function init(){
  window._mapDebug={camera,controls,render:()=>render(),scene,world};
  const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),new T.MeshStandardMaterial({color:'#2e4424',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-5.3;floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
- const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null;const texturePromises=new Map();
+ const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null,planOpacity=0.65,overlayActive=false;const texturePromises=new Map();
  async function loadTexture(url){if(texturePromises.has(url))return texturePromises.get(url);const promise=textureLoader.loadAsync(url).then(tex=>{tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),16);textures.push(tex);return tex;});texturePromises.set(url,promise);return promise;}
- function imageTile(tex,corners,height){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(corners.flatMap(p=>world(p,height).toArray()),3));geo.setAttribute('uv',new T.Float32BufferAttribute([0,1,1,1,0,0,1,0],2));geo.setIndex([0,2,1,1,2,3]);geo.computeVertexNormals();return new T.Mesh(geo,new T.MeshBasicMaterial({map:tex,toneMapped:false,transparent:true,alphaTest:.01,side:T.DoubleSide}));}
+ function imageTile(tex,corners,height,opacity=1){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(corners.flatMap(p=>world(p,height).toArray()),3));geo.setAttribute('uv',new T.Float32BufferAttribute([0,1,1,1,0,0,1,0],2));geo.setIndex([0,2,1,1,2,3]);geo.computeVertexNormals();return new T.Mesh(geo,new T.MeshBasicMaterial({map:tex,toneMapped:false,transparent:true,opacity,depthWrite:false,side:T.DoubleSide}));}
  async function createImageLayer(kind){
   if(kind==='3d')return;
   if(layerPromises.has(kind))return layerPromises.get(kind);
@@ -61,7 +61,9 @@ async function init(){
     const tiles=await Promise.all(data.tiles.map(async tile=>{const tex=await loadTexture(mobile()?tile.mobileUrl:tile.url);const mesh=imageTile(tex,tile.corners,-.4+tile.order*.006);mesh.renderOrder=tile.order;return mesh;}));
     tiles.forEach(m=>group.add(m));group.visible=false;satellite=group;scene.add(group);
    }else{
-    const tex=await loadTexture('./assets/planta-r84.webp?v=7');planImage=imageTile(tex,[[62,10],[1235,10],[62,1120],[1235,1120]],-.25);planImage.visible=false;scene.add(planImage);
+    const tex=await loadTexture('./assets/referencias/prancha-completa.webp?v=r83-r84');
+    planImage=imageTile(tex,[[0,0],[1600,0],[0,1131.869],[1600,1131.869]],-.22,planOpacity);
+    planImage.renderOrder=6;planImage.visible=false;scene.add(planImage);
    }
   })();layerPromises.set(kind,promise);
   try{await promise;}catch(e){layerPromises.delete(kind);throw e;}
@@ -150,19 +152,29 @@ async function init(){
  $('#zoom-in').addEventListener('click',()=>zoom(1.28));$('#zoom-out').addEventListener('click',()=>zoom(1/1.28));
  $('#rotate').addEventListener('click',()=>{activeTween++;if(!tilted)return;const off=camera.position.clone().sub(controls.target).applyAxisAngle(new T.Vector3(0,1,0),Math.PI/8);camera.position.copy(controls.target).add(off);controls.update();render();});
  const reset=()=>{closeSelection(false);overview();};$('#reset').addEventListener('click',reset);$('#north').addEventListener('click',reset);
- function updateLayers(){
-  built.landscape.visible=view==='3d';built.vegetation.visible=view==='3d';built.infrastructure.visible=buildings;built.water.visible=view==='3d';built.modelLayer.visible=buildings;built.circuits.visible=view==='3d'||buildings;floor.visible=view==='3d';imageShadows.visible=view!=='3d'&&buildings;if(satellite)satellite.visible=view==='satellite';if(planImage)planImage.visible=view==='plan';
-  $('#map-credit').textContent=view==='satellite'?'Ortofoto extraída da implantação · Fonte: projeto PNMT':view==='plan'?'Implantação arquitetônica · Arquivo R84':'Maquete do parque · Áreas verdes ilustrativas';
-  $('.map-caption div>span').textContent=view==='satellite'?'O território e os espaços do projeto':view==='plan'?'Consulte a implantação dos espaços':'Explore a arquitetura e os espaços';
-  stage.dataset.view=view;$('#buildings').setAttribute('aria-pressed',String(buildings));renderer.shadowMap.needsUpdate=true;
- }
- $('#tilt').addEventListener('click',()=>{tilted=!tilted;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));});
- $('#buildings').addEventListener('click',()=>{buildings=!buildings;updateLayers();if(selectedId)focus(places.find(p=>p.id===selectedId));render();});
- let requestedView=0;
- document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',async()=>{
-  const token=++requestedView;try{stage.setAttribute('aria-busy','true');b.classList.add('is-loading');await createImageLayer(b.dataset.view);if(token!==requestedView)return;view=b.dataset.view;tilted=view!=='plan';buildings=view!=='plan';updateLayers();document.querySelectorAll('[data-view]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));overview();if(selectedId)focus(places.find(p=>p.id===selectedId));$('#announcement').textContent=`Visualização ${b.textContent} aberta.`;
-  }catch(e){$('#announcement').textContent='Não foi possível carregar essa vista. Tente novamente.';console.error(e);}finally{b.classList.remove('is-loading');if(token===requestedView)stage.removeAttribute('aria-busy');}
- }));
+  const planSlider=$('#plan-opacity'),opacityVal=$('#opacity-val'),overlayWrap=$('#overlay-control'),overlayBtn=$('#overlay-btn');
+  if(planSlider){planSlider.addEventListener('input',e=>{planOpacity=Number(e.target.value)/100;if(opacityVal)opacityVal.textContent=e.target.value+'%';if(planImage){planImage.material.opacity=planOpacity;planImage.visible=planOpacity>0&&(view==='plan'||overlayActive);}render();});}
+  if(overlayBtn){overlayBtn.addEventListener('click',async()=>{overlayActive=!overlayActive;overlayBtn.setAttribute('aria-pressed',String(overlayActive));if(overlayActive&&!planImage)await createImageLayer('plan');updateLayers();render();});}
+  const sidebarToggle=$('#sidebar-toggle');
+  if(sidebarToggle){sidebarToggle.addEventListener('click',()=>{const exp=$('.explorer');exp.classList.toggle('sidebar-collapsed');const col=exp.classList.contains('sidebar-collapsed');sidebarToggle.setAttribute('aria-label',col?'Expandir lista de espaços':'Recolher lista de espaços');sidebarToggle.title=col?'Expandir lista de espaços':'Recolher lista de espaços';setTimeout(()=>overview(),280);});}
+  function updateLayers(){
+   const showPlan=(view==='plan'||overlayActive)&&planImage;
+   built.landscape.visible=view==='3d';built.vegetation.visible=view==='3d';built.infrastructure.visible=buildings;built.water.visible=view==='3d';built.modelLayer.visible=buildings;built.circuits.visible=view==='3d'||buildings;floor.visible=view==='3d';imageShadows.visible=view!=='3d'&&buildings;
+   if(satellite)satellite.visible=view==='satellite';
+   if(planImage){planImage.visible=Boolean(showPlan);planImage.material.opacity=(view==='plan'&&!overlayActive)?Math.max(planOpacity,.85):planOpacity;}
+   if(overlayWrap)overlayWrap.hidden=!(view==='plan'||overlayActive);
+   if(overlayBtn)overlayBtn.setAttribute('aria-pressed',String(overlayActive));
+   $('#map-credit').textContent=view==='satellite'?'Ortofoto aérea da implantação · Fonte: projeto PNMT':(view==='plan'||overlayActive)?'Implantação oficial (Carimbo R83 / Arquivo R84) · Projeto Arquitetônico':'Visualização 3D do projeto · Geometria fiel à implantação R83/R84';
+   $('.map-caption div>span').textContent=view==='satellite'?'O território e os espaços do projeto':(view==='plan'||overlayActive)?'Conferência ortográfica da implantação oficial':'Explore a arquitetura e os espaços';
+   stage.dataset.view=view;$('#buildings').setAttribute('aria-pressed',String(buildings));renderer.shadowMap.needsUpdate=true;
+  }
+  $('#tilt').addEventListener('click',()=>{tilted=!tilted;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));});
+  $('#buildings').addEventListener('click',()=>{buildings=!buildings;updateLayers();if(selectedId)focus(places.find(p=>p.id===selectedId));render();});
+  let requestedView=0;
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',async()=>{
+   const token=++requestedView;try{stage.setAttribute('aria-busy','true');b.classList.add('is-loading');await createImageLayer(b.dataset.view);if(token!==requestedView)return;view=b.dataset.view;tilted=view!=='plan';buildings=true;updateLayers();document.querySelectorAll('[data-view]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));overview();if(selectedId)focus(places.find(p=>p.id===selectedId));$('#announcement').textContent=`Visualização ${b.textContent} aberta.`;
+   }catch(e){$('#announcement').textContent='Não foi possível carregar essa vista. Tente novamente.';console.error(e);}finally{b.classList.remove('is-loading');if(token===requestedView)stage.removeAttribute('aria-busy');}
+  }));
  let resizeW=0,resizeH=0;
  const resize=new ResizeObserver(()=>{if(stage.clientWidth===resizeW&&stage.clientHeight===resizeH)return;resizeW=stage.clientWidth;resizeH=stage.clientHeight;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));});resize.observe(stage);
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showFallback();});

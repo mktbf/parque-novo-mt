@@ -3,6 +3,7 @@
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin.html", "destination": "/admin.html" },
+    { "source": "/pnmt-mapa/:match*", "destination": "/pnmt-mapa/:match*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

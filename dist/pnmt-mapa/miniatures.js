@@ -256,7 +256,7 @@ export function createMiniatures(){
  for(let x=-12;x<=12;x+=1)beam(cg,[x,1.1,14],[x,2.1,14],.065,C.white);beam(cg,[-12,2.1,14],[12,2.1,14],.09,C.white);
  treesSmall(cg,[[-8,8],[8,8]],.65);
  const agro=models.get('agroplace');const ap=groupAt(agro,398,701);cylinder(ap,0,1,0,19,1,C.stone);cylinder(ap,0,2,0,16,11,C.glass);cylinder(ap,0,13,0,17,1.2,'#466347');ring(ap,0,2,0,17,.14,'#99b670');ring(ap,0,12.8,0,17,.14,'#99b670');for(let i=0;i<60;i++){const a=i/60*Math.PI*2;const b=box(ap,Math.cos(a)*16.8,2,Math.sin(a)*16.8,.6,12,1.3,i%3===0?'#8aaf69':'#466b42');b.rotation.y=-a;}for(let r=21;r<=25;r+=2){const step=cylinder(ap,0,.15+(25-r)*.1,0,r,.3,C.stone);step.castShadow=false;}
- const gate=models.get('portico-de-entrada');const ga=groupAt(gate,918,975,1.18);
+ const gate=models.get('portico-de-entrada');const ga=groupAt(gate,933,968,1.15);
  // Two broad, curved concrete shells, as shown in the entrance rendering.
  for(const x of [-17,17]){const shell=new T.Shape();shell.moveTo(-17,1);shell.absellipse(0,1,17,19,Math.PI,0,true);shell.lineTo(15.8,1);shell.absellipse(0,1,15.8,17.8,0,Math.PI,false);shell.closePath();const m=add(ga,new T.ExtrudeGeometry(shell,{depth:11,bevelEnabled:true,bevelThickness:.15,bevelSize:.15,bevelSegments:2,curveSegments:40}),C.white,x,0,-5.5);for(const side of [-1,1]){box(ga,x+side*16.4,.5,0,1.6,2,12,C.stone);beam(ga,[x+side*15.7,2,-5.7],[x+side*12.5,11,-5.7],.1,C.gold);}}
  box(ga,0,1,0,5,2,9,C.green);for(const x of [-25,-8,8,25])path(ga,[[x,-15],[x,15]],.28,C.white,1.1);

@@ -8,12 +8,13 @@ import * as T from 'three';
  */
 export const referencias = [
   {id:'arena-show',nome:'Arena Show',foto:'03-arena.png',centro:[479,442],vista:[1,.65,.9],ajustes:['Cobertura branca contínua e ondulada','Pavilhão aberto, com estrutura aparente','Bilheteria independente e entrada recuada']},
-  {id:'portico-de-entrada',nome:'Pórtico de Entrada',foto:'02-portico.png',centro:[918,975],angulo:1.18,vista:[.28,.36,1],ajustes:['Duas asas arqueadas com encontro central','Nervuras e travamentos sob a cobertura','Canteiro central e passagem livre para veículos']},
+  {id:'portico-de-entrada',nome:'Pórtico de Entrada',foto:'02-portico.png',centro:[933,968],angulo:1.15,vista:[.28,.36,1],ajustes:['Duas asas arqueadas com encontro central no canteiro','Estrutura fanning e travamentos sob a cobertura','Canteiro central oval e passagem livre para veículos']},
   {id:'bmx',nome:'Pista de BMX',foto:'06-bmx.png',centro:[307,865],angulo:.36,escala:[.9,1,.86],vista:[1,.9,1.15],ajustes:['Quatro retas conectadas por curvas','Superfície azul e curvas amarelas','Ondulações integradas e plataformas de largada abertas']},
   {id:'skate-park',nome:'Skate Park',foto:'07-skate.png',centro:[261,786],angulo:-.25,escala:[.9,1,.77],vista:[1,1.25,1],ajustes:['Bowls rebaixados com formas diferentes','Área street com corrimãos e rampas','Marquises brancas e caminhos entre os setores']},
   {id:'kartodromo',nome:'Kartódromo',foto:'08-kartodromo.png',centro:[443,837],vista:[-1,1.2,1],ajustes:['Traçado existente preservado','Edifício linear e marquise escura','Pilares, estrutura superior e acessos modulados']},
   {id:'motocross',nome:'Pista de Motocross',foto:'05-motocross.png',centro:[363,963],angulo:.74,vista:[1,1.1,1],ajustes:['Percurso de terra serpenteando pela área','Saltos integrados à pista','Taludes de terra com entorno verde']},
-  {id:'roda-gigante',nome:'Roda-gigante',foto:'09-roda-gigante.png',centro:[508,738],angulo:.74,vista:[.62,.32,1],ajustes:['Dois aros, raios e 42 cabines','Apoios inclinados e eixo exposto','Passarela elevada e torre de acesso separada']},
+  {id:'roda-gigante',nome:'Roda-gigante',foto:'09-roda-gigante.png',centro:[508,738],angulo:.74,vista:[.62,.32,1],ajustes:['Dois aros, raios e 42 cabines','Apoios inclinados e eixo exposto','Passarela elevada 25.2 e plataforma 25.3']},
+  {id:'agroplace',nome:'AgroPlace',foto:'19-agroplace.png',centro:[398,701],vista:[.6,.4,1],ajustes:['Rotunda arquitetônica independente (Setor 19)','Brises metálicos e mezanino panorâmico','Esplanada própria de circulação']},
   {id:'arvore-da-vida',nome:'Árvore da Vida',foto:'10-arvore-da-vida.png',centro:[283,598],vista:[1,.5,1],ajustes:['Fuste cilíndrico esbelto','Coroamento compacto conforme o print','Acabamento superior ainda interpretativo']},
   {id:'vila-das-nacoes',nome:'Vila das Nações',foto:'11-vila-das-nacoes.png',centro:[447,568],angulo:-Math.PI/2+.4,vista:[.25,.55,1],ajustes:['Fachadas temáticas com silhuetas distintas','Torres, cúpulas, frontões e arcadas','Passeio contínuo voltado para a orla']},
   {id:'autodromo',nome:'Autódromo',foto:'01-autodromo.png',centro:[828,640],vista:[-1,1.3,1],ajustes:['Circuito e ligação já existentes preservados','Boxes, arquibancadas e postes','Pintura azul concentrada nas áreas de escape']},
@@ -64,25 +65,54 @@ function archWindow(g,x,y,z,w,h,c=PAL.glass){
 
 export function buildPortico(g){
   g.name='Pórtico · duas asas';
-  box(g,0,.05,0,78,.15,34,PAL.grass);
-  for(const side of [-1,1]){
-    box(g,side*18,.23,0,29,.08,34,PAL.road);
-    for(const x of [side*7,side*30])path(g,[[x,-16],[x,16]],.18,PAL.white,.325,false,false);
-    for(let z=-14;z<16;z+=5)box(g,side*18,.33,z,.16,.015,2.8,PAL.white);
-    const n=64,v=[],ix=[],span=34;
-    const y=t=>.7+17*Math.pow(Math.sin(Math.PI*t),.82);
-    for(let i=0;i<=n;i++){const t=i/n,x=side*(1+span*t);v.push(x,y(t),-4.8,x,y(t)+.8,4.8);if(i<n){const k=2*i;ix.push(k,k+1,k+2,k+1,k+3,k+2);}}
-    const skin=surface(g,v,ix,'#dce2df');skin.material=material('#dce2df').clone();skin.material.side=T.DoubleSide;
-    for(const z of [-4.8,-2.4,0,2.4,4.8]){
-      const pts=Array.from({length:65},(_,i)=>{const t=i/64;return[side*(1+span*t),y(t)+.08+(z+4.8)/12,z];});
-      tube(g,pts,z===-4.8||z===4.8?.34:.2,PAL.white);
-    }
-    for(let i=2;i<32;i+=2){const t=i/34,x=side*(1+34*t);beam(g,[x,y(t)-.14,-4.8],[x,y(t)+.66,4.8],.08,PAL.white);}
-    for(const x of [side*1,side*35])box(g,x,.25,0,1.5,.7,10,PAL.concrete);
+  // Canteiro central oval e ajardinado no encontro das duas cascas
+  const islandCurbs=mesh(g,new T.CylinderGeometry(1,1,.32,48),PAL.concrete,0,.2,0);
+  islandCurbs.scale.set(3.8,1,11);
+  const islandLawn=mesh(g,new T.CylinderGeometry(1,1,.36,48),PAL.grass,0,.22,0);
+  islandLawn.scale.set(3.2,1,10.2);
+  for(let i=0;i<16;i++){
+    const a=i*Math.PI*2/16;
+    shrub(g,Math.cos(a)*2.4,Math.sin(a)*8.5,.9);
   }
-  const island=mesh(g,new T.CylinderGeometry(1,1,.28,40),PAL.concrete,0,.45,8);island.scale.set(4.8,1,10);
-  for(let i=0;i<12;i++){const a=i*Math.PI*2/12;shrub(g,Math.cos(a)*3.4,8+Math.sin(a)*7,1);}
-  for(const z of [-10,2,14])lamp(g,-36,z,5);
+
+  // Duas cascas arqueadas de concreto com envoltória fanning e encontro escalonado
+  for(const side of [-1,1]){
+    const zOffset=side*3.2; // Escalonamento entre as asas conforme a implantação
+    const span=27.5; // Vão livre cruzando a pista até a base externa no meio-fio
+    const n=64,v=[],ix=[];
+    const y=t=>.5+16.5*Math.pow(Math.sin(Math.PI*t),.84);
+    const halfW=t=>3.4+3.8*t; // Mais estreito no canteiro central e expande na guia externa
+    
+    for(let i=0;i<=n;i++){
+      const t=i/n,x=side*(1.2+span*t),w=halfW(t);
+      v.push(x,y(t),zOffset-w,x,y(t)+.75,zOffset+w);
+      if(i<n){const k=2*i;ix.push(k,k+1,k+2,k+1,k+3,k+2);}
+    }
+    const skin=surface(g,v,ix,'#dce2df');
+    skin.material=material('#dce2df').clone();skin.material.side=T.DoubleSide;
+
+    // Bordas tubulares e vigas longitudinais
+    for(const factor of [-1,-.5,0,.5,1]){
+      const pts=Array.from({length:65},(_,i)=>{
+        const t=i/64,w=halfW(t);
+        return[side*(1.2+span*t),y(t)+.08*(1-t)+(factor*w)/18,zOffset+factor*w];
+      });
+      tube(g,pts,Math.abs(factor)===1?.32:.18,PAL.white);
+    }
+
+    // Travamentos transversais e nervuras estruturais sob a cobertura
+    for(let i=2;i<span;i+=2.5){
+      const t=i/span,x=side*(1.2+span*t),w=halfW(t);
+      beam(g,[x,y(t)-.12,zOffset-w],[x,y(t)+.62,zOffset+w],.075,PAL.white);
+    }
+
+    // Blocos de fundação e pilares de engaste: no canteiro central e no meio-fio
+    box(g,side*1.5,.3,zOffset,1.8,1.2,7.6,PAL.concrete);
+    box(g,side*(1.2+span),.3,zOffset,2.2,1.3,15.2,PAL.concrete);
+  }
+
+  // Postes de iluminação viária nas margens do acesso
+  for(const z of [-18,0,18])lamp(g,-34,z,6);
 }
 
 function rampStrip(g,x,z0,z1,w,heightAt,c){
@@ -167,30 +197,145 @@ export function buildMotocross(g){
 }
 
 export function buildWheel(g){
-  g.name='Roda-gigante · aro e acesso';box(g,-4,.1,4,69,.25,40,PAL.concrete);
-  const r=22.2,cy=27;
-  for(const z of [-2.8,2.8]){ring(g,0,cy,z,r,.23,PAL.white,true);ring(g,0,cy,z,r-.95,.15,PAL.white,true);}
+  g.name='Roda-gigante (Setor 25) · Praça, Plataforma 25.3 e Passarela 25.2';
+
+  // 1. PRAÇA CIRCULAR DO SETOR 25 (Diâmetro 68m, raio 34)
+  mesh(g,new T.CylinderGeometry(34,34,.22,64),PAL.concrete,0,.1,0);
+  ring(g,0,.23,0,32,.5,'#b8c2be');
+  ring(g,0,.23,0,24,.35,'#c9d1cc');
+  ring(g,0,.23,0,16,.25,'#b8c2be');
+
+  // Canteiros radiais e iluminação
+  for(let k=0;k<6;k++){
+    const a=k/6*Math.PI*2+Math.PI/6,qx=Math.cos(a)*27,qz=Math.sin(a)*27;
+    mesh(g,new T.CylinderGeometry(3.5,3.5,.25,24),PAL.grass,qx,.24,qz);
+    shrub(g,qx,qz,1.2);
+    lamp(g,Math.cos(a)*32,Math.sin(a)*32,7);
+  }
+
+  // 2. FUNDAÇÃO E PYLONS EM "A" DA RODA-GIGANTE
+  const r=23.5,cy=28.5; // Raio 23.5m, centro a 28.5m de altura
+  for(const s of [-1,1])for(const z of [-5.5,5.5]){
+    box(g,s*13.5,.25,z,4.2,.8,4.2,PAL.concrete);
+    box(g,s*13.5,.85,z,3.2,.4,3.2,PAL.steel);
+    beam(g,[s*13.5,1.0,z],[0,cy,z*.4],.65,PAL.white);
+    beam(g,[s*13.5,1.0,z*.8],[0,cy,z*.4],.45,PAL.steel);
+  }
+  beam(g,[-13.5,6,-5.5],[-13.5,6,5.5],.35,PAL.white);
+  beam(g,[13.5,6,-5.5],[13.5,6,5.5],.35,PAL.white);
+  beam(g,[-13.5,14,-3.8],[-13.5,14,3.8],.3,PAL.white);
+  beam(g,[13.5,14,-3.8],[13.5,14,3.8],.3,PAL.white);
+
+  // Eixo central fixo de alta robustez com mancal
+  beam(g,[0,cy,-4.5],[0,cy,4.5],1.2,PAL.steel);
+  cylinder(g,0,cy,-2.8,1.8,.9,PAL.white);
+  cylinder(g,0,cy,2.8,1.8,.9,PAL.white);
+
+  // 3. AROS DUPLOS E TRELIÇAS EM ZIG-ZAG
+  for(const z of [-2.8,2.8]){
+    ring(g,0,cy,z,r,.24,PAL.white,true);
+    ring(g,0,cy,z,r-1.1,.16,PAL.white,true);
+  }
   for(let i=0;i<42;i++){
     const a=i/42*Math.PI*2,x=Math.cos(a)*r,y=cy+Math.sin(a)*r;
-    for(const z of [-2.8,2.8])beam(g,[0,cy,z*.4],[x,y,z],.065,'#bdc7ca');
-    beam(g,[x,y,-2.8],[x,y,2.8],.1,PAL.white);
-    const aa=a+Math.PI*2/42;beam(g,[x,y,-2.8],[Math.cos(aa)*r,cy+Math.sin(aa)*r,2.8],.075,PAL.white);
-    const px=Math.cos(a)*(r+1.2),py=cy+Math.sin(a)*(r+1.2);
-    beam(g,[x,y,0],[px,py,0],.1,PAL.white);
-    const c=group(g,px,0);c.position.y=py-1.1;c.name='Cabine '+String(i+1).padStart(2,'0');
-    const cap=mesh(c,new T.SphereGeometry(1.08,12,8),PAL.white,0,.45,0);cap.scale.set(1,.45,1.3);
-    cylinder(c,0,.45,0,.96,1.17,PAL.glass);const top=mesh(c,new T.SphereGeometry(1.05,12,8),PAL.white,0,1.58,0);top.scale.set(1,.38,1.25);
-    for(const x of [-.82,.82])beam(c,[x,.5,.55],[x,1.6,.55],.035,PAL.white);beam(c,[0,1.8,0],[0,2.16,0],.11,PAL.steel);
+    beam(g,[x,y,-2.8],[x,y,2.8],.11,PAL.white);
+    const aNext=(i+1)/42*Math.PI*2,nx=Math.cos(aNext)*r,ny=cy+Math.sin(aNext)*r;
+    beam(g,[x,y,-2.8],[nx,ny,2.8],.075,PAL.white);
+    beam(g,[x,y,2.8],[nx,ny,-2.8],.075,PAL.white);
+    for(const z of [-2.8,2.8]){
+      beam(g,[0,cy,z*.45],[x,y,z],.055,'#c4cfd2');
+    }
   }
-  for(const z of [-5,5])for(const s of [-1,1]){beam(g,[s*12,.4,z],[0,cy,0],.62,PAL.white);box(g,s*12,.2,z,4,.4,4,PAL.concrete);}
-  beam(g,[0,cy,-4],[0,cy,4],1.1,PAL.steel);
-  const bridge=group(g,-22,14);bridge.name='Passarela de acesso';box(bridge,0,4,0,34,.4,4.5,'#985d3f');
-  for(const z of [-2.1,2.1]){beam(bridge,[-17,4.4,z],[17,4.4,z],.11,PAL.steel);beam(bridge,[-17,7,z],[17,7,z],.1,PAL.white);for(let x=-17;x<17;x+=3.4){beam(bridge,[x,4.4,z],[x+1.7,7,z],.1,PAL.white);beam(bridge,[x+1.7,7,z],[x+3.4,4.4,z],.1,PAL.white);}}
-  for(const x of [-10,10])for(const z of [-1.8,1.8])beam(bridge,[x,.3,z],[x,4,z],.16,PAL.steel);
-  box(g,-39,.3,14,4.6,9.8,5.4,'#ceccb4');box(g,-42.2,.3,14,2,5,6,'#b73828');
-  for(let y=1;y<=9;y+=2.5)box(g,-39,y,16.73,4.5,.08,.04,PAL.white);
-  for(let x=-41;x<-37;x+=.3)box(g,x,.5,16.76,.035,9.5,.04,PAL.white);
-  box(g,-3,.4,12,16,3.5,9,PAL.glass);box(g,-3,3.9,12,17,.25,10,PAL.white);
+
+  // 4. EXATAMENTE 42 CABINES CLIMATIZADAS COM ORIENTAÇÃO GRAVITACIONAL VERTICAL
+  for(let i=0;i<42;i++){
+    const a=i/42*Math.PI*2,x=Math.cos(a)*r,y=cy+Math.sin(a)*r;
+    beam(g,[x,y,0],[x,y-1.1,0],.1,PAL.steel);
+    const c=group(g,x,0);
+    c.position.y=y-1.2;
+    c.name='Cabine '+String(i+1).padStart(2,'0')+' (Setor 25)';
+    const baseCap=mesh(c,new T.SphereGeometry(1.1,14,8),PAL.white,0,.42,0);
+    baseCap.scale.set(1.05,.4,1.3);
+    cylinder(c,0,.45,0,.98,1.25,PAL.glass);
+    const roofCap=mesh(c,new T.SphereGeometry(1.08,14,8),PAL.white,0,1.65,0);
+    roofCap.scale.set(1.05,.35,1.25);
+    for(const sx of [-.85,.85])beam(c,[sx,.5,.6],[sx,1.65,.6],.035,PAL.white);
+    beam(c,[0,1.85,0],[0,2.15,0],.1,PAL.steel);
+  }
+
+  // 5. PLATAFORMA DE EMBARQUE/DESEMBARQUE (SETOR 25.3)
+  const plat=group(g,0,14);
+  plat.name='Plataforma de Embarque 25.3';
+  box(plat,0,.3,0,32,1.8,12,PAL.concrete);
+  box(plat,0,2.1,0,33,.2,13,'#37474f');
+  box(plat,0,6.2,0,35,.35,14,PAL.white);
+  for(const px of [-14,-7,0,7,14])for(const pz of [-5.5,5.5]){
+    beam(plat,[px,2.1,pz],[px,6.2,pz],.16,PAL.steel);
+  }
+  box(plat,0,3.2,6.3,32,2.0,.08,PAL.glass);
+  box(plat,0,3.2,-6.3,32,2.0,.08,PAL.glass);
+  for(let step=0;step<5;step++){
+    box(plat,0,.2+step*.35,6.8+step*1.1,16,.36,1.2,PAL.concrete);
+  }
+
+  // 6. PASSARELA ELEVADA DE PEDESTRES (SETOR 25.2)
+  const walkway=group(g,-24,14);
+  walkway.name='Passarela Elevada de Pedestres 25.2';
+  box(walkway,0,3.8,0,38,.4,4.8,'#c4cec9');
+  box(walkway,0,4.1,0,38,.18,4.2,'#4e6572');
+  for(const side of [-2.2,2.2]){
+    box(walkway,0,4.9,side,38,1.2,.06,PAL.glass);
+    beam(walkway,[-19,5.5,side],[19,5.5,side],.08,PAL.steel);
+    for(let x=-18;x<=18;x+=3){
+      beam(walkway,[x,4.2,side],[x,5.5,side],.055,PAL.steel);
+    }
+  }
+  for(const wx of [-12,8]){
+    beam(walkway,[wx,.2,-1.8],[wx-1.2,3.8,-1.8],.2,PAL.steel);
+    beam(walkway,[wx,.2,1.8],[wx-1.2,3.8,1.8],.2,PAL.steel);
+    beam(walkway,[wx,.2,-1.8],[wx+1.2,3.8,-1.8],.2,PAL.steel);
+    beam(walkway,[wx,.2,1.8],[wx+1.2,3.8,1.8],.2,PAL.steel);
+  }
+  const tower=group(g,-43,14);
+  box(tower,0,.3,0,5.6,11.2,5.6,'#2c3d46');
+  box(tower,0,5.5,0,5.8,4.5,5.8,PAL.glass);
+  box(tower,0,11.4,0,6.2,.4,6.2,PAL.white);
+}
+
+export function buildAgroPlace(g){
+  g.name='AgroPlace (Setor 19) · Rotunda de Eventos';
+  mesh(g,new T.CylinderGeometry(26,26,.2,48),PAL.concrete,0,.1,0);
+  for(let r=21;r<=25;r+=2){
+    const step=mesh(g,new T.CylinderGeometry(r,r,.18,48),PAL.concrete,0,.12+(25-r)*.06,0);
+    step.castShadow=false;
+  }
+  cylinder(g,0,.3,0,18.5,1,PAL.concrete);
+  cylinder(g,0,1.3,0,17.2,5.2,PAL.glass);
+  for(let i=0;i<16;i++){
+    const a=i/16*Math.PI*2,px=Math.cos(a)*17.5,pz=Math.sin(a)*17.5;
+    cylinder(g,px,1.3,pz,.45,5.2,PAL.concrete);
+  }
+  box(g,0,6.5,0,38,.4,38,'#36543b');
+  cylinder(g,0,6.7,0,18.8,.3,PAL.concrete);
+  cylinder(g,0,7.0,0,17,4.8,PAL.glass);
+  ring(g,0,7.0,0,17.6,.18,'#8aaf69');
+  ring(g,0,11.8,0,17.6,.18,'#8aaf69');
+  for(let i=0;i<60;i++){
+    const a=i/60*Math.PI*2;
+    const b=box(g,Math.cos(a)*17.4,7.0,Math.sin(a)*17.4,.55,4.6,.35,i%3===0?'#8aaf69':'#466b42');
+    b.rotation.y=-a;
+  }
+  const dome=mesh(g,new T.SphereGeometry(18.2,32,16,0,Math.PI*2,0,Math.PI/2),'#4a674e',0,11.8,0);
+  dome.scale.y=.35;
+  cylinder(g,0,15.8,0,3.5,1.2,PAL.glass);
+  cylinder(g,0,17.0,0,4.2,.35,PAL.white);
+  box(g,0,3.8,19.5,14,.3,8,PAL.white);
+  for(const x of [-6,6])beam(g,[x,.3,23],[x,3.8,23],.2,PAL.steel);
+  for(let i=0;i<8;i++){
+    const a=i/8*Math.PI*2+Math.PI/8,lx=Math.cos(a)*23.5,lz=Math.sin(a)*23.5;
+    lamp(g,lx,lz,6);
+    shrub(g,Math.cos(a)*21,Math.sin(a)*21,.9);
+  }
 }
 
 export function buildTower(g){
@@ -256,7 +401,7 @@ export function buildAutodromo(g,terrain){
   for(let i=0;i<80;i++){const p=curve.getPointAt(i/80),t=curve.getTangentAt(i/80);lamp(g,p.x-t.z*12,p.z+t.x*12,12);}
 }
 
-export const builders={'portico-de-entrada':buildPortico,bmx:buildBMX,'skate-park':buildSkate,kartodromo:buildKartodromo,motocross:buildMotocross,'roda-gigante':buildWheel,'arvore-da-vida':buildTower,'vila-das-nacoes':buildVillage,'estrutura-e-acesso':buildParking,autodromo:buildAutodromo};
+export const builders={'portico-de-entrada':buildPortico,bmx:buildBMX,'skate-park':buildSkate,kartodromo:buildKartodromo,motocross:buildMotocross,'roda-gigante':buildWheel,agroplace:buildAgroPlace,'arvore-da-vida':buildTower,'vila-das-nacoes':buildVillage,'estrutura-e-acesso':buildParking,autodromo:buildAutodromo};
 
 /** Cria o estudo em coordenadas locais. A Arena e o Autódromo usam a base existente. */
 export function createRefinedSpace(id,{terrain}={}){
