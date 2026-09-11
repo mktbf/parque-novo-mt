@@ -20,14 +20,19 @@ export const referencias = [
   {id:'estrutura-e-acesso',nome:'Estacionamentos',foto:'04-estacionamentos.png',centro:[789,982],vista:[.4,1.5,1],ajustes:['Pavimento cinza e marcações legíveis','Vias internas e ilhas verdes','Vagas conforme as áreas existentes']}
 ];
 
-const PAL={white:'#edf0ec',concrete:'#bebbb1',steel:'#58656a',dark:'#27343e',glass:'#467582',blue:'#0876d5',yellow:'#f1cc08',grass:'#729b4b',earth:'#bb7149',road:'#555d63',green:'#365f39'};
+const PAL={white:'#f6f8f5',concrete:'#c7c6bd',steel:'#4d5c64',dark:'#1d272f',glass:'#467b8c',blue:'#0876d5',yellow:'#f1cc08',grass:'#68914f',earth:'#b86e45',road:'#464c50',green:'#366238'};
 const materialCache=new Map();
 function material(c,metalness=0,roughness=.72){
-  const key=[c,metalness,roughness].join('|');
+  const isGlass=c===PAL.glass;
+  const isSteel=[PAL.steel,PAL.dark,'#bdc7ca'].includes(c);
+  const m=metalness||(isSteel?.65:0);
+  const r=roughness||(isSteel?.26:isGlass?.12:.72);
+  const key=[c,m,r].join('|');
   if(!materialCache.has(key)){
-    const glass=c===PAL.glass;
-    const m=glass?new T.MeshPhysicalMaterial({color:c,metalness:.18,roughness:.19,clearcoat:1}):new T.MeshStandardMaterial({color:c,metalness,roughness});
-    m.name=c; materialCache.set(key,m);
+    const mat=isGlass
+      ? new T.MeshPhysicalMaterial({color:c,metalness:.2,roughness:.1,clearcoat:1,clearcoatRoughness:.06,envMapIntensity:2})
+      : new T.MeshStandardMaterial({color:c,metalness:m,roughness:r,envMapIntensity:isSteel?1.5:.85});
+    mat.name=c; materialCache.set(key,mat);
   }
   return materialCache.get(key);
 }

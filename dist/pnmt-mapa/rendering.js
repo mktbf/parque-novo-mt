@@ -21,22 +21,23 @@ export function createRendering(scene,camera,smallScreen){
  const beauty=new RenderPass(scene,camera);
  composer.addPass(beauty);
  const ao=new GTAOPass(scene,camera,1,1);
- ao.blendIntensity=.72;
- ao.updateGtaoMaterial({radius:7,thickness:2.5,distanceExponent:1.4,distanceFallOff:.6,scale:1,samples:12,screenSpaceRadius:false});
- ao.updatePdMaterial({radius:4,samples:8,rings:2});
+ ao.blendIntensity=.88;
+ ao.updateGtaoMaterial({radius:20,thickness:3.8,distanceExponent:1.3,distanceFallOff:.5,scale:1,samples:14,screenSpaceRadius:false});
+ ao.updatePdMaterial({radius:6,samples:10,rings:3});
  composer.addPass(ao);
  composer.addPass(new OutputPass());
- const sun=new T.DirectionalLight('#fff7ea',3.6);
+ const sun=new T.DirectionalLight('#fff8eb',3.75);
  const sunOffset=new T.Vector3(-540,460,340);sun.position.copy(sunOffset);
  sun.castShadow=true;
+ sun.shadow.radius=2.2;
  sun.shadow.mapSize.set(smallScreen?2048:4096,smallScreen?2048:4096);
  Object.assign(sun.shadow.camera,{left:-870,right:870,top:840,bottom:-840,near:1,far:2300});
- sun.shadow.bias=-.00012;sun.shadow.normalBias=.24;
- scene.add(sun,sun.target,new T.HemisphereLight('#c4e2f8','#48683a',.95));
- const sky=new Sky();sky.scale.setScalar(40000);sky.material.uniforms.turbidity.value=2.4;sky.material.uniforms.rayleigh.value=1.15;sky.material.uniforms.mieCoefficient.value=.0035;sky.material.uniforms.mieDirectionalG.value=.82;sky.material.uniforms.sunPosition.value.copy(sunOffset.clone().normalize());scene.add(sky);
- const atmosphere=new T.Fog('#c5dce7',1600,6000);
- scene.environmentIntensity=1.05;
- scene.background=new T.Color('#c5dce7');
+ sun.shadow.bias=-.0001;sun.shadow.normalBias=.2;
+ scene.add(sun,sun.target,new T.HemisphereLight('#c6e4fa','#456436',.95));
+ const sky=new Sky();sky.scale.setScalar(40000);sky.material.uniforms.turbidity.value=2.0;sky.material.uniforms.rayleigh.value=1.05;sky.material.uniforms.mieCoefficient.value=.003;sky.material.uniforms.mieDirectionalG.value=.8;sky.material.uniforms.sunPosition.value.copy(sunOffset.clone().normalize());scene.add(sky);
+ const atmosphere=new T.Fog('#c1d9e5',1800,6500);
+ scene.environmentIntensity=1.15;
+ scene.background=new T.Color('#c1d9e5');
  let environment=null,disposed=false;
  function setCamera(next){
   beauty.camera=next;ao.camera=next;
@@ -55,7 +56,7 @@ export function createRendering(scene,camera,smallScreen){
   resize(w,h){renderer.setSize(w,h,false);composer.setSize(w,h);},
   render(mode,overlay){
    // The photo and technical drawing retain their source colors.
-   scene.background.set(mode==='3d'?'#c5dce7':mode==='plan'?'#eeeee9':'#27332c');sky.visible=mode==='3d';const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.near=Math.max(1400,distance*1.12);atmosphere.far=Math.max(5000,distance+3800);scene.fog=mode==='3d'?atmosphere:null;
+   scene.background.set(mode==='3d'?'#c1d9e5':mode==='plan'?'#eeeee9':'#27332c');sky.visible=mode==='3d';const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.near=Math.max(1400,distance*1.12);atmosphere.far=Math.max(5000,distance+3800);scene.fog=mode==='3d'?atmosphere:null;
    const useAO=mode==='3d'&&!smallScreen&&renderer.extensions.has('EXT_color_buffer_float');
    if(useAO){ao.enabled=true;composer.render();}else renderer.render(scene,beauty.camera);
    if(overlay){renderer.autoClear=false;renderer.clearDepth();renderer.render(overlay,beauty.camera);renderer.autoClear=true;}
