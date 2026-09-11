@@ -24,7 +24,7 @@ export async function loadMaterials(renderer){
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of mats.values()){
-   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6'].includes(m.name);
+   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6','#1a1e21','#1e2225','#23292d','#101214','#25292c'].includes(m.name);
    const grass=[C.grass,'#b7c49a','#82986a','#b0ad82'].includes(m.name);
    // Concreto e cobertura branca preservam seus materiais próprios.
    if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.28);m.color.set('#25292c');m.needsUpdate=true;}
@@ -53,6 +53,155 @@ function archRoof(g,w,d,h,color=C.white){const cross=new T.Shape();cross.moveTo(
 function stand(g,x,z,w,d,angle=0){const s=groupAt(g,x,z,angle);for(let j=0;j<6;j++)box(s,0,j*.7,j*d/6-d/2,w,.8,d/6,C.stone);box(s,0,9,0,w+3,.7,d+3,C.dark);for(const ix of [-w/2,w/2])for(const iz of [-d/2,d/2])cylinder(s,ix,0,iz,.5,9,C.dark);for(let j=0;j<6;j++)for(let i=-w/2+1.5;i<w/2;i+=2.4){box(s,i,j*.7+.9,j*d/6-d/2,1.4,.23,1,'#acbdc3');box(s,i,j*.7+1.05,j*d/6-d/2+.5,1.4,.9,.18,C.white);}for(let i=-w/2;i<w/2;i+=8){beam(s,[i,8,-d/2],[i+8,9,d/2],.13,C.white);beam(s,[i,9,d/2],[i+8,8,-d/2],.13,C.white);}return s;}
 function court(g,x,z,w,d){box(g,x,.7,z,w,1,d,'#e2cc9b');path(g,[[x-w/2+1,z-d/2+1],[x+w/2-1,z-d/2+1],[x+w/2-1,z+d/2-1],[x-w/2+1,z+d/2-1]],.3,C.white,1.75,true,false);beam(g,[x-w/2-1,1,z],[x-w/2-1,6,z],.18,C.dark);beam(g,[x+w/2+1,1,z],[x+w/2+1,6,z],.18,C.dark);for(let h=3;h<=5;h+=.5)beam(g,[x-w/2, h,z],[x+w/2,h,z],.045,C.white);}
 
+function buildAutodromo(auto,circuits){
+ const ag=groupAt(auto,689,521,.77);
+ // 1. RETA PRINCIPAL - GRID FIA E PÓRTICO
+ for(let z=-5.7;z<=5.7;z+=.95){const isW=Math.round((z+6)/.95)%2===0;box(ag,-10,.72,z,.95,.02,.95,isW?C.white:C.dark);}
+ for(let row=0;row<12;row++){
+  const x=-75+row*5.2,zSlot=(row%2===0)?-2.8:2.8;
+  box(ag,x,.72,zSlot,3.8,.02,.15,C.white);box(ag,x-1.9,.72,zSlot-.7,.15,.02,1.4,C.white);box(ag,x+1.9,.72,zSlot-.7,.15,.02,1.4,C.white);box(ag,x+1.5,.72,zSlot-.7,.4,.02,.4,'#bc5942');
+ }
+ for(let x=-95;x<85;x+=3.6){
+  const isRed=Math.round(x/3.6)%2===0;
+  box(ag,x,.71,-5.9,3.6,.08,.8,isRed?'#bc5942':C.white);
+  box(ag,x,.71,5.9,3.6,.08,.8,isRed?'#bc5942':C.white);
+ }
+ for(const zSide of [-6.8,6.8]){beam(ag,[-10,.7,zSide],[-10,8.5,zSide],.22,C.dark);beam(ag,[-10,.7,zSide+.6*Math.sign(zSide)],[-10,8.5,zSide],.15,C.dark);}
+ beam(ag,[-10,8.2,-6.8],[-10,8.2,6.8],.25,C.dark);beam(ag,[-10,7.2,-6.8],[-10,7.2,6.8],.18,C.dark);
+ for(let z=-6;z<=6;z+=1.5){beam(ag,[-10,7.2,z],[-10,8.2,z+.75],.08,C.white);beam(ag,[-10,8.2,z],[-10,7.2,z+.75],.08,C.white);}
+ for(let i=-2;i<=2;i++){box(ag,-10,7.7,i*.9,.35,.6,.5,C.dark);cylinder(ag,-9.8,7.7,i*.9,.18,.1,'#e53935',.18);}
+ box(ag,-10,9.1,0,.3,1.2,7.5,'#102027');box(ag,-9.8,9.1,0,.05,.8,7.0,'#37474f');
+
+ // 2. PISTA DE ARRANCADA ("Dragstrip" - 23 | PISTA DE ARRANCADA em Print 2)
+ box(ag,-5,.69,-21,180,.03,10.2,'#1a1e21');
+ box(ag,-84,.71,-18.7,16,.02,3.8,'#101214');box(ag,-84,.71,-23.3,16,.02,3.8,'#101214');
+ path(ag,[[-94,-21],[80,-21]],.25,C.white,.72,false,false);path(ag,[[-94,-16.2],[80,-16.2]],.2,C.white,.72,false,false);path(ag,[[-94,-25.8],[80,-25.8]],.2,C.white,.72,false,false);
+ box(ag,-74,.72,-21,.5,.02,9.8,C.white);box(ag,-74.8,.72,-21,.3,.02,9.8,'#fbc02d');
+ cylinder(ag,-74.5,.7,-21,.12,5.5,C.dark);box(ag,-74.5,3.8,-21,.3,3.2,.65,C.dark);
+ for(const side of [-.22,.22]){
+  cylinder(ag,-74.3,5.1,-21+side,.08,.08,'#0288d1');cylinder(ag,-74.3,4.8,-21+side,.08,.08,'#0288d1');
+  cylinder(ag,-74.3,4.4,-21+side,.09,.08,'#fbc02d');cylinder(ag,-74.3,4.0,-21+side,.09,.08,'#fbc02d');cylinder(ag,-74.3,3.6,-21+side,.09,.08,'#fbc02d');
+  cylinder(ag,-74.3,3.2,-21+side,.09,.08,'#43a047');cylinder(ag,-74.3,2.8,-21+side,.09,.08,'#e53935');
+ }
+ box(ag,-5,.7,-15.6,180,1.1,.55,C.stone);box(ag,-5,1.8,-15.6,180,.08,.35,C.dark);
+ for(let x=-92;x<84;x+=12){beam(ag,[x,1.8,-15.6],[x,3.2,-15.6],.06,C.dark);if(x+12<84)beam(ag,[x,3.1,-15.6],[x+12,3.1,-15.6],.03,C.white);}
+ box(ag,-5,.7,-26.4,180,1.1,.55,C.stone);box(ag,-5,1.8,-26.4,180,.08,.35,C.dark);
+ for(let x=-92;x<84;x+=12){beam(ag,[x,1.8,-26.4],[x,3.6,-26.4],.06,C.dark);if(x+12<84)beam(ag,[x,3.5,-26.4],[x+12,3.5,-26.4],.03,C.white);}
+ box(ag,55,.72,-21,.6,.02,9.8,C.white);
+ beam(ag,[55,.7,-15.6],[55,6.5,-15.6],.16,C.dark);beam(ag,[55,.7,-26.4],[55,6.5,-26.4],.16,C.dark);beam(ag,[55,6.2,-15.6],[55,6.2,-26.4],.18,C.dark);
+ box(ag,55,6.2,-21,.4,1.4,6.5,'#102027');box(ag,78,.7,-21,22,.35,9.6,'#c4b595');
+ box(ag,-5,.68,-10.8,180,.02,8.8,C.grass);
+
+ // 3. ARQUIBANCADA PRINCIPAL (23 | ARQUIBANCADA em Print 2)
+ const standLen=155;
+ for(let r=0;r<10;r++){
+  const tZ=-28-r*1.4,tY=.7+r*.75;
+  box(ag,-2.5,tY,tZ,standLen,.8,1.45,C.stone);
+  for(let sx=-78;sx<73;sx+=1.35){
+   if(Math.abs((sx+3)%26)<1.8)continue;
+   const cSeat=(Math.abs(Math.sin(sx*.15+r))>.45)?'#1d5ba8':(r%3===0?C.white:'#455a64');
+   box(ag,sx,tY+.8,tZ-.25,.95,.2,.65,cSeat);box(ag,sx,tY+.95,tZ-.55,.95,.55,.15,cSeat);
+  }
+ }
+ box(ag,-2.5,1.5,-27.2,standLen,1.0,.08,C.glass);box(ag,-2.5,2.0,-27.2,standLen,.06,.12,C.white);
+ box(ag,-2.5,5.5,-42.8,standLen,9.5,.6,C.stone);
+ for(let sx=-75;sx<70;sx+=12.5){
+  box(ag,sx+5.5,7.8,-41.6,11,2.8,1.8,C.glass);box(ag,sx+5.5,9.3,-41.6,11.5,.2,2.0,C.white);box(ag,sx,7.8,-41.5,.4,3.0,2.0,C.dark);
+ }
+ box(ag,-2.5,11.6,-34.5,standLen+6,.5,19,'#252e35');box(ag,-2.5,11.9,-34.5,standLen+6,.12,19,'#37474f');
+ box(ag,-2.5,11.6,-25.2,standLen+6,.6,.35,C.white);box(ag,-2.5,11.6,-43.8,standLen+6,.6,.35,C.white);
+ for(let sx=-78;sx<=73;sx+=13){
+  cylinder(ag,sx,.7,-43.5,.45,11.2,C.dark);beam(ag,[sx,10.5,-43.5],[sx,11.4,-26.0],.18,C.white);beam(ag,[sx,8.5,-43.5],[sx,11.3,-33.0],.14,C.white);
+ }
+
+ // 4. ESPLANADA DA ARQUIBANCADA (Concourse com escadarias e quiosques)
+ box(ag,-2.5,.68,-51,170,.04,15,'#b0b8b8');
+ for(const sx of [-60,-20,20,60]){
+  for(let st=0;st<6;st++)box(ag,sx,.7+st*.45,-44.5-st*1.1,9,.5,1.2,C.stone);
+  beam(ag,[sx-4.6,1.2,-50.5],[sx-4.6,3.8,-44.5],.05,C.white);beam(ag,[sx+4.6,1.2,-50.5],[sx+4.6,3.8,-44.5],.05,C.white);
+ }
+ for(const sx of [-45,-5,35]){box(ag,sx,.7,-56,14,3.2,5,C.white);box(ag,sx,2.5,-53.4,12,1.4,.3,C.glass);box(ag,sx,4.0,-56,15,.25,6,'#24333c');}
+ for(let sx=-80;sx<=75;sx+=15.5){ring(ag,sx,.7,-59,1.8,.35,C.stone);palm(ag,sx,-59,8.5);}
+
+ // 5. COMPLEXO DE BOXES & PADDOCK (INFIELD)
+ box(ag,0,.7,7.5,150,1.15,.5,C.stone);box(ag,0,1.85,7.5,150,.06,.25,C.dark);
+ for(let x=-72;x<=72;x+=9){beam(ag,[x,1.85,7.5],[x,3.4,7.5],.05,C.dark);if(x+9<=72)beam(ag,[x,3.3,7.5],[x+9,3.3,7.5],.03,C.white);}
+ for(const px of [-55,-35,-15,5,25,45,65]){
+  box(ag,px,1.4,7.5,4.2,1.2,1.6,'#1a262c');box(ag,px,2.7,7.5,4.4,.12,1.8,C.white);
+  for(let mon=-1.2;mon<=1.2;mon+=1.2)box(ag,px+mon,2.0,7.0,.7,.45,.1,'#00e5ff');
+ }
+ box(ag,0,.69,12.2,155,.03,8.5,'#1e2225');
+ for(let b=0;b<24;b++){
+  const bx=-70+b*6.0;box(ag,bx,.71,14.5,5.4,.02,3.8,'#bcc4c7');box(ag,bx,.72,12.7,5.2,.02,.15,'#fbc02d');box(ag,bx,.72,16.3,5.2,.02,.15,'#fbc02d');
+ }
+ const pitLen=150;
+ box(ag,0,.7,23.5,pitLen,9.2,13,C.white);
+ for(let bay=0;bay<30;bay++){
+  const gx=-72.5+bay*5.0;
+  box(ag,gx,.7,16.9,4.4,3.8,.35,'#1e252b');
+  for(let sy=1.3;sy<4.2;sy+=.55)box(ag,gx,sy,16.8,4.3,.05,.2,'#37474f');
+  box(ag,gx,4.3,16.8,4.6,.7,.25,C.white);box(ag,gx,4.3,16.7,1.8,.45,.1,'#bc5942');
+  box(ag,gx+2.45,.7,17.0,.55,4.5,.6,C.stone);
+ }
+ box(ag,0,5.2,17.1,pitLen,4.0,.4,C.glass);
+ for(let fx=-75;fx<=75;fx+=5.0)box(ag,fx,5.2,17.0,.25,4.0,.6,C.dark);
+ box(ag,0,5.2,16.0,pitLen,.25,2.0,C.stone);box(ag,0,5.5,15.0,pitLen,.9,.08,C.glass);box(ag,0,6.4,15.0,pitLen,.06,.12,C.white);
+ box(ag,0,10.0,23.5,pitLen+6,.6,15.5,C.white);box(ag,0,10.3,23.5,pitLen+4,.15,12,'#b0bec5');
+ box(ag,-75,.7,23.5,12,15.5,13,'#263238');box(ag,-75,11.5,23.5,14,3.8,15,C.glass);box(ag,-75,15.3,23.5,15,.6,16,C.white);
+ cylinder(ag,-75,15.9,23.5,.15,7.5,C.white);beam(ag,[-75,21.0,23.5],[-73,21.0,23.5],.06,C.white);
+ box(ag,-71,5.2,16.5,6.5,.3,3.5,C.stone);box(ag,-71,5.5,14.8,6.5,.9,.1,C.glass);
+  box(ag,-71,5.5,16.0,1.4,.7,1.2,C.white);box(ag,-72.6,5.5,16.0,1.2,.45,1.2,'#cfd8dc');box(ag,-69.4,5.5,16.0,1.2,.3,1.2,'#b0bec5');box(ag,-71,6.5,17.5,6.0,2.2,.15,'#1e88e5');
+
+ // Pit Exit Signal Gantry (Semáforo de Saída dos Boxes)
+ beam(ag,[76,.7,12.5],[76,5.5,12.5],.1,C.dark);beam(ag,[76,.7,15.5],[76,5.5,15.5],.1,C.dark);beam(ag,[76,5.2,12.5],[76,5.2,15.5],.12,C.dark);
+ box(ag,76,5.2,14,.3,.8,1.4,'#102027');cylinder(ag,76.2,5.2,13.6,.18,.08,'#43a047');cylinder(ag,76.2,5.2,14.4,.18,.08,'#e53935');
+
+ // Postos de Sinalização / Fiscais de Pista (Marshal Posts)
+ for(const mx of [-65,-20,25,65]){
+  box(ag,mx,1.2,-15.6,1.4,.9,1.4,C.white);box(ag,mx,1.8,-15.6,1.6,.08,1.6,'#ff6f00');
+  beam(ag,[mx,1.8,-15.6],[mx,3.5,-15.6],.04,C.dark);box(ag,mx+.3,3.3,-15.6,.6,.4,.02,'#fbc02d');
+ }
+
+ // Passarelas de pedestres conectando o estacionamento E6 à esplanada
+ for(const wx of [-50,-10,30])box(ag,wx,.67,-66,4.5,.02,15,'#cfd5d4');
+
+ // Torres de iluminação no topo da cobertura da arquibancada
+ for(const lx of [-65,-20,25,65]){cylinder(ag,lx,11.8,-43.5,.25,5.5,C.dark);box(ag,lx,17.2,-43.0,3.6,.8,.8,C.white);}
+
+ // PADDOCK (Infield)
+ box(ag,0,.68,44,165,.03,27,'#23292d');
+ const truckLiveries=['#d32f2f','#ff9800','#212121','#1565c0','#43a047','#f44336','#37474f','#00acc1'];
+ for(let t=0;t<8;t++){
+  const tx=-62+t*17.5,tz=42,col=truckLiveries[t%truckLiveries.length];
+  box(ag,tx,1.3,tz,12.5,3.4,3.2,col);box(ag,tx,4.7,tz,12.5,.15,3.2,C.white);
+  box(ag,tx-7.5,1.1,tz,3.0,3.0,2.8,col);box(ag,tx-8.2,2.4,tz,1.6,1.4,2.7,C.glass);
+  box(ag,tx,.7,tz+4.5,12,3.2,5.5,C.white);
+ }
+ box(ag,58,.7,46,22,6.5,14,'#37474f');box(ag,58,7.2,46,23,.5,15,C.white);box(ag,48,1.5,46,.3,4.2,7.0,'#455a64');
+ box(ag,-40,.7,48,16,4.5,10,C.white);box(ag,-40,5.2,48,17,.3,11,'#263238');box(ag,-40,5.5,48,4.0,.05,1.2,'#e53935');box(ag,-40,5.5,48,1.2,.05,4.0,'#e53935');
+ ring(ag,-10,.72,51,6.5,.35,C.white);box(ag,-10,.72,51,.6,.02,5.0,C.white);box(ag,-11.8,.72,51,3.0,.02,.6,C.white);box(ag,-8.2,.72,51,3.0,.02,.6,C.white);
+ for(const lx of [-70,0,70]){cylinder(ag,lx,.7,56,.3,18,C.dark);box(ag,lx,18.2,56,4.2,1.2,1.0,C.white);}
+
+ // 6. MONUMENTO & PRAÇA DO HAIRPIN ("CASA INDÍGENA" em Print 2)
+ const hp=groupAt(auto,665,705,.25);
+ polygon(hp,[[-18,-18],[18,-18],[18,18],[-18,18]],C.stone,.7,.15);polygon(hp,[[-13,-13],[13,-13],[13,13],[-13,13]],'#b8c0ba',.85,.12);
+ cylinder(hp,0,.9,0,7.5,.6,C.stone);cylinder(hp,0,1.4,0,6.5,.2,C.water);cylinder(hp,0,1.5,0,1.2,2.5,C.gold);
+ for(let i=0;i<8;i++){
+  const a=(i/8)*Math.PI*2,px=Math.cos(a)*11,pz=Math.sin(a)*11;
+  beam(hp,[px,.8,pz],[Math.cos(a)*3,6.8,Math.sin(a)*3],.25,C.wood);beam(hp,[px,.8,pz],[px*1.15,.8,pz*1.15],.15,C.wood);
+ }
+ add(hp,new T.ConeGeometry(8.5,3.2,8),'#bcaaa4',0,7.8,0);
+
+ // 7. ESCAPE AZUL FIA & BARREIRAS TECPRO (Turn 1)
+ polygon(circuits,[[785,442],[828,408],[855,412],[862,432],[842,452],[798,458]],'#25292c',.69,.02);
+ for(let s=0;s<7;s++){const frac=s/7,px=795+frac*50,pz=445-frac*32;box(circuits,px,.71,pz,1.8,.02,14,s%2===0?'#0060c0':C.white);}
+ const barrierPts=[[802,452],[820,442],[844,438],[860,428],[865,412]];
+ for(let i=0;i<barrierPts.length-1;i++){
+  const p1=barrierPts[i],p2=barrierPts[i+1],dist=Math.hypot(p2[0]-p1[0],p2[1]-p1[1]),numB=Math.floor(dist/2.2);
+  for(let b=0;b<numB;b++){const t=b/numB,bx=p1[0]+(p2[0]-p1[0])*t,bz=p1[1]+(p2[1]-p1[1])*t;box(circuits,bx,.72,bz,1.8,.9,.9,b%2===0?'#d32f2f':C.white);}
+ }
+}
+
 export function createMiniatures(){
  const root=new T.Group();root.position.set(-origin[0],0,-origin[1]);const modelLayer=new T.Group();root.add(modelLayer);
  const landscape=new T.Group();root.add(landscape);const vegetation=new T.Group(),infrastructure=new T.Group(),water=new T.Group();root.add(vegetation,infrastructure,water);
@@ -74,16 +223,10 @@ export function createMiniatures(){
   for(const link of terrain.raceConnections)path(circuits,link,width,color,y,false,false);
  }
 
- // Escape azul oficial FIA no Autódromo conforme os prints e foto aérea
- polygon(circuits,[[799,451],[817,430],[838,431],[848,449],[853,464],[831,456]],'#0060c0',.70,.01);
- polygon(circuits,[[751,725],[743,743],[726,748],[709,736],[720,718]],'#0060c0',.70,.01);
  const models=new Map();
  for(const p of places){const g=new T.Group();g.userData.placeId=p.id;modelLayer.add(g);models.set(p.id,g);}
  const auto=models.get('autodromo');
- const pits=groupAt(auto,706,529,.77);glazing(pits,188,12,9);box(pits,0,10,0,193,1.2,15,C.white);for(let bay=0;bay<36;bay++){const x=-89+bay*5.08;box(pits,x,1,7,4.3,3.8,.5,'#23383e');box(pits,x,5.1,7.1,4.3,.6,.2,C.white);for(let y=1.5;y<4.7;y+=.45)box(pits,x,y,7.3,4.2,.07,.05,'#677677');}stand(auto,702,491,147,16,.77);stand(auto,808,424,45,14,.7);
- for(const [x,z] of [[651,650],[632,619],[818,473]]){const b=groupAt(auto,x,z,.77);glazing(b,21,12,7);}
- // Finish straight: dashed grid and red/white kerbs along its real axis.
- const straight=groupAt(auto,711,521,.77);for(let i=-91;i<89;i+=8){box(straight,i,1.5,20,4,.15,.6,C.white);box(straight,i,1.5,27,4,.15,2,i%16===-11?'#bc5942':C.white);}
+ buildAutodromo(auto,circuits);
  buildArenaShow(models.get('arena-show'),{add,box,beam,tube,path,polygon,cylinder,groupAt,inPolygon,C});
  const events=models.get('centro-de-eventos');const eg=groupAt(events,318,307,.72);for(let i=0;i<5;i++){const h=groupAt(eg,(i-2)*30,(i%2)*6);glazing(h,27,67,10+(i%2)*2);box(h,0,12,0,29,1,70,'#f1f3f2');for(let k=-32;k<=32;k+=2.5)box(h,0,13,k,29,.12,.13,'#b2c1c5');box(h,0,13.2,0,5,.5,56,'#b6c9cc');for(let x=-12;x<12;x+=5)box(h,x,0,-33.7,4.5,8,.4,'#bbbeb7');}box(eg,0,2,41,155,5,10,C.glass);for(let x=-72;x<=72;x+=12)palm(eg,x,52,10+(x%3));for(const y of [4.5,8])box(eg,0,y,46.2,155,.35,.3,C.dark);box(eg,0,12,42,160,.8,12,C.white);for(let x=-68;x<=68;x+=17)box(eg,x,0,46,.5,12,.5,C.white);
  const wheel=models.get('roda-gigante');const wg=groupAt(wheel,508,738,.74);cylinder(wg,0,.8,0,27,1.2,'#d9cfaa');ring(wg,0,2.2,0,25,.4,'#aeac83');for(const z of [-4,4]){beam(wg,[-12,2,z],[0,27,0],1,C.white);beam(wg,[12,2,z],[0,27,0],1,C.white);ring(wg,0,27,z,22,.8,C.white,true);}for(let i=0;i<42;i++){const a=i*Math.PI*2/42,x=Math.cos(a)*22,y=27+Math.sin(a)*22;beam(wg,[0,27,0],[x,y,3],.12,C.gold);if(i%2===0)beam(wg,[0,27,0],[x,y,-3],.12,C.white);cylinder(wg,x,y-2.8,0,1.5,2.2,C.glass);cylinder(wg,x,y-.6,0,1.65,.3,C.white);}const axle=add(wg,new T.CylinderGeometry(1.8,1.8,11,32),C.white,0,27,0);axle.rotation.x=Math.PI/2;const boarding=groupAt(wg,0,0);glazing(boarding,39,17,6);box(boarding,0,3.8,8.8,39,.18,.2,C.white);for(const z of [-9,9]){tube(boarding,[[-20,7,z],[-12,8.7,z],[0,5.8,z],[12,7,z],[20,9,z]],.85,C.white);tube(boarding,[[-20,5.5,z],[-10,6.8,z],[1,3.9,z],[12,5.2,z],[20,7,z]],.4,C.white);}for(let i=-18;i<=18;i+=2)beam(boarding,[i,1,9],[i,6,9],.07,C.white);
@@ -199,7 +342,7 @@ function buildInfrastructure(g){
  bridge(g,[[320,417],[349,435],[382,461]]);
  for(const points of [terrain.paths[0],terrain.paths[1]]){path(g,points,4.7,C.stone,.42);path(g,points,4.2,'#b9b9ad',.57);}
  // Canteiros e postes ao longo das vias, sem deslocar o eixo viário do projeto.
- for(const pts of terrain.roads.slice(0,1)){const c=new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)),false,'centripetal'),len=c.getLength();for(let d=40;d<len;d+=65){const p=c.getPointAt(d/len),t=c.getTangentAt(d/len);for(const side of [-1,1]){const x=p.x-t.z*12*side,z=p.z+t.x*12*side;ring(g,x,.5,z,1.7,.35,C.stone);palm(g,x,z,7);}}}
+ for(const pts of terrain.roads.slice(0,1)){const c=new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)),false,'centripetal'),len=c.getLength();for(let d=40;d<len;d+=65){const p=c.getPointAt(d/len),t=c.getTangentAt(d/len);for(const side of [-1,1]){const x=p.x-t.z*12*side,z=p.z+t.x*12*side;if(x>560&&z<720)continue;ring(g,x,.5,z,1.7,.35,C.stone);palm(g,x,z,7);}}}
 }
 
 function pearl(g){
