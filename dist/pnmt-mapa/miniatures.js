@@ -214,7 +214,23 @@ export function createMiniatures(){
  polygon(landscape,terrain.outline,C.grass,-.25,.15);
  for(const ps of terrain.greens)polygon(landscape,ps,'#355225',-.04,.02);
  for(const ps of terrain.parking){polygon(landscape,ps,'#4c5257',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f0f4f7',.023,false,false);}}
- for(const ps of terrain.roads){path(landscape,ps,18,'#875438',.045);path(landscape,ps,15,C.stone,.055);path(landscape,ps,11,C.road,.07);roadMarks(landscape,ps);}
+ for(const ps of terrain.roads){path(landscape,ps,19,'#875438',.045);path(landscape,ps,16,C.stone,.055);path(landscape,ps,13,C.road,.07);roadMarks(landscape,ps);}
+ if(terrain.roundabouts){
+  for(const rb of terrain.roundabouts){
+   const [cx,cz]=rb.center;
+   const roadRing=add(landscape,new T.RingGeometry(rb.innerRadius,rb.outerRadius,48),C.road,cx,.07,cz);
+   roadRing.rotation.x=-Math.PI/2;
+   ring(landscape,cx,.08,cz,rb.outerRadius,.5,C.stone);
+   ring(landscape,cx,.08,cz,rb.innerRadius,.5,C.stone);
+   ring(landscape,cx,.085,cz,(rb.innerRadius+rb.outerRadius)/2,.2,'#f0f4f7');
+   const island=add(landscape,new T.CircleGeometry(rb.innerRadius-.3,40),C.grass,cx,.08,cz);
+   island.rotation.x=-Math.PI/2;
+   for(let i=0;i<8;i++){
+    const a=i*Math.PI*2/8,rr=(rb.innerRadius-.3)*.62;
+    treesSmall(landscape,[[cx+Math.cos(a)*rr,cz+Math.sin(a)*rr]],.45);
+   }
+  }
+ }
  for(const ps of terrain.paths)path(landscape,ps,5.2,'#d5ceb8',.095);
  // Pista e ligação usam as mesmas camadas, sem bordas atravessando as junções.
  const circuits=new T.Group();root.add(circuits);
@@ -284,9 +300,34 @@ function batchStatic(g){
 export function inPolygon([x,y],vs){let inside=false;for(let i=0,j=vs.length-1;i<vs.length;j=i++){const [xi,yi]=vs[i],[xj,yj]=vs[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;}return inside;}
 function addVegetation(g){
  let seed=237;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};const positions=[];
- for(const poly of terrain.greens.slice(0,3)){const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);for(let i=0;i<550;i++){const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));if(inPolygon([x,z],poly))positions.push([x,z,2.8+rand()*3]);}}
- // Trees follow the actual park perimeter, away from the main roads and facilities.
- for(let i=0;i<terrain.outline.length;i++){const a=terrain.outline[i],b=terrain.outline[(i+1)%terrain.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let d=8;d<len;d+=13){const t=d/len;positions.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,3+rand()*3]);}}
+ function nearRoad(x,z,minDist=14){
+  for(const pts of terrain.roads){
+   for(let i=0;i<pts.length-1;i++){
+    const p1=pts[i],p2=pts[i+1],dx=p2[0]-p1[0],dz=p2[1]-p1[1],lenSq=dx*dx+dz*dz;
+    if(!lenSq)continue;
+    const t=Math.max(0,Math.min(1,((x-p1[0])*dx+(z-p1[1])*dz)/lenSq));
+    const px=p1[0]+t*dx,pz=p1[1]+t*dz;
+    if(Math.hypot(x-px,z-pz)<minDist)return true;
+   }
+  }
+  for(const park of terrain.parking){if(inPolygon([x,z],park))return true;}
+  for(const rb of(terrain.roundabouts||[])){if(Math.hypot(x-rb.center[0],z-rb.center[1])<rb.outerRadius+4)return true;}
+  return false;
+ }
+ for(const poly of terrain.greens){
+  const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);
+  for(let i=0;i<400;i++){
+   const x=Math.min(...xs)+rand()*(Math.max(...xs)-Math.min(...xs)),z=Math.min(...zs)+rand()*(Math.max(...zs)-Math.min(...zs));
+   if(inPolygon([x,z],poly)&&!nearRoad(x,z))positions.push([x,z,2.8+rand()*3]);
+  }
+ }
+ for(let i=0;i<terrain.outline.length;i++){
+  const a=terrain.outline[i],b=terrain.outline[(i+1)%terrain.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);
+  for(let d=8;d<len;d+=14){
+   const t=d/len,x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;
+   if(!nearRoad(x,z,16))positions.push([x,z,3+rand()*3]);
+  }
+ }
  const crown=new T.InstancedMesh(new T.SphereGeometry(1,12,9),material('#2b4721',0,.85),positions.length*4),trunk=new T.InstancedMesh(new T.CylinderGeometry(.18,.32,1,7),material('#4a3826',0,.88),positions.length);
  const dummy=new T.Object3D();positions.forEach(([x,z,s],i)=>{for(let j=0;j<4;j++){const a=j/3*Math.PI*2;dummy.position.set(x+(j?Math.cos(a)*s*.48:0),2+s*(j?.8:1.23),z+(j?Math.sin(a)*s*.48:0));dummy.scale.set(s*(j?.69:.78),s*(j?.77:.95),s*(j?.75:.8));dummy.rotation.y=rand()*Math.PI;dummy.updateMatrix();crown.setMatrixAt(i*4+j,dummy.matrix);crown.setColorAt(i*4+j,new T.Color().setHSL(.25+rand()*.06,.52+rand()*.18,.16+rand()*.10));}dummy.position.set(x,2.5,z);dummy.scale.set(s*.7,5,s*.7);dummy.updateMatrix();trunk.setMatrixAt(i,dummy.matrix);});crown.castShadow=true;crown.receiveShadow=true;trunk.castShadow=true;g.add(crown,trunk);
 }
@@ -336,13 +377,9 @@ function bridge(g,points){
 }
 function buildInfrastructure(g){
  const solar=groupAt(g,306,740,.61);
- for(let row=0;row<6;row++)solarCanopy(solar,0,-31+row*12.3,43,6);
- for(let row=0;row<6;row++)for(const side of [-1,1])path(solar,[[side*22,-35+row*12.3],[side*22,-28+row*12.3]],.25,C.white,.5,false,false);
- // A ligação sobre o lago é mantida no traçado da implantação.
- bridge(g,[[320,417],[349,435],[382,461]]);
- for(const points of [terrain.paths[0],terrain.paths[1]]){path(g,points,4.7,C.stone,.42);path(g,points,4.2,'#b9b9ad',.57);}
- // Canteiros e postes ao longo das vias, sem deslocar o eixo viário do projeto.
- for(const pts of terrain.roads.slice(0,1)){const c=new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)),false,'centripetal'),len=c.getLength();for(let d=40;d<len;d+=65){const p=c.getPointAt(d/len),t=c.getTangentAt(d/len);for(const side of [-1,1]){const x=p.x-t.z*12*side,z=p.z+t.x*12*side;if(x>560&&z<720)continue;ring(g,x,.5,z,1.7,.35,C.stone);palm(g,x,z,7);}}}
+ for(let row=0;row<4;row++)solarCanopy(solar,0,-24+row*14,36,6);
+ for(let row=0;row<4;row++)for(const side of [-1,1])path(solar,[[side*18,-27+row*14],[side*18,-21+row*14]],.25,C.white,.5,false,false);
+ for(const points of terrain.paths){path(g,points,4.2,C.stone,.42);path(g,points,3.6,'#b9b9ad',.55);}
 }
 
 function pearl(g){
