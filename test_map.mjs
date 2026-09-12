@@ -137,6 +137,33 @@ server.listen(PORT, async () => {
   await page.screenshot({ path: path.join(artifactsDir, 'view_focus_portico.png') });
   console.log('Saved view_focus_portico.png');
 
+  // 8. Focus on Skate Park
+  await page.evaluate(() => {
+    const btn = document.querySelector('[data-locate="skate-park"]');
+    if (btn) btn.click();
+  });
+  await new Promise(r => setTimeout(r, 2500));
+  await page.screenshot({ path: path.join(artifactsDir, 'view_focus_skate.png') });
+  console.log('Saved view_focus_skate.png');
+
+  // 9. Focus on Kartódromo
+  await page.evaluate(() => {
+    const btn = document.querySelector('[data-locate="kartodromo"]');
+    if (btn) btn.click();
+  });
+  await new Promise(r => setTimeout(r, 2500));
+  await page.screenshot({ path: path.join(artifactsDir, 'view_focus_kartodromo.png') });
+  console.log('Saved view_focus_kartodromo.png');
+
+  // 10. Focus on Vila das Nações
+  await page.evaluate(() => {
+    const btn = document.querySelector('[data-locate="vila-das-nacoes"]');
+    if (btn) btn.click();
+  });
+  await new Promise(r => setTimeout(r, 2500));
+  await page.screenshot({ path: path.join(artifactsDir, 'view_focus_vila_nacoes.png') });
+  console.log('Saved view_focus_vila_nacoes.png');
+
   await browser.close();
   server.close();
   console.log('Validation screenshots completed successfully!');

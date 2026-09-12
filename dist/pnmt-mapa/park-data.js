@@ -78,7 +78,7 @@ export const terrain={
  ],
  roundabouts:[
   {name:'Rotatória Norte 1',center:[808,348],outerRadius:25,innerRadius:14},
-  {name:'Rotatória Roda-gigante',center:[508,740],outerRadius:28,innerRadius:16},
+  {name:'Rotatória Roda-gigante',center:[508,740],outerRadius:34,innerRadius:22},
   {name:'Rotatória Sudoeste',center:[470,990],outerRadius:22,innerRadius:12}
  ],
  roads:[

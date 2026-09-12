@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {terrain,places} from './park-data.js?v=7';
 import {buildArenaShow} from './arena-show.js?v=7';
-import {applyPhotoRefinements} from './refinamentos.js?v=prints-1';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=prints-1';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
@@ -29,10 +29,11 @@ export async function loadMaterials(renderer){
  const loader=new T.TextureLoader(),textures=[];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
+ const allMats=[...mats.values(),...materialCache.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
-  for(const m of mats.values()){
+  for(const m of allMats){
    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
-   const grass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934'].includes(m.name);
+   const grass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32'].includes(m.name);
    if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);m.color.set('#24282b');m.needsUpdate=true;}
    if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
   }
@@ -40,7 +41,7 @@ export async function loadMaterials(renderer){
  const size=256,data=new Uint8Array(size*size*4);
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;const dx=Math.cos(u*4+v*2)*16+Math.cos(u*8-v*6)*8+Math.cos(u*14+v*10)*4,dy=Math.sin(v*4+u*2)*16+Math.sin(v*8-u*6)*8+Math.sin(v*14+u*10)*4;data[i]=Math.min(255,Math.max(0,128+dx));data[i+1]=Math.min(255,Math.max(0,128+dy));data[i+2]=254;data[i+3]=255;}
  const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(12,12);normal.needsUpdate=true;textures.push(normal);
- for(const m of mats.values())if(m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'){m.normalMap=normal;m.normalScale.setScalar(.55);m.needsUpdate=true;}
+ for(const m of allMats)if(m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'){m.normalMap=normal;m.normalScale.setScalar(.55);m.needsUpdate=true;}
  return textures;
 }
 function add(g,geo,color,x=0,y=0,z=0,metal=0,rough=.72){const m=new T.Mesh(geo,material(color,metal,rough));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
@@ -248,11 +249,13 @@ export function createMiniatures(){
    ring(landscape,cx,.08,cz,rb.outerRadius,.5,C.stone);
    ring(landscape,cx,.08,cz,rb.innerRadius,.5,C.stone);
    ring(landscape,cx,.085,cz,(rb.innerRadius+rb.outerRadius)/2,.2,'#f0f4f7');
-   const island=add(landscape,new T.CircleGeometry(rb.innerRadius-.3,40),C.grass,cx,.08,cz);
-   island.rotation.x=-Math.PI/2;
-   for(let i=0;i<8;i++){
-    const a=i*Math.PI*2/8,rr=(rb.innerRadius-.3)*.62;
-    treesSmall(landscape,[[cx+Math.cos(a)*rr,cz+Math.sin(a)*rr]],.45);
+   if(!rb.name.includes('Roda-gigante')){
+    const island=add(landscape,new T.CircleGeometry(rb.innerRadius-.3,40),C.grass,cx,.08,cz);
+    island.rotation.x=-Math.PI/2;
+    for(let i=0;i<8;i++){
+     const a=i*Math.PI*2/8,rr=(rb.innerRadius-.3)*.62;
+     treesSmall(landscape,[[cx+Math.cos(a)*rr,cz+Math.sin(a)*rr]],.45);
+    }
    }
   }
  }
@@ -297,10 +300,7 @@ export function createMiniatures(){
  for(let x=-12;x<=12;x+=1)beam(cg,[x,1.1,14],[x,2.1,14],.065,C.white);beam(cg,[-12,2.1,14],[12,2.1,14],.09,C.white);
  treesSmall(cg,[[-8,8],[8,8]],.65);
  const agro=models.get('agroplace');const ap=groupAt(agro,398,701);cylinder(ap,0,1,0,19,1,C.stone);cylinder(ap,0,2,0,16,11,C.glass);cylinder(ap,0,13,0,17,1.2,'#466347');ring(ap,0,2,0,17,.14,'#99b670');ring(ap,0,12.8,0,17,.14,'#99b670');for(let i=0;i<60;i++){const a=i/60*Math.PI*2;const b=box(ap,Math.cos(a)*16.8,2,Math.sin(a)*16.8,.6,12,1.3,i%3===0?'#8aaf69':'#466b42');b.rotation.y=-a;}for(let r=21;r<=25;r+=2){const step=cylinder(ap,0,.15+(25-r)*.1,0,r,.3,C.stone);step.castShadow=false;}
- const gate=models.get('portico-de-entrada');const ga=groupAt(gate,933,968,1.15);
- // Two broad, curved concrete shells, as shown in the entrance rendering.
- for(const x of [-17,17]){const shell=new T.Shape();shell.moveTo(-17,1);shell.absellipse(0,1,17,19,Math.PI,0,true);shell.lineTo(15.8,1);shell.absellipse(0,1,15.8,17.8,0,Math.PI,false);shell.closePath();const m=add(ga,new T.ExtrudeGeometry(shell,{depth:11,bevelEnabled:true,bevelThickness:.15,bevelSize:.15,bevelSegments:2,curveSegments:40}),C.white,x,0,-5.5);for(const side of [-1,1]){box(ga,x+side*16.4,.5,0,1.6,2,12,C.stone);beam(ga,[x+side*15.7,2,-5.7],[x+side*12.5,11,-5.7],.1,C.gold);}}
- box(ga,0,1,0,5,2,9,C.green);for(const x of [-25,-8,8,25])path(ga,[[x,-15],[x,15]],.28,C.white,1.1);
+ const gate=models.get('portico-de-entrada');
  const park=models.get('estrutura-e-acesso');const parkFoot=places.find(p=>p.id==='estrutura-e-acesso').footprint;polygon(park,parkFoot,'#cfccb6',.6,.15);for(let x=720;x<=864;x+=11)for(let z=948;z<1029;z+=18)if(inPolygon([x,z],parkFoot)&&inPolygon([x+6,z+9],parkFoot)){path(park,[[x,z],[x,z+8],[x+6,z+8]],.35,C.white,.9,false,false);if((x+z)%4===0){box(park,x+3,1,z+4,3,1.6,6,'#eef0d9');box(park,x+3,2.3,z+4,2.6,.8,3,C.glass);}}
  const moto=models.get('motocross');const mp=places.find(p=>p.id==='motocross').footprint;polygon(moto,mp,'#c4a27a',.9,.2);const mt=[[327,931],[346,943],[368,958],[390,971],[406,995],[395,1007],[371,981],[357,966],[338,952],[327,931]];path(moto,mt,9,'#976e48',1.4,true);for(let i=0;i<14;i++){const x=336+i*4.2,z=940+i*4.3;const b=add(moto,new T.SphereGeometry(4,10,6),'#ad865c',x,1.5,z);b.scale.set(1.6,.5,.85);}stand(moto,333,952,50,8,-.85);
  pearl(models.get('perola-do-cerrado'));
