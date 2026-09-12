@@ -1,5 +1,5 @@
 import {bindHostBridge,reportMapReady} from './bridge.js';
-import {places,colors} from './park-data.js?v=7';
+import {places,colors} from './park-data.js?v=20260912-r83';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -35,7 +35,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=7'),import('./rendering.js?v=7'),import('./camera-math.js?v=7')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=20260912-r83'),import('./rendering.js?v=20260912-r83'),import('./camera-math.js?v=20260912-r83')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,1,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;

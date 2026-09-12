@@ -1,7 +1,7 @@
 import * as T from 'three';
-import {terrain,places} from './park-data.js?v=7';
-import {buildArenaShow} from './arena-show.js?v=7';
-import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=prints-1';
+import {terrain,places} from './park-data.js?v=20260912-r83';
+import {buildArenaShow} from './arena-show.js?v=20260912-r83';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=20260912-r83';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];

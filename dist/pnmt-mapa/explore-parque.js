@@ -327,7 +327,7 @@ class ParqueExplorer extends HTMLElement {
     frame.style.pointerEvents = 'auto';
     frame.referrerPolicy = 'same-origin';
     frame.addEventListener('load', () => this._configureFrame());
-    frame.src = new URL('index.html?embed=1', assets).href;
+    frame.src = new URL('index.html?embed=1&v=20260912-r83', assets).href;
     this._frame = frame;
     this.shadowRoot.querySelector('.viewport').appendChild(frame);
   }

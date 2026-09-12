@@ -55,7 +55,9 @@ server.listen(PORT, async () => {
   page.on('pageerror', err => console.error('BROWSER ERROR:', err.message));
 
   console.log('Navigating to map page...');
-  await page.goto(`http://localhost:${PORT}/pnmt-mapa/index.html`, { waitUntil: 'networkidle2', timeout: 30000 });
+  const targetUrl = process.env.TEST_URL || `http://localhost:${PORT}/pnmt-mapa/index.html`;
+  console.log('Target URL:', targetUrl);
+  await page.goto(targetUrl, { waitUntil: 'networkidle2', timeout: 45000 });
 
   try {
     await page.waitForFunction(() => {
