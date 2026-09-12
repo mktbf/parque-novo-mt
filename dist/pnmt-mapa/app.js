@@ -1,5 +1,5 @@
 import {bindHostBridge,reportMapReady} from './bridge.js';
-import {places,colors} from './park-data.js?v=implantacao-20260912-1';
+import {places,colors} from './park-data.js?v=implantacao-20260912-2';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -35,9 +35,9 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=implantacao-20260912-1'),import('./rendering.js?v=implantacao-20260912-1'),import('./camera-math.js?v=implantacao-20260912-1')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=implantacao-20260912-2'),import('./rendering.js?v=implantacao-20260912-2'),import('./camera-math.js?v=implantacao-20260912-2')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
- const perspective=new T.PerspectiveCamera(38,1,1,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
+ const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
  const engine=createRendering(scene,camera,mobile()),renderer=engine.renderer;
  host.appendChild(renderer.domElement);
@@ -118,12 +118,23 @@ async function init(){
   $('#tilt').setAttribute('aria-pressed',String(tilted));$('#buildings').setAttribute('aria-pressed',String(buildings));
  }
  function overview(){
-  activeTween++;chooseCamera();const aspect=viewport(),target=world([624,566]);controls.target.copy(target);camera.zoom=1;
+  activeTween++;chooseCamera();camera.up.set(0,1,0);const aspect=viewport(),target=world([624,566]);controls.target.copy(target);camera.zoom=1;
   const direction=tilted?defaultDirection:new T.Vector3(0,1,.0001);camera.position.copy(target).addScaledVector(direction,2000);camera.lookAt(target);
   if(tilted){overviewDistance=fitDistance(camera,target,corners,aspect,mobile()?1.13:1.17);camera.position.copy(target).addScaledVector(direction,overviewDistance);controls.maxDistance=Math.max(overviewDistance*1.5,2200);}
   else fitOrtho(camera,target,corners,aspect,1.14);
   camera.updateProjectionMatrix();controls.update();camera.updateMatrixWorld();engine.focusShadow(controls.target,900);
   $('.map-hint span:last-child').textContent=mobile()?'Pince para aproximar · Toque para explorar':tilted?'Arraste para girar · Role para aproximar':'Arraste para mover · Role para aproximar';render();
+ }
+ function enterPlanComparison(){
+  activeTween++;
+  const target=controls.target.clone(),offset=camera.position.clone().sub(target),distance=offset.length();
+  const span=Math.tan(T.MathUtils.degToRad(camera.fov/2))*distance/camera.zoom;
+  const up=new T.Vector3(-offset.x,0,-offset.z);if(up.lengthSq()<1e-8)up.set(0,0,-1);up.normalize();
+  tilted=false;chooseCamera();const aspect=viewport();
+  camera.left=-span*aspect;camera.right=span*aspect;camera.top=span;camera.bottom=-span;camera.zoom=1;
+  camera.up.copy(up);camera.position.copy(target).add(new T.Vector3(0,2000,0));camera.lookAt(target);controls.target.copy(target);
+  camera.updateProjectionMatrix();controls.update();camera.updateMatrixWorld();engine.focusShadow(target,900);
+  $('.map-hint span:last-child').textContent='Arraste para mover · Role para aproximar';
  }
  function placeBounds(p){
   const bounds=new T.Box3().setFromObject(built.models.get(p.id));
@@ -157,7 +168,7 @@ async function init(){
   if(overlayBtn){overlayBtn.addEventListener('click',async()=>{
    overlayBtn.disabled=true;
    try{const next=!overlayActive;if(next&&!planImage)await createImageLayer('plan');overlayActive=next;
-    if(next){tilted=false;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));}
+    if(next&&tilted)enterPlanComparison();
     updateLayers();render();
    }catch(e){$('#announcement').textContent='A planta não carregou. Tente novamente.';console.error(e);}
    finally{overlayBtn.disabled=false;}
@@ -172,7 +183,7 @@ async function init(){
    if(overlayWrap)overlayWrap.hidden=!(view==='plan'||overlayActive);
    if(overlayBtn)overlayBtn.setAttribute('aria-pressed',String(overlayActive));
    $('#map-credit').textContent=view==='satellite'?'Ortofoto aérea da implantação · Fonte: projeto PNMT':(view==='plan'||overlayActive)?'Implantação oficial (Carimbo R83 / Arquivo R84) · Projeto Arquitetônico':'Implantação do projeto · volumes ilustrativos';
-   $('.map-caption div>span').textContent=view==='satellite'?'O território e os espaços do projeto':(view==='plan'||overlayActive)?'Conferência ortográfica da implantação oficial':'Explore a arquitetura e os espaços';
+   $('.map-caption div>span').textContent=view==='satellite'?'O território e os espaços do projeto':(view==='plan'||overlayActive)?'Conferência da implantação do projeto':'Explore a arquitetura e os espaços';
    stage.dataset.view=view;$('#buildings').setAttribute('aria-pressed',String(buildings));renderer.shadowMap.needsUpdate=true;
   }
   $('#tilt').addEventListener('click',()=>{tilted=!tilted;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));});

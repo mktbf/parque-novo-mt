@@ -1,8 +1,8 @@
-import {applyRegisteredLayout} from './implantacao-correcoes.js?v=implantacao-20260912-1';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=implantacao-20260912-2';
 import * as T from 'three';
-import {terrain,places} from './park-data.js?v=implantacao-20260912-1';
-import {buildArenaShow} from './arena-show.js?v=implantacao-20260912-1';
-import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=implantacao-20260912-1';
+import {terrain,places} from './park-data.js?v=implantacao-20260912-2';
+import {buildArenaShow} from './arena-show.js?v=implantacao-20260912-2';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=implantacao-20260912-2';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
@@ -30,19 +30,19 @@ export async function loadMaterials(renderer){
  const loader=new T.TextureLoader(),textures=[];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
- const allMats=[...mats.values(),...materialCache.values()];
+ const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of allMats){
    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
    const grass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32'].includes(m.name);
-   if(name==='clean_asphalt'&&asphalt){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);m.color.set('#24282b');m.needsUpdate=true;}
-   if(name==='leafy_grass'&&grass){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
+   if(name==='clean_asphalt'&&(asphalt||m.userData.surfaceKind==='asphalt')){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);if(!m.userData.surfaceKind)m.color.set('#24282b');m.needsUpdate=true;}
+   if(name==='leafy_grass'&&(grass||m.userData.surfaceKind==='grass')){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;if(!m.userData.surfaceKind)m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
   }
  }
  const size=256,data=new Uint8Array(size*size*4);
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;const dx=Math.cos(u*4+v*2)*16+Math.cos(u*8-v*6)*8+Math.cos(u*14+v*10)*4,dy=Math.sin(v*4+u*2)*16+Math.sin(v*8-u*6)*8+Math.sin(v*14+u*10)*4;data[i]=Math.min(255,Math.max(0,128+dx));data[i+1]=Math.min(255,Math.max(0,128+dy));data[i+2]=254;data[i+3]=255;}
  const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(12,12);normal.needsUpdate=true;textures.push(normal);
- for(const m of allMats)if(m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'){m.normalMap=normal;m.normalScale.setScalar(.55);m.needsUpdate=true;}
+ for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'){m.normalMap=normal;m.normalScale.setScalar(.55);m.needsUpdate=true;}
  return textures;
 }
 function add(g,geo,color,x=0,y=0,z=0,metal=0,rough=.72){const m=new T.Mesh(geo,material(color,metal,rough));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}

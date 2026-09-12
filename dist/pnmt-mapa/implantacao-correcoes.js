@@ -1,6 +1,6 @@
 import * as T from 'three';
-import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260912-1';
-import {primitives as P} from './refinamentos.js?v=implantacao-20260912-1';
+import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260912-2';
+import {primitives as P} from './refinamentos.js?v=implantacao-20260912-2';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
  * O root de miniatures aplica [-620, 0, -570]. Não repetir essa transformação.
@@ -9,6 +9,19 @@ import {primitives as P} from './refinamentos.js?v=implantacao-20260912-1';
 const mat=(color,roughness=.83)=>new T.MeshStandardMaterial({color,roughness,metalness:0});
 const floorMat=mat('#bab6ac');
 const soilMat=mat('#9a7554',.96);
+export const registeredMaterials=new Map();
+function registeredMaterial(kind,color,roughness){
+ if(!registeredMaterials.has(kind)){const m=mat(color,roughness);m.name=color;m.userData.surfaceKind=kind;registeredMaterials.set(kind,m);}return registeredMaterials.get(kind);
+}
+// Superfícies sem paredes ou faces inferiores coincidentes. Cada área tem um único proprietário.
+function registeredFloor(group,record,material,y,name){
+ if(!record.indices.length)return null;
+ const positions=[];for(let i=0;i<record.points.length;i+=2)positions.push(record.points[i],y,record.points[i+1]);
+ const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(positions,3));geo.setIndex(record.indices);geo.computeVertexNormals();
+ const uv=record.points.map(v=>v/5);geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
+ const mesh=new T.Mesh(geo,material);mesh.name=name;mesh.receiveShadow=true;mesh.castShadow=false;group.add(mesh);return mesh;
+}
+
 function linePath(points, Type=T.Shape){
  const p=new Type();points.forEach(([x,z],i)=>i?p.lineTo(x,-z):p.moveTo(x,-z));p.closePath();return p;
 }
@@ -102,12 +115,12 @@ function inside([x,z],ring){let ok=false;for(let i=0,j=ring.length-1;i<ring.leng
 export function applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure}){
  const R=D.registered;
  for(const g of [landscape,water,circuits,vegetation,infrastructure])clearGeometry(g);
- const grass=mat('#72805a',.97),asphalt=mat('#414747',.94),parkingMat=mat('#656861',.95),lakeMat=mat('#426f70',.25);
- for(const p of R.ground){const holes=skateHoles.filter(r=>inside(r[0],p.coordinates[0]));geoSurface(landscape,p,grass,-.08,.08,holes);}
- for(const p of R.roads)geoSurface(landscape,p,asphalt,.035,.035).name='Via · contorno derivado da planta';
- for(const p of R.parking)geoSurface(landscape,p,parkingMat,.015,.025).name='Estacionamento · envelope de implantação';
- for(const p of R.water)geoSurface(water,p,lakeMat,-.07,.03).name='Água · margens CAD e interpretação';
- for(const p of R.autodrome)geoSurface(circuits,p,asphalt,.08,.04).name='Autódromo · bordas CAD';
+ const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#8c9292',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#426f70',.3),bankMat=registeredMaterial('bank','#92856b',.97);
+ registeredFloor(landscape,R.meshes.ground,grass,0,'Terreno recortado');
+ registeredFloor(landscape,R.meshes.roads,asphalt,.12,'Vias · superfícies sem sobreposição');
+ registeredFloor(landscape,R.meshes.banks,bankMat,.01,'Margens · interpretação da prancha');
+ registeredFloor(water,R.meshes.water,lakeMat,-.08,'Água · contornos compatibilizados');
+ registeredFloor(circuits,R.meshes.autodrome,asphalt,.12,'Autódromo · bordas CAD preservadas');
  const auto=models.get('autodromo');clearGeometry(auto);
  for(const item of R.autoBuildings)geoSurface(auto,item.geometry,mat('#d4d8d4',.75),.10,item.height).name=item.role;
  auto.name='Autódromo · implantação dos boxes e arquibancada';
@@ -116,7 +129,7 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  const stand=kart.getObjectByName('Arquibancada do Kartódromo');
  for(const o of [boxes,stand])if(o)o.removeFromParent();
  clearGeometry(kart);
- for(const p of R.kart)geoSurface(kart,p,asphalt,.08,.04);
+ registeredFloor(kart,R.meshes.kart,asphalt,.12,'Kart · bordas CAD preservadas');
  if(boxes){boxes.position.set(379,0,852);boxes.rotation.y=.12;kart.add(boxes);}
  if(stand){stand.position.set(366,0,849);stand.rotation.y=.12;kart.add(stand);}
  kart.name='Kartódromo · contorno e ilhas CAD';
@@ -124,10 +137,7 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  rebuildSkate(models.get('skate-park'));
  correctVillage(models.get('vila-das-nacoes'));
  const parking=models.get('estrutura-e-acesso');clearGeometry(parking);
- // The selectable parking model owns its surfaces; avoids an empty focus bound.
- for(const p of R.parking)geoSurface(parking,p,parkingMat,.018,.025);
- // Remove duplicate landscape parking meshes: selection remains active in all map modes.
- for(const m of [...landscape.children])if(m.name==='Estacionamento · envelope de implantação'){m.geometry.dispose();landscape.remove(m);}
+ registeredFloor(parking,R.meshes.parking,parkingMat,.10,'Estacionamentos · bolsões recortados');
  const moto=models.get('motocross');clearGeometry(moto);
  shapeMesh(moto,D.motocross.outline,[],soilMat,.015,.03);moto.name='Motocross · setor, traçado a confirmar';
  const wake=models.get('wake-park');
