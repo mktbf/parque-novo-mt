@@ -1,7 +1,8 @@
+import {applyRegisteredLayout} from './implantacao-correcoes.js?v=implantacao-20260912-1';
 import * as T from 'three';
-import {terrain,places} from './park-data.js?v=20260912-r83';
-import {buildArenaShow} from './arena-show.js?v=20260912-r83';
-import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=20260912-r83';
+import {terrain,places} from './park-data.js?v=implantacao-20260912-1';
+import {buildArenaShow} from './arena-show.js?v=implantacao-20260912-1';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=implantacao-20260912-1';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
@@ -308,6 +309,7 @@ export function createMiniatures(){
  buildInfrastructure(infrastructure);
  // Batch static architecture by material: fine detail without thousands of draw calls.
  applyPhotoRefinements(models,{terrain});
+ applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure});
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});

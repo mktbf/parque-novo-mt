@@ -109,3 +109,8 @@ export const terrain={
  raceConnections:[[[716,757],[814,807]]],
  kartTrack:[[407,794],[428,788],[446,793],[452,805],[444,817],[463,831],[476,822],[486,835],[485,854],[471,874],[460,892],[445,902],[426,906],[415,895],[423,881],[411,868],[410,852],[396,840],[394,817]]
 };
+
+// Markers are independent of architecture transforms (plan coordinates).
+for(const [id,position] of Object.entries({'portico-de-entrada':[923,968],'skate-park':[253,771],'motocross':[389,973]})){
+ const place=places.find(p=>p.id===id);if(place)place.position=position;
+}
