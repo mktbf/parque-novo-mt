@@ -45,7 +45,7 @@ async function init(){
  Object.assign(controls,{enableDamping:false,minPolarAngle:.22,maxPolarAngle:1.36,rotateSpeed:.45,zoomSpeed:.8,minDistance:60,maxDistance:5000,minZoom:.65,maxZoom:10,enablePan:true,screenSpacePanning:true});
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
  const built=createMiniatures();scene.add(built.root);
- window._mapDebug={camera,controls,render:()=>render(),scene,world};
+ window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world};
  const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),new T.MeshStandardMaterial({color:'#2e4424',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-5.3;floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null,planOpacity=0.65,overlayActive=false;const texturePromises=new Map();
