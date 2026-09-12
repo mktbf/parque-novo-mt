@@ -25,7 +25,7 @@ export const sourceMetadata = {
 export const colors={Esportes:'#246dad',Experiências:'#239467',Cultura:'#aa703e',Eventos:'#7754b2',Convivência:'#657a87'};
 /** @type {ParkPlace[]} */
 export const places=[
- {id:'autodromo',name:'Autódromo Internacional',category:'Esportes',position:[705,520],sector:'23/24',height:12,featured:true,focusDirection:[-.7,.55,.6],photoCaption:'Autódromo Internacional e Pista de Arrancada',description:'Circuito oficial FIA com reta principal, complexo de boxes e paddock, arquibancada coberta e pista de arrancada ("Dragstrip").',footprint:[[562,658],[576,614],[760,413],[811,386],[855,383],[890,399],[924,461],[961,553],[1001,643],[1030,720],[1078,799],[1073,832],[1040,871],[999,882],[928,873],[852,846],[757,811],[654,753],[573,710]]},
+ {id:'autodromo',name:'Autódromo Internacional',category:'Esportes',position:[743,490],sector:'23/24',height:12,featured:true,focusDirection:[-.7,.55,.6],photoCaption:'Autódromo Internacional e Pista de Arrancada',description:'Circuito oficial FIA com reta principal, complexo de boxes e paddock, arquibancada coberta e pista de arrancada ("Dragstrip").',footprint:[[562,658],[576,614],[760,413],[811,386],[855,383],[890,399],[924,461],[961,553],[1001,643],[1030,720],[1078,799],[1073,832],[1040,871],[999,882],[928,873],[852,846],[757,811],[654,753],[573,710]]},
  {id:'arena-show',name:'Arena Show',category:'Eventos',position:[479,442],sector:'01',height:18,featured:true,focusDirection:[1,.65,.65],photoCaption:'Fotografia aérea da Arena Show',description:'Ampla cobertura branca ondulada contínua com forro acústico, pilares inclinados e bilheteria independente recuada diante da praça de acesso Show 13.',footprint:[[435,389],[515,389],[550,417],[568,442],[583,470],[576,491],[514,496],[435,496]]},
  {id:'roda-gigante',name:'Roda-gigante',category:'Experiências',position:[508,738],sector:'25',height:52,featured:true,photoCaption:'Roda-gigante (Setor 25) · Praça, plataforma e passarela',description:'Marco visual do parque (Setor 25), com 42 cabines panorâmicas climatizadas, plataforma de embarque (25.3), passarela elevada (25.2) e praça circular integrada.',footprint:[[476,706],[540,706],[540,770],[476,770]]},
  {id:'centro-de-eventos',name:'Centro de Eventos',category:'Eventos',position:[318,307],sector:'31',height:22,featured:true,description:'Espaço previsto para feiras, congressos e encontros, junto à parte norte da orla.',footprint:[[212,377],[252,415],[300,386],[391,300],[425,270],[405,227],[374,213],[304,246],[255,298]]},
@@ -67,36 +67,34 @@ export const terrain={
   [[768,682],[786,641],[820,588],[849,553],[843,601],[824,650],[848,694],[878,711],[901,695],[919,668],[929,708],[948,767],[904,754],[850,742],[803,746],[780,756]]
  ],
  parking:[
-  // E1 - Estacionamento Arena Show (Leste/Sudeste)
-  [[585,400],[675,410],[685,485],[605,505],[585,460]],
-  // E4 / E5 - Estacionamento Complexo Esportivo / AgroPlace
-  [[275,745],[355,750],[355,825],[275,825]],
-  // E6 - Estacionamento Principal / Pórtico (Sul)
-  [[630,895],[690,935],[795,935],[865,975],[845,1035],[710,1045],[630,980]],
+  // E6 - Estacionamento Arena Show Norte (54.297 m²)
+  [[540,375],[745,378],[655,515],[565,495],[540,430]],
+  // E7 - Estacionamento Arena Show Sul (24.824 m²)
+  [[645,530],[565,635],[490,615],[555,510]],
+  // E5 - Estacionamento Principal Sul
+  [[500,890],[860,890],[890,960],[500,980]],
   // E8 - Estacionamento Centro de Eventos (Norte)
   [[280,175],[420,155],[450,215],[315,235]]
  ],
  roundabouts:[
-  {name:'Rotatória Sul',center:[700,866],outerRadius:24,innerRadius:13},
-  {name:'Rotatória Norte 1',center:[672,119],outerRadius:24,innerRadius:13},
-  {name:'Rotatória Norte 2',center:[852,145],outerRadius:28,innerRadius:17}
+  {name:'Rotatória Norte 1',center:[808,348],outerRadius:25,innerRadius:14},
+  {name:'Rotatória Roda-gigante',center:[508,740],outerRadius:28,innerRadius:16},
+  {name:'Rotatória Sudoeste',center:[470,990],outerRadius:22,innerRadius:12}
  ],
  roads:[
-  // 1. Avenida de Entrada (Setor 10 Pórtico -> Rotatória Sul)
-  [[1040,1030],[980,995],[933,968],[880,938],[800,905],[724,866]],
-  // 2. Avenida Central (Rotatória Sul -> Roda-gigante -> leste da Arena Show -> Rotatória Norte 1)
-  [[678,860],[620,815],[563,779],[540,745],[532,705],[525,650],[525,580],[550,540],[577,506],[565,456],[558,415],[540,375],[560,320],[600,250],[648,180],[672,143]],
-  // 3. Avenida Perimetral do Autódromo (Rotatória Sul -> contorno leste -> Rotatória Norte 2)
-  [[724,866],[800,875],[864,878],[950,860],[1025,824],[1080,750],[1101,679],[1080,560],[1035,470],[970,425],[912,401],[865,300],[852,173]],
-  // 4. Interligação Norte (Rotatória Norte 1 -> Rotatória Norte 2)
-  [[696,119],[770,130],[824,145]],
-  // 5. Acesso Norte / Rodovia
-  [[672,95],[672,30],[665,10]],
-  // 6. Avenida Noroeste (Rotatória Norte 1 -> contorno sul do Centro de Eventos -> Orla)
-  [[648,119],[580,150],[510,180],[456,204],[422,275],[385,342],[337,370],[275,385],[223,380],[195,323]],
-  // 7. Avenida Oeste / AgroPlace -> Complexo Esportivo
-  [[508,702],[463,745],[392,757],[320,770],[270,790],[260,840],[265,900],[280,950]],
-  // 8. Anel Viário do Complexo Esportivo (Kartódromo / Motocross Sul)
+  // 1. Avenida de Entrada (Pórtico Setor 10 -> Rotatória Sudoeste)
+  [[1040,955],[980,962],[933,968],[850,980],[750,990],[650,996],[550,998],[470,990]],
+  // 2. Avenida Oeste (Rotatória Sudoeste -> Rotatória Roda-gigante)
+  [[470,990],[476,930],[490,850],[504,790],[508,740]],
+  // 3. Avenida Central (Rotatória Roda-gigante -> leste dos Estacionamentos -> Rotatória Norte 1)
+  [[508,740],[512,720],[530,688],[560,642],[596,594],[634,548],[672,504],[708,462],[744,420],[780,378],[808,348]],
+  // 4. Acesso Norte / Rodovia
+  [[808,348],[810,280],[800,200],[780,100],[770,30]],
+  // 5. Avenida Noroeste (Rotatória Norte 1 -> Centro de Eventos -> Orla)
+  [[808,348],[740,320],[650,310],[550,300],[456,260],[422,275],[385,342],[337,370],[275,385],[223,380],[195,323]],
+  // 6. Conexão Esportiva (Rotatória Roda-gigante -> Complexo Esportivo Oeste)
+  [[508,740],[463,745],[392,757],[320,770],[270,790],[260,840],[265,900],[280,950]],
+  // 7. Circuito do Kartódromo / Motocross Sul
   [[392,757],[420,770],[480,780],[510,830],[515,890],[490,950],[420,980],[350,970],[280,950]]
  ],
  paths:[
