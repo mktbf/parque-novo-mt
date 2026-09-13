@@ -2,7 +2,7 @@ import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes
 import * as T from 'three';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {terrain,places} from './park-data.js?v=autodromo-arquitetura-20260913-1';
-import {buildArenaShow} from './arena-show.js?v=autodromo-arquitetura-20260913-1';
+import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
 import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=autodromo-arquitetura-20260913-1';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
@@ -28,7 +28,7 @@ function material(color,metalness=0,roughness=.72){
 }
 
 export async function loadMaterials(renderer){
- const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer)];
+ const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values()];

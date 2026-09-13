@@ -1,12 +1,67 @@
 import * as T from 'three';
 
 // Horizontal registration: R84 implantation, in the shared 1600 px plan space.
-// Roof and facades: aerial photograph supplied by the user, c98b6e81…df05.png.
-// Vertical dimensions remain an architectural interpretation of that photograph.
+// Roof, glazing and detached support blocks: the existing aerial photograph
+// assets/spaces/arena-show.webp, compared with the registered R83/R84 plant.
+// Drive retrofit renders are proposals; their sculpture and plaza redesign are
+// deliberately not part of this existing-building interpretation.
+// Heights, details and material values are visual parameters, not surveyed meters.
 export const arenaLayout={
  pavilion:{position:[479,441.5],rotation:Math.PI/2,width:96,depth:68},
  ticketOffice:{position:[565,476],rotation:Math.PI/4},
 };
+
+export const ARENA_ARCHITECTURE_VERSION='arena-arquitetura-20260913-1';
+const arenaMaterials=new Map();
+const finish={
+ roof:{color:'#e5e8e3',roughness:.48,metalness:.12,envMapIntensity:.85},
+ seam:{color:'#dfe4df',roughness:.48,metalness:.15},
+ soffit:{color:'#cbd1ce',roughness:.82,metalness:.04},
+ fascia:{color:'#639fc0',roughness:.48,metalness:.12},
+ frame:{color:'#99a7a9',roughness:.38,metalness:.6},
+ steel:{color:'#becac8',roughness:.53,metalness:.42},
+ glass:{color:'#344c53',roughness:.14,metalness:.24,envMapIntensity:1.55},
+ panel:{color:'#455355',roughness:.69,metalness:.08},
+ white:{color:'#e1e5df',roughness:.8,metalness:.01},
+ concrete:{color:'#c4c8c0',roughness:.93,metalness:0},
+ dark:{color:'#243437',roughness:.67,metalness:.04},
+};
+function surface(name){
+ if(!arenaMaterials.has(name)){
+  const material=new T.MeshStandardMaterial(finish[name]);
+  material.name='arena:'+name;material.userData.arenaSurface=name;
+  arenaMaterials.set(name,material);
+ }
+ return arenaMaterials.get(name);
+}
+const painted=(mesh,kind)=>{mesh.material=surface(kind);return mesh;};
+let arenaTextures=null;
+export function configureArenaMaterials(renderer){
+ if(!arenaTextures){
+  const n=128,data=new Uint8Array(n*n*4);let seed=9013;
+  for(let i=0;i<n*n;i++){
+   seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+   const value=225+(seed>>>28);data.set([value,value,value,255],i*4);
+  }
+  const rough=new T.DataTexture(data,n,n,T.RGBAFormat);
+  rough.name='arena:paint-roughness';rough.wrapS=rough.wrapT=T.RepeatWrapping;
+  rough.minFilter=T.LinearMipmapLinearFilter;rough.magFilter=T.LinearFilter;
+  rough.generateMipmaps=true;rough.needsUpdate=true;arenaTextures=[rough];
+ }
+ for(const tex of arenaTextures)tex.anisotropy=Math.min(8,renderer?.capabilities?.getMaxAnisotropy?.()??1);
+ for(const name of ['roof','fascia','panel']){
+  const material=surface(name);material.roughnessMap=arenaTextures[0];material.needsUpdate=true;
+ }
+ return arenaTextures;
+}
+// Only the roof needs its original parametric UVs. Flatten its local transform
+// before skipBatch: the common batcher reparents kept meshes into the place root.
+function keepRoofUV(mesh,arena){
+ arena.updateWorldMatrix(true,true);
+ const m=arena.matrixWorld.clone().invert().multiply(mesh.matrixWorld);
+ mesh.geometry.applyMatrix4(m);mesh.position.set(0,0,0);mesh.quaternion.identity();mesh.scale.set(1,1,1);
+ mesh.userData.skipBatch=true;mesh.userData.arenaPart='roof';arena.add(mesh);
+}
 
 const halfWidth=arenaLayout.pavilion.width/2,halfDepth=arenaLayout.pavilion.depth/2;
 export function roofHalfDepth(x){
@@ -23,6 +78,8 @@ export function roofHeight(x,z){
 }
 
 export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,groupAt,inPolygon,C}){
+ arena.userData.arenaArchitectureVersion=ARENA_ARCHITECTURE_VERSION;
+ arena.userData.arenaEvidence='R83/R84 + aerial photograph; visual vertical proportions';
  const pavilion=arenaLayout.pavilion;
  const hall=groupAt(arena,...pavilion.position,pavilion.rotation);
  hall.name='Arena Show · Pavilhão Aberto Ondulado';
@@ -32,11 +89,8 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
  for(let x=-44;x<=44;x+=8){path(hall,[[x,-31],[x,31]],.08,'#aeb2a8',.48,false,false);}
  for(let z=-30;z<=30;z+=8){path(hall,[[-45,z],[45,z]],.08,'#aeb2a8',.49,false,false);}
 
- for(let k=0;k<5;k++){
-  const r=26+k*3.5,pts=[];
-  for(let a=-Math.PI*.75;a<=Math.PI*.75;a+=.1){pts.push([Math.cos(a)*r,-18+Math.sin(a)*(r*.55)]);}
-  path(hall,pts,2.8,'#b8b8ac',.35+k*.18,false,false);
- }
+ // Remove the previous decorative semicircles: the aerial reference shows
+ // an open event floor, not a set of permanent concentric seating rings.
 
  // 2. COBERTURA ONDULADA ORGÂNICA (MALHA CONTÍNUA)
  const nx=140,nz=56,positions=[],indices=[],uvs=[];
@@ -56,13 +110,17 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
  geometry.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));
  geometry.setIndex(indices);geometry.computeVertexNormals();
 
- const skin=add(hall,geometry,C.white,0,0,0,.05,.35);skin.name='Cobertura Branca Ondulada';
+ const skin=painted(add(hall,geometry,C.white), 'roof');skin.name='Cobertura Branca Ondulada';
+ keepRoofUV(skin,arena);
 
- const soffit=geometry.clone();soffit.translate(0,-1.05,0);
+ // Clone the original local grid: the upper mesh now uses canonical coordinates.
+ const soffit=new T.BufferGeometry();soffit.setAttribute('position',new T.Float32BufferAttribute(positions,3));
+ soffit.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));soffit.translate(0,-1.05,0);
  const bottomIndices=indices.slice();
  for(let i=0;i<bottomIndices.length;i+=3)[bottomIndices[i+1],bottomIndices[i+2]]=[bottomIndices[i+2],bottomIndices[i+1]];
  soffit.setIndex(bottomIndices);soffit.computeVertexNormals();
- const underMesh=add(hall,soffit,'#cfd7d5',0,0,0,.1,.65);underMesh.name='Forro Inferior da Cobertura';
+ const underMesh=painted(add(hall,soffit,'#cfd7d5'),'soffit');underMesh.name='Forro Inferior da Cobertura';
+ keepRoofUV(underMesh,arena);
 
  // 3. TESTEIRA AZUL-PISCINA / TURQUESA CONTÍNUA (FASCIA PERIMETRAL)
  const boundary=[];
@@ -81,8 +139,24 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
  const fasciaGeo=new T.BufferGeometry();
  fasciaGeo.setAttribute('position',new T.Float32BufferAttribute(sidePositions,3));
  fasciaGeo.setIndex(sideIndices);fasciaGeo.computeVertexNormals();
- const fasciaMesh=add(hall,fasciaGeo,'#5ea8d8',0,0,0,.15,.32);fasciaMesh.name='Testeira Azul-Piscina Contínua';
+ const fasciaMesh=painted(add(hall,fasciaGeo,'#5ea8d8'),'fascia');fasciaMesh.name='Testeira Azul-Piscina Contínua';
  tube(hall,edgePoints.filter((_,i)=>i%2===0),.11,C.white,true);
+
+ // Standing seams follow exactly the existing roof height and boundary.
+ // Their spacing is a visual finish parameter, not a manufacturer specification.
+ const seamPositions=[],seamIndices=[];
+ for(let sx=-46.25;sx<47;sx+=1.25){
+  const max=roofHalfDepth(sx)-.32,base=seamPositions.length/3,segments=36;
+  for(let j=0;j<=segments;j++){
+   const z=-max+2*max*j/segments;
+   for(const [dx,dy] of [[-.026,.035],[0,.083],[.026,.035]])
+    seamPositions.push(sx+dx,roofHeight(sx+dx,z)+dy,z);
+   if(j<segments){const k=base+j*3;seamIndices.push(k,k+3,k+1,k+1,k+3,k+4,k+1,k+4,k+2,k+2,k+4,k+5);}
+  }
+ }
+ const seamGeo=new T.BufferGeometry();seamGeo.setAttribute('position',new T.Float32BufferAttribute(seamPositions,3));
+ seamGeo.setIndex(seamIndices);seamGeo.computeVertexNormals();
+ painted(add(hall,seamGeo,C.white),'seam').name='Juntas longitudinais da cobertura';
 
  // 4. PILARES CILÍNDRICOS DE CONCRETO ESTRUTURAL
  const columnCols=[
@@ -93,7 +167,8 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
  for(const col of columnCols){
   for(const cx of col.xs){
    const topY=roofHeight(cx,col.z)-1.1;
-   cylinder(hall,cx,.2,col.z,.85,topY-.2,'#dadcd5',.85);
+   painted(cylinder(hall,cx,.2,col.z,.85,topY-.2,'#dadcd5',.85),'concrete');
+   painted(cylinder(hall,cx,.2,col.z,1.08,.24,'#dadcd5'),'concrete');
    cylinder(hall,cx,topY-.5,col.z,1.25,.45,'#bcc1bc',1.0);
   }
  }
@@ -102,12 +177,19 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
  for(const tz of [-25,-2,25]){
   const ptsTop=[],ptsBot=[];
   for(let tx=-42;tx<=42;tx+=2.5){ptsTop.push([tx,roofHeight(tx,tz)-1.15,tz]);ptsBot.push([tx,roofHeight(tx,tz)-2.15,tz]);}
-  tube(hall,ptsTop,.11,'#b8c5c4');tube(hall,ptsBot,.11,'#b8c5c4');
+  painted(tube(hall,ptsTop,.11,'#b8c5c4'),'steel');painted(tube(hall,ptsBot,.11,'#b8c5c4'),'steel');
   for(let tx=-42;tx<42;tx+=3.5){
    const nextX=Math.min(tx+3.5,42);
    beam(hall,[tx,roofHeight(tx,tz)-1.15,tz],[nextX,roofHeight(nextX,tz)-2.15,tz],.07,'#c2cecd');
    beam(hall,[tx,roofHeight(tx,tz)-2.15,tz],[nextX,roofHeight(nextX,tz)-1.15,tz],.07,'#c2cecd');
   }
+ }
+
+ // Secondary purlins and connections stay beneath the existing roof.
+ for(let px=-38;px<=38;px+=4.75){
+  const points=[];for(let pz=-26;pz<=26;pz+=2)points.push([px,roofHeight(px,pz)-1.18,pz]);
+  const curve=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)));
+  painted(add(hall,new T.TubeGeometry(curve,24,.065,6,false),'#becac8'),'steel');
  }
 
  // 5. PALCO E BACKSTAGE (FACILIDADES TÉCNICAS E DOCAS VOLTADAS AO LAGO)
@@ -124,12 +206,32 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
   box(hall,dx,4.25,-45.2,5.0,.25,1.5,'#78909c');
  }
 
- for(const side of [-1,1]){
-  const wing=groupAt(hall,side*51,0);
-  box(wing,0,.35,0,9,3.8,22,'#485552');
-  box(wing,0,4.15,0,9.6,.45,22.8,C.white);
-  for(const wz of [-8,0,8])box(wing,side*4.55,.9,wz,.12,2.6,2.2,'#213531');
+ // The plan labels two bathrooms and one bar along each lateral edge.
+ // Keep the established lateral setback; separate the formerly generic volume.
+ // These local subdivisions follow the plant/photo visually, not measured CAD.
+ const supportBlocks=[];
+ for(const side of [-1,1])for(const [z,depth,kind] of [[-24,12,'bwc'],[0,11,'bar'],[27,11,'bwc']]){
+  const wing=groupAt(hall,side*51,z),front=-side*4.55;
+  supportBlocks.push({side,z,depth,kind});
+  painted(box(wing,0,.35,0,9,3.8,depth,'#485552'),'panel');
+  painted(box(wing,0,4.15,0,9.6,.32,depth+.5,C.white),'roof');
+  painted(box(wing,0,.35,0,9.12,.45,depth+.12,'#aaa'),'concrete');
+  // Light roof curb and edge flashing.
+  for(const end of [-1,1])painted(box(wing,0,4.47,end*(depth/2),9.6,.16,.16,C.white),'white');
+  if(kind==='bar'){
+   painted(box(wing,front,1.55,0,.18,1.95,depth-1.2,'#213531'),'dark');
+   painted(box(wing,front-side*.32,1.50,0,.8,.16,depth-1,C.white),'concrete');
+   painted(box(wing,front-side*.60,3.65,0,1.55,.22,depth+.2,C.white),'white');
+   for(let zz=-depth/2+.9;zz<depth/2;zz+=2.2)painted(box(wing,front-side*.12,1.5,zz,.18,2.14,.10,C.white),'frame');
+  }else{
+   painted(box(wing,front,.78,1.4,.18,2.65,2.6,'#213531'),'dark');
+   painted(box(wing,front-side*.6,3.58,1.4,1.65,.22,4.1,C.white),'white');
+   for(const zz of [-depth/2+1.1,-depth/2+3])painted(box(wing,side*4.56,2.55,zz,.18,.8,1.45,'#213531'),'glass');
+  }
+  // Sparse cladding joints, baked into material batches rather than individual draw calls.
+  for(let zz=-depth/2+.4;zz<depth/2;zz+=.8)painted(box(wing,side*4.56,.85,zz,.08,3.2,.035,'#667174'),'frame');
  }
+ arena.userData.arenaSupportBlocks=supportBlocks;
 
  // 6. ESPLANADA DA ARENA (ENTRE ARENA E BILHETERIA)
  const curve=new T.CurvePath();
@@ -182,17 +284,30 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
  const glassWall=(x0,z0,x1,z1)=>{
   const dx=x1-x0,dz=z1-z0,len=Math.hypot(dx,dz);
   const wall=groupAt(ticket,(x0+x1)/2,(z0+z1)/2,-Math.atan2(dz,dx));
-  box(wall,0,.9,0,len,4.2,.15,C.glass);
-  for(let i=0,n=Math.ceil(len/1.2);i<=n;i++)box(wall,-len/2+i*len/n,.8,.05,.07,4.3,.2,'#90a4ae');
-  for(const gy of [.9,2.5,5.0])box(wall,0,gy,.05,len,.08,.18,'#90a4ae');
+  painted(box(wall,0,.9,0,len,4.2,.15,C.glass),'glass');
+  for(let i=0,n=Math.ceil(len/1.2);i<=n;i++)painted(box(wall,-len/2+i*len/n,.8,.05,.07,4.3,.2,'#90a4ae'),'frame');
+  for(const gy of [.9,2.5,5.0])painted(box(wall,0,gy,.05,len,.08,.18,'#90a4ae'),'frame');
  };
  glassWall(-16.5,7.2,-5.5,7.2);glassWall(5.5,7.2,17.5,7.2);
  glassWall(-5.5,7.2,-5.5,1.8);glassWall(5.5,1.8,5.5,7.2);glassWall(-5.5,1.8,5.5,1.8);
 
- for(const bx of [-3.2,-1.1,1.1,3.2]){
-  box(ticket,bx,1.0,2.1,1.5,2.4,.4,'#37474f');
-  box(ticket,bx,2.3,2.35,1.3,.35,.1,'#cfd8dc');
+ // Recessed access doors, opaque plinths, handles and roof drip edges.
+ // The independent U-shaped footprint and all paving polygons are retained.
+ for(const dx of [-2.4,0,2.4]){
+  painted(box(ticket,dx,1,1.96,2.15,3.95,.11,C.glass),'glass');
+  for(const side of [-1,1])painted(box(ticket,dx+side*1.05,1,2.04,.07,4,.10,C.white),'frame');
+  painted(box(ticket,dx+.72,2.2,2.12,.075,.85,.11,C.white),'frame');
  }
+ for(const [cx,w] of [[-11,11],[11.5,12]]){
+  painted(box(ticket,cx,.8,7.37,w,.72,.27,'#afb8b6'),'concrete');
+  painted(box(ticket,cx,5.61,7.46,w,.12,.25,C.white),'white');
+ }
+ for(const [px,pw] of [[-14.2,5.5],[14.8,6.5]]){
+  painted(box(ticket,px,2.6,7.51,pw,2.6,.10,'#2b393f'),'panel');
+  for(let x=px-pw/2+.8;x<px+pw/2;x+=.8)painted(box(ticket,x,2.65,7.58,.018,2.48,.035,'#90a4ae'),'frame');
+ }
+ painted(box(ticket,.5,5.62,-6.95,35.2,.13,.24,C.white),'white');
+ // Mapped services, not event-only decoration: no proposed sculpture, posters or wet paving.
 
  // 8. PRAÇA FRONTAL COM ILHAS DE PAISAGISMO GEOMÉTRICO
  const gardenBeds=[
