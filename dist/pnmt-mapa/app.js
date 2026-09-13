@@ -62,7 +62,10 @@ async function init(){
     tiles.forEach(m=>group.add(m));group.visible=false;satellite=group;scene.add(group);
    }else{
     const tex=await loadTexture('./assets/referencias/prancha-completa.webp?v=r83-r84');
-    planImage=imageTile(tex,[[0,0],[1600,0],[0,1131.869],[1600,1131.869]],-.22,planOpacity);
+    const parkOutline=[[72,548],[81,480],[120,445],[121,382],[105,337],[128,297],[218,190],[344,14],[520,14],[921,128],[936,170],[914,303],[1004,477],[1124,714],[1176,935],[1158,1009],[998,1049],[594,1111],[394,1118],[362,1076],[320,1003],[255,950],[270,881],[221,810],[160,825],[125,815],[95,740],[135,675],[104,605]];
+    const vecs=parkOutline.map(([x,z])=>new T.Vector2(x,z)),indices=T.ShapeUtils.triangulateShape(vecs,[]).flat(),positions=parkOutline.flatMap(([x,z])=>world([x,z],-.22).toArray()),uvs=parkOutline.flatMap(([x,z])=>[x/1600,1-z/1131.8694362]);
+    const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(positions,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));geo.setIndex(indices);geo.computeVertexNormals();
+    planImage=new T.Mesh(geo,new T.MeshBasicMaterial({map:tex,toneMapped:false,transparent:true,opacity:planOpacity,depthWrite:false,side:T.DoubleSide}));
     planImage.renderOrder=6;planImage.visible=false;scene.add(planImage);
    }
   })();layerPromises.set(kind,promise);
@@ -110,7 +113,7 @@ async function init(){
  controls.addEventListener('change',render);controls.addEventListener('start',()=>{activeTween++;});controls.addEventListener('end',()=>{engine.focusShadow(controls.target,camera.position.distanceTo(controls.target)*.62);render();});
  const corners=[[72,14],[1176,14],[1176,1118],[72,1118]].flatMap(p=>[world(p),world(p,24)]);
  const defaultDirection=new T.Vector3(-.94,.62,.29).normalize();
- function viewport(focused=false){const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);camera.aspect=w/h;camera.clearViewOffset();if(mobile()&&focused)camera.setViewOffset(w,h,0,h*.2,w,h);camera.updateProjectionMatrix();engine.resize(w,h);return w/h;}
+ function viewport(focused=false){const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);camera.aspect=w/h;camera.clearViewOffset();if(mobile()&&focused)camera.setViewOffset(w,h,0,h*.16,w,h);camera.updateProjectionMatrix();engine.resize(w,h);return w/h;}
  function chooseCamera(){
   camera=tilted?perspective:topCamera;controls.object=camera;engine.setCamera(camera);
   controls.enableRotate=tilted;controls.minPolarAngle=tilted?.22:0;controls.maxPolarAngle=tilted?1.36:Math.PI/2;
@@ -130,7 +133,7 @@ async function init(){
   const target=controls.target.clone(),offset=camera.position.clone().sub(target),distance=offset.length();
   const span=Math.tan(T.MathUtils.degToRad(camera.fov/2))*distance/camera.zoom;
   const up=new T.Vector3(-offset.x,0,-offset.z);if(up.lengthSq()<1e-8)up.set(0,0,-1);up.normalize();
-  tilted=false;chooseCamera();const aspect=viewport();
+  tilted=false;chooseCamera();const aspect=viewport(Boolean(selectedId));
   camera.left=-span*aspect;camera.right=span*aspect;camera.top=span;camera.bottom=-span;camera.zoom=1;
   camera.up.copy(up);camera.position.copy(target).add(new T.Vector3(0,2000,0));camera.lookAt(target);controls.target.copy(target);
   camera.updateProjectionMatrix();controls.update();camera.updateMatrixWorld();engine.focusShadow(target,900);
@@ -151,10 +154,10 @@ async function init(){
   if(tilted){
    const direction=p.focusDirection?new T.Vector3(...p.focusDirection).normalize():off.normalize();
    const fitted=camera.clone();fitted.position.copy(target).add(direction);fitted.lookAt(target);
-   const distance=Math.max(100,fitDistance(fitted,target,points,aspect,mobile()?2.15:1.4));
+   const distance=Math.max(100,fitDistance(fitted,target,points,aspect,mobile()?1.08:1.4));
    to=target.clone().addScaledVector(direction,distance);
   }
-  else{to=target.clone().add(off);const inverse=camera.quaternion.clone().invert(),locals=points.map(v=>v.clone().sub(target).applyQuaternion(inverse));const need=Math.max(30,...locals.map(v=>Math.max(Math.abs(v.y),Math.abs(v.x)/aspect)))*(mobile()?2.15:1.55);zoom=Math.min(10,camera.top/need);}
+  else{to=target.clone().add(off);const inverse=camera.quaternion.clone().invert(),locals=points.map(v=>v.clone().sub(target).applyQuaternion(inverse));const need=Math.max(30,...locals.map(v=>Math.max(Math.abs(v.y),Math.abs(v.x)/aspect)))*(mobile()?1.08:1.55);zoom=Math.min(10,camera.top/need);}
   const token=++activeTween,start=performance.now(),duration=reduced?0:850;
   function step(now){if(disposed||token!==activeTween)return;const t=duration?Math.min((now-start)/duration,1):1,e=1-Math.pow(1-t,3);camera.position.lerpVectors(from,to,e);controls.target.lerpVectors(fromTarget,target,e);camera.zoom=z0+(zoom-z0)*e;camera.updateProjectionMatrix();controls.update();render();if(t<1)animation=requestAnimationFrame(step);else engine.focusShadow(controls.target,Math.max(100,camera.position.distanceTo(controls.target)*.62));}
   animation=requestAnimationFrame(step);
