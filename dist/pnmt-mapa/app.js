@@ -3,8 +3,12 @@ import {places,colors} from './park-data.js?v=autodromo-arquitetura-20260913-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=autodromo-arquitetura-20260913-1';
+import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-arquitetura-20260913-2';
 let autoDetail=null;
-function autoViewButtons(p){return p.id==='autodromo'?`<div class="auto-views" role="group" aria-label="Explorar o autódromo"><button type="button" data-auto-view="boxes" aria-pressed="false" ${mapApi?'':'disabled'}>Ver boxes e torre</button><button type="button" data-auto-view="stand" aria-pressed="false" ${mapApi?'':'disabled'}>Ver arquibancada</button><button type="button" data-auto-view="circuit" aria-pressed="true" ${mapApi?'':'disabled'}>Ver circuito completo</button></div>`:'';}
+function autoViewButtons(p){
+ const options=detailOptions[p.id];if(!options)return '';
+ return `<div class="auto-views" role="group" aria-label="Explorar ${escapeHtml(p.name)}">${options.map(([key,label])=>`<button type="button" data-detail-view="${key}" ${p.id==='autodromo'?`data-auto-view="${key||'circuit'}"`:''} aria-pressed="${String(key===(autoDetail||''))}" ${mapApi?'':'disabled'}>${label}</button>`).join('')}</div>`;
+}
 let selectedId=null,filter='all',query='',visible=new Set(places.map(p=>p.id)),mapApi=null,lastTrigger=null;
 function toggleList(open){$('.explorer').classList.toggle('list-open',open);$('#map-stage').inert=open;$('.mobile-list-open').setAttribute('aria-expanded',String(open));}
 function drawList(){
@@ -14,7 +18,7 @@ function drawList(){
  mapApi?.render();
 }
 function selectPlace(id,focus=true){
- const p=places.find(p=>p.id===id);if(!p)return;autoDetail=null;lastTrigger=document.activeElement;selectedId=id;
+ const p=places.find(p=>p.id===id);if(!p)return;if(focus||selectedId!==id)autoDetail=null;lastTrigger=document.activeElement;selectedId=id;
  const nearest=relatedPlaces(p,places);
  $('#browse-panel').hidden=true;$('#selection').hidden=false;$('.explorer').classList.add('has-selection');$('#selection').style.setProperty('--color',colors[p.category]);
  $('#selection').innerHTML=`<div class="selection-top"><button class="selection-back" type="button">← Todos os espaços</button><button class="selection-close" type="button" aria-label="Fechar detalhes">×</button></div><img class="selection-image${p.kind==='parking'?' parking-image':''}" src="${imageFor(p)}" alt="${p.name}, referência do projeto"><div class="selection-photo-label">${p.photoCaption||(p.id==='estrutura-e-acesso'?'Planta de implantação':'Imagem do projeto')}</div><div class="selection-copy"><div class="selection-tag">${category(p)}</div><h2 tabindex="-1">${p.name}</h2>${autoViewButtons(p)}<p>${p.description}</p>${guideHtml(p,places)}${p.url?`<a class="primary-link" data-destination="${p.id}" href="${p.url}" target="_top">Conhecer o espaço <span aria-hidden="true">↗</span></a>`:''}<div class="selection-location"><strong>Você está explorando</strong>${p.zone||'Parque Novo Mato Grosso'}<br>Selecione um destino para localizá-lo no mapa.</div><div class="nearby"><p>POR PERTO</p>${nearest.map(n=>`<button data-nearby="${n.id}">${n.name} ↗</button>`).join('')}</div></div>`;
@@ -27,7 +31,7 @@ function closeSelection(returnFocus=true){selectedId=null;autoDetail=null;$('#se
 $('#search').addEventListener('input',e=>{query=e.target.value;drawList();});
 $('.filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawList();mapApi?.overview();$('#announcement').textContent=$('#list-count').textContent;});
 $('#place-list').addEventListener('click',e=>{const b=e.target.closest('[data-locate]');if(b)selectPlace(b.dataset.locate);});
-$('#selection').addEventListener('click',e=>{const detail=e.target.closest('[data-auto-view]');if(detail){if(mapApi){autoDetail=detail.dataset.autoView==='circuit'?null:detail.dataset.autoView;mapApi.focusAutoDetail(autoDetail);document.querySelectorAll('[data-auto-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===detail)));}return;}if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
+$('#selection').addEventListener('click',e=>{const detail=e.target.closest('[data-detail-view]');if(detail){if(mapApi)mapApi.focusDetail(detail.dataset.detailView||null);return;}if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
 $('.mobile-list-open').addEventListener('click',()=>{if(selectedId)closeSelection(false);toggleList(true);$('#search').focus({preventScroll:true});});
 $('.mobile-list-close').addEventListener('click',()=>{toggleList(false);$('.mobile-list-open').focus({preventScroll:true});});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSelection();toggleList(false);mapApi?.overview();}if(e.key==='Tab'&&mobile()&&$('.explorer').classList.contains('list-open')){const els=[...$('#places').querySelectorAll('button,a,input')].filter(x=>x.offsetParent);const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
@@ -50,21 +54,18 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=arena-arquitetura-20260913-1'),import('./rendering.js?v=autodromo-arquitetura-20260913-1'),import('./camera-math.js?v=autodromo-arquitetura-20260913-1')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=espacos-arquitetura-20260913-2'),import('./rendering.js?v=espacos-arquitetura-20260913-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
  const engine=createRendering(scene,camera,mobile()),renderer=engine.renderer;
  host.appendChild(renderer.domElement);
  const controls=new OrbitControls(camera,renderer.domElement);
- Object.assign(controls,{enableDamping:false,minPolarAngle:.22,maxPolarAngle:1.36,rotateSpeed:.45,zoomSpeed:.8,minDistance:60,maxDistance:5000,minZoom:.65,maxZoom:10,enablePan:true,screenSpacePanning:true});
+ Object.assign(controls,{enableDamping:false,minPolarAngle:.22,maxPolarAngle:1.36,rotateSpeed:.45,zoomSpeed:.8,minDistance:24,maxDistance:5000,minZoom:.65,maxZoom:10,enablePan:true,screenSpacePanning:true});
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
  const built=createMiniatures();scene.add(built.root);
- window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world};
- const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),built.groundMaterial);floor.rotation.x=-Math.PI/2;floor.position.y=-.3;
- const backdropUV=[];const backdropPos=floor.geometry.getAttribute('position');
- for(let i=0;i<backdropPos.count;i++)backdropUV.push((backdropPos.getX(i)+620)/5,(-backdropPos.getY(i)+570)/5);
- floor.geometry.setAttribute('uv',new T.Float32BufferAttribute(backdropUV,2));floor.receiveShadow=true;scene.add(floor);
+ window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world,get state(){return {version:'espacos-arquitetura-20260913-2',selectedId,detail:autoDetail,view,tilted,buildings};},get diagnostics(){return engine.diagnostics();}};
+ const floor=new T.Mesh(createBackdropGeometry(),built.groundMaterial);floor.position.y=-.3;floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null,planOpacity=0.65,overlayActive=false;const texturePromises=new Map();
  async function loadTexture(url){if(texturePromises.has(url))return texturePromises.get(url);const promise=textureLoader.loadAsync(url).then(tex=>{tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),16);textures.push(tex);return tex;});texturePromises.set(url,promise);return promise;}
@@ -120,7 +121,10 @@ async function init(){
   for(const p of priority){
    const m=markers.get(p.id),isActive=p.id===selectedId||p.id===hoveredId;
    m.querySelector('.pin-name').textContent=isActive?p.name:(p.shortLabel||p.name);
-   const v=world(p.position,buildings?Math.min(Math.max(markerHeights.get(p.id),p.height+2),64):2).project(camera),x=(v.x+1)/2*width,y=(1-v.y)/2*height;
+   const detail=p.id===selectedId?detailView(built.models.get(p.id),p.id,autoDetail):null;
+   const anchor=detail?detail.footprint.reduce((a,pt)=>[a[0]+pt[0]/detail.footprint.length,a[1]+pt[1]/detail.footprint.length],[0,0]):p.position;
+   const anchorHeight=detail?detail.height+1:Math.min(Math.max(markerHeights.get(p.id),p.height+2),64);
+   const v=world(anchor,buildings?anchorHeight:2).project(camera),x=(v.x+1)/2*width,y=(1-v.y)/2*height;
    const showing=(visible.has(p.id)||p.id===selectedId)&&v.z>=-1&&v.z<=1&&x>18&&x<width-18&&y>100&&y<height-(mobile()&&selectedId?height*.43:80);
    m.hidden=!showing;if(!showing)continue;m.style.left=x+'px';m.style.top=y+'px';m.classList.toggle('selected',p.id===selectedId);m.style.zIndex=isActive?'50':'10';
    let full=isActive||p.featured||p.kind==='parking'||scale>2.6;if(mobile()&&!isActive&&p.kind!=='parking'&&scale<2.6)full=['autodromo','roda-gigante','arena-show','centro-de-eventos'].includes(p.id);
@@ -138,7 +142,19 @@ async function init(){
  controls.addEventListener('change',render);controls.addEventListener('start',()=>{activeTween++;engine.setInteracting(true);});controls.addEventListener('end',()=>{engine.setInteracting(false);engine.focusShadow(controls.target,camera.position.distanceTo(controls.target)*.62);render();});
  const corners=[[72,14],[1176,14],[1176,1118],[72,1118]].flatMap(p=>[world(p),world(p,24)]);
  const defaultDirection=new T.Vector3(-.94,.62,.29).normalize();
- function viewport(focused=false){const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);camera.aspect=w/h;camera.clearViewOffset();if(mobile()&&focused)camera.setViewOffset(w,h,0,h*.16,w,h);camera.updateProjectionMatrix();engine.resize(w,h);return w/h;}
+ let fitFrame={width:1,height:1};
+ function viewport(focused=false){
+  const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);camera.aspect=w/h;camera.clearViewOffset();fitFrame={width:1,height:1};
+  if(focused){
+   const sr=stage.getBoundingClientRect();let top=16,bottom=h-18;
+   for(const el of stage.querySelectorAll('.mode-switch,.map-caption,.scene-settings'))if(!el.hidden&&el.offsetHeight)top=Math.max(top,el.getBoundingClientRect().bottom-sr.top+16);
+   if(mobile()&&selectedId){const panel=$('#places').getBoundingClientRect();bottom=Math.min(bottom,panel.top-sr.top-16);}else bottom=h-92;
+   top=Math.min(top,h*.32);bottom=Math.max(bottom,top+h*.2);
+   const center=(top+bottom)/2;fitFrame.height=Math.max(.2,(bottom-top)/h);
+   camera.setViewOffset(w,h,0,h/2-center,w,h);
+  }
+  camera.updateProjectionMatrix();engine.resize(w,h);return w/h;
+ }
  function chooseCamera(){
   camera=tilted?perspective:topCamera;controls.object=camera;engine.setCamera(camera);
   controls.enableRotate=tilted;controls.minPolarAngle=tilted?.22:0;controls.maxPolarAngle=tilted?1.36:Math.PI/2;
@@ -172,18 +188,19 @@ async function init(){
   return bounds;
  }
  function focus(p){
-  const detail=p.id==='autodromo'&&autoDetail?built.models.get('autodromo').userData.detailViews?.[autoDetail]:null;
+  const detail=detailView(built.models.get(p.id),p.id,autoDetail);
   const bounds=detail?new T.Box3().setFromPoints(detail.footprint.flatMap(pt=>[world(pt,0),world(pt,detail.height)])):placeBounds(p),target=bounds.getCenter(new T.Vector3()),points=[];
-  for(const x of [bounds.min.x,bounds.max.x])for(const z of [bounds.min.z,bounds.max.z])for(const y of [0,bounds.max.y])points.push(new T.Vector3(x,y,z));
+  if(detail)points.push(...detail.footprint.flatMap(pt=>[world(pt,0),world(pt,detail.height)]));
+  else for(const x of [bounds.min.x,bounds.max.x])for(const z of [bounds.min.z,bounds.max.z])for(const y of [0,bounds.max.y])points.push(new T.Vector3(x,y,z));
   const aspect=viewport(true),from=camera.position.clone(),fromTarget=controls.target.clone(),off=camera.position.clone().sub(controls.target),z0=camera.zoom;
   let to,zoom=1;
   if(tilted){
    const focusDirection=detail?.direction||p.focusDirection;const direction=focusDirection?new T.Vector3(...focusDirection).normalize():off.normalize();
    const fitted=camera.clone();fitted.position.copy(target).add(direction);fitted.lookAt(target);
-   const distance=Math.max(detail?65:100,fitDistance(fitted,target,points,aspect,mobile()?1.08:detail?1.12:1.4));
+   const distance=Math.max(detail?24:100,fitDistance(fitted,target,points,aspect,mobile()?1.06:detail?1.1:1.4,fitFrame));
    to=target.clone().addScaledVector(direction,distance);
   }
-  else{to=target.clone().add(off);const inverse=camera.quaternion.clone().invert(),locals=points.map(v=>v.clone().sub(target).applyQuaternion(inverse));const need=Math.max(30,...locals.map(v=>Math.max(Math.abs(v.y),Math.abs(v.x)/aspect)))*(mobile()?1.08:1.55);zoom=Math.min(10,camera.top/need);}
+  else{to=target.clone().add(off);const inverse=camera.quaternion.clone().invert(),locals=points.map(v=>v.clone().sub(target).applyQuaternion(inverse));const need=Math.max(30,...locals.map(v=>Math.max(Math.abs(v.y)/fitFrame.height,Math.abs(v.x)/aspect)))*(mobile()?1.08:1.55);zoom=Math.min(10,camera.top/need);}
   const token=++activeTween,start=performance.now(),duration=reduced?0:850;
   function step(now){if(disposed||token!==activeTween)return;const t=duration?Math.min((now-start)/duration,1):1,e=1-Math.pow(1-t,3);camera.position.lerpVectors(from,to,e);controls.target.lerpVectors(fromTarget,target,e);camera.zoom=z0+(zoom-z0)*e;camera.updateProjectionMatrix();controls.update();render();if(t<1)animation=requestAnimationFrame(step);else engine.focusShadow(controls.target,Math.max(100,camera.position.distanceTo(controls.target)*.62));}
   animation=requestAnimationFrame(step);
@@ -223,20 +240,22 @@ async function init(){
  let resizeW=0,resizeH=0;
  const resize=new ResizeObserver(()=>{if(stage.clientWidth===resizeW&&stage.clientHeight===resizeH)return;resizeW=stage.clientWidth;resizeH=stage.clientHeight;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));});resize.observe(stage);
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showFallback();});
- function focusAutoDetail(key){
-  const p=places.find(p=>p.id==='autodromo');if(selectedId!==p.id)return;
+ function focusDetail(key){
+  const p=places.find(p=>p.id===selectedId);if(!p)return;
+  if(key&&!validDetail(p.id,key))return;
   autoDetail=key;const url=new URL(location.href);if(key)url.searchParams.set('detalhe',key);else url.searchParams.delete('detalhe');history.replaceState(null,'',url);view='3d';tilted=true;buildings=true;overlayActive=false;requestedView++;
   chooseCamera();updateLayers();document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view==='3d')));
-  $('#announcement').textContent=key==='stand'?'Arquibancada em detalhe.':key==='boxes'?'Boxes e torre em detalhe.':'Circuito completo.';
+  document.querySelectorAll('[data-detail-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.detailView===(key||''))));
+  $('#announcement').textContent=detailLabel(p.id,key)+'.';
   focus(p);
  }
- mapApi={render,focus,overview,focusAutoDetail};overview();updateLayers();
+ mapApi={render,focus,overview,focusDetail,focusAutoDetail:focusDetail};overview();updateLayers();
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
  if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
- const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');if(places.some(p=>p.id===requested))selectPlace(requested);if(requested==='autodromo'&&['stand','boxes'].includes(detail)){focusAutoDetail(detail);document.querySelectorAll('[data-auto-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.autoView===detail)));}
+ const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');if(places.some(p=>p.id===requested))selectPlace(requested);if(validDetail(requested,detail))focusDetail(detail);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
 }
-function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass,[data-auto-view]').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
+function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass,[data-detail-view]').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
 init().catch(error=>{console.error('Não foi possível abrir a maquete.',error);showFallback();});

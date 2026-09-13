@@ -59,4 +59,4 @@
 /* Autódromo: atalhos para enxergar a arquitetura em computadores e celulares. */
 .auto-views{clear:both;display:grid;gap:7px;margin:16px 0}.auto-views button{min-height:42px;padding:10px 13px;border:1px solid #cad7ca;border-radius:9px;background:#f4f7f1;color:#193e35;font:inherit;font-size:13px;font-weight:600;line-height:1.35;text-align:left;cursor:pointer}.auto-views button[aria-pressed="true"]{background:#193e35;color:#fff;border-color:#193e35}.auto-views button:focus-visible{outline:3px solid #94b964;outline-offset:2px}.auto-views button:disabled{opacity:.5;cursor:default}.fallback-open .auto-views{display:none}
 
-@media(max-width:760px){.auto-views{grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}.auto-views button:last-child{grid-column:1/-1}.auto-views button{font-size:12px;min-height:40px;padding:9px 10px}}
+@media(max-width:760px){.auto-views{grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}.auto-views button:last-child:nth-child(odd){grid-column:1/-1}.auto-views button{font-size:12px;min-height:40px;padding:9px 10px}}

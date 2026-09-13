@@ -1,5 +1,7 @@
 import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=autodromo-arquitetura-20260913-1';
 import * as T from 'three';
+import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
+export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {terrain,places} from './park-data.js?v=autodromo-arquitetura-20260913-1';
 import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
@@ -28,7 +30,7 @@ function material(color,metalness=0,roughness=.72){
 }
 
 export async function loadMaterials(renderer){
- const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer)];
+ const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values()];
@@ -273,6 +275,7 @@ export function createMiniatures(){
  // Batch static architecture by material: fine detail without thousands of draw calls.
  applyPhotoRefinements(models,{terrain});
  applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure});
+ applySpaceArchitecture(models);
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});
