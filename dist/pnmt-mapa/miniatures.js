@@ -1,4 +1,4 @@
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=implantacao-20260913-auto1';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=implantacao-20260913-g04';
 import * as T from 'three';
 import {terrain,places} from './park-data.js?v=implantacao-20260912-2';
 import {buildArenaShow} from './arena-show.js?v=implantacao-20260912-2';
@@ -318,7 +318,7 @@ export function createMiniatures(){
 
 function batchStatic(g){
  g.updateWorldMatrix(true,true);const inverse=g.matrixWorld.clone().invert(),buckets=new Map(),keep=[];
- g.traverse(o=>{if(!o.isMesh)return;if(o.isInstancedMesh){keep.push(o);return;}const key=o.material.uuid+o.castShadow+o.receiveShadow;let b=buckets.get(key);if(!b){b={material:o.material,cast:o.castShadow,receive:o.receiveShadow,positions:[],normals:[],uvs:[]};buckets.set(key,b);}const geo=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();geo.applyMatrix4(inverse.clone().multiply(o.matrixWorld));const pos=geo.getAttribute('position'),normal=geo.getAttribute('normal');for(let i=0;i<pos.array.length;i++)b.positions.push(pos.array[i]);for(let i=0;i<normal.array.length;i++)b.normals.push(normal.array[i]);
+ g.traverse(o=>{if(!o.isMesh)return;if(o.isInstancedMesh||o.userData.skipBatch){keep.push(o);return;}const key=o.material.uuid+o.castShadow+o.receiveShadow;let b=buckets.get(key);if(!b){b={material:o.material,cast:o.castShadow,receive:o.receiveShadow,positions:[],normals:[],uvs:[]};buckets.set(key,b);}const geo=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();geo.applyMatrix4(inverse.clone().multiply(o.matrixWorld));const pos=geo.getAttribute('position'),normal=geo.getAttribute('normal');for(let i=0;i<pos.array.length;i++)b.positions.push(pos.array[i]);for(let i=0;i<normal.array.length;i++)b.normals.push(normal.array[i]);
   // Plan-space projection survives merged geometry and keeps PBR scale consistent.
   for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i),nx=Math.abs(normal.getX(i)),ny=Math.abs(normal.getY(i)),nz=Math.abs(normal.getZ(i));b.uvs.push((nx>ny&&nx>nz?z:x)/5,(ny>=nx&&ny>=nz?z:y)/5);}o.geometry.dispose();geo.dispose();});
  g.clear();keep.forEach(m=>g.add(m));for(const b of buckets.values()){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(b.positions,3));geo.setAttribute('normal',new T.Float32BufferAttribute(b.normals,3));geo.setAttribute('uv',new T.Float32BufferAttribute(b.uvs,2));geo.computeBoundingSphere();const m=new T.Mesh(geo,b.material);m.castShadow=b.cast;m.receiveShadow=b.receive;g.add(m);}

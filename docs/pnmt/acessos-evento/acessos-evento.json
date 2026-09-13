@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "file": "mapa-acessos-evento.png",
+    "providedBy": "usuário",
+    "title": "Parque Novo Mato Grosso — Mapa de Acesso",
+    "eventName": null,
+    "eventDate": null,
+    "role": "Referência de nomes, funções e organização de acesso em um evento.",
+    "geometryAuthority": false,
+    "sha256": "cf745aac65e500bd8421941b72d50f766e97b54b7226f077a87b561c01824cf2"
+  },
+  "status": "referencia_de_evento",
+  "activeForVisitors": false,
+  "rules": [
+    "A planta técnica governa posição, escala, contorno, ruas e implantação.",
+    "O mapa do evento informa nomes e funções. Não fornece coordenadas 3D.",
+    "Conservar os IDs do modelo; armazenar números do evento como aliases separados.",
+    "Não inferir abertura atual, capacidade, trajeto de transporte ou restrições vigentes.",
+    "A publicação como operação de um evento exige identificar o evento e confirmar os acessos que estarão ativos."
+  ],
+  "parkingGroups": [
+    {
+      "id": "evento-estacionamentos-1-2-3",
+      "label": "Estacionamentos 1–2–3",
+      "description": "Conjunto de estacionamentos no setor sul do parque.",
+      "planReferences": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "correspondence": "Mesmo conjunto ao sul; o mapa de evento apresenta os três juntos.",
+      "modelPlaceId": "estrutura-e-acesso",
+      "worldPosition": null
+    },
+    {
+      "id": "evento-estacionamento-4",
+      "label": "Estacionamento 4",
+      "description": "Área indicada na região oeste, próxima aos espaços esportivos.",
+      "planReferences": [],
+      "correspondence": "Não atribuir o número 4 a uma componente geométrica pela ordem do array. Identificar o bolsão na planta antes de criar o marcador.",
+      "modelPlaceId": "estrutura-e-acesso",
+      "worldPosition": null
+    },
+    {
+      "id": "evento-estacionamento-5",
+      "label": "Estacionamento 5",
+      "description": "Área ao sul da Arena Show, na região do acesso ao túnel de pedestres.",
+      "planReferences": [
+        "E7 — correspondência espacial candidata"
+      ],
+      "correspondence": "A planta R83 identifica como E7 o bolsão ao sul da Arena. O mapa de evento usa 5 nessa região. Manter as duas referências e confirmar a convenção do evento.",
+      "modelPlaceId": "estrutura-e-acesso",
+      "worldPosition": null
+    },
+    {
+      "id": "evento-estacionamento-6",
+      "label": "Estacionamento 6",
+      "description": "Área ao norte/leste da Arena Show, próxima ao acesso à arquibancada oeste.",
+      "planReferences": [
+        "E6"
+      ],
+      "correspondence": "A região e a identificação E6 coincidem nas duas referências consultadas.",
+      "modelPlaceId": "estrutura-e-acesso",
+      "worldPosition": null
+    }
+  ],
+  "gates": [
+    {
+      "id": "evento-portao-2",
+      "label": "Portão 2",
+      "destination": "Arquibancada sul",
+      "modelPlaceId": "autodromo",
+      "worldPosition": null
+    },
+    {
+      "id": "evento-portao-3",
+      "label": "Portão 3",
+      "destination": "Acesso aos boxes",
+      "audienceInSource": "Pilotos / equipes",
+      "modelPlaceId": "autodromo",
+      "worldPosition": null
+    },
+    {
+      "id": "evento-portao-4",
+      "label": "Portão 4",
+      "destination": "Túnel de pedestres",
+      "modelPlaceId": "autodromo",
+      "worldPosition": null
+    },
+    {
+      "id": "evento-portao-5",
+      "label": "Portão 5",
+      "destination": "Arquibancada oeste",
+      "modelPlaceId": "autodromo",
+      "worldPosition": null
+    }
+  ],
+  "internalTransport": {
+    "label": "Ponto do trenzinho",
+    "descriptionInSource": "Transporte interno para os principais pontos do parque.",
+    "indicatedLocations": [
+      "Região do estacionamento 6",
+      "Extremidade oeste/noroeste do conjunto de estacionamentos 1–2–3",
+      "Região do estacionamento ao sul da arquibancada sul"
+    ],
+    "stops": 3,
+    "route": null,
+    "timetable": null,
+    "availability": null,
+    "worldPositions": null
+  }
+}

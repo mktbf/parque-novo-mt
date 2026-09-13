@@ -1,5 +1,5 @@
 import * as T from 'three';
-import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260913-auto1';
+import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260913-g04';
 import {primitives as P} from './refinamentos.js?v=implantacao-20260912-2';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
@@ -138,6 +138,32 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  correctVillage(models.get('vila-das-nacoes'));
  const parking=models.get('estrutura-e-acesso');clearGeometry(parking);
  registeredFloor(parking,R.meshes.parking,parkingMat,.10,'Estacionamentos · bolsões recortados');
+ // PNMT-G04-BEGIN
+ // Piso fotográfico registrado: origem e escala iguais às da implantação.
+ const parkingFloorG04=parking.getObjectByName('Estacionamentos · bolsões recortados');
+ const photoG04=R.parkingSurface;
+ if(parkingFloorG04&&photoG04){
+  const [x0,z0,x1,z1]=photoG04.bounds,uv=[];
+  for(let i=0;i<R.meshes.parking.points.length;i+=2){
+   uv.push((R.meshes.parking.points[i]-x0)/(x1-x0),1-(R.meshes.parking.points[i+1]-z0)/(z1-z0));
+  }
+  const photoMatG04=registeredMaterial('parking-photo-g04','#ffffff',.94);
+  if(!photoMatG04.map){
+   const textureG04=new T.TextureLoader().load(photoG04.dataURI,undefined,undefined,()=>{
+    photoMatG04.map=null;photoMatG04.color.set('#626962');photoMatG04.needsUpdate=true;
+    console.warn('PNMT: a superfície fotográfica dos estacionamentos não carregou.');
+   });
+   textureG04.colorSpace=T.SRGBColorSpace;
+   textureG04.wrapS=T.ClampToEdgeWrapping;textureG04.wrapT=T.ClampToEdgeWrapping;
+   textureG04.minFilter=T.LinearMipmapLinearFilter;textureG04.magFilter=T.LinearFilter;
+   photoMatG04.map=textureG04;photoMatG04.needsUpdate=true;
+  }
+  parkingFloorG04.geometry.setIndex(photoG04.otherIndices);
+  const southFloorG04=registeredFloor(parking,{points:R.meshes.parking.points,indices:photoG04.southIndices},photoMatG04,.10,'Estacionamentos E1/E2/E3 · superfície registrada');
+  southFloorG04.geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
+  southFloorG04.userData.skipBatch=true;
+ }
+ // PNMT-G04-END
  const moto=models.get('motocross');clearGeometry(moto);
  shapeMesh(moto,D.motocross.outline,[],soilMat,.015,.03);moto.name='Motocross · setor, traçado a confirmar';
  const wake=models.get('wake-park');
