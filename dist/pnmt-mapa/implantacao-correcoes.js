@@ -1,5 +1,5 @@
 import * as T from 'three';
-import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260912-3';
+import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260913-auto1';
 import {primitives as P} from './refinamentos.js?v=implantacao-20260912-2';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
