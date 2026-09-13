@@ -1,4 +1,4 @@
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=implantacao-20260912-2';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=implantacao-20260912-3';
 import * as T from 'three';
 import {terrain,places} from './park-data.js?v=implantacao-20260912-2';
 import {buildArenaShow} from './arena-show.js?v=implantacao-20260912-2';
