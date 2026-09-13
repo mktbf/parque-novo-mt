@@ -1,6 +1,7 @@
 import * as T from 'three';
-import {implantationData as D} from './implantacao-dados.js?v=consolidado-20260913-1';
-import {primitives as P} from './refinamentos.js?v=consolidado-20260913-1';
+import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
+import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
+import {primitives as P} from './refinamentos.js?v=autodromo-arquitetura-20260913-1';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
  * O root de miniatures aplica [-620, 0, -570]. Não repetir essa transformação.
@@ -122,8 +123,7 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  registeredFloor(water,R.meshes.water,lakeMat,-.08,'Água · contornos compatibilizados');
  registeredFloor(circuits,R.meshes.autodrome,asphalt,.12,'Autódromo · bordas CAD preservadas');
  const auto=models.get('autodromo');clearGeometry(auto);
- for(const item of R.autoBuildings)geoSurface(auto,item.geometry,mat('#d4d8d4',.75),.10,item.height).name=item.role;
- auto.name='Autódromo · implantação dos boxes e arquibancada';
+ buildAutodromeArchitecture(auto,R.autoBuildings);
  const kart=models.get('kartodromo');
  const boxes=kart.getObjectByName('Boxes do Kart · Edifício Linear e Marquise');
  const stand=kart.getObjectByName('Arquibancada do Kartódromo');

@@ -1,8 +1,10 @@
-import {bindHostBridge,reportMapReady} from './bridge.js?v=consolidado-20260913-1';
-import {places,colors} from './park-data.js?v=consolidado-20260913-1';
+import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
+import {places,colors} from './park-data.js?v=autodromo-arquitetura-20260913-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
-import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=consolidado-20260913-1';
+import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=autodromo-arquitetura-20260913-1';
+let autoDetail=null;
+function autoViewButtons(p){return p.id==='autodromo'?`<div class="auto-views" role="group" aria-label="Explorar o autódromo"><button type="button" data-auto-view="boxes" aria-pressed="false" ${mapApi?'':'disabled'}>Ver boxes e torre</button><button type="button" data-auto-view="stand" aria-pressed="false" ${mapApi?'':'disabled'}>Ver arquibancada</button><button type="button" data-auto-view="circuit" aria-pressed="true" ${mapApi?'':'disabled'}>Ver circuito completo</button></div>`:'';}
 let selectedId=null,filter='all',query='',visible=new Set(places.map(p=>p.id)),mapApi=null,lastTrigger=null;
 function toggleList(open){$('.explorer').classList.toggle('list-open',open);$('#map-stage').inert=open;$('.mobile-list-open').setAttribute('aria-expanded',String(open));}
 function drawList(){
@@ -12,20 +14,20 @@ function drawList(){
  mapApi?.render();
 }
 function selectPlace(id,focus=true){
- const p=places.find(p=>p.id===id);if(!p)return;lastTrigger=document.activeElement;selectedId=id;
+ const p=places.find(p=>p.id===id);if(!p)return;autoDetail=null;lastTrigger=document.activeElement;selectedId=id;
  const nearest=relatedPlaces(p,places);
  $('#browse-panel').hidden=true;$('#selection').hidden=false;$('.explorer').classList.add('has-selection');$('#selection').style.setProperty('--color',colors[p.category]);
- $('#selection').innerHTML=`<div class="selection-top"><button class="selection-back" type="button">← Todos os espaços</button><button class="selection-close" type="button" aria-label="Fechar detalhes">×</button></div><img class="selection-image${p.kind==='parking'?' parking-image':''}" src="${imageFor(p)}" alt="${p.name}, referência do projeto"><div class="selection-photo-label">${p.photoCaption||(p.id==='estrutura-e-acesso'?'Planta de implantação':'Imagem do projeto')}</div><div class="selection-copy"><div class="selection-tag">${category(p)}</div><h2 tabindex="-1">${p.name}</h2><p>${p.description}</p>${guideHtml(p,places)}${p.url?`<a class="primary-link" data-destination="${p.id}" href="${p.url}" target="_top">Conhecer o espaço <span aria-hidden="true">↗</span></a>`:''}<div class="selection-location"><strong>Você está explorando</strong>${p.zone||'Parque Novo Mato Grosso'}<br>Selecione um destino para localizá-lo no mapa.</div><div class="nearby"><p>POR PERTO</p>${nearest.map(n=>`<button data-nearby="${n.id}">${n.name} ↗</button>`).join('')}</div></div>`;
+ $('#selection').innerHTML=`<div class="selection-top"><button class="selection-back" type="button">← Todos os espaços</button><button class="selection-close" type="button" aria-label="Fechar detalhes">×</button></div><img class="selection-image${p.kind==='parking'?' parking-image':''}" src="${imageFor(p)}" alt="${p.name}, referência do projeto"><div class="selection-photo-label">${p.photoCaption||(p.id==='estrutura-e-acesso'?'Planta de implantação':'Imagem do projeto')}</div><div class="selection-copy"><div class="selection-tag">${category(p)}</div><h2 tabindex="-1">${p.name}</h2>${autoViewButtons(p)}<p>${p.description}</p>${guideHtml(p,places)}${p.url?`<a class="primary-link" data-destination="${p.id}" href="${p.url}" target="_top">Conhecer o espaço <span aria-hidden="true">↗</span></a>`:''}<div class="selection-location"><strong>Você está explorando</strong>${p.zone||'Parque Novo Mato Grosso'}<br>Selecione um destino para localizá-lo no mapa.</div><div class="nearby"><p>POR PERTO</p>${nearest.map(n=>`<button data-nearby="${n.id}">${n.name} ↗</button>`).join('')}</div></div>`;
  toggleList(false);$('#selection').scrollTop=0;$('#announcement').textContent=p.url?`${p.name} selecionado. Use Conhecer o espaço para abrir a página.`:`${p.name} selecionado. Veja a localização e os detalhes no mapa.`;
  const u=new URL(location.href);u.searchParams.set('espaco',id);history.replaceState(null,'',u);
- if(focus)mapApi?.focus(p);else mapApi?.render();
+ if(focus){const url=new URL(location.href);url.searchParams.delete('detalhe');history.replaceState(null,'',url);mapApi?.focus(p);}else mapApi?.render();
  if(lastTrigger?.matches('button')&&lastTrigger.matches(':focus-visible'))$('#selection h2').focus({preventScroll:true});
 }
-function closeSelection(returnFocus=true){selectedId=null;$('#selection').hidden=true;$('#browse-panel').hidden=false;$('.explorer').classList.remove('has-selection');const u=new URL(location.href);u.searchParams.delete('espaco');history.replaceState(null,'',u);mapApi?.render();if(returnFocus&&lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});}
+function closeSelection(returnFocus=true){selectedId=null;autoDetail=null;$('#selection').hidden=true;$('#browse-panel').hidden=false;$('.explorer').classList.remove('has-selection');const u=new URL(location.href);u.searchParams.delete('espaco');u.searchParams.delete('detalhe');history.replaceState(null,'',u);mapApi?.render();if(returnFocus&&lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});}
 $('#search').addEventListener('input',e=>{query=e.target.value;drawList();});
 $('.filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawList();mapApi?.overview();$('#announcement').textContent=$('#list-count').textContent;});
 $('#place-list').addEventListener('click',e=>{const b=e.target.closest('[data-locate]');if(b)selectPlace(b.dataset.locate);});
-$('#selection').addEventListener('click',e=>{if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
+$('#selection').addEventListener('click',e=>{const detail=e.target.closest('[data-auto-view]');if(detail){if(mapApi){autoDetail=detail.dataset.autoView==='circuit'?null:detail.dataset.autoView;mapApi.focusAutoDetail(autoDetail);document.querySelectorAll('[data-auto-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===detail)));}return;}if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
 $('.mobile-list-open').addEventListener('click',()=>{if(selectedId)closeSelection(false);toggleList(true);$('#search').focus({preventScroll:true});});
 $('.mobile-list-close').addEventListener('click',()=>{toggleList(false);$('.mobile-list-open').focus({preventScroll:true});});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSelection();toggleList(false);mapApi?.overview();}if(e.key==='Tab'&&mobile()&&$('.explorer').classList.contains('list-open')){const els=[...$('#places').querySelectorAll('button,a,input')].filter(x=>x.offsetParent);const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
@@ -48,7 +50,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=consolidado-20260913-1'),import('./rendering.js?v=consolidado-20260913-1'),import('./camera-math.js?v=consolidado-20260913-1')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=autodromo-arquitetura-20260913-1'),import('./rendering.js?v=autodromo-arquitetura-20260913-1'),import('./camera-math.js?v=autodromo-arquitetura-20260913-1')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -170,14 +172,15 @@ async function init(){
   return bounds;
  }
  function focus(p){
-  const bounds=placeBounds(p),target=bounds.getCenter(new T.Vector3()),points=[];
+  const detail=p.id==='autodromo'&&autoDetail?built.models.get('autodromo').userData.detailViews?.[autoDetail]:null;
+  const bounds=detail?new T.Box3().setFromPoints(detail.footprint.flatMap(pt=>[world(pt,0),world(pt,detail.height)])):placeBounds(p),target=bounds.getCenter(new T.Vector3()),points=[];
   for(const x of [bounds.min.x,bounds.max.x])for(const z of [bounds.min.z,bounds.max.z])for(const y of [0,bounds.max.y])points.push(new T.Vector3(x,y,z));
   const aspect=viewport(true),from=camera.position.clone(),fromTarget=controls.target.clone(),off=camera.position.clone().sub(controls.target),z0=camera.zoom;
   let to,zoom=1;
   if(tilted){
-   const direction=p.focusDirection?new T.Vector3(...p.focusDirection).normalize():off.normalize();
+   const focusDirection=detail?.direction||p.focusDirection;const direction=focusDirection?new T.Vector3(...focusDirection).normalize():off.normalize();
    const fitted=camera.clone();fitted.position.copy(target).add(direction);fitted.lookAt(target);
-   const distance=Math.max(100,fitDistance(fitted,target,points,aspect,mobile()?1.08:1.4));
+   const distance=Math.max(detail?65:100,fitDistance(fitted,target,points,aspect,mobile()?1.08:detail?1.12:1.4));
    to=target.clone().addScaledVector(direction,distance);
   }
   else{to=target.clone().add(off);const inverse=camera.quaternion.clone().invert(),locals=points.map(v=>v.clone().sub(target).applyQuaternion(inverse));const need=Math.max(30,...locals.map(v=>Math.max(Math.abs(v.y),Math.abs(v.x)/aspect)))*(mobile()?1.08:1.55);zoom=Math.min(10,camera.top/need);}
@@ -220,13 +223,20 @@ async function init(){
  let resizeW=0,resizeH=0;
  const resize=new ResizeObserver(()=>{if(stage.clientWidth===resizeW&&stage.clientHeight===resizeH)return;resizeW=stage.clientWidth;resizeH=stage.clientHeight;overview();if(selectedId)focus(places.find(p=>p.id===selectedId));});resize.observe(stage);
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showFallback();});
- mapApi={render,focus,overview};overview();updateLayers();
+ function focusAutoDetail(key){
+  const p=places.find(p=>p.id==='autodromo');if(selectedId!==p.id)return;
+  autoDetail=key;const url=new URL(location.href);if(key)url.searchParams.set('detalhe',key);else url.searchParams.delete('detalhe');history.replaceState(null,'',url);view='3d';tilted=true;buildings=true;overlayActive=false;requestedView++;
+  chooseCamera();updateLayers();document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view==='3d')));
+  $('#announcement').textContent=key==='stand'?'Arquibancada em detalhe.':key==='boxes'?'Boxes e torre em detalhe.':'Circuito completo.';
+  focus(p);
+ }
+ mapApi={render,focus,overview,focusAutoDetail};overview();updateLayers();
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
  if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
- const requested=new URLSearchParams(location.search).get('espaco');if(places.some(p=>p.id===requested))selectPlace(requested);
+ const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');if(places.some(p=>p.id===requested))selectPlace(requested);if(requested==='autodromo'&&['stand','boxes'].includes(detail)){focusAutoDetail(detail);document.querySelectorAll('[data-auto-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.autoView===detail)));}
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
 }
-function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
+function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass,[data-auto-view]').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
 init().catch(error=>{console.error('Não foi possível abrir a maquete.',error);showFallback();});
