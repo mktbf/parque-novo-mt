@@ -1,3 +1,4 @@
+import {parkingPlaces} from './visitor-data.js?v=consolidado-20260913-1';
 /**
  * Coordenadas locais em pixels da planta renderizada a 1600 px de largura (fator 1 : 2.10625 da prancha completa 3370 x 2384 px).
  * Fonte primária: GOV_U_ParqueNovoMT_ARQ_Implantação_R84.pdf, página 1, rotação 270°.
@@ -114,3 +115,14 @@ export const terrain={
 for(const [id,position] of Object.entries({'portico-de-entrada':[923,968],'skate-park':[253,771],'motocross':[389,973]})){
  const place=places.find(p=>p.id===id);if(place)place.position=position;
 }
+
+
+// Catálogo de orientação: IDs antigos e geometria do G04 preservados.
+colors.Acessos='#246976';
+const parkingHub=places.find(p=>p.id==='estrutura-e-acesso');
+Object.assign(parkingHub,{category:'Acessos',mapMarker:false,zone:'Estacionamentos do parque',
+ description:'Encontre os sete bolsões identificados na planta do parque e veja os espaços próximos de cada um.',
+ searchAliases:['estacionar','bolsões','entrada','acessos'],relatedIds:['portico-de-entrada','autodromo','arena-show']});
+const entrance=places.find(p=>p.id==='portico-de-entrada');
+Object.assign(entrance,{category:'Acessos',searchAliases:['entrada principal','portao de entrada','acesso principal']});
+places.push(...parkingPlaces);

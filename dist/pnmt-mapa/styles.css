@@ -26,3 +26,32 @@
 @media(max-width:760px){.header{height:70px;padding:5px 18px}.brand img{width:93px;height:58px}.header nav{font-size:14px;gap:20px}.header nav .nav-active{display:none}.explorer{display:block;height:calc(100dvh - 70px);min-height:580px;max-height:none;position:relative}.map-stage{width:100%;height:100%}.places{display:none;position:absolute;inset:0;z-index:12;border:0;box-shadow:none}.explorer.list-open .places,.explorer.has-selection .places{display:block}.explorer.has-selection .places{top:auto;height:auto;max-height:43%;border-radius:18px 18px 0 0;box-shadow:0 -9px 35px #122e332c;overflow:auto}.explorer.list-open .places{height:100%;max-height:none;border-radius:0;top:0}.browse-panel{padding:23px;min-height:0}.places h1{font-size:38px;margin:15px 0}.intro-text{font-size:16px;margin-bottom:18px}.mobile-list-close{display:block;border:0;background:#edf3ed;border-radius:50%;font-size:25px;width:42px;height:42px}.mode-switch{top:17px;left:16px;right:16px;padding:4px;justify-content:space-between}.mode-switch button{font-size:14px;padding:9px 12px;flex:1;min-height:41px}.map-caption{left:17px;top:80px;padding:8px 11px}.map-caption strong{font-size:13px}.map-caption div>span{display:none}.live-dot{width:5px;height:5px;margin-top:5px}.scene-settings{top:79px;right:17px;gap:5px}.scene-settings button{width:36px;min-height:36px;padding:7px;border-radius:6px}.overlay-control{top:124px;left:17px;padding:6px 12px;font-size:12px;gap:6px}.overlay-control input[type=range]{width:80px}.compass{top:135px;bottom:auto;right:18px;width:39px;height:58px}.mobile-list-open{display:flex;align-items:center;justify-content:space-between;gap:25px;border:1px solid #b6c9b766;background:#173c34f2;color:white;padding:14px 17px;min-height:49px;font-size:15px;font-weight:700;border-radius:9px;position:absolute;bottom:67px;left:17px;z-index:5;box-shadow:0 6px 22px #183c3f33}.mobile-list-open span{color:var(--lime);font-size:21px}.map-controls{bottom:67px;right:17px;display:flex;flex-direction:column;padding:3px}.map-controls button{width:39px;height:39px;font-size:24px}.map-controls>span{width:20px;height:1px;margin:2px}.map-hint{bottom:34px;left:18px;max-width:none;padding:0;border:0;background:transparent;box-shadow:none;font-size:12px;color:#173c34;text-shadow:0 0 5px white}.map-stage[data-view=satellite] .map-hint{color:white;text-shadow:0 1px 5px #0d2014}.drag-symbol{font-size:19px}.map-credit{bottom:8px;left:17px;font-size:9px;padding:4px 6px;max-width:calc(100% - 34px)}.marker button{font-size:13px;padding:8px 10px;min-height:36px}.marker.compact button{min-width:36px;min-height:36px}.selection{height:auto;overflow:visible}.selection-top{padding:8px 18px 0}.selection-top .selection-back{font-size:13px}.selection-image{float:right;width:102px;height:88px;margin:9px 18px 0 15px;border-radius:8px}.selection-photo-label{display:none}.selection-copy{padding:11px 18px 20px}.selection h2{font-size:27px;margin-bottom:11px;max-width:65%}.selection-tag{font-size:11px;margin-bottom:7px}.selection p{font-size:14px;line-height:1.4;margin-bottom:15px;max-width:100%;clear:both;padding-top:9px}.selection-location,.nearby{display:none}.selection .primary-link{min-height:47px}.has-selection .map-controls,.has-selection .map-hint,.has-selection .map-credit,.has-selection .mobile-list-open{visibility:hidden}.detail-grid{grid-template-columns:1fr;gap:23px}.detail-main{padding-top:25px}.detail-photo{aspect-ratio:1.6}.detail-copy h1{font-size:38px}.detail-copy p{font-size:16px}.loading strong{font-size:22px}.loading span{font-size:14px}}
 @media(max-width:370px){.map-caption strong{font-size:12px}.map-caption{padding:8px}.scene-settings{right:15px;gap:4px}.scene-settings button{width:32px}.overlay-control{left:15px;padding:5px 9px;font-size:11px;gap:5px}.overlay-control input[type=range]{width:68px}.mode-switch button{padding:9px 7px;font-size:13px}.map-credit{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Orientação consolidada: mantém as regras de câmera e sobreposição existentes. */
+.parking-image{object-fit:contain;background:#102b3d}
+.access-note{background:#f0f5ef;border:1px solid #dce7d8;border-left:3px solid #527d58;border-radius:9px;padding:14px 15px;margin:18px 0}
+.access-note strong{display:block;color:#244d3b;font-size:14px;margin-bottom:6px}
+.selection .access-note p{font-size:14px;line-height:1.5;margin:0;padding:0;color:#50665b;clear:none}
+.access-browse{display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;border:1px solid #d4dfd7;border-radius:8px;background:#fff;padding:12px 14px;min-height:46px;text-align:left;font-size:14px;font-weight:700;margin:12px 0}
+.access-browse:hover,.parking-picker button:hover{background:#e8f1e6}
+.parking-picker{display:grid;gap:7px;margin:18px 0}
+.parking-picker button{display:grid;grid-template-columns:38px 1fr 16px;gap:10px;align-items:center;text-align:left;border:1px solid #dce5dd;border-radius:9px;padding:10px;background:#fff;min-height:54px}
+.parking-picker strong{background:#173c34;color:#f4f8e9;border-radius:7px;text-align:center;padding:8px 0;font-size:16px}
+.parking-picker span{font-size:13px;line-height:1.35}
+.marker.parking-marker button{min-width:42px;justify-content:center;background:#f3f7eb;color:#173c34;border:1px solid #638773;font-weight:700}
+.marker.parking-marker:not(.selected) .pin-stem{height:10px}
+.marker.parking-marker:not(.selected) .pin-stem:after{top:8px}
+.marker.parking-marker.compact button{padding:5px 8px;min-height:32px;border-radius:7px}
+.marker.parking-marker.compact .pin-name{display:block;font-size:12px}
+.marker.parking-marker.compact i{display:none}
+.marker.parking-marker.selected button{background:#173c34;color:#fff;border-color:#dff3b9}
+.place-list .place-thumb[src*="/parking/"]{object-fit:cover;background:#102b3d}
+@media(max-width:760px){
+ .selection .access-note{clear:both;margin:12px 0;padding:11px 12px}
+ .selection .access-note p{font-size:13px}
+ .parking-picker{grid-template-columns:1fr;margin:12px 0}
+ .parking-picker button{min-height:49px}
+ .access-browse{min-height:44px;font-size:13px}
+ .fallback-open .fallback{inset:145px 12px 120px}
+ .fallback-open .fallback img{height:80%}
+}

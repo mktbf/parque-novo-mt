@@ -1,4 +1,4 @@
-import './explore-parque.js';
+import './explore-parque.js?v=consolidado-20260913-1';
 
 /* Integração específica do site atual: #espacos, após o banner e antes dos cards. */
 function insertMap(){

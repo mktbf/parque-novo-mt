@@ -1,22 +1,21 @@
-import {bindHostBridge,reportMapReady} from './bridge.js';
-import {places,colors} from './park-data.js?v=implantacao-20260912-2';
+import {bindHostBridge,reportMapReady} from './bridge.js?v=consolidado-20260913-1';
+import {places,colors} from './park-data.js?v=consolidado-20260913-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const category=p=>p.category==='Experiências'?'Lazer':p.category;
+import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=consolidado-20260913-1';
 let selectedId=null,filter='all',query='',visible=new Set(places.map(p=>p.id)),mapApi=null,lastTrigger=null;
 function toggleList(open){$('.explorer').classList.toggle('list-open',open);$('#map-stage').inert=open;$('.mobile-list-open').setAttribute('aria-expanded',String(open));}
 function drawList(){
- const found=places.filter(p=>(filter==='all'||p.category===filter)&&normalize(p.name+' '+category(p)).includes(normalize(query)));
- visible=new Set(found.map(p=>p.id));$('#list-count').textContent=`${found.length} espaços para descobrir`;
- $('#place-list').innerHTML=found.length?found.map(p=>`<div class="place-row"><button class="place-focus" type="button" data-locate="${p.id}" aria-label="Localizar ${p.name}"><img class="place-thumb" src="./assets/spaces/${p.id}.webp?v=7" alt="" width="47" height="42" loading="lazy"><span><span class="place-name">${p.name}</span><span class="place-category">${category(p)}</span></span></button>${p.url?`<a class="place-link" data-destination="${p.id}" href="${p.url}" target="_top" aria-label="Conhecer ${p.name}">↗</a>`:''}</div>`).join(''):'<p class="empty">Não encontramos esse espaço.<br>Tente outro nome ou escolha Todos.</p>';
+ const found=findPlaces(places,filter,query);
+ visible=new Set(found.map(p=>p.id));$('#list-count').textContent=`${found.length} ${found.length===1?'local encontrado':'locais para descobrir'}`;
+ $('#place-list').innerHTML=found.length?found.map(p=>`<div class="place-row"><button class="place-focus" type="button" data-locate="${p.id}" aria-label="Localizar ${p.name}"><img class="place-thumb" src="${imageFor(p)}" alt="" width="47" height="42" loading="lazy"><span><span class="place-name">${p.name}</span><span class="place-category">${escapeHtml(p.kind==='parking'?p.zone:category(p))}</span></span></button>${p.url?`<a class="place-link" data-destination="${p.id}" href="${p.url}" target="_top" aria-label="Conhecer ${p.name}">↗</a>`:''}</div>`).join(''):'<p class="empty">Não encontramos esse espaço.<br>Tente outro nome ou escolha Todos.</p>';
  mapApi?.render();
 }
 function selectPlace(id,focus=true){
  const p=places.find(p=>p.id===id);if(!p)return;lastTrigger=document.activeElement;selectedId=id;
- const nearest=places.filter(q=>q.id!==id).sort((a,b)=>Math.hypot(a.position[0]-p.position[0],a.position[1]-p.position[1])-Math.hypot(b.position[0]-p.position[0],b.position[1]-p.position[1])).slice(0,3);
+ const nearest=relatedPlaces(p,places);
  $('#browse-panel').hidden=true;$('#selection').hidden=false;$('.explorer').classList.add('has-selection');$('#selection').style.setProperty('--color',colors[p.category]);
- $('#selection').innerHTML=`<div class="selection-top"><button class="selection-back" type="button">← Todos os espaços</button><button class="selection-close" type="button" aria-label="Fechar detalhes">×</button></div><img class="selection-image" src="./assets/spaces/${p.id}.webp?v=7" alt="${p.name}, referência do projeto"><div class="selection-photo-label">${p.photoCaption||(p.id==='estrutura-e-acesso'?'Planta de implantação':'Imagem do projeto')}</div><div class="selection-copy"><div class="selection-tag">${category(p)}</div><h2 tabindex="-1">${p.name}</h2><p>${p.description}</p>${p.url?`<a class="primary-link" data-destination="${p.id}" href="${p.url}" target="_top">Conhecer o espaço <span aria-hidden="true">↗</span></a>`:''}<div class="selection-location"><strong>Você está explorando</strong>${p.zone||'Parque Novo Mato Grosso'}<br>Veja também as atrações ao redor.</div><div class="nearby"><p>POR PERTO</p>${nearest.map(n=>`<button data-nearby="${n.id}">${n.name} ↗</button>`).join('')}</div></div>`;
+ $('#selection').innerHTML=`<div class="selection-top"><button class="selection-back" type="button">← Todos os espaços</button><button class="selection-close" type="button" aria-label="Fechar detalhes">×</button></div><img class="selection-image${p.kind==='parking'?' parking-image':''}" src="${imageFor(p)}" alt="${p.name}, referência do projeto"><div class="selection-photo-label">${p.photoCaption||(p.id==='estrutura-e-acesso'?'Planta de implantação':'Imagem do projeto')}</div><div class="selection-copy"><div class="selection-tag">${category(p)}</div><h2 tabindex="-1">${p.name}</h2><p>${p.description}</p>${guideHtml(p,places)}${p.url?`<a class="primary-link" data-destination="${p.id}" href="${p.url}" target="_top">Conhecer o espaço <span aria-hidden="true">↗</span></a>`:''}<div class="selection-location"><strong>Você está explorando</strong>${p.zone||'Parque Novo Mato Grosso'}<br>Selecione um destino para localizá-lo no mapa.</div><div class="nearby"><p>POR PERTO</p>${nearest.map(n=>`<button data-nearby="${n.id}">${n.name} ↗</button>`).join('')}</div></div>`;
  toggleList(false);$('#selection').scrollTop=0;$('#announcement').textContent=p.url?`${p.name} selecionado. Use Conhecer o espaço para abrir a página.`:`${p.name} selecionado. Veja a localização e os detalhes no mapa.`;
  const u=new URL(location.href);u.searchParams.set('espaco',id);history.replaceState(null,'',u);
  if(focus)mapApi?.focus(p);else mapApi?.render();
@@ -26,16 +25,30 @@ function closeSelection(returnFocus=true){selectedId=null;$('#selection').hidden
 $('#search').addEventListener('input',e=>{query=e.target.value;drawList();});
 $('.filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawList();mapApi?.overview();$('#announcement').textContent=$('#list-count').textContent;});
 $('#place-list').addEventListener('click',e=>{const b=e.target.closest('[data-locate]');if(b)selectPlace(b.dataset.locate);});
-$('#selection').addEventListener('click',e=>{if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
+$('#selection').addEventListener('click',e=>{if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
 $('.mobile-list-open').addEventListener('click',()=>{if(selectedId)closeSelection(false);toggleList(true);$('#search').focus({preventScroll:true});});
 $('.mobile-list-close').addEventListener('click',()=>{toggleList(false);$('.mobile-list-open').focus({preventScroll:true});});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSelection();toggleList(false);mapApi?.overview();}if(e.key==='Tab'&&mobile()&&$('.explorer').classList.contains('list-open')){const els=[...$('#places').querySelectorAll('button,a,input')].filter(x=>x.offsetParent);const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+function showAccessList(){
+ closeSelection(false);filter='Acessos';query='';$('#search').value='';
+ document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));
+ $('.explorer').classList.remove('sidebar-collapsed');drawList();mapApi?.overview();
+ if(mobile())toggleList(true);$('#search').focus({preventScroll:true});
+}
+const sidebarToggle=$('#sidebar-toggle');
+if(sidebarToggle)sidebarToggle.addEventListener('click',()=>{
+ const exp=$('.explorer');exp.classList.toggle('sidebar-collapsed');const col=exp.classList.contains('sidebar-collapsed');
+ sidebarToggle.setAttribute('aria-label',col?'Expandir lista de espaços':'Recolher lista de espaços');sidebarToggle.title=col?'Expandir lista de espaços':'Recolher lista de espaços';
+ setTimeout(()=>{if(selectedId)mapApi?.focus(places.find(p=>p.id===selectedId));else mapApi?.overview();},280);
+});
 drawList();
+const requestedSpace=new URLSearchParams(location.search).get('espaco');
+if(places.some(p=>p.id===requestedSpace))selectPlace(requestedSpace,false);
 bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(selectedId,false);}});
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=implantacao-20260913-g04'),import('./rendering.js?v=implantacao-20260912-2'),import('./camera-math.js?v=implantacao-20260912-2')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=consolidado-20260913-1'),import('./rendering.js?v=consolidado-20260913-1'),import('./camera-math.js?v=consolidado-20260913-1')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -46,7 +59,10 @@ async function init(){
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
  const built=createMiniatures();scene.add(built.root);
  window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world};
- const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),new T.MeshStandardMaterial({color:'#2e4424',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-5.3;floor.receiveShadow=true;scene.add(floor);
+ const floor=new T.Mesh(new T.PlaneGeometry(6500,6500),built.groundMaterial);floor.rotation.x=-Math.PI/2;floor.position.y=-.3;
+ const backdropUV=[];const backdropPos=floor.geometry.getAttribute('position');
+ for(let i=0;i<backdropPos.count;i++)backdropUV.push((backdropPos.getX(i)+620)/5,(-backdropPos.getY(i)+570)/5);
+ floor.geometry.setAttribute('uv',new T.Float32BufferAttribute(backdropUV,2));floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null,planOpacity=0.65,overlayActive=false;const texturePromises=new Map();
  async function loadTexture(url){if(texturePromises.has(url))return texturePromises.get(url);const promise=textureLoader.loadAsync(url).then(tex=>{tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),16);textures.push(tex);return tex;});texturePromises.set(url,promise);return promise;}
@@ -72,13 +88,19 @@ async function init(){
   try{await promise;}catch(e){layerPromises.delete(kind);throw e;}
  }
  const selectables=[],outlines=[],markers=new Map(),markerHeights=new Map();built.models.forEach((g,id)=>markerHeights.set(id,new T.Box3().setFromObject(g).max.y+2));
- places.forEach(p=>{
+ places.filter(p=>p.mapMarker!==false).forEach(p=>{
   const radius=p.id==='roda-gigante'?28:p.id==='agroplace'?23:p.id==='arvore-da-vida'?11:p.id==='portico-de-entrada'?35:20;
   const points=p.footprint||Array.from({length:32},(_,i)=>[p.position[0]+Math.cos(i/32*Math.PI*2)*radius,p.position[1]+Math.sin(i/32*Math.PI*2)*radius]);
-  const s=new T.Shape();points.forEach((point,i)=>{const v=world(point);i?s.lineTo(v.x,-v.z):s.moveTo(v.x,-v.z);});s.closePath();const geo=new T.ShapeGeometry(s);geo.rotateX(-Math.PI/2);
-  const fill=new T.Mesh(geo,new T.MeshBasicMaterial({color:colors[p.category],transparent:true,opacity:0,depthWrite:false,depthTest:false,side:T.DoubleSide,toneMapped:false}));fill.position.y=1.8;fill.userData.placeId=p.id;overlay.add(fill);selectables.push(fill);
-  const line=new T.LineLoop(new T.BufferGeometry().setFromPoints(points.map(pt=>world(pt,2))),new T.LineBasicMaterial({color:'#f6eac8',transparent:true,opacity:0,depthWrite:false,depthTest:false,toneMapped:false}));line.userData.placeId=p.id;overlay.add(line);outlines.push(line);
-  const m=document.createElement('div');m.className='marker';m.dataset.id=p.id;m.style.setProperty('--color',colors[p.category]);m.innerHTML=`<button type="button" aria-label="Localizar ${p.name}" title="${p.name}"><i aria-hidden="true"></i><span class="pin-name">${p.name}</span></button><span class="pin-stem" aria-hidden="true"></span>`;
+  const polygons=p.selectionPolygons||[[points]];
+  for(const rings of polygons){
+   const makePath=(ring,Type)=>{const path=new Type();ring.forEach((point,i)=>{const v=world(point);i?path.lineTo(v.x,-v.z):path.moveTo(v.x,-v.z);});path.closePath();return path;};
+   const shape=makePath(rings[0],T.Shape);shape.holes=rings.slice(1).map(r=>makePath(r,T.Path));
+   const geo=new T.ShapeGeometry(shape);geo.rotateX(-Math.PI/2);
+   const fill=new T.Mesh(geo,new T.MeshBasicMaterial({color:colors[p.category],transparent:true,opacity:0,depthWrite:false,depthTest:false,side:T.DoubleSide,toneMapped:false}));
+   fill.position.y=1.8;fill.userData.placeId=p.id;overlay.add(fill);selectables.push(fill);
+   for(const ring of rings){const line=new T.LineLoop(new T.BufferGeometry().setFromPoints(ring.map(pt=>world(pt,2))),new T.LineBasicMaterial({color:'#f6eac8',transparent:true,opacity:0,depthWrite:false,depthTest:false,toneMapped:false}));line.userData.placeId=p.id;overlay.add(line);outlines.push(line);}
+  }
+  const m=document.createElement('div');m.className=p.kind==='parking'?'marker parking-marker':'marker';m.dataset.id=p.id;m.style.setProperty('--color',colors[p.category]);m.innerHTML=`<button type="button" aria-label="Localizar ${p.name}" title="${p.name}"><i aria-hidden="true"></i><span class="pin-name">${p.shortLabel||p.name}</span></button><span class="pin-stem" aria-hidden="true"></span>`;
   m.querySelector('button').addEventListener('click',()=>selectPlace(p.id));m.addEventListener('pointerenter',()=>{hoveredId=p.id;render();});m.addEventListener('pointerleave',()=>{hoveredId=null;render();});m.addEventListener('focusin',()=>{hoveredId=p.id;render();});m.addEventListener('focusout',()=>{hoveredId=null;render();});$('#markers').appendChild(m);markers.set(p.id,m);
  });
  const raycaster=new T.Raycaster(),mouse=new T.Vector2();let pointerStart=null;
@@ -91,14 +113,15 @@ async function init(){
  function updateMarkers(){
   const width=stage.clientWidth,height=stage.clientHeight,rects=[],scale=camera.isPerspectiveCamera?overviewDistance/camera.position.distanceTo(controls.target):camera.zoom;
   // Reserve the visible toolbar areas before placing labels.
-  for(const el of stage.querySelectorAll('.mode-switch,.scene-settings,.compass,.map-caption')){const r=el.getBoundingClientRect(),s=stage.getBoundingClientRect();rects.push({l:r.left-s.left,r:r.right-s.left,t:r.top-s.top,b:r.bottom-s.top});}
-  const priority=[...places].sort((a,b)=>((b.id===selectedId?100:0)+(b.id===hoveredId?50:0)+(b.featured?15:0))-((a.id===selectedId?100:0)+(a.id===hoveredId?50:0)+(a.featured?15:0)));
+  for(const el of stage.querySelectorAll('.mode-switch,.scene-settings,.compass,.map-caption,.overlay-control,.mobile-list-open')){if(el.hidden||!el.getClientRects().length)continue;const r=el.getBoundingClientRect(),s=stage.getBoundingClientRect();rects.push({l:r.left-s.left,r:r.right-s.left,t:r.top-s.top,b:r.bottom-s.top});}
+  const priority=places.filter(p=>markers.has(p.id)).sort((a,b)=>((b.id===selectedId?100:0)+(b.id===hoveredId?50:0)+(b.featured?15:0))-((a.id===selectedId?100:0)+(a.id===hoveredId?50:0)+(a.featured?15:0)));
   for(const p of priority){
    const m=markers.get(p.id),isActive=p.id===selectedId||p.id===hoveredId;
+   m.querySelector('.pin-name').textContent=isActive?p.name:(p.shortLabel||p.name);
    const v=world(p.position,buildings?Math.min(Math.max(markerHeights.get(p.id),p.height+2),64):2).project(camera),x=(v.x+1)/2*width,y=(1-v.y)/2*height;
    const showing=(visible.has(p.id)||p.id===selectedId)&&v.z>=-1&&v.z<=1&&x>18&&x<width-18&&y>100&&y<height-(mobile()&&selectedId?height*.43:80);
    m.hidden=!showing;if(!showing)continue;m.style.left=x+'px';m.style.top=y+'px';m.classList.toggle('selected',p.id===selectedId);m.style.zIndex=isActive?'50':'10';
-   let full=isActive||p.featured||scale>2.6;if(mobile()&&!isActive&&scale<2.6)full=['autodromo','roda-gigante','arena-show','centro-de-eventos'].includes(p.id);
+   let full=isActive||p.featured||p.kind==='parking'||scale>2.6;if(mobile()&&!isActive&&p.kind!=='parking'&&scale<2.6)full=['autodromo','roda-gigante','arena-show','centro-de-eventos'].includes(p.id);
    m.classList.toggle('compact',!full);let mw=m.offsetWidth,mh=m.offsetHeight,r={l:x-mw/2,r:x+mw/2,t:full?y-mh:y-18,b:full?y:y+18};
    const collision=rects.some(a=>r.l<a.r+9&&r.r>a.l-9&&r.t<a.b+8&&r.b>a.t-8);
    if(!isActive&&(r.l<12||r.r>width-12||collision)){m.classList.add('compact');r={l:x-18,r:x+18,t:y-18,b:y+18};if(rects.some(a=>r.l<a.r+4&&r.r>a.l-4&&r.t<a.b+4&&r.b>a.t-4)){m.hidden=true;continue;}}
@@ -110,7 +133,7 @@ async function init(){
  }
  function paint(){frame=0;if(disposed)return;selectables.forEach(m=>{const id=m.userData.placeId;m.material.opacity=id===selectedId?.065:id===hoveredId?.035:0;});outlines.forEach(m=>{m.material.opacity=m.userData.placeId===selectedId?.9:m.userData.placeId===hoveredId?.45:0;});engine.render(view,overlay);updateMarkers();}
  function render(){if(!frame)frame=requestAnimationFrame(paint);}
- controls.addEventListener('change',render);controls.addEventListener('start',()=>{activeTween++;});controls.addEventListener('end',()=>{engine.focusShadow(controls.target,camera.position.distanceTo(controls.target)*.62);render();});
+ controls.addEventListener('change',render);controls.addEventListener('start',()=>{activeTween++;engine.setInteracting(true);});controls.addEventListener('end',()=>{engine.setInteracting(false);engine.focusShadow(controls.target,camera.position.distanceTo(controls.target)*.62);render();});
  const corners=[[72,14],[1176,14],[1176,1118],[72,1118]].flatMap(p=>[world(p),world(p,24)]);
  const defaultDirection=new T.Vector3(-.94,.62,.29).normalize();
  function viewport(focused=false){const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);camera.aspect=w/h;camera.clearViewOffset();if(mobile()&&focused)camera.setViewOffset(w,h,0,h*.16,w,h);camera.updateProjectionMatrix();engine.resize(w,h);return w/h;}
@@ -176,8 +199,6 @@ async function init(){
    }catch(e){$('#announcement').textContent='A planta não carregou. Tente novamente.';console.error(e);}
    finally{overlayBtn.disabled=false;}
   });}
-  const sidebarToggle=$('#sidebar-toggle');
-  if(sidebarToggle){sidebarToggle.addEventListener('click',()=>{const exp=$('.explorer');exp.classList.toggle('sidebar-collapsed');const col=exp.classList.contains('sidebar-collapsed');sidebarToggle.setAttribute('aria-label',col?'Expandir lista de espaços':'Recolher lista de espaços');sidebarToggle.title=col?'Expandir lista de espaços':'Recolher lista de espaços';setTimeout(()=>overview(),280);});}
   function updateLayers(){
    const showPlan=(view==='plan'||overlayActive)&&planImage;
    built.landscape.visible=view==='3d';built.vegetation.visible=view==='3d';built.infrastructure.visible=buildings;built.water.visible=view==='3d';built.modelLayer.visible=buildings;built.circuits.visible=view==='3d'||buildings;floor.visible=view==='3d';imageShadows.visible=view!=='3d'&&buildings;
@@ -207,5 +228,5 @@ async function init(){
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
 }
-function showFallback(){clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass').forEach(b=>b.disabled=true);$('.mobile-list-open').style.display='flex';}
+function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
 init().catch(error=>{console.error('Não foi possível abrir a maquete.',error);showFallback();});

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" role="img" aria-label="Contorno do estacionamento E5">
+<rect width="640" height="380" fill="#102b3d"/><path d="M0 85H640M0 195H640M0 305H640M100 0V380M320 0V380M540 0V380" stroke="#b7d3c4" opacity=".08"/>
+<path d="M259.095,318.121 L282.244,303.389 L438.754,189.669 L421.570,150.244 L411.352,132.092 L394.666,107.330 L385.352,95.382 L370.770,79.500 L201.246,202.118 L212.869,234.518 L229.555,286.158 L239.547,314.381 L245.894,324.500 L259.095,318.121 Z" fill="#d5e6b0" fill-rule="evenodd" stroke="#f4f8e9" stroke-width="2"/>
+<rect x="25" y="22" width="62" height="48" rx="12" fill="#f8fbf0"/><text x="56" y="54" text-anchor="middle" font-family="Arial,sans-serif" font-size="27" font-weight="700" fill="#193e35">E5</text>
+<text x="103" y="45" font-family="Arial,sans-serif" font-size="19" fill="#ffffff">ESTACIONAMENTO</text><text x="103" y="66" font-family="Arial,sans-serif" font-size="13" fill="#b5c8ce">Parque Novo Mato Grosso</text>
+<text x="25" y="356" font-family="Arial,sans-serif" font-size="13" fill="#b5c8ce">Contorno da planta · alturas não representadas</text></svg>

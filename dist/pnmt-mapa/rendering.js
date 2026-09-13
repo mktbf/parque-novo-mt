@@ -16,16 +16,19 @@ export function createRendering(scene,camera,smallScreen){
  renderer.shadowMap.enabled=true;
  renderer.shadowMap.type=T.PCFSoftShadowMap;
  renderer.shadowMap.autoUpdate=false;
- const target=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,samples:smallScreen?0:4});
- const composer=new EffectComposer(renderer,target);
+ const canAO=!smallScreen&&renderer.extensions.has('EXT_color_buffer_float');
+ const target=canAO?new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,samples:4}):null;
+ const composer=canAO?new EffectComposer(renderer,target):null;
  const beauty=new RenderPass(scene,camera);
- composer.addPass(beauty);
- const ao=new GTAOPass(scene,camera,1,1);
+ composer?.addPass(beauty);
+ const ao=canAO?new GTAOPass(scene,camera,1,1):null;
+ if(ao){
  ao.blendIntensity=.88;
  ao.updateGtaoMaterial({radius:20,thickness:3.8,distanceExponent:1.3,distanceFallOff:.5,scale:1,samples:14,screenSpaceRadius:false});
  ao.updatePdMaterial({radius:6,samples:10,rings:3});
  composer.addPass(ao);
  composer.addPass(new OutputPass());
+ }
  const sun=new T.DirectionalLight('#fff8ee',2.55);
  const sunOffset=new T.Vector3(-560,520,380);sun.position.copy(sunOffset);
  sun.castShadow=true;
@@ -38,9 +41,9 @@ export function createRendering(scene,camera,smallScreen){
  const atmosphere=new T.Fog('#a8c5d8',2500,9000);
  scene.environmentIntensity=0.95;
  scene.background=new T.Color('#a8c5d8');
- let environment=null,disposed=false;
+ let environment=null,disposed=false,interacting=false;
  function setCamera(next){
-  beauty.camera=next;ao.camera=next;
+  beauty.camera=next;if(!ao)return;ao.camera=next;
   const perspective=next.isPerspectiveCamera?1:0;
   if(ao.gtaoMaterial.defines.PERSPECTIVE_CAMERA!==perspective){ao.gtaoMaterial.defines.PERSPECTIVE_CAMERA=perspective;ao.gtaoMaterial.needsUpdate=true;}
  }
@@ -51,16 +54,17 @@ export function createRendering(scene,camera,smallScreen){
   environment=pmrem.fromEquirectangular(hdr);scene.environment=environment.texture;
   hdr.dispose();pmrem.dispose();
  }
- return {renderer,loadEnvironment,setCamera,
+ return {renderer,loadEnvironment,setCamera,setInteracting(value){interacting=Boolean(value);},
   focusShadow(target,radius=850){const extent=T.MathUtils.clamp(radius,85,900);sun.target.position.copy(target);sun.position.copy(target).add(sunOffset);Object.assign(sun.shadow.camera,{left:-extent,right:extent,top:extent,bottom:-extent});sun.shadow.camera.updateProjectionMatrix();renderer.shadowMap.needsUpdate=true;},
-  resize(w,h){renderer.setSize(w,h,false);composer.setSize(w,h);},
+  resize(w,h){renderer.setSize(w,h,false);composer?.setSize(w,h);},
   render(mode,overlay){
    // The photo and technical drawing retain their source colors.
    scene.background.set(mode==='3d'?'#b6cedc':mode==='plan'?'#eeeee9':'#27332c');sky.visible=mode==='3d';const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.near=Math.max(1400,distance*1.12);atmosphere.far=Math.max(5000,distance+3800);scene.fog=mode==='3d'?atmosphere:null;
-   const useAO=mode==='3d'&&!smallScreen&&renderer.extensions.has('EXT_color_buffer_float');
+   // Durante gestos, usa a renderização direta. O acabamento retorna ao soltar.
+   const useAO=mode==='3d'&&canAO&&!interacting;
    if(useAO){ao.enabled=true;composer.render();}else renderer.render(scene,beauty.camera);
    if(overlay){renderer.autoClear=false;renderer.clearDepth();renderer.render(overlay,beauty.camera);renderer.autoClear=true;}
   },
-  dispose(){disposed=true;environment?.dispose();ao.dispose();composer.dispose();renderer.dispose();}
+  dispose(){disposed=true;environment?.dispose();ao?.dispose();composer?.dispose();renderer.dispose();}
  };
 }

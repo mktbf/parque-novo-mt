@@ -1,0 +1,114 @@
+[
+  {
+    "id": "estacionamento-e1",
+    "planCode": "E1",
+    "sourceComponent": 6,
+    "sourceLabelPoint": [
+      762.68,
+      945.62
+    ],
+    "markerPoint": [
+      763.13228,
+      978.79165
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  },
+  {
+    "id": "estacionamento-e2",
+    "planCode": "E2",
+    "sourceComponent": 4,
+    "sourceLabelPoint": [
+      582.84,
+      930.66
+    ],
+    "markerPoint": [
+      593.64947,
+      929.58224
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  },
+  {
+    "id": "estacionamento-e3",
+    "planCode": "E3",
+    "sourceComponent": 7,
+    "sourceLabelPoint": [
+      555.49,
+      1031.29
+    ],
+    "markerPoint": [
+      586.2644,
+      1026.72333
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  },
+  {
+    "id": "estacionamento-e4",
+    "planCode": "E4",
+    "sourceComponent": 3,
+    "sourceLabelPoint": [
+      321.64,
+      760.46
+    ],
+    "markerPoint": [
+      320.39291,
+      759.4831
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  },
+  {
+    "id": "estacionamento-e5",
+    "planCode": "E5",
+    "sourceComponent": 2,
+    "sourceLabelPoint": [
+      291.09,
+      718.0
+    ],
+    "markerPoint": [
+      291.33076,
+      714.35723
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  },
+  {
+    "id": "estacionamento-e6",
+    "planCode": "E6",
+    "sourceComponent": 0,
+    "sourceLabelPoint": [
+      643.1,
+      432.22
+    ],
+    "markerPoint": [
+      638.60066,
+      429.39883
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  },
+  {
+    "id": "estacionamento-e7",
+    "planCode": "E7",
+    "sourceComponent": 1,
+    "sourceLabelPoint": [
+      559.19,
+      550.24
+    ],
+    "markerPoint": [
+      553.72073,
+      552.54718
+    ],
+    "labelInsidePolygon": true,
+    "geometry": "Cópia exata da componente G04; sem simplificação.",
+    "source": "PDF R84 / carimbo R83; texto nativo do rótulo e contorno registrado."
+  }
+]

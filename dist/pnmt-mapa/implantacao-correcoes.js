@@ -1,6 +1,6 @@
 import * as T from 'three';
-import {implantationData as D} from './implantacao-dados.js?v=implantacao-20260913-g04';
-import {primitives as P} from './refinamentos.js?v=implantacao-20260912-2';
+import {implantationData as D} from './implantacao-dados.js?v=consolidado-20260913-1';
+import {primitives as P} from './refinamentos.js?v=consolidado-20260913-1';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
  * O root de miniatures aplica [-620, 0, -570]. Não repetir essa transformação.
@@ -115,7 +115,7 @@ function inside([x,z],ring){let ok=false;for(let i=0,j=ring.length-1;i<ring.leng
 export function applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure}){
  const R=D.registered;
  for(const g of [landscape,water,circuits,vegetation,infrastructure])clearGeometry(g);
- const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#8c9292',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#426f70',.3),bankMat=registeredMaterial('bank','#92856b',.97);
+ const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#426f70',.3),bankMat=registeredMaterial('bank','#92856b',.97);
  registeredFloor(landscape,R.meshes.ground,grass,0,'Terreno recortado');
  registeredFloor(landscape,R.meshes.roads,asphalt,.12,'Vias · superfícies sem sobreposição');
  registeredFloor(landscape,R.meshes.banks,bankMat,.01,'Margens · interpretação da prancha');
@@ -147,7 +147,7 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
   for(let i=0;i<R.meshes.parking.points.length;i+=2){
    uv.push((R.meshes.parking.points[i]-x0)/(x1-x0),1-(R.meshes.parking.points[i+1]-z0)/(z1-z0));
   }
-  const photoMatG04=registeredMaterial('parking-photo-g04','#ffffff',.94);
+  const photoMatG04=registeredMaterial('parking-photo-g04','#bec4ba',.96);
   if(!photoMatG04.map){
    const textureG04=new T.TextureLoader().load(photoG04.dataURI,undefined,undefined,()=>{
     photoMatG04.map=null;photoMatG04.color.set('#626962');photoMatG04.needsUpdate=true;

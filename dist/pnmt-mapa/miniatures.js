@@ -1,8 +1,8 @@
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=implantacao-20260913-g04';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=consolidado-20260913-1';
 import * as T from 'three';
-import {terrain,places} from './park-data.js?v=implantacao-20260912-2';
-import {buildArenaShow} from './arena-show.js?v=implantacao-20260912-2';
-import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=implantacao-20260912-2';
+import {terrain,places} from './park-data.js?v=consolidado-20260913-1';
+import {buildArenaShow} from './arena-show.js?v=consolidado-20260913-1';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=consolidado-20260913-1';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
@@ -33,7 +33,7 @@ export async function loadMaterials(renderer){
  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of allMats){
-   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#cccab4','#cfccb6','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
+   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
    const grass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32'].includes(m.name);
    if(name==='clean_asphalt'&&(asphalt||m.userData.surfaceKind==='asphalt')){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);if(!m.userData.surfaceKind)m.color.set('#24282b');m.needsUpdate=true;}
    if(name==='leafy_grass'&&(grass||m.userData.surfaceKind==='grass')){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;if(!m.userData.surfaceKind)m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
@@ -41,8 +41,11 @@ export async function loadMaterials(renderer){
  }
  const size=256,data=new Uint8Array(size*size*4);
  for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;const dx=Math.cos(u*4+v*2)*16+Math.cos(u*8-v*6)*8+Math.cos(u*14+v*10)*4,dy=Math.sin(v*4+u*2)*16+Math.sin(v*8-u*6)*8+Math.sin(v*14+u*10)*4;data[i]=Math.min(255,Math.max(0,128+dx));data[i+1]=Math.min(255,Math.max(0,128+dy));data[i+2]=254;data[i+3]=255;}
- const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(12,12);normal.needsUpdate=true;textures.push(normal);
- for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'){m.normalMap=normal;m.normalScale.setScalar(.55);m.needsUpdate=true;}
+ const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(1,1);normal.needsUpdate=true;textures.push(normal);
+ for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'){m.normalMap=normal;m.normalScale.setScalar(.16);m.roughness=.26;m.metalness=.03;m.envMapIntensity=1.1;m.needsUpdate=true;}
+ // A fotografia G04 mantém os UVs importados e participa do descarte da cena.
+ const photo=registeredMaterials.get('parking-photo-g04')?.map;
+ if(photo){photo.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());textures.push(photo);}
  return textures;
 }
 function add(g,geo,color,x=0,y=0,z=0,metal=0,rough=.72){const m=new T.Mesh(geo,material(color,metal,rough));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
@@ -226,52 +229,13 @@ export function createMiniatures(){
  const root=new T.Group();root.position.set(-origin[0],0,-origin[1]);const modelLayer=new T.Group();root.add(modelLayer);
  const landscape=new T.Group();root.add(landscape);const vegetation=new T.Group(),infrastructure=new T.Group(),water=new T.Group();root.add(vegetation,infrastructure,water);
 
- // 1. BACIAS HIDROGRÁFICAS NATURAIS (Laguna das Nações e Lago das Palmeiras)
- for(const ps of terrain.lakes){
-  // Leito escavado com talude de terra/areia
-  polygon(landscape,ps,'#6d4c41',-.32,.35);
-  // Faixa de praia/enrocamento pedregoso na orla
-  path(landscape,ps,3.5,'#a1887f',-.04,true,true);
-  // Espelho d'água ligeiramente rebaixado (-0.05m)
-  const lake=polygon(water,ps,C.water,-.05,.03);
-  lake.castShadow=false;
- }
-
- // 2. TERRENO CONTÍNUO NIVELADO (Sem paredes verticais de maquete)
- polygon(landscape,terrain.outline,C.grass,0,.05);
- for(const ps of terrain.greens)polygon(landscape,ps,'#355225',.01,.02);
- for(const ps of terrain.parking){polygon(landscape,ps,'#4c5257',.005,.012);const xs=ps.map(p=>p[0]),zs=ps.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);for(let x=minX+12;x<maxX-12;x+=9){const rows=[];for(let z=minZ+12;z<maxZ-12;z+=18)if(inPolygon([x,z],ps)&&inPolygon([x+5,z+9],ps))rows.push(z);for(const z of rows)path(landscape,[[x,z],[x,z+9],[x+5,z+9]],.32,'#f0f4f7',.023,false,false);}}
- for(const ps of terrain.roads){path(landscape,ps,19,'#875438',.045);path(landscape,ps,16,C.stone,.055);path(landscape,ps,13,C.road,.07);roadMarks(landscape,ps);}
- if(terrain.roundabouts){
-  for(const rb of terrain.roundabouts){
-   const [cx,cz]=rb.center;
-   const roadRing=add(landscape,new T.RingGeometry(rb.innerRadius,rb.outerRadius,48),C.road,cx,.07,cz);
-   roadRing.rotation.x=-Math.PI/2;
-   ring(landscape,cx,.08,cz,rb.outerRadius,.5,C.stone);
-   ring(landscape,cx,.08,cz,rb.innerRadius,.5,C.stone);
-   ring(landscape,cx,.085,cz,(rb.innerRadius+rb.outerRadius)/2,.2,'#f0f4f7');
-   if(!rb.name.includes('Roda-gigante')){
-    const island=add(landscape,new T.CircleGeometry(rb.innerRadius-.3,40),C.grass,cx,.08,cz);
-    island.rotation.x=-Math.PI/2;
-    for(let i=0;i<8;i++){
-     const a=i*Math.PI*2/8,rr=(rb.innerRadius-.3)*.62;
-     treesSmall(landscape,[[cx+Math.cos(a)*rr,cz+Math.sin(a)*rr]],.45);
-    }
-   }
-  }
- }
- for(const ps of terrain.paths)path(landscape,ps,5.2,'#d5ceb8',.095);
- // Pista e ligação usam as mesmas camadas, sem bordas atravessando as junções.
+ // A implantação registrada cria terreno, vias, água e circuitos diretamente.
+ // Evita construir as malhas antigas que eram descartadas logo em seguida.
  const circuits=new T.Group();root.add(circuits);
- for(const [width,color,y] of [[17.3,'#8a5236',.48],[13.2,'#e6e6de',.58],[11.3,'#222629',.68]]){
-  path(circuits,terrain.raceTrack,width,color,y,true);
-  for(const link of terrain.raceConnections)path(circuits,link,width,color,y,false,false);
- }
 
  const models=new Map();
  for(const p of places){const g=new T.Group();g.userData.placeId=p.id;modelLayer.add(g);models.set(p.id,g);}
  const auto=models.get('autodromo');
- buildAutodromo(auto,circuits);
  buildArenaShow(models.get('arena-show'),{add,box,beam,tube,path,polygon,cylinder,groupAt,inPolygon,C});
  const events=models.get('centro-de-eventos');const eg=groupAt(events,318,307,.72);for(let i=0;i<5;i++){const h=groupAt(eg,(i-2)*30,(i%2)*6);glazing(h,27,67,10+(i%2)*2);box(h,0,12,0,29,1,70,'#f1f3f2');for(let k=-32;k<=32;k+=2.5)box(h,0,13,k,29,.12,.13,'#b2c1c5');box(h,0,13.2,0,5,.5,56,'#b6c9cc');for(let x=-12;x<12;x+=5)box(h,x,0,-33.7,4.5,8,.4,'#bbbeb7');}box(eg,0,2,41,155,5,10,C.glass);for(let x=-72;x<=72;x+=12)palm(eg,x,52,10+(x%3));for(const y of [4.5,8])box(eg,0,y,46.2,155,.35,.3,C.dark);box(eg,0,12,42,160,.8,12,C.white);for(let x=-68;x<=68;x+=17)box(eg,x,0,46,.5,12,.5,C.white);
  const wheel=models.get('roda-gigante');const wg=groupAt(wheel,508,738,.74);cylinder(wg,0,.8,0,27,1.2,'#d9cfaa');ring(wg,0,2.2,0,25,.4,'#aeac83');for(const z of [-4,4]){beam(wg,[-12,2,z],[0,27,0],1,C.white);beam(wg,[12,2,z],[0,27,0],1,C.white);ring(wg,0,27,z,22,.8,C.white,true);}for(let i=0;i<42;i++){const a=i*Math.PI*2/42,x=Math.cos(a)*22,y=27+Math.sin(a)*22;beam(wg,[0,27,0],[x,y,3],.12,C.gold);if(i%2===0)beam(wg,[0,27,0],[x,y,-3],.12,C.white);cylinder(wg,x,y-2.8,0,1.5,2.2,C.glass);cylinder(wg,x,y-.6,0,1.65,.3,C.white);}const axle=add(wg,new T.CylinderGeometry(1.8,1.8,11,32),C.white,0,27,0);axle.rotation.x=Math.PI/2;const boarding=groupAt(wg,0,0);glazing(boarding,39,17,6);box(boarding,0,3.8,8.8,39,.18,.2,C.white);for(const z of [-9,9]){tube(boarding,[[-20,7,z],[-12,8.7,z],[0,5.8,z],[12,7,z],[20,9,z]],.85,C.white);tube(boarding,[[-20,5.5,z],[-10,6.8,z],[1,3.9,z],[12,5.2,z],[20,7,z]],.4,C.white);}for(let i=-18;i<=18;i+=2)beam(boarding,[i,1,9],[i,6,9],.07,C.white);
@@ -305,15 +269,13 @@ export function createMiniatures(){
  const park=models.get('estrutura-e-acesso');const parkFoot=places.find(p=>p.id==='estrutura-e-acesso').footprint;polygon(park,parkFoot,'#cfccb6',.6,.15);for(let x=720;x<=864;x+=11)for(let z=948;z<1029;z+=18)if(inPolygon([x,z],parkFoot)&&inPolygon([x+6,z+9],parkFoot)){path(park,[[x,z],[x,z+8],[x+6,z+8]],.35,C.white,.9,false,false);if((x+z)%4===0){box(park,x+3,1,z+4,3,1.6,6,'#eef0d9');box(park,x+3,2.3,z+4,2.6,.8,3,C.glass);}}
  const moto=models.get('motocross');const mp=places.find(p=>p.id==='motocross').footprint;polygon(moto,mp,'#c4a27a',.9,.2);const mt=[[327,931],[346,943],[368,958],[390,971],[406,995],[395,1007],[371,981],[357,966],[338,952],[327,931]];path(moto,mt,9,'#976e48',1.4,true);for(let i=0;i<14;i++){const x=336+i*4.2,z=940+i*4.3;const b=add(moto,new T.SphereGeometry(4,10,6),'#ad865c',x,1.5,z);b.scale.set(1.6,.5,.85);}stand(moto,333,952,50,8,-.85);
  pearl(models.get('perola-do-cerrado'));
- kerbs(circuits,terrain.raceTrack,terrain.raceConnections);roadFurniture(infrastructure);addVegetation(vegetation);
- buildInfrastructure(infrastructure);
  // Batch static architecture by material: fine detail without thousands of draw calls.
  applyPhotoRefinements(models,{terrain});
  applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure});
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});
- return {root,modelLayer,models,landscape,vegetation,infrastructure,water,circuits};
+ return {root,modelLayer,models,landscape,vegetation,infrastructure,water,circuits,groundMaterial:registeredMaterials.get('grass')};
 }
 
 function batchStatic(g){
