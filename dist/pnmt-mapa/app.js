@@ -120,8 +120,8 @@ async function init(){
  function overview(){
   activeTween++;chooseCamera();camera.up.set(0,1,0);const aspect=viewport(),target=world([624,566]);controls.target.copy(target);camera.zoom=1;
   const direction=tilted?defaultDirection:new T.Vector3(0,1,.0001);camera.position.copy(target).addScaledVector(direction,2000);camera.lookAt(target);
-  if(tilted){overviewDistance=fitDistance(camera,target,corners,aspect,mobile()?1.13:1.17);camera.position.copy(target).addScaledVector(direction,overviewDistance);controls.maxDistance=Math.max(overviewDistance*1.5,2200);}
-  else fitOrtho(camera,target,corners,aspect,1.14);
+  if(tilted){overviewDistance=fitDistance(camera,target,corners,aspect,mobile()?.70:1.17);camera.position.copy(target).addScaledVector(direction,overviewDistance);controls.maxDistance=Math.max(overviewDistance*1.5,2200);}
+  else fitOrtho(camera,target,corners,aspect,mobile()?.70:1.14);
   camera.updateProjectionMatrix();controls.update();camera.updateMatrixWorld();engine.focusShadow(controls.target,900);
   $('.map-hint span:last-child').textContent=mobile()?'Pince para aproximar · Toque para explorar':tilted?'Arraste para girar · Role para aproximar':'Arraste para mover · Role para aproximar';render();
  }
