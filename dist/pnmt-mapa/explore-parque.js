@@ -327,7 +327,7 @@ class ParqueExplorer extends HTMLElement {
     frame.style.pointerEvents = 'auto';
     frame.referrerPolicy = 'same-origin';
     frame.addEventListener('load', () => this._configureFrame());
-    frame.src = new URL('index.html?embed=1&v=espacos-arquitetura-20260913-2', assets).href;
+    frame.src = new URL('index.html?embed=1&v=autodromo-acabamento-20260913-2', assets).href;
     this._frame = frame;
     this.shadowRoot.querySelector('.viewport').appendChild(frame);
   }

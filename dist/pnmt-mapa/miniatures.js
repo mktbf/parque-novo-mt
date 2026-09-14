@@ -1,3 +1,4 @@
+import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
 import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=autodromo-arquitetura-20260913-1';
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
@@ -33,6 +34,7 @@ export async function loadMaterials(renderer){
  const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
+ textures.push(...await loadAutodromeFinishMaterials(renderer));
  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of allMats){
@@ -279,7 +281,8 @@ export function createMiniatures(){
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});
- return {root,modelLayer,models,landscape,vegetation,infrastructure,water,circuits,groundMaterial:registeredMaterials.get('grass')};
+ const autodromeFinish=createAutodromeFinish(circuits,models.get('autodromo'));root.add(autodromeFinish.root);
+ return {root,modelLayer,models,landscape,vegetation,infrastructure,water,circuits,autodromeFinish,groundMaterial:registeredMaterials.get('grass')};
 }
 
 function batchStatic(g){

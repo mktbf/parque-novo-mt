@@ -60,3 +60,9 @@
 .auto-views{clear:both;display:grid;gap:7px;margin:16px 0}.auto-views button{min-height:42px;padding:10px 13px;border:1px solid #cad7ca;border-radius:9px;background:#f4f7f1;color:#193e35;font:inherit;font-size:13px;font-weight:600;line-height:1.35;text-align:left;cursor:pointer}.auto-views button[aria-pressed="true"]{background:#193e35;color:#fff;border-color:#193e35}.auto-views button:focus-visible{outline:3px solid #94b964;outline-offset:2px}.auto-views button:disabled{opacity:.5;cursor:default}.fallback-open .auto-views{display:none}
 
 @media(max-width:760px){.auto-views{grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}.auto-views button:last-child:nth-child(odd){grid-column:1/-1}.auto-views button{font-size:12px;min-height:40px;padding:9px 10px}}
+
+/* Autódromo: acabamento e comparação de iluminação, sem ocupar o mapa. */
+.auto-light{display:flex;gap:8px;margin:0 0 14px}.auto-light button{flex:1;min-height:38px;border:1px solid #c6d3c9;background:#f8faf6;color:#25473a;border-radius:8px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:8px}.auto-light button[aria-pressed="true"]{background:#193e35;color:#fff;border-color:#193e35}.auto-light button:focus-visible{outline:3px solid #a7c767;outline-offset:2px}
+
+.fallback-open .auto-light{display:none}
+@media(min-width:761px){.auto-views{grid-template-columns:1fr 1fr}.auto-views button:last-child:nth-child(odd){grid-column:1/-1}}

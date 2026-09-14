@@ -1,4 +1,4 @@
-import './explore-parque.js?v=espacos-arquitetura-20260913-2';
+import './explore-parque.js?v=autodromo-acabamento-20260913-2';
 
 /* Integração específica do site atual: #espacos, após o banner e antes dos cards. */
 function insertMap(){

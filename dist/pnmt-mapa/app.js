@@ -3,11 +3,11 @@ import {places,colors} from './park-data.js?v=autodromo-arquitetura-20260913-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=autodromo-arquitetura-20260913-1';
-import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-arquitetura-20260913-2';
-let autoDetail=null;
+import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=autodromo-acabamento-20260913-2';
+let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';
- return `<div class="auto-views" role="group" aria-label="Explorar ${escapeHtml(p.name)}">${options.map(([key,label])=>`<button type="button" data-detail-view="${key}" ${p.id==='autodromo'?`data-auto-view="${key||'circuit'}"`:''} aria-pressed="${String(key===(autoDetail||''))}" ${mapApi?'':'disabled'}>${label}</button>`).join('')}</div>`;
+ return `<div class="auto-views" role="group" aria-label="Explorar ${escapeHtml(p.name)}">${options.map(([key,label])=>`<button type="button" data-detail-view="${key}" ${p.id==='autodromo'?`data-auto-view="${key||'circuit'}"`:''} aria-pressed="${String(key===(autoDetail||''))}" ${mapApi?'':'disabled'}>${label}</button>`).join('')}</div>${p.id==='autodromo'?`<div class="auto-light" role="group" aria-label="Iluminação do autódromo"><button type="button" data-auto-light="dia" aria-pressed="${!nightAuto}">Dia</button><button type="button" data-auto-light="entardecer" aria-pressed="${nightAuto}">Entardecer iluminado</button></div>`:''}`;
 }
 let selectedId=null,filter='all',query='',visible=new Set(places.map(p=>p.id)),mapApi=null,lastTrigger=null;
 function toggleList(open){$('.explorer').classList.toggle('list-open',open);$('#map-stage').inert=open;$('.mobile-list-open').setAttribute('aria-expanded',String(open));}
@@ -18,7 +18,7 @@ function drawList(){
  mapApi?.render();
 }
 function selectPlace(id,focus=true){
- const p=places.find(p=>p.id===id);if(!p)return;if(focus||selectedId!==id)autoDetail=null;lastTrigger=document.activeElement;selectedId=id;
+ const p=places.find(p=>p.id===id);if(!p)return;if(id!=='autodromo')mapApi?.setNight(false);if(focus||selectedId!==id)autoDetail=null;lastTrigger=document.activeElement;selectedId=id;
  const nearest=relatedPlaces(p,places);
  $('#browse-panel').hidden=true;$('#selection').hidden=false;$('.explorer').classList.add('has-selection');$('#selection').style.setProperty('--color',colors[p.category]);
  $('#selection').innerHTML=`<div class="selection-top"><button class="selection-back" type="button">← Todos os espaços</button><button class="selection-close" type="button" aria-label="Fechar detalhes">×</button></div><img class="selection-image${p.kind==='parking'?' parking-image':''}" src="${imageFor(p)}" alt="${p.name}, referência do projeto"><div class="selection-photo-label">${p.photoCaption||(p.id==='estrutura-e-acesso'?'Planta de implantação':'Imagem do projeto')}</div><div class="selection-copy"><div class="selection-tag">${category(p)}</div><h2 tabindex="-1">${p.name}</h2>${autoViewButtons(p)}<p>${p.description}</p>${guideHtml(p,places)}${p.url?`<a class="primary-link" data-destination="${p.id}" href="${p.url}" target="_top">Conhecer o espaço <span aria-hidden="true">↗</span></a>`:''}<div class="selection-location"><strong>Você está explorando</strong>${p.zone||'Parque Novo Mato Grosso'}<br>Selecione um destino para localizá-lo no mapa.</div><div class="nearby"><p>POR PERTO</p>${nearest.map(n=>`<button data-nearby="${n.id}">${n.name} ↗</button>`).join('')}</div></div>`;
@@ -27,11 +27,11 @@ function selectPlace(id,focus=true){
  if(focus){const url=new URL(location.href);url.searchParams.delete('detalhe');history.replaceState(null,'',url);mapApi?.focus(p);}else mapApi?.render();
  if(lastTrigger?.matches('button')&&lastTrigger.matches(':focus-visible'))$('#selection h2').focus({preventScroll:true});
 }
-function closeSelection(returnFocus=true){selectedId=null;autoDetail=null;$('#selection').hidden=true;$('#browse-panel').hidden=false;$('.explorer').classList.remove('has-selection');const u=new URL(location.href);u.searchParams.delete('espaco');u.searchParams.delete('detalhe');history.replaceState(null,'',u);mapApi?.render();if(returnFocus&&lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});}
+function closeSelection(returnFocus=true){mapApi?.setNight(false);selectedId=null;autoDetail=null;$('#selection').hidden=true;$('#browse-panel').hidden=false;$('.explorer').classList.remove('has-selection');const u=new URL(location.href);u.searchParams.delete('espaco');u.searchParams.delete('detalhe');history.replaceState(null,'',u);mapApi?.render();if(returnFocus&&lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});}
 $('#search').addEventListener('input',e=>{query=e.target.value;drawList();});
 $('.filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawList();mapApi?.overview();$('#announcement').textContent=$('#list-count').textContent;});
 $('#place-list').addEventListener('click',e=>{const b=e.target.closest('[data-locate]');if(b)selectPlace(b.dataset.locate);});
-$('#selection').addEventListener('click',e=>{const detail=e.target.closest('[data-detail-view]');if(detail){if(mapApi)mapApi.focusDetail(detail.dataset.detailView||null);return;}if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
+$('#selection').addEventListener('click',e=>{const light=e.target.closest('[data-auto-light]');if(light){mapApi?.setNight(light.dataset.autoLight==='entardecer');return;}const detail=e.target.closest('[data-detail-view]');if(detail){if(mapApi)mapApi.focusDetail(detail.dataset.detailView||null);return;}if(e.target.closest('[data-show-access]')){showAccessList();return;}if(e.target.closest('.selection-close,.selection-back')){closeSelection();mapApi?.overview();}const b=e.target.closest('[data-nearby]');if(b)selectPlace(b.dataset.nearby);});
 $('.mobile-list-open').addEventListener('click',()=>{if(selectedId)closeSelection(false);toggleList(true);$('#search').focus({preventScroll:true});});
 $('.mobile-list-close').addEventListener('click',()=>{toggleList(false);$('.mobile-list-open').focus({preventScroll:true});});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSelection();toggleList(false);mapApi?.overview();}if(e.key==='Tab'&&mobile()&&$('.explorer').classList.contains('list-open')){const els=[...$('#places').querySelectorAll('button,a,input')].filter(x=>x.offsetParent);const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
@@ -54,7 +54,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=espacos-arquitetura-20260913-2'),import('./rendering.js?v=espacos-arquitetura-20260913-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=autodromo-acabamento-20260913-2'),import('./rendering.js?v=autodromo-acabamento-20260913-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -63,8 +63,8 @@ async function init(){
  const controls=new OrbitControls(camera,renderer.domElement);
  Object.assign(controls,{enableDamping:false,minPolarAngle:.22,maxPolarAngle:1.36,rotateSpeed:.45,zoomSpeed:.8,minDistance:24,maxDistance:5000,minZoom:.65,maxZoom:10,enablePan:true,screenSpacePanning:true});
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
- const built=createMiniatures();scene.add(built.root);
- window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world,get state(){return {version:'espacos-arquitetura-20260913-2',selectedId,detail:autoDetail,view,tilted,buildings};},get diagnostics(){return engine.diagnostics();}};
+ const built=createMiniatures();scene.add(built.root);engine.setLightSources(built.autodromeFinish.lamps);
+ window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world,get state(){return {version:'autodromo-acabamento-20260913-2',selectedId,detail:autoDetail,view,tilted,buildings,nightAuto};},get diagnostics(){return engine.diagnostics();}};
  const floor=new T.Mesh(createBackdropGeometry(),built.groundMaterial);floor.position.y=-.3;floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null,planOpacity=0.65,overlayActive=false;const texturePromises=new Map();
@@ -221,6 +221,7 @@ async function init(){
   });}
   function updateLayers(){
    const showPlan=(view==='plan'||overlayActive)&&planImage;
+   built.autodromeFinish.setVisible(view,buildings);built.autodromeFinish.setNight(nightAuto&&view==='3d');
    built.landscape.visible=view==='3d';built.vegetation.visible=view==='3d';built.infrastructure.visible=buildings;built.water.visible=view==='3d';built.modelLayer.visible=buildings;built.circuits.visible=view==='3d'||buildings;floor.visible=view==='3d';imageShadows.visible=view!=='3d'&&buildings;
    if(satellite)satellite.visible=view==='satellite';
    if(planImage){const onTop=overlayActive&&view==='3d';if(planImage.parent!==(onTop?overlay:scene))(onTop?overlay:scene).add(planImage);planImage.material.depthTest=!onTop;planImage.renderOrder=onTop?-100:6;planImage.visible=Boolean(showPlan);planImage.material.opacity=(view==='plan'&&!overlayActive)?Math.max(planOpacity,.85):planOpacity;}
@@ -249,13 +250,18 @@ async function init(){
   $('#announcement').textContent=detailLabel(p.id,key)+'.';
   focus(p);
  }
- mapApi={render,focus,overview,focusDetail,focusAutoDetail:focusDetail};overview();updateLayers();
+ function setNight(value){
+  nightAuto=Boolean(value);engine.setLighting(nightAuto);built.autodromeFinish.setNight(nightAuto&&view==='3d');
+  document.querySelectorAll('[data-auto-light]').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.autoLight==='entardecer')===nightAuto)));
+  const url=new URL(location.href);if(nightAuto)url.searchParams.set('atmosfera','entardecer');else url.searchParams.delete('atmosfera');history.replaceState(null,'',url);render();
+ }
+ mapApi={render,focus,overview,focusDetail,setNight,focusAutoDetail:focusDetail};overview();updateLayers();
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
  if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
- const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');if(places.some(p=>p.id===requested))selectPlace(requested);if(validDetail(requested,detail))focusDetail(detail);
+ const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');if(places.some(p=>p.id===requested))selectPlace(requested);if(validDetail(requested,detail))focusDetail(detail);if(requested==='autodromo'&&incoming.get('atmosfera')==='entardecer')setNight(true);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
 }
-function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass,[data-detail-view]').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
+function showFallback(){mapApi=null;$('.explorer').classList.add('fallback-open');clearTimeout(timer);$('#loading').hidden=true;$('#fallback').hidden=false;$('#markers').hidden=true;$('.map-caption').hidden=true;$('.map-hint').hidden=true;document.querySelectorAll('.map-controls button,.scene-settings button,[data-view],.compass,[data-detail-view],[data-auto-light]').forEach(b=>b.disabled=true);$('.mobile-list-open').style.removeProperty('display');}
 init().catch(error=>{console.error('Não foi possível abrir a maquete.',error);showFallback();});

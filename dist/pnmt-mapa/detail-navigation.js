@@ -1,6 +1,6 @@
 // Rótulos públicos. Os enquadramentos vêm das construções no sistema da prancha.
 export const detailOptions={
- 'autodromo':[['boxes','Ver boxes e torre'],['stand','Ver arquibancada'],['','Ver circuito completo']],
+ 'autodromo':[['reta','Reta e arquibancada'],['aerea','Vista aérea'],['boxes','Ver boxes e torre'],['stand','Ver arquibancada'],['','Ver circuito completo']],
  'arena-show':[['cobertura','Ver cobertura'],['bilheteria','Ver bilheteria'],['','Ver Arena completa']],
  'portico-de-entrada':[['estrutura','Ver os arcos'],['','Ver acesso completo']],
  'kartodromo':[['boxes','Ver edifício dos boxes'],['arquibancada','Ver arquibancada'],['','Ver pista completa']],
