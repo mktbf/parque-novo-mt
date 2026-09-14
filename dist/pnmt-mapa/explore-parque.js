@@ -1,6 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
+const integrationVersion = 'portal-espacos-20260914-1';
 
 const safeHref = (value) => {
   try {
@@ -17,6 +18,7 @@ class ParqueExplorer extends HTMLElement {
     this._mounted = true;
     this._active = true;
     this._routes = null;
+    this._spaceId = this.getAttribute('space-id') || null;
 
     const shadow = this.shadowRoot || this.attachShadow({ mode: 'open' });
     shadow.innerHTML = `
@@ -144,6 +146,9 @@ class ParqueExplorer extends HTMLElement {
           border-color: #0d2b4d;
         }
 
+        .back-map { padding: 8px 0; color: #193e35; }
+        .viewport:fullscreen { border: 0; border-radius: 0; }
+
         a:focus-visible, button:focus-visible {
           outline: 3px solid #58b947;
           outline-offset: 3px;
@@ -239,9 +244,10 @@ class ParqueExplorer extends HTMLElement {
           <div class="header-content">
             <span class="kicker-badge"><span class="pulse-dot"></span>EXPERIÊNCIA 3D</span>
             <h2 id="explore-title">Explore o Parque</h2>
-            <p>Navegue em perspectiva pelas atrações do complexo. Toque ou clique em qualquer ponto do mapa para ver detalhes ou use a lista lateral.</p>
+            <p class="description">Explore o parque em 3D. Selecione uma atração no mapa ou na lista para abrir a página dela.</p>
           </div>
           <div class="actions">
+            <a class="back-map" href="#espacos" hidden>← Mapa geral</a>
             <button class="jump-btn" type="button" aria-label="Rolar para os filtros e cards de espaços">
               <span>Ver lista e cards</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
@@ -249,7 +255,7 @@ class ParqueExplorer extends HTMLElement {
               </svg>
             </button>
             <a class="expand" target="_blank" rel="noopener">
-              <span>Tela cheia</span>
+              <span>Ampliar 3D</span>
               <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -259,32 +265,52 @@ class ParqueExplorer extends HTMLElement {
 
         <div class="note-bar">
           <p class="note">
-            💡 <strong>Interação direta:</strong> Arraste para girar em 3D, role o mouse para aproximar ou selecione qualquer atração. Os cards continuam logo abaixo.
+            Arraste para girar e aproxime para explorar. As páginas dos espaços reúnem fotos, informações e opções de visita.
           </p>
         </div>
 
-        <p class="sr" role="status" aria-live="polite">Mapa 3D interativo carregado e pronto para navegação.</p>
+        <p class="sr" role="status" aria-live="polite">Carregando o mapa 3D.</p>
       </section>
     `;
 
-    shadow.querySelector('.expand').href = new URL('index.html', assets).href;
-
-    // Smooth scroll down to space catalog
-    shadow.querySelector('.jump-btn')?.addEventListener('click', () => {
-      const target = document.querySelector('.catalog-tools') || document.getElementById('space-results');
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    if (this._spaceId) {
+      shadow.querySelector('#explore-title').textContent = (this.getAttribute('space-name') || 'Este espaço') + ' em 3D';
+      shadow.querySelector('.description').textContent = 'Gire, aproxime e use as vistas disponíveis para conhecer o espaço.';
+      shadow.querySelector('.jump-btn span').textContent = 'Informações e visita';
+      shadow.querySelector('.jump-btn').setAttribute('aria-label', 'Ir às informações e opções de visita deste espaço');
+      shadow.querySelector('.back-map').hidden = false;
+      shadow.querySelector('.note').textContent = 'As informações do espaço e as opções de visita estão logo abaixo.';
+    }
+    const expanded = new URL('index.html', assets);
+    if (this._spaceId) expanded.searchParams.set('espaco', this._spaceId);
+    if (this._spaceId === 'autodromo') expanded.searchParams.set('detalhe', 'reta');
+    shadow.querySelector('.expand').href = expanded.href;
+    shadow.querySelector('.expand').addEventListener('click', () => {
+      // Reaproveita a vista e a iluminação escolhidas ao ampliar em uma aba própria.
+      try {
+        const current = new URL(this._frame.contentWindow.location.href);
+        if (current.origin !== location.origin || current.pathname !== expanded.pathname) return;
+        current.searchParams.delete('embed'); current.searchParams.delete('portal');
+        shadow.querySelector('.expand').href = current.href;
+      } catch { /* O link inicial permanece utilizável enquanto o iframe carrega. */ }
     });
+    shadow.querySelector('.jump-btn').addEventListener('click', () => this._jumpToContent());
 
     this._message = (event) => {
       if (!this._frame || event.source !== this._frame.contentWindow || event.origin !== location.origin) return;
       if (event.data?.type === 'pnmt:bridge-ready') this._configureFrame();
       else if (event.data?.type === 'pnmt:navigate') this._navigate(event.data.id);
+      else if (event.data?.type === 'pnmt:details') this._jumpToContent();
+      else if (event.data?.type === 'pnmt:scene-ready') shadow.querySelector('[role="status"]').textContent = 'Mapa 3D pronto para explorar.';
+      else if (event.data?.type === 'pnmt:scene-error') shadow.querySelector('[role="status"]').textContent = 'A visualização 3D está indisponível neste navegador. As informações dos espaços continuam disponíveis na página.';
     };
     window.addEventListener('message', this._message);
 
-    fetch(new URL('rotas.json', assets))
+    // O cadastro do portal é a fonte das páginas disponíveis. Configura antes do primeiro clique.
+    const currentSpaces = window.PNMT_CONTENT?.spaces;
+    if (Array.isArray(currentSpaces)) {
+      this.configure({ routes: Object.fromEntries(currentSpaces.map(p => [p.id, '#espaco/' + p.id])) });
+    } else fetch(new URL('rotas.json', assets))
       .then((r) => {
         if (!r.ok) throw Error('Rotas indisponíveis');
         return r.json();
@@ -317,17 +343,34 @@ class ParqueExplorer extends HTMLElement {
     }
   }
 
+  _jumpToContent() {
+    const target = this._spaceId ? document.querySelector('#main .detail-layout')
+      : document.querySelector('.catalog-tools') || document.getElementById('space-results');
+    if (!target) return;
+    target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+    // Move também o foco do teclado para fora do iframe, sem criar uma parada permanente.
+    const heading = target.querySelector('h2') || target;
+    const previous = heading.getAttribute('tabindex');
+    heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true });
+    heading.addEventListener('blur', () => previous === null ? heading.removeAttribute('tabindex') : heading.setAttribute('tabindex', previous), { once: true });
+  }
+
   _start() {
     if (this._frame || !this.isConnected) return;
     const frame = document.createElement('iframe');
-    frame.title = 'Mapa interativo 3D do Parque Novo Mato Grosso';
+    frame.title = this._spaceId ? 'Visualização 3D: ' + (this.getAttribute('space-name') || this._spaceId) : 'Mapa interativo 3D do Parque Novo Mato Grosso';
     frame.tabIndex = 0;
     frame.inert = false;
     frame.setAttribute('aria-hidden', 'false');
     frame.style.pointerEvents = 'auto';
     frame.referrerPolicy = 'same-origin';
     frame.addEventListener('load', () => this._configureFrame());
-    frame.src = new URL('index.html?embed=1&v=espacos-acabamento-20260914-3', assets).href;
+    const url = new URL('index.html', assets);
+    url.searchParams.set('embed', '1'); url.searchParams.set('portal', this._spaceId ? 'space' : 'overview');
+    url.searchParams.set('v', integrationVersion);
+    if (this._spaceId) url.searchParams.set('espaco', this._spaceId);
+    if (this._spaceId === 'autodromo') url.searchParams.set('detalhe', 'reta');
+    frame.src = url.href;
     this._frame = frame;
     this.shadowRoot.querySelector('.viewport').appendChild(frame);
   }
@@ -346,6 +389,7 @@ class ParqueExplorer extends HTMLElement {
   }
 
   _navigate(id) {
+    if (id === this._spaceId) return;
     if (!this._routes || typeof id !== 'string' || !Object.hasOwn(this._routes, id)) return;
     const href = this._routes[id];
     if (!href) return;

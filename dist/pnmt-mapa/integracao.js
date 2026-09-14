@@ -1,25 +1,45 @@
-import './explore-parque.js?v=espacos-acabamento-20260914-3';
+import './explore-parque.js?v=portal-espacos-20260914-1';
 
-/* Integração específica do site atual: #espacos, após o banner e antes dos cards. */
-function insertMap(){
- const route=(location.hash.slice(1)||'inicio').split('?')[0];
- if(route!=='espacos')return;
- const main=document.getElementById('main');
- if(!main||main.querySelector('pnmt-explore'))return;
- const intro=main.querySelector('.page-intro');
- // Só insere quando o catálogo da página de espaços estiver presente.
- if(!intro||!main.querySelector('#space-results'))return;
- const block=document.createElement('pnmt-explore');block.id='explore-o-parque';
- intro.after(block);
+/* Reutiliza as páginas do roteador do portal e apenas acrescenta o visualizador. */
+function insertMap() {
+  const main = document.getElementById('main');
+  if (!main || main.querySelector('pnmt-explore')) return;
+  const route = (location.hash.slice(1) || 'inicio').split('?')[0];
+  let anchor, space;
+  if (route === 'espacos') {
+    anchor = main.querySelector('.page-intro');
+    if (!anchor || !main.querySelector('#space-results')) return;
+  } else {
+    const match = /^espaco\/([a-z0-9-]+)$/.exec(route);
+    if (!match) return;
+    space = window.PNMT_CONTENT?.spaces?.find(item => item.id === match[1]);
+    const details = main.querySelector('.detail-layout');
+    if (!space || !details) return;
+    // Só monta depois de o roteador inserir a página de detalhes.
+    anchor = details.previousElementSibling;
+    if (!anchor) return;
+  }
+  const block = document.createElement('pnmt-explore');
+  block.id = space ? 'espaco-em-3d' : 'explore-o-parque';
+  if (space) {
+    block.setAttribute('space-id', space.id);
+    block.setAttribute('space-name', space.name);
+  }
+  anchor.after(block);
 }
 
-function start(){
- const main=document.getElementById('main');if(!main)return;
- insertMap();
- // O roteador atual troca o conteúdo de main. O bloco acompanha esse ciclo.
- const observer=new MutationObserver(insertMap);observer.observe(main,{childList:true});
- const routeChanged=()=>queueMicrotask(insertMap);
- window.addEventListener('hashchange',routeChanged);
- window.addEventListener('pagehide',()=>{observer.disconnect();window.removeEventListener('hashchange',routeChanged);},{once:true});
+function start() {
+  const main = document.getElementById('main');
+  if (!main) return;
+  insertMap();
+  const observer = new MutationObserver(insertMap);
+  observer.observe(main, { childList: true });
+  const routeChanged = () => queueMicrotask(insertMap);
+  window.addEventListener('hashchange', routeChanged);
+  window.addEventListener('pagehide', () => {
+    observer.disconnect();
+    window.removeEventListener('hashchange', routeChanged);
+  }, { once: true });
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+else start();

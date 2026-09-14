@@ -1,0 +1,17 @@
+/* Só o painel incorporado na página do espaço recebe estes ajustes. */
+[data-portal="space"] .portal-selection-top { padding: 16px 22px 0; }
+[data-portal="space"] .portal-overview { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; }
+[data-portal="space"] .portal-selection-copy { padding: 18px 22px 24px; }
+[data-portal="space"] .portal-selection-copy h2 { font-size: 27px; max-width: none; }
+[data-portal="space"] .portal-selection-copy .auto-views { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-portal="space"] .portal-selection-copy .auto-views button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+[data-portal="space"] .portal-selection-copy .portal-controls-note { font-size: 14px; line-height: 1.5; margin: 18px 0 12px; padding: 0; }
+[data-portal="space"] .portal-details { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 10px 12px; background: #f3f7f1; color: #193e35; border: 1px solid #cad7ca; border-radius: 8px; text-align: left; font-size: 14px; font-weight: 600; }
+@media (max-width: 760px) {
+  [data-portal="space"] .portal-selection-top { padding: 3px 18px 0; }
+  [data-portal="space"] .portal-selection-copy { padding: 6px 18px 16px; }
+  [data-portal="space"] .portal-selection-copy h2 { font-size: 23px; }
+  [data-portal="space"] .portal-selection-copy .auto-views button,
+  [data-portal="space"] .portal-selection-copy .auto-light button { min-height: 44px; }
+  [data-portal="space"] .portal-selection-copy .portal-controls-note { display: none; }
+}
