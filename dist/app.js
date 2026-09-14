@@ -156,7 +156,10 @@
   }
 
   function catalogCard(s) {
-    return `<a class="catalog-card ${s.image ? '' : 'text-only'}" href="#espaco/${esc(s.id)}">${s.image ? `<div class="catalog-image"><img loading="lazy" src="${asset(s.image)}" alt="${esc(s.name)}">${s.kind ? `<span class="image-note">${esc(s.kind)}</span>` : ''}</div>` : ''}<div class="catalog-copy"><span class="kicker">${esc(s.category)}</span><h3>${esc(s.name)}</h3><p>${esc(s.tagline)}</p><span>Conheça o espaço ↗</span></div></a>`;
+    const media = s.image
+      ? `<div class="catalog-image"><img loading="lazy" decoding="async" src="${asset(s.image)}" alt="">${s.kind ? `<span class="image-note">${esc(s.kind)}</span>` : ''}</div>`
+      : `<div class="catalog-image catalog-placeholder" aria-hidden="true"><img src="${asset('symbol')}" alt="" loading="lazy"><span>${esc(s.category)}</span><small>Parque Novo Mato Grosso</small></div>`;
+    return `<a class="catalog-card catalog-card--portal" href="#espaco/${esc(s.id)}">${media}<div class="catalog-copy"><span class="kicker">${esc(s.category)}</span><h3>${esc(s.name)}</h3><p>${esc(s.tagline)}</p><span class="catalog-cta">Ver detalhes <span aria-hidden="true">↗</span></span></div></a>`;
   }
 
   const videoBlock = () =>
@@ -260,14 +263,8 @@
   }
 
   function spacesPage() {
-    return (
-      intro(
-        'Infinitas possibilidades.',
-        '',
-        'Conheça os espaços'
-      ) +
-      `<section class="wrap"><div class="catalog-tools"><h2>Cada espaço nasce com um propósito. Conheça o que está sendo construído.</h2><label class="sr-only" for="space-search">Buscar um espaço</label><input id="space-search" type="search" placeholder="Busque pelo nome do espaço" value="${esc(state.spaceQuery)}"></div>${filters(['Todos', 'Esportes', 'Eventos', 'Cultura', 'Família', 'Experiências', 'Convivência'], state.spaceFilter, 'espaços')}<p class="result-count" id="space-count" aria-live="polite"></p><div class="catalog-grid" id="space-results"></div></section>${visitStrip()}`
-    );
+    return `<section class="page-intro spaces-intro">${crumb('Conheça os espaços')}<div class="spaces-intro-row"><div><h1>Conheça os espaços</h1><p>Explore o mapa e descubra o que você pode viver no parque.</p></div><div class="spaces-shortcuts" role="group" aria-label="Explorar os espaços"><button type="button" data-pnmt-jump="mapa">Explorar o mapa <span aria-hidden="true">↓</span></button><button type="button" data-pnmt-jump="catalogo">Ver todos os espaços <span aria-hidden="true">↓</span></button></div></div></section>
+      <section class="wrap spaces-catalog" id="catalogo-espacos" aria-labelledby="catalog-title"><div class="catalog-tools"><div><span class="kicker">ENCONTRE SUA PRÓXIMA EXPERIÊNCIA</span><h2 id="catalog-title">Qual espaço você quer conhecer?</h2><p>Escolha uma categoria ou busque pelo nome.</p></div><div class="catalog-search"><label for="space-search">Buscar um espaço</label><input id="space-search" type="search" placeholder="Ex.: autódromo, arena, skate…" value="${esc(state.spaceQuery)}" aria-controls="space-results" autocomplete="off"></div></div>${filters(['Todos', 'Esportes', 'Eventos', 'Cultura', 'Família', 'Experiências', 'Convivência'], state.spaceFilter, 'espaços')}<div class="catalog-results-bar"><p class="result-count" id="space-count" aria-live="polite" aria-atomic="true"></p><button type="button" id="clear-space-filters" data-action="reset-spaces" hidden>Limpar busca e filtros</button></div><div class="catalog-grid" id="space-results"></div></section>${visitStrip()}`;
   }
 
   function updateSpaces() {
@@ -280,6 +277,9 @@
     document.getElementById('space-count').textContent = `${list.length} ${
       list.length === 1 ? 'espaço encontrado' : 'espaços encontrados'
     }`;
+
+    const clearFilters = document.getElementById('clear-space-filters');
+    if (clearFilters) clearFilters.hidden = !state.spaceQuery && state.spaceFilter === 'Todos';
 
     document.getElementById('space-results').innerHTML = list.length
       ? list.map(catalogCard).join('')
@@ -1203,6 +1203,7 @@
         state.spaceQuery = '';
         document.getElementById('space-search').value = '';
         setFilter('espaços', 'Todos');
+        document.getElementById('space-search').focus({ preventScroll: true });
       } else if (action === 'copy-request') {
         const t = document.getElementById('request-text');
         try {

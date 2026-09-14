@@ -1,0 +1,25 @@
+/* Alternativa sem WebGL. Não participa da cena 3D nem de sua renderização. */
+.fallback-open .mode-switch,
+.fallback-open .scene-settings,
+.fallback-open .compass,
+.fallback-open .map-controls,
+.fallback-open .overlay-control,
+.fallback-open .map-credit,
+.fallback-open #map,
+.fallback-open .portal-controls-note,
+.fallback-open .selection-tag { display: none !important; }
+.fallback-open .map-stage { background: #e9efea; }
+.fallback-open .fallback { inset: 18px; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 15px; }
+.fallback-open .fallback img { width: 100%; height: auto; min-height: 0; flex: 1 1 0; object-fit: contain; border-radius: 8px; }
+.fallback-open .fallback-copy { flex: 0 0 auto; padding: 2px 20px 12px; text-align: center; }
+.fallback-open .fallback-copy strong { color: #193e35; font-size: 19px; }
+.fallback-open .fallback-copy p { margin: 7px auto 0; max-width: 520px; font-size: 14px; line-height: 1.45; color: #4b655a; }
+@media (max-width: 760px) {
+  .fallback-open .fallback { inset: 16px 16px 86px; gap: 12px; }
+  .fallback-open .fallback-copy { padding: 0; }
+  .fallback-open .fallback-copy strong { font-size: 18px; }
+  .fallback-open .fallback-copy p { font-size: 13px; }
+  .fallback-open .mobile-list-open { bottom: 18px; right: 16px; left: 16px; min-height: 48px; }
+  .fallback-open.has-selection .fallback { bottom: 45%; }
+  .fallback-open.has-selection .fallback-copy { display: none; }
+}

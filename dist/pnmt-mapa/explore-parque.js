@@ -1,7 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
-const integrationVersion = 'portal-espacos-20260914-1';
+const integrationVersion = 'portal-ux-20260914-2';
 
 const safeHref = (value) => {
   try {
@@ -237,19 +237,27 @@ class ParqueExplorer extends HTMLElement {
             font-size: 0.8125rem;
           }
         }
+        :host(:not([space-id])) .viewport { height: clamp(450px, 62svh, 640px); }
+        :host(:not([space-id])) h2 { font-size: clamp(1.6rem, 2.3vw, 2.2rem); }
+        :host([data-fallback]) .viewport { height: 420px; }
+        @media (max-width: 760px) {
+          :host(:not([space-id])) .viewport { height: clamp(420px, 72svh, 560px); }
+          :host([data-fallback]) .viewport { height: 440px; }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
       </style>
 
       <section aria-labelledby="explore-title">
         <header>
           <div class="header-content">
             <span class="kicker-badge"><span class="pulse-dot"></span>EXPERIÊNCIA 3D</span>
-            <h2 id="explore-title">Explore o Parque</h2>
+            <h2 id="explore-title">Explore no mapa</h2>
             <p class="description">Explore o parque em 3D. Selecione uma atração no mapa ou na lista para abrir a página dela.</p>
           </div>
           <div class="actions">
             <a class="back-map" href="#espacos" hidden>← Mapa geral</a>
             <button class="jump-btn" type="button" aria-label="Rolar para os filtros e cards de espaços">
-              <span>Ver lista e cards</span>
+              <span>Buscar na lista</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                 <path d="M12 5v14M19 12l-7 7-7-7"/>
               </svg>
@@ -302,7 +310,15 @@ class ParqueExplorer extends HTMLElement {
       else if (event.data?.type === 'pnmt:navigate') this._navigate(event.data.id);
       else if (event.data?.type === 'pnmt:details') this._jumpToContent();
       else if (event.data?.type === 'pnmt:scene-ready') shadow.querySelector('[role="status"]').textContent = 'Mapa 3D pronto para explorar.';
-      else if (event.data?.type === 'pnmt:scene-error') shadow.querySelector('[role="status"]').textContent = 'A visualização 3D está indisponível neste navegador. As informações dos espaços continuam disponíveis na página.';
+      else if (event.data?.type === 'pnmt:scene-error') {
+        this.setAttribute('data-fallback', '');
+        shadow.querySelector('#explore-title').textContent = 'Vista aérea do parque';
+        shadow.querySelector('.kicker-badge').textContent = 'CONHEÇA O PARQUE';
+        shadow.querySelector('.description').textContent = 'O 3D não está disponível neste navegador. Você pode continuar explorando as páginas dos espaços.';
+        shadow.querySelector('.expand').hidden = true;
+        shadow.querySelector('.note').textContent = this._spaceId ? 'As informações e as opções de visita deste espaço estão logo abaixo.' : 'Use a lista do mapa ou os cards abaixo para conhecer cada espaço.';
+        shadow.querySelector('[role="status"]').textContent = 'Exibindo fotografia aérea do parque. As páginas dos espaços continuam disponíveis.';
+      }
     };
     window.addEventListener('message', this._message);
 
