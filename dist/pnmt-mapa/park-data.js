@@ -6,22 +6,7 @@ import {parkingPlaces} from './visitor-data.js?v=consolidado-20260913-1';
  * Divergência documental: Arquivo R84 / Carimbo R83 preservada para rastreabilidade de projeto.
  * @typedef {{id:string,name:string,category:string,position:number[],sector?:string,footprint?:number[][],height:number,description:string,number:number,url:string,featured?:boolean,focusDirection?:number[],photoCaption?:string}} ParkPlace
  */
-export const sourceMetadata = {
- document: 'GOV_U_ParqueNovoMT_ARQ_Implantação_R84.pdf',
- driveFileId: '1tmTfEGBpxk7W752ftdckDCRuJ3KmFJBo',
- sha256: '366b5825834fea554ab3794dd71c547f103f66e17608f431ca4b018f6134a39f',
- fileNameRevision: 'R84',
- titleBlockRevision: 'IMPLANTAÇÃO REVISÃO R83',
- scaleNominal: '1:2500',
- pranchaCompleta: {
-  arquivo: './assets/referencias/prancha-completa.webp',
-  larguraPx: 3370,
-  alturaPx: 2384,
-  rotacaoPdf: 270,
-  escalaPara1600: 3370 / 1600
- },
- notaDivergencia: 'Divergência entre o nome do arquivo (R84) e o carimbo do desenho (R83) documentada conforme diretriz técnica.'
-};
+export const sourceMetadata = {reference:'Implantação consolidada do parque',technicalDrawingPublic:false};
 
 export const colors={Esportes:'#246dad',Experiências:'#239467',Cultura:'#aa703e',Eventos:'#7754b2',Convivência:'#657a87'};
 /** @type {ParkPlace[]} */

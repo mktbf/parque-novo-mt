@@ -446,7 +446,7 @@
       <div class="event-map-card">
         <div class="event-map-header">
           <div class="event-map-kicker-row">
-            <span class="event-map-badge">PLANTA OFICIAL R81 · 500 HECTARES</span>
+            <span class="event-map-badge">EXPLORE O PARQUE</span>
             <span class="event-map-live-tag"><span class="event-map-live-dot"></span> 21 ESPAÇOS</span>
           </div>
           <h3>Mapa Geral do Complexo</h3>
@@ -454,29 +454,8 @@
         </div>
 
         <a href="#mapa" class="event-map-preview" title="Abrir visualizador interativo em perspectiva 3D" aria-label="Abrir mapa interativo do Parque Novo Mato Grosso">
-          <img src="assets/map-masterplan.webp" alt="Planta de Implantação e Mapa de Eventos do Parque Novo Mato Grosso" loading="lazy" width="600" height="400">
+          <img src="assets/aerial-real.jpg" alt="Fotografia aérea do Parque Novo Mato Grosso" loading="lazy" width="600" height="400">
           
-          <div class="event-map-pin pin-arena" style="top: 47%; left: 38%;">
-            <span class="pin-pulse"></span>
-            <span class="pin-icon">🏟️</span>
-            <span class="pin-label">Arena Show · 120k</span>
-          </div>
-          <div class="event-map-pin pin-events" style="top: 56%; left: 22%;">
-            <span class="pin-pulse"></span>
-            <span class="pin-icon">🏛️</span>
-            <span class="pin-label">Centro de Eventos</span>
-          </div>
-          <div class="event-map-pin pin-track" style="top: 36%; left: 62%;">
-            <span class="pin-pulse"></span>
-            <span class="pin-icon">🏎️</span>
-            <span class="pin-label">Autódromo FIA</span>
-          </div>
-          <div class="event-map-pin pin-circus" style="top: 48%; left: 16%;">
-            <span class="pin-pulse"></span>
-            <span class="pin-icon">🎪</span>
-            <span class="pin-label">Circo do Futuro</span>
-          </div>
-
           <div class="event-map-overlay">
             <span class="event-map-overlay-btn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>

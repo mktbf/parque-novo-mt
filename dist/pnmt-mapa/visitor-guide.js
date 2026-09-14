@@ -12,7 +12,7 @@ export function findPlaces(places, filter, query) {
   return terms.every(term=>haystack.includes(term));
  });
 }
-export const imageFor = p => p.image || `./assets/spaces/${p.id}.webp?v=7`;
+export const imageFor = p => p.id==='estrutura-e-acesso'?'./assets/parque-aereo-real.webp':p.image || `./assets/spaces/${p.id}.webp?v=7`;
 export function relatedPlaces(p,places){
  if(p.relatedIds)return p.relatedIds.map(id=>places.find(x=>x.id===id)).filter(Boolean);
  return places.filter(q=>q.id!==p.id&&!q.parentId).sort((a,b)=>Math.hypot(a.position[0]-p.position[0],a.position[1]-p.position[1])-Math.hypot(b.position[0]-p.position[0],b.position[1]-p.position[1])).slice(0,3);

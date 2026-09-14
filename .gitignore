@@ -29,3 +29,6 @@ yarn-error.log*
 .vercel
 
 .pnmt-backups/
+
+# Referências de trabalho do mapa; fora da publicação
+.pnmt-interno/

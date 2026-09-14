@@ -1,7 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
-const integrationVersion = 'portal-ux-20260914-2';
+const integrationVersion = 'cenario-solar-20260914-1';
 
 const safeHref = (value) => {
   try {
