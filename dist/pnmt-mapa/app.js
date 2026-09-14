@@ -3,7 +3,7 @@ import {places,colors} from './park-data.js?v=autodromo-arquitetura-20260913-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=autodromo-arquitetura-20260913-1';
-import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=autodromo-acabamento-20260913-2';
+import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-acabamento-20260914-3';
 let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';
@@ -54,7 +54,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=autodromo-acabamento-20260913-2'),import('./rendering.js?v=autodromo-acabamento-20260913-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=espacos-acabamento-20260914-3'),import('./rendering.js?v=autodromo-acabamento-20260913-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -64,7 +64,7 @@ async function init(){
  Object.assign(controls,{enableDamping:false,minPolarAngle:.22,maxPolarAngle:1.36,rotateSpeed:.45,zoomSpeed:.8,minDistance:24,maxDistance:5000,minZoom:.65,maxZoom:10,enablePan:true,screenSpacePanning:true});
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
  const built=createMiniatures();scene.add(built.root);engine.setLightSources(built.autodromeFinish.lamps);
- window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world,get state(){return {version:'autodromo-acabamento-20260913-2',selectedId,detail:autoDetail,view,tilted,buildings,nightAuto};},get diagnostics(){return engine.diagnostics();}};
+ window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world,get state(){return {version:'espacos-acabamento-20260914-3',selectedId,detail:autoDetail,view,tilted,buildings,nightAuto};},get diagnostics(){return engine.diagnostics();}};
  const floor=new T.Mesh(createBackdropGeometry(),built.groundMaterial);floor.position.y=-.3;floor.receiveShadow=true;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null,planImage=null,planOpacity=0.65,overlayActive=false;const texturePromises=new Map();

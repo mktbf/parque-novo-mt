@@ -1,5 +1,8 @@
 // Rótulos públicos. Os enquadramentos vêm das construções no sistema da prancha.
 export const detailOptions={
+ 'roda-gigante':[['pavilhao','Ver pavilhão e embarque'],['roda','Ver roda completa'],['passarela','Ver passarela'],['','Ver espaço completo']],
+ 'bmx':[['largada','Ver largadas'],['pista','Ver pista e relevo'],['','Ver BMX completo']],
+ 'casa-cuiabana':[['fachada','Ver fachada e praça'],['cobertura','Ver cobertura'],['','Ver Casa completa']],
  'autodromo':[['reta','Reta e arquibancada'],['aerea','Vista aérea'],['boxes','Ver boxes e torre'],['stand','Ver arquibancada'],['','Ver circuito completo']],
  'arena-show':[['cobertura','Ver cobertura'],['bilheteria','Ver bilheteria'],['','Ver Arena completa']],
  'portico-de-entrada':[['estrutura','Ver os arcos'],['','Ver acesso completo']],

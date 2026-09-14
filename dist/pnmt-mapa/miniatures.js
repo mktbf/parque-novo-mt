@@ -1,3 +1,4 @@
+import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=espacos-acabamento-20260914-3';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
 import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=autodromo-arquitetura-20260913-1';
 import * as T from 'three';
@@ -31,7 +32,7 @@ function material(color,metalness=0,roughness=.72){
 }
 
 export async function loadMaterials(renderer){
- const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer)];
+ const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer),...configureLeisureMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  textures.push(...await loadAutodromeFinishMaterials(renderer));
@@ -278,6 +279,7 @@ export function createMiniatures(){
  applyPhotoRefinements(models,{terrain});
  applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure});
  applySpaceArchitecture(models);
+ applyLeisureArchitecture(models);
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});
