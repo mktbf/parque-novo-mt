@@ -42,7 +42,8 @@ vec2 parkUV = vec2((vParkWorld.x + 620.0 - 50.0) / 1100.0, (vParkWorld.z + 570.0
 float parkInside = step(0.0, parkUV.x) * step(parkUV.x, 1.0) * step(0.0, parkUV.y) * step(parkUV.y, 1.0);
 vec3 parkLight = texture2D(uParkIllumination, clamp(parkUV, 0.0, 1.0)).rgb;
 float parkHeight = exp(-max(0.0, vParkWorld.y) / 18.0);
-reflectedLight.indirectDiffuse += diffuseColor.rgb * parkLight * (uParkNight * parkInside * parkHeight * 0.72);`);
+vec3 lampGlow = parkLight * (uParkNight * parkInside * parkHeight);
+reflectedLight.indirectDiffuse += (diffuseColor.rgb * 1.25 + vec3(0.045, 0.038, 0.024)) * lampGlow;`);
    };
    m.customProgramCacheKey=()=>previousKey()+'|pnmt-park-light-v2';m.needsUpdate=true;
   }

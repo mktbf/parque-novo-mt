@@ -59,7 +59,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=vias-acabamento-20260915-3'),import('./rendering.js?v=cenario-integral-20260914-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=vias-acabamento-20260915-3'),import('./rendering.js?v=cenario-integral-20260914-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -136,6 +136,26 @@ async function init(){
  function paint(){frame=0;if(disposed)return;selectables.forEach(m=>{const id=m.userData.placeId;m.material.opacity=id===selectedId?.065:id===hoveredId?.035:0;});outlines.forEach(m=>{m.material.opacity=m.userData.placeId===selectedId?.9:m.userData.placeId===hoveredId?.45:0;});engine.render(view,overlay);updateMarkers();}
  function render(){if(!frame)frame=requestAnimationFrame(paint);}
  controls.addEventListener('change',render);controls.addEventListener('start',()=>{activeTween++;engine.setInteracting(true);});controls.addEventListener('end',()=>{engine.setInteracting(false);engine.focusShadow(controls.target,camera.position.distanceTo(controls.target)*.62);render();});
+  let lastWaterTime=performance.now();
+  function waterLoop(now){
+   if(disposed)return;
+   if(view==='3d'&&!document.hidden){
+    const wt=getWaterTexture();
+    if(wt){
+     const elapsed=now-lastWaterTime;
+     const interval=mobile()?35:16;
+     if(elapsed>=interval){
+      const dt=Math.min(elapsed/1000,0.1);
+      lastWaterTime=now;
+      wt.offset.x=(wt.offset.x+dt*0.014)%1;
+      wt.offset.y=(wt.offset.y+dt*0.009)%1;
+      render();
+     }
+    }
+   }
+   requestAnimationFrame(waterLoop);
+  }
+  requestAnimationFrame(waterLoop);
  const corners=[[72,14],[1176,14],[1176,1118],[72,1118]].flatMap(p=>[world(p),world(p,24)]);
  const defaultDirection=new T.Vector3(-.94,.62,.29).normalize();
  let fitFrame={width:1,height:1};

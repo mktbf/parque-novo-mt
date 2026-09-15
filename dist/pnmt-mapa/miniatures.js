@@ -16,6 +16,8 @@ import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=autodrom
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
 export const world=(p,y=0)=>new T.Vector3(p[0]-origin[0],y,p[1]-origin[1]);
+export let waterTexture=null;
+export function getWaterTexture(){return waterTexture;}
 const mats=new Map();
 const C={stone:'#cfd2cc',white:'#f8fafc',glass:'#345868',dark:'#182026',roof:'#f1f5f4',wood:'#6d4c41',gold:'#b8af8d',green:'#2d4e23',grass:'#486e34',water:'#163e46',road:'#24282b',blue:'#0062cc'};
 function material(color,metalness=0,roughness=.72){
@@ -49,10 +51,28 @@ export async function loadMaterials(renderer){
    if(name==='leafy_grass'&&(grass||m.userData.surfaceKind==='grass')){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;if(!m.userData.surfaceKind)m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
   }
  }
- const size=256,data=new Uint8Array(size*size*4);
- for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4,u=x/size*Math.PI*2,v=y/size*Math.PI*2;const dx=Math.cos(u*4+v*2)*16+Math.cos(u*8-v*6)*8+Math.cos(u*14+v*10)*4,dy=Math.sin(v*4+u*2)*16+Math.sin(v*8-u*6)*8+Math.sin(v*14+u*10)*4;data[i]=Math.min(255,Math.max(0,128+dx));data[i+1]=Math.min(255,Math.max(0,128+dy));data[i+2]=254;data[i+3]=255;}
- const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(1,1);normal.needsUpdate=true;textures.push(normal);
- for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'){m.normalMap=normal;m.normalScale.setScalar(.16);m.roughness=.26;m.metalness=.03;m.envMapIntensity=1.1;m.needsUpdate=true;}
+ const size=512,data=new Uint8Array(size*size*4);
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+  const i=(y*size+x)*4,u=(x/size)*Math.PI*2,v=(y/size)*Math.PI*2;
+  const dx=Math.cos(u*3+v*2)*0.32+Math.cos(u*7-v*5)*0.24+Math.cos(u*13+v*11)*0.16+Math.cos(u*23-v*17)*0.08,
+        dy=Math.sin(v*3+u*2)*0.32+Math.sin(v*7-u*5)*0.24+Math.sin(v*13+u*11)*0.16+Math.sin(v*23-u*17)*0.08;
+  const len=Math.hypot(dx,dy,1.0);
+  data[i]=Math.round(((dx/len)*0.5+0.5)*255);
+  data[i+1]=Math.round(((dy/len)*0.5+0.5)*255);
+  data[i+2]=Math.round(((1.0/len)*0.5+0.5)*255);
+  data[i+3]=255;
+ }
+ const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(2.4,2.4);normal.needsUpdate=true;textures.push(normal);
+ waterTexture=normal;
+ for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'||m.name==='#426f70'||m.name==='#163e48'){
+  m.color.set('#163e48');
+  m.normalMap=normal;
+  m.normalScale.setScalar(.30);
+  m.roughness=.06;
+  m.metalness=.08;
+  m.envMapIntensity=2.4;
+  m.needsUpdate=true;
+ }
  // A fotografia G04 mantém os UVs importados e participa do descarte da cena.
  const photo=registeredMaterials.get('parking-photo-g04')?.map;
  if(photo){photo.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());textures.push(photo);}

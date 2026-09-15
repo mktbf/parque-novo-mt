@@ -117,7 +117,7 @@ function inside([x,z],ring){let ok=false;for(let i=0,j=ring.length-1;i<ring.leng
 export function applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure}){
  const R=D.registered;
  for(const g of [landscape,water,circuits,vegetation,infrastructure])clearGeometry(g);
- const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#426f70',.3),bankMat=registeredMaterial('bank','#92856b',.97);
+ const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#163e48',.06),bankMat=registeredMaterial('bank','#92856b',.97);
  registeredFloor(landscape,ROAD03.surfaces.ground,grass,0,'Terreno recortado');
  registeredFloor(landscape,ROAD03.surfaces.roads,roadAsphaltMaterial(),.12,'Vias · superfícies sem sobreposição');
  registeredFloor(landscape,R.meshes.banks,bankMat,.01,'Margens · interpretação da prancha');

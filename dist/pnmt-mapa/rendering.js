@@ -84,8 +84,8 @@ export function createRendering(scene,camera,smallScreen){
    renderer.info.reset();lighting(mode);
    // A ortofoto mantém as próprias cores; a simulação pertence apenas ao 3D.
    scene.background.set(mode==='3d'?(activeNight?'#14243d':solar.elevation<12?'#d6b79c':'#b6cedc'):'#27332c');sky.visible=mode==='3d'&&!activeNight;const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.color.set(activeNight?'#27394a':solar.elevation<12?'#d6b79c':'#a8c5d8');atmosphere.near=Math.max(4200,distance*1.6);atmosphere.far=Math.max(11500,distance+7000);scene.fog=mode==='3d'?atmosphere:null;
-   // Durante gestos, usa a renderização direta. O acabamento retorna ao soltar.
-   const useAO=mode==='3d'&&canAO&&!interacting;if(ao)ao.blendIntensity=activeNight?.32:.55;lastAO=useAO;
+   // Renderização consistente com pós-processamento unificado (sem saltos de exposição ou AO durante a navegação).
+   const useAO=mode==='3d'&&canAO;if(ao)ao.blendIntensity=activeNight?.32:interacting?.45:.55;lastAO=useAO;
    if(useAO){ao.enabled=true;composer.render();}else renderer.render(scene,beauty.camera);
    if(overlay){renderer.autoClear=false;renderer.clearDepth();renderer.render(overlay,beauty.camera);renderer.autoClear=true;}
   },
