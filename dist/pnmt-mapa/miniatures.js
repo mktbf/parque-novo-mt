@@ -1,9 +1,10 @@
+import {loadRoadMaterials} from './vias-acabamento.js?v=vias-acabamento-20260915-3';
 import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=cenario-integral-20260914-2';
 import {applyIntegralFinish,configureIntegralMaterials} from './acabamento-integral.js?v=cenario-integral-20260914-2';
-import {createScenario,scenarioMaterials} from './cenario.js?v=cenario-integral-20260914-2';
+import {createScenario,scenarioMaterials} from './cenario.js?v=vias-acabamento-20260915-3';
 import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=espacos-acabamento-20260914-3';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=autodromo-arquitetura-20260913-1';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=vias-acabamento-20260915-3';
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
@@ -38,7 +39,7 @@ export async function loadMaterials(renderer){
  const loader=new T.TextureLoader(),textures=[...configureIntegralMaterials(renderer),...configureLandscapeMaterials(renderer),...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer),...configureLeisureMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
- textures.push(...await loadAutodromeFinishMaterials(renderer));
+ textures.push(...await loadAutodromeFinishMaterials(renderer),...await loadRoadMaterials(renderer));
  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values(),...scenarioMaterials.values(),...landscapeMaterials.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of allMats){

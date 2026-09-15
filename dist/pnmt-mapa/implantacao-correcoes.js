@@ -1,3 +1,4 @@
+import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js?v=vias-acabamento-20260915-3';
 import * as T from 'three';
 import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
@@ -117,8 +118,8 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  const R=D.registered;
  for(const g of [landscape,water,circuits,vegetation,infrastructure])clearGeometry(g);
  const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#426f70',.3),bankMat=registeredMaterial('bank','#92856b',.97);
- registeredFloor(landscape,R.meshes.ground,grass,0,'Terreno recortado');
- registeredFloor(landscape,R.meshes.roads,asphalt,.12,'Vias · superfícies sem sobreposição');
+ registeredFloor(landscape,ROAD03.surfaces.ground,grass,0,'Terreno recortado');
+ registeredFloor(landscape,ROAD03.surfaces.roads,roadAsphaltMaterial(),.12,'Vias · superfícies sem sobreposição');
  registeredFloor(landscape,R.meshes.banks,bankMat,.01,'Margens · interpretação da prancha');
  registeredFloor(water,R.meshes.water,lakeMat,-.08,'Água · contornos compatibilizados');
  registeredFloor(circuits,R.meshes.autodrome,asphalt,.12,'Autódromo · bordas CAD preservadas');

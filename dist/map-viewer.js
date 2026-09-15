@@ -4,7 +4,7 @@
   constructor(container){
    this.container=container;
    const frame=document.createElement('iframe');this.frame=frame;
-   const url=new URL('pnmt-mapa/index.html',location.href);url.searchParams.set('v','cenario-integral-20260914-2');url.searchParams.set('embed','1');url.searchParams.set('portal','overview');
+   const url=new URL('pnmt-mapa/index.html',location.href);url.searchParams.set('v','vias-acabamento-20260915-3');url.searchParams.set('embed','1');url.searchParams.set('portal','overview');
    frame.src=url.href;frame.title='Mapa 3D e vista aérea do Parque Novo Mato Grosso';frame.allowFullscreen=true;
    frame.style.cssText='display:block;width:100%;height:clamp(520px,76vh,850px);border:0;border-radius:16px;background:#71845e';
    container.replaceChildren(frame);

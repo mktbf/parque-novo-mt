@@ -1,4 +1,4 @@
-import './explore-parque.js?v=cenario-integral-20260914-2';
+import './explore-parque.js?v=vias-acabamento-20260915-3';
 
 /* Reutiliza as páginas do roteador do portal e apenas acrescenta o visualizador. */
 // O arquivo de rotas explicita os IDs que o mapa sabe localizar.

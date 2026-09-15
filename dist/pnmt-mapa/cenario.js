@@ -1,3 +1,4 @@
+import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=vias-acabamento-20260915-3';
 import {createCanopyGeometry} from './folhagem.js?v=cenario-integral-20260914-2';
 import {createIntegralLandscape} from './cenario-integral.js?v=cenario-integral-20260914-2';
 import * as T from 'three';
@@ -21,10 +22,10 @@ function instances(parent,geo,mat,entries,cast=true){
  mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();parent.add(mesh);return mesh;
 }
 export function createScenario({smallScreen=false,landscape,groundMaterial,integralFinish}){
- const root=new T.Group(),trees=new T.Group(),street=new T.Group(),paint=new T.Group();root.name='Parque · paisagismo, sinalização e iluminação';root.userData.version=D.version;root.userData.provenance=D.provenance;root.add(trees,street,paint);
+ const root=new T.Group(),trees=new T.Group(),street=new T.Group(),paint=new T.Group();root.name='Parque · paisagismo, sinalização e iluminação';root.userData.version=D.version;root.userData.provenance=D.provenance;root.add(trees,street,paint,createRoadDetails());
  const integral=createIntegralLandscape({smallScreen});root.add(integral.root);
  const colors={curbs:'#bec1b3',roadEdges:'#eee9d6',roadDashes:'#eee9d6',parkingBays:'#e6e5ce'};
- for(const [key,data]of Object.entries(D.surfaces)){if(!data.indices.length)continue;const m=material(key,colors[key]);m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;paint.add(surface(data,key==='curbs'?.18:.155,m));}
+ for(const [key,data]of Object.entries(D.surfaces)){if(key!=='parkingBays'||!data.indices.length)continue;const m=material(key,colors[key]);m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;paint.add(surface(data,key==='curbs'?.18:.155,m));}
  const palette=['#3d653b','#516f3d','#5e753f','#315a3c','#687e48'],trunks=[],crowns=[];
  // Stable thinning keeps the same spatial distribution on small screens.
  const entries=integral.trees.filter((_,i)=>!smallScreen||i%2===0);
@@ -57,5 +58,5 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
  const detailedGround=groundMaterial.clone();detailedGround.name='Cenário · terreno';detailedGround.vertexColors=true;scenarioMaterials.set('terreno',detailedGround);
  landscape.traverse(o=>{if(!o.isMesh||o.material!==groundMaterial)return;const p=o.geometry.attributes.position,colors=[];for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),k=.92+.065*Math.sin(x*.039+z*.013)+.035*Math.cos(z*.065-x*.024);colors.push(k,k*.995,k*.95);}o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));o.material=detailedGround;});
  let visible=true,night=false;
- return {root,integral,lamps:allLamps,setNight(value){integralFinish?.setNight(value);night=Boolean(value);lampFace.emissiveIntensity=night?2.6:0;poolMaterial.uniforms.strength.value=night?.14:0;glow.visible=night&&visible;},setVisible(view,buildings){visible=view==='3d';root.visible=visible;street.visible=Boolean(buildings);trees.visible=Boolean(buildings);integral.setBuildings(Boolean(buildings));glow.visible=night&&visible;},diagnostics(){return {version:'cenario-integral-20260914-2',trees:entries.length,lamps:allLamps.length,integral:integral.diagnostics(),architecture:integralFinish?.diagnostics(),sourceTreeCount:D.trees.length,paintTriangles:Object.fromEntries(Object.entries(D.surfaces).map(([k,v])=>[k,v.indices.length/3])),canopyTriangles:crownMesh.count*(crownMesh.geometry.index?.count||crownMesh.geometry.attributes.position.count)/3};}};
+ return {root,integral,lamps:allLamps,setNight(value){integralFinish?.setNight(value);night=Boolean(value);lampFace.emissiveIntensity=night?2.6:0;poolMaterial.uniforms.strength.value=night?.14:0;glow.visible=night&&visible;},setVisible(view,buildings){visible=view==='3d';root.visible=visible;street.visible=Boolean(buildings);trees.visible=Boolean(buildings);integral.setBuildings(Boolean(buildings));glow.visible=night&&visible;},diagnostics(){return {version:'cenario-integral-20260914-2',trees:entries.length,lamps:allLamps.length,integral:integral.diagnostics(),architecture:integralFinish?.diagnostics(),sourceTreeCount:D.trees.length,roadFinishVersion:ROAD03.version,paintTriangles:{parkingBays:D.surfaces.parkingBays.indices.length/3,curbs:ROAD03.surfaces.curbs.indices.length/3,roadEdges:ROAD03.surfaces.edges.indices.length/3,roadDashes:ROAD03.surfaces.dashes.indices.length/3},canopyTriangles:crownMesh.count*(crownMesh.geometry.index?.count||crownMesh.geometry.attributes.position.count)/3};}};
 }
