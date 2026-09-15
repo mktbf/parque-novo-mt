@@ -5,7 +5,7 @@ import {GTAOPass} from './vendor/addons/postprocessing/GTAOPass.js';
 import {OutputPass} from './vendor/addons/postprocessing/OutputPass.js';
 import {Sky} from './vendor/addons/objects/Sky.js';
 import {HDRLoader} from './vendor/addons/loaders/HDRLoader.js';
-import {simulation} from './solar-model.js?v=cenario-solar-20260914-1';
+import {simulation} from './solar-model.js?v=cenario-integral-20260914-2';
 
 // One local, version-matched pipeline. No runtime CDN or API key is required.
 export function createRendering(scene,camera,smallScreen){
@@ -55,13 +55,13 @@ export function createRendering(scene,camera,smallScreen){
    sunOffset.fromArray(is3d?solar.direction:[-.48,.8,.34]).normalize().multiplyScalar(1600);sun.position.copy(sun.target.position).add(sunOffset);
    sun.color.set(low?'#ffc076':'#fff5df');sun.intensity=is3d?solar.elevation<=-.833?0:low?Math.max(.2,1.35*Math.sin((solar.elevation+8)*Math.PI/70)):2.5:2.0;
    sun.castShadow=sun.intensity>0;
-   hemisphere.color.set(night?'#9cbbdf':low?'#b6c9df':'#aecce0');hemisphere.groundColor.set(night?'#283b2c':'#617047');hemisphere.intensity=night?.26:low?.55:.8;
-   scene.environmentIntensity=night?.16:low?.5:.85;renderer.toneMappingExposure=night?1.06:low?.93:.91;
+   hemisphere.color.set(night?'#9cbbdf':low?'#b6c9df':'#aecce0');hemisphere.groundColor.set(night?'#334253':'#617047');hemisphere.intensity=night?.46:low?.58:.8;
+   scene.environmentIntensity=night?.25:low?.55:.88;renderer.toneMappingExposure=night?1.12:low?.96:.94;
    sky.material.uniforms.sunPosition.value.fromArray(solar.direction);sky.material.uniforms.turbidity.value=low?3.4:2.7;sky.material.uniforms.rayleigh.value=low?1.8:1.15;
    renderer.shadowMap.needsUpdate=true;
   }
   dusk.visible=night;dusk.position.copy(beauty.camera.position);
-  const ordered=is3d&&solar.lightsOn?sources.map(s=>({s,d:beauty.camera.position.distanceToSquared(s.p)})).sort((a,b)=>a.d-b.d).slice(0,spots.length):[];
+  const ordered=is3d&&solar.lightsOn?sources.map(s=>({s,d:sun.target.position.distanceToSquared(s.p)})).sort((a,b)=>a.d-b.d).slice(0,spots.length):[];
   spots.forEach((light,i)=>{const source=ordered[i]?.s;light.intensity=source?source.power:0;if(source){light.position.copy(source.p);light.target.position.copy(source.target);light.color.set(source.color);}});
  }
 
@@ -77,7 +77,7 @@ export function createRendering(scene,camera,smallScreen){
   environment=pmrem.fromEquirectangular(hdr);scene.environment=environment.texture;
   hdr.dispose();pmrem.dispose();
  }
- return {renderer,loadEnvironment,setCamera,setLightSources(lamps){sources.splice(0);for(const l of lamps)sources.push({p:new T.Vector3(l.position[0]-620,l.height,l.position[1]-570),target:new T.Vector3(l.aim[0]-620,0,l.aim[1]-570),power:l.kind==='via'?95:135,color:l.kind==='via'?'#ffe5b8':'#e9efff'});},setSolar(state){solar=state;lightingKey='';},setLighting(value){solar=simulation(solar.date,value?'noite':'tarde');lightingKey='';},setInteracting(value){interacting=Boolean(value);},
+ return {renderer,loadEnvironment,setCamera,setLightSources(lamps){sources.splice(0);for(const l of lamps)sources.push({p:new T.Vector3(l.position[0]-620,l.height,l.position[1]-570),target:new T.Vector3(l.aim[0]-620,0,l.aim[1]-570),power:l.power||(l.kind==='via'?135:l.kind==='passeio'?92:165),color:l.color||(l.kind==='via'?'#ffe5b8':'#e9efff')});},setSolar(state){solar=state;lightingKey='';},setLighting(value){solar=simulation(solar.date,value?'noite':'tarde');lightingKey='';},setInteracting(value){interacting=Boolean(value);},
   focusShadow(target,radius=850){const extent=T.MathUtils.clamp(radius,85,900);sun.target.position.copy(target);sun.position.copy(target).add(sunOffset);Object.assign(sun.shadow.camera,{left:-extent,right:extent,top:extent,bottom:-extent});sun.shadow.camera.updateProjectionMatrix();renderer.shadowMap.needsUpdate=true;},
   resize(w,h){renderer.setSize(w,h,false);composer?.setSize(w,h);},
   render(mode,overlay){
@@ -85,7 +85,7 @@ export function createRendering(scene,camera,smallScreen){
    // A ortofoto mantém as próprias cores; a simulação pertence apenas ao 3D.
    scene.background.set(mode==='3d'?(activeNight?'#14243d':solar.elevation<12?'#d6b79c':'#b6cedc'):'#27332c');sky.visible=mode==='3d'&&!activeNight;const distance=beauty.camera.position.distanceTo(sun.target.position);atmosphere.color.set(activeNight?'#27394a':solar.elevation<12?'#d6b79c':'#a8c5d8');atmosphere.near=Math.max(4200,distance*1.6);atmosphere.far=Math.max(11500,distance+7000);scene.fog=mode==='3d'?atmosphere:null;
    // Durante gestos, usa a renderização direta. O acabamento retorna ao soltar.
-   const useAO=mode==='3d'&&canAO&&!interacting&&!solar.lightsOn;lastAO=useAO;
+   const useAO=mode==='3d'&&canAO&&!interacting;if(ao)ao.blendIntensity=activeNight?.32:.55;lastAO=useAO;
    if(useAO){ao.enabled=true;composer.render();}else renderer.render(scene,beauty.camera);
    if(overlay){renderer.autoClear=false;renderer.clearDepth();renderer.render(overlay,beauty.camera);renderer.autoClear=true;}
   },

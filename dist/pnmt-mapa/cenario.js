@@ -1,5 +1,7 @@
+import {createCanopyGeometry} from './folhagem.js?v=cenario-integral-20260914-2';
+import {createIntegralLandscape} from './cenario-integral.js?v=cenario-integral-20260914-2';
 import * as T from 'three';
-import {scenarioData as D} from './cenario-dados.js?v=cenario-solar-20260914-1';
+import {scenarioData as D} from './cenario-dados.js?v=cenario-integral-20260914-2';
 export const scenarioMaterials=new Map();
 function material(key,color,roughness=.86,metalness=0){
  if(!scenarioMaterials.has(key)){const m=new T.MeshStandardMaterial({color,roughness,metalness});m.name='Cenário · '+key;scenarioMaterials.set(key,m);}
@@ -18,26 +20,28 @@ function instances(parent,geo,mat,entries,cast=true){
  for(let i=0;i<entries.length;i++){const e=entries[i];o.position.fromArray(e.p);o.scale.fromArray(e.s);o.rotation.set(0,e.a||0,0);o.updateMatrix();mesh.setMatrixAt(i,o.matrix);if(e.color)mesh.setColorAt(i,new T.Color(e.color));}
  mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();parent.add(mesh);return mesh;
 }
-export function createScenario({smallScreen=false,landscape,groundMaterial}){
+export function createScenario({smallScreen=false,landscape,groundMaterial,integralFinish}){
  const root=new T.Group(),trees=new T.Group(),street=new T.Group(),paint=new T.Group();root.name='Parque · paisagismo, sinalização e iluminação';root.userData.version=D.version;root.userData.provenance=D.provenance;root.add(trees,street,paint);
+ const integral=createIntegralLandscape({smallScreen});root.add(integral.root);
  const colors={curbs:'#bec1b3',roadEdges:'#eee9d6',roadDashes:'#eee9d6',parkingBays:'#e6e5ce'};
  for(const [key,data]of Object.entries(D.surfaces)){if(!data.indices.length)continue;const m=material(key,colors[key]);m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;paint.add(surface(data,key==='curbs'?.18:.155,m));}
  const palette=['#3d653b','#516f3d','#5e753f','#315a3c','#687e48'],trunks=[],crowns=[];
  // Stable thinning keeps the same spatial distribution on small screens.
- const entries=D.trees.filter((_,i)=>!smallScreen||i%2===0);
+ const entries=integral.trees.filter((_,i)=>!smallScreen||i%2===0);
  for(const [x,z,h,r,c]of entries){
   trunks.push({p:[x,h*.32,z],s:[.18,h*.64,.18],color:c%2?'#68553f':'#594d3d'});
-  for(let j=0;j<3;j++){const a=j*2.094+c*.73;crowns.push({p:[x+Math.cos(a)*r*.25,h*(.64+j*.08),z+Math.sin(a)*r*.25],s:[r*(j===2?.68:.79),h*(j===2?.25:.29),r*(j===2?.7:.82)],a,color:palette[c]});}
+  crowns.push({p:[x,h*.74,z],s:[r,h*.37,r],a:c*.73+x,color:palette[c]});
  }
- const bark=material('troncos','#ffffff'),leaves=material('copas','#ffffff',.93);leaves.envMapIntensity=.7;
+ const bark=material('troncos','#ffffff'),leaves=material('copas','#ffffff',.93);leaves.envMapIntensity=.7;leaves.vertexColors=true;
  instances(trees,new T.CylinderGeometry(.65,1,1,6),bark,trunks);
- const crownMesh=instances(trees,new T.IcosahedronGeometry(1,smallScreen?0:1),leaves,crowns);
+ const crownMesh=instances(trees,createCanopyGeometry(smallScreen),leaves,crowns);
  const bases=[],poles=[],arms=[],heads=[],faces=[],pools=[];
- for(const l of D.lamps){const[x,z]=l.position,[ax,az]=l.aim,dx=ax-x,dz=az-z,len=Math.hypot(dx,dz),ux=dx/len,uz=dz/len,a=-Math.atan2(uz,ux),reach=1.35;
+ const allLamps=[...D.lamps,...integral.lamps];
+ for(const l of allLamps){const[x,z]=l.position,[ax,az]=l.aim,dx=ax-x,dz=az-z,len=Math.hypot(dx,dz),ux=dx/len,uz=dz/len,a=-Math.atan2(uz,ux),reach=1.35;
   bases.push({p:[x,.16,z],s:[.42,.32,.42]});poles.push({p:[x,l.height/2,z],s:[.082,l.height,.082]});
   arms.push({p:[x+ux*reach/2,l.height,z+uz*reach/2],s:[reach,.085,.085],a});
   heads.push({p:[x+ux*reach,l.height-.065,z+uz*reach],s:[.65,.15,.31],a});faces.push({p:[x+ux*reach,l.height-.148,z+uz*reach],s:[.53,.016,.25],a});
-  pools.push({p:[ax,.205,az],s:[8,1,8]});
+  pools.push({p:[ax,.205,az],s:[l.kind==='passeio'?5:8,1,l.kind==='passeio'?5:8]});
  }
  instances(street,new T.BoxGeometry(1,1,1),material('bases','#aaa99a'),bases);
  instances(street,new T.CylinderGeometry(.6,1,1,8),material('postes','#9ca8a5',.5,.68),poles);
@@ -49,9 +53,9 @@ export function createScenario({smallScreen=false,landscape,groundMaterial}){
  const poolMaterial=new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,toneMapped:false,uniforms:{strength:{value:0}},vertexShader:'varying vec2 vPool;void main(){vPool=uv*2.0-1.0;gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(position,1.0);}',fragmentShader:'varying vec2 vPool;uniform float strength;void main(){float a=pow(max(0.0,1.0-length(vPool)),2.5)*strength;gl_FragColor=vec4(0.95,0.72,0.40,a);\n#include <colorspace_fragment>\n}'});
  const glow=instances(street,poolGeo,poolMaterial,pools,false);glow.name='Luz ambiente dos postes · simulação visual';glow.visible=false;
  // Changes only the terrain material and vertex colors, never its positions/indices.
- groundMaterial.color.set('#6b7951');
+ groundMaterial.color.set('#71805c');
  const detailedGround=groundMaterial.clone();detailedGround.name='Cenário · terreno';detailedGround.vertexColors=true;scenarioMaterials.set('terreno',detailedGround);
  landscape.traverse(o=>{if(!o.isMesh||o.material!==groundMaterial)return;const p=o.geometry.attributes.position,colors=[];for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),k=.92+.065*Math.sin(x*.039+z*.013)+.035*Math.cos(z*.065-x*.024);colors.push(k,k*.995,k*.95);}o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));o.material=detailedGround;});
  let visible=true,night=false;
- return {root,lamps:D.lamps,setNight(value){night=Boolean(value);lampFace.emissiveIntensity=night?4:0;poolMaterial.uniforms.strength.value=night?.38:0;glow.visible=night&&visible;},setVisible(view,buildings){visible=view==='3d';root.visible=visible;street.visible=Boolean(buildings);trees.visible=Boolean(buildings);glow.visible=night&&visible;},diagnostics(){return {version:D.version,trees:entries.length,lamps:D.lamps.length,sourceTreeCount:D.trees.length,paintTriangles:Object.fromEntries(Object.entries(D.surfaces).map(([k,v])=>[k,v.indices.length/3])),canopyTriangles:crownMesh.count*(crownMesh.geometry.index?.count||crownMesh.geometry.attributes.position.count)/3};}};
+ return {root,integral,lamps:allLamps,setNight(value){integralFinish?.setNight(value);night=Boolean(value);lampFace.emissiveIntensity=night?2.6:0;poolMaterial.uniforms.strength.value=night?.14:0;glow.visible=night&&visible;},setVisible(view,buildings){visible=view==='3d';root.visible=visible;street.visible=Boolean(buildings);trees.visible=Boolean(buildings);integral.setBuildings(Boolean(buildings));glow.visible=night&&visible;},diagnostics(){return {version:'cenario-integral-20260914-2',trees:entries.length,lamps:allLamps.length,integral:integral.diagnostics(),architecture:integralFinish?.diagnostics(),sourceTreeCount:D.trees.length,paintTriangles:Object.fromEntries(Object.entries(D.surfaces).map(([k,v])=>[k,v.indices.length/3])),canopyTriangles:crownMesh.count*(crownMesh.geometry.index?.count||crownMesh.geometry.attributes.position.count)/3};}};
 }

@@ -1,4 +1,4 @@
-import {PERIODS,localDate,validDate,simulation,localParts} from './solar-model.js?v=cenario-solar-20260914-1';
+import {PERIODS,localDate,validDate,simulation,localParts} from './solar-model.js?v=cenario-integral-20260914-2';
 const labels={manha:'Manhã',tarde:'Tarde','por-do-sol':'Pôr do sol',noite:'Noite'};
 const paths={manha:'M3 17h18M5 13l-2-1m16 1 2-1M12 3v3M5 5l2 2m10 0 2-2M7 17a5 5 0 0 1 10 0M12 10v5m-2-2 2-2 2 2',tarde:'M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0','por-do-sol':'M3 17h18M5 13l-2-1m16 1 2-1M12 3v5m-2-2 2 2 2-2M7 17a5 5 0 0 1 10 0M5 21h14',noite:'M20 15a8 8 0 0 1-11-11 8.5 8.5 0 1 0 11 11Z'};
 const icon=d=>`<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;

@@ -1,4 +1,6 @@
-import {createScenario,scenarioMaterials} from './cenario.js?v=cenario-solar-20260914-1';
+import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=cenario-integral-20260914-2';
+import {applyIntegralFinish,configureIntegralMaterials} from './acabamento-integral.js?v=cenario-integral-20260914-2';
+import {createScenario,scenarioMaterials} from './cenario.js?v=cenario-integral-20260914-2';
 import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=espacos-acabamento-20260914-3';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
 import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=autodromo-arquitetura-20260913-1';
@@ -6,7 +8,7 @@ import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
-import {terrain,places} from './park-data.js?v=cenario-solar-20260914-1';
+import {terrain,places} from './park-data.js?v=cenario-integral-20260914-2';
 import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
 import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=autodromo-arquitetura-20260913-1';
 
@@ -33,11 +35,11 @@ function material(color,metalness=0,roughness=.72){
 }
 
 export async function loadMaterials(renderer){
- const loader=new T.TextureLoader(),textures=[...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer),...configureLeisureMaterials(renderer)];
+ const loader=new T.TextureLoader(),textures=[...configureIntegralMaterials(renderer),...configureLandscapeMaterials(renderer),...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer),...configureLeisureMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  textures.push(...await loadAutodromeFinishMaterials(renderer));
- const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values(),...scenarioMaterials.values()];
+ const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values(),...scenarioMaterials.values(),...landscapeMaterials.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of allMats){
    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
@@ -281,11 +283,12 @@ export function createMiniatures({smallScreen=false}={}){
  applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure});
  applySpaceArchitecture(models);
  applyLeisureArchitecture(models);
+ const integralFinish=applyIntegralFinish(models,{smallScreen});
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
  circuits.traverse(o=>{o.userData.placeId='autodromo';});
  const autodromeFinish=createAutodromeFinish(circuits,models.get('autodromo'));root.add(autodromeFinish.root);
- const scenario=createScenario({smallScreen,landscape,groundMaterial:registeredMaterials.get('grass')});root.add(scenario.root);
+ const scenario=createScenario({smallScreen,landscape,models,integralFinish,autodromeFinish,groundMaterial:registeredMaterials.get('grass')});root.add(scenario.root);
  return {root,modelLayer,models,landscape,vegetation,infrastructure,water,circuits,autodromeFinish,scenario,groundMaterial:registeredMaterials.get('grass')};
 }
 
