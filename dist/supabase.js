@@ -13,7 +13,7 @@
   // CONFIGURE THESE VALUES FROM YOUR SUPABASE PROJECT
   // Dashboard → Settings → API
   // =============================================
-  const SUPABASE_URL = 'https://ojntiktsusdttlkefvnv.supabase.co';
+  const SUPABASE_URL = 'https://ojntiktsusdttlkefvrv.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_tiQEioVmgeSaP5Av1NiRdQ_LChECxEG';
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
