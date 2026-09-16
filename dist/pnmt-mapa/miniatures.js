@@ -84,14 +84,14 @@ export async function loadMaterials(renderer){
  for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'||m.name==='#426f70'||m.name==='#163e48'||m.name==='#143d46'){
   m.color.set('#143d46');
   m.normalMap=normal;
-  m.normalScale.setScalar(.45);
-  m.roughness=.05;
-  m.metalness=.12;
-  m.clearcoat=1;
-  m.clearcoatRoughness=.03;
+  m.normalScale.setScalar(.22);
+  m.roughness=.22;
+  m.metalness=.04;
+  m.clearcoat=.45;
+  m.clearcoatRoughness=.15;
   m.ior=1.333;
   m.reflectivity=.95;
-  m.envMapIntensity=3.2;
+  m.envMapIntensity=1.2;
   m.userData.isWater=true;
   m.onBeforeCompile=(shader)=>{
    shader.uniforms.uTime=waterUniforms.uTime;
@@ -120,12 +120,12 @@ export async function loadMaterials(renderer){
     '#include <normal_fragment_maps>',
     `#include <normal_fragment_maps>
      #ifdef USE_NORMALMAP
-      vec2 wUv1=vWorldPos.xz*0.065+vec2(uTime*0.016,uTime*0.009);
-      vec2 wUv2=vWorldPos.xz*0.125+vec2(-uTime*0.013,uTime*0.017);
+      vec2 wUv1=vWorldPos.xz*0.04+vec2(uTime*0.012,uTime*0.007);
+      vec2 wUv2=vWorldPos.xz*0.08+vec2(-uTime*0.010,uTime*0.012);
       vec3 nMap1=texture2D(normalMap,wUv1).xyz*2.0-1.0;
       vec3 nMap2=texture2D(normalMap,wUv2).xyz*2.0-1.0;
-      vec3 waveNorm=normalize(vec3(nMap1.xy+nMap2.xy,nMap1.z*1.4));
-      normal=normalize(normal+vec3(waveNorm.x,waveNorm.y,0.0)*0.35);
+      vec3 waveNorm=normalize(vec3(nMap1.xy+nMap2.xy,nMap1.z*2.0));
+      normal=normalize(normal+vec3(waveNorm.x,waveNorm.y,0.0)*0.18);
      #endif
     `
    ).replace(
@@ -135,10 +135,6 @@ export async function loadMaterials(renderer){
      float fresnelTerm=pow(clamp(1.0-dot(normal,vDir),0.0,1.0),2.8);
      vec3 waterTint=mix(uDeepColor,uShallowColor,0.40+0.60*fresnelTerm);
      gl_FragColor.rgb=mix(waterTint,gl_FragColor.rgb,0.35+0.65*fresnelTerm);
-     vec3 sDir=normalize((viewMatrix*vec4(uSunDir,0.0)).xyz);
-     vec3 hVec=normalize(sDir+vDir);
-     float specGlitter=pow(max(0.0,dot(normal,hVec)),140.0);
-     gl_FragColor.rgb+=uSunColor*specGlitter*2.4;
     `
    );
   };
