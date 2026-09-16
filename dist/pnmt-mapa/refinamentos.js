@@ -770,17 +770,53 @@ function buildAsianCorner(f, w=8.0, h=7.2){
   snow.scale.set(1.3, 1.0, 1.0);
 }
 
+function buildNeoclassicPalace(f, w=7.6, h=7.5){
+  box(f, 0, .4, -.2, w*.94, h*.65, 2.2, PAL.white);
+  for(let i=0; i<6; i++){
+    const cx = -w*.38 + i * (w*.76 / 5);
+    cylinder(f, cx, .4, .92, .12, h*.65, PAL.white, .12, 10);
+  }
+  for(let r=0; r<2; r++) for(let c=0; c<5; c++){
+    archWindow(f, -w*.30+c*w*.15, 1.1+r*2.2, .93, w*.09, 1.4, PAL.glass);
+  }
+  box(f, 0, h*.65+.4, -.2, w*.98, .35, 2.4, PAL.white);
+  const ped = new T.Shape();
+  ped.moveTo(-w*.28, 0); ped.lineTo(w*.28, 0); ped.lineTo(0, 1.3); ped.closePath();
+  mesh(f, new T.ExtrudeGeometry(ped, {depth:.35, bevelEnabled:false}), PAL.white, 0, h*.65+.75, -.2);
+  box(f, 0, h*.65+1.1, -.4, w*.90, 1.4, 1.8, '#435158');
+  for(let c=-w*.35; c<=w*.35; c+=w*.25){
+    box(f, c, h*.65+1.3, .52, .75, .85, .5, PAL.white);
+  }
+}
+
+function buildMedievalCastle(f, w=7.5, h=6.8){
+  box(f, 0, .4, -.2, w*.95, h*.62, 2.4, '#8a887f');
+  for(let i=0; i<8; i++){
+    box(f, -w*.44+i*w*.125, h*.62+.4, -.2, .45, .5, 2.45, '#8a887f');
+  }
+  box(f, w*.28, .4, -.1, w*.35, h*.92, 2.6, '#7d7a72');
+  for(let i=0; i<4; i++){
+    box(f, w*.28+(i-1.5)*.7, h*.92+.4, -.1, .35, .5, 2.65, '#7d7a72');
+  }
+  archWindow(f, -w*.15, .4, 1.02, w*.24, 2.8, PAL.dark);
+  for(let j=0; j<3; j++) box(f, -w*.15, .8+j*.7, 1.05, w*.22, .08, .12, PAL.timberWood);
+}
+
 export const villageRealLandmarks = [
-  { name: 'Fachada 01 · Fontana di Trevi', fn: buildTrevi, w: 7.8, h: 7.2 },
-  { name: 'Fachada 02 · Basílica das Cúpulas Azuis', fn: buildBlueBasilica, w: 8.0, h: 8.8 },
-  { name: 'Fachada 03 · Casas Enxaimel da Baviera', fn: buildTimberHouses, w: 6.8, h: 7.6 },
-  { name: 'Fachada 04 · Portão de Brandemburgo e Quadriga', fn: buildBrandenburg, w: 8.5, h: 7.5 },
-  { name: 'Fachada 05 · Casas de Canal de Amsterdã', fn: buildDutchCanal, w: 6.5, h: 7.2 },
-  { name: 'Fachada 06 · Igreja Gótica com Pináculo', fn: buildGothicTower, w: 5.2, h: 8.8 },
-  { name: 'Fachada 07 · Palácio Rosa Indiano/Mourisco', fn: buildPinkPalace, w: 8.0, h: 7.6 },
-  { name: 'Fachada 08 · Sagrada Família de Gaudí', fn: buildSagradaFamilia, w: 7.6, h: 10.5 },
-  { name: 'Fachada 09 · Palácio Imperial Eslavo', fn: buildSlavicPalace, w: 7.0, h: 6.8 },
-  { name: 'Fachada 10 · Canto Oriental, Pagode e Monte Fuji', fn: buildAsianCorner, w: 8.0, h: 7.2 }
+  // Ala 1 - Faixa Longitudinal ao pé da colina (Sul -> Norte)
+  { name: 'Fachada 01 · Palácio Imperial Eslavo', fn: buildSlavicPalace, w: 7.2, h: 6.8, wing: 1 },
+  { name: 'Fachada 02 · Sagrada Família de Gaudí', fn: buildSagradaFamilia, w: 7.8, h: 10.5, wing: 1 },
+  { name: 'Fachada 03 · Palácio Rosa Indiano/Mourisco', fn: buildPinkPalace, w: 8.0, h: 7.6, wing: 1 },
+  { name: 'Fachada 04 · Casas de Canal de Amsterdã', fn: buildDutchCanal, w: 6.8, h: 7.2, wing: 1 },
+  { name: 'Fachada 05 · Igreja Gótica com Pináculo', fn: buildGothicTower, w: 5.4, h: 8.8, wing: 1 },
+  { name: 'Fachada 06 · Palácio Neoclássico com Colunata', fn: buildNeoclassicPalace, w: 7.6, h: 7.5, wing: 1 },
+  { name: 'Fachada 07 · Basílica das Cúpulas Azuis', fn: buildBlueBasilica, w: 8.2, h: 8.8, wing: 1 },
+  { name: 'Fachada 08 · Casas Enxaimel da Baviera', fn: buildTimberHouses, w: 7.0, h: 7.6, wing: 1 },
+  { name: 'Fachada 09 · Portão de Brandemburgo e Quadriga', fn: buildBrandenburg, w: 8.8, h: 7.5, wing: 1 },
+  // Ala 2 - Cabeceira Norte Transversal (virando para a praça/lago)
+  { name: 'Fachada 10 · Castelo Medieval Fortificado', fn: buildMedievalCastle, w: 7.5, h: 6.8, wing: 2 },
+  { name: 'Fachada 11 · Canto Oriental, Pagode e Monte Fuji', fn: buildAsianCorner, w: 8.5, h: 7.5, wing: 2 },
+  { name: 'Fachada 12 · Fontana di Trevi e Arco Monumental', fn: buildTrevi, w: 8.2, h: 7.4, wing: 2 }
 ];
 
 export function buildVillage(g){
@@ -788,6 +824,7 @@ export function buildVillage(g){
   villageRealLandmarks.forEach((entry, i) => {
     const f = group(g, 0, 0, 0);
     f.name = entry.name;
+    f.userData.wing = entry.wing;
     entry.fn(f, entry.w, entry.h);
   });
 }
