@@ -21,15 +21,26 @@ export const referencias = [
   {id:'estrutura-e-acesso',nome:'Estacionamentos',foto:'04-estacionamentos.png',centro:[789,982],vista:[.4,1.5,1],ajustes:['Pavimento cinza e marcações legíveis','Vias internas e ilhas verdes','Vagas conforme as áreas existentes']}
 ];
 
-const PAL={white:'#f8fafc',concrete:'#c9c8bd',steel:'#3d4b53',dark:'#182228',glass:'#386072',blue:'#0062cc',yellow:'#f2c808',grass:'#466b32',earth:'#9a5332',road:'#24282b',green:'#2d5222',magenta:'#d81b60',purple:'#ab47bc',terracotta:'#a84838'};
+const PAL={
+  white:'#f8fafc',concrete:'#c9c8bd',steel:'#3d4b53',dark:'#182228',glass:'#386072',
+  blue:'#0062cc',yellow:'#f2c808',grass:'#466b32',earth:'#9a5332',road:'#24282b',
+  green:'#2d5222',magenta:'#d81b60',purple:'#ab47bc',terracotta:'#a84838',
+  treviStone:'#dedcd4',domeTurquoise:'#4fa8b5',basilicaStone:'#e6ddc8',
+  timberWood:'#3a2618',timberPlaster:'#f4f1ea',brandenburgStone:'#dcd7c4',
+  bronzeStatue:'#2e483e',dutchBrick:'#9e5d4a',dutchTrim:'#f0ede6',
+  rosePalace:'#c87a80',rosePalaceTrim:'#ebd8dc',gaudiSandstone:'#c2a56e',
+  slavicPink:'#d4a5a5',fujiSnow:'#f2f4f8',fujiRock:'#444952',
+  thatchStraw:'#8e734c',plazaStripes:'#b4afa4'
+};
 export const materialCache=new Map();
 function material(c,metalness=0,roughness=.72){
   const isGlass=c===PAL.glass||c==='#365f70'||c==='#345868'||c==='#4a6878';
-  const isSteel=[PAL.steel,PAL.dark,'#bdc7ca','#424f56','#37474f'].includes(c);
-  const isWhiteRoof=[PAL.white,'#f8fafc','#f5f7f8','#e2e6e5','#ffffff'].includes(c);
-  const isConcrete=[PAL.concrete,'#c7c6bd','#c9c8bd','#cfd2cc'].includes(c);
-  const m=metalness||(isSteel?.7:isGlass?.08:isWhiteRoof?.05:0);
-  const r=roughness||(isSteel?.22:isGlass?.05:isWhiteRoof?.38:isConcrete?.82:.72);
+  const isBronze=c===PAL.bronzeStatue;
+  const isSteel=[PAL.steel,PAL.dark,'#bdc7ca','#424f56','#37474f'].includes(c)||isBronze;
+  const isWhiteRoof=[PAL.white,'#f8fafc','#f5f7f8','#e2e6e5','#ffffff',PAL.fujiSnow].includes(c);
+  const isConcrete=[PAL.concrete,'#c7c6bd','#c9c8bd','#cfd2cc',PAL.treviStone,PAL.basilicaStone,PAL.brandenburgStone,PAL.plazaStripes].includes(c);
+  const m=metalness||(isBronze?.55:isSteel?.7:isGlass?.08:isWhiteRoof?.05:0);
+  const r=roughness||(isBronze?.38:isSteel?.22:isGlass?.05:isWhiteRoof?.38:isConcrete?.82:.72);
   const key=[c,m,r].join('|');
   if(!materialCache.has(key)){
     const mat=isGlass
@@ -554,81 +565,231 @@ export function buildTower(g){
   for(let i=0;i<16;i++){const a=i/16*Math.PI*2;beam(g,[Math.cos(a)*2.55,43.1,Math.sin(a)*2.55],[Math.cos(a)*2.55,44.2,Math.sin(a)*2.55],.028,PAL.steel);}ring(g,0,44.2,0,2.55,.035,PAL.steel);
 }
 
-const villagePattern=[
-  ['torres',4.8,6.8,'#d9e7dc'],['pagode',5,5.7,'#dcc9ae'],['pagode',5,7.3,'#e6e5dc'],['reto',4.3,5.2,'#e9e9df'],['torres',5.7,7.3,'#d9b864'],['cupula',5.6,7.2,'#eee7d5'],['reto',4.7,5.5,'#e0dacc'],['arcada',4.8,4.6,'#eee9de'],['duplo',5.5,6.1,'#eee9dc'],['frontao',4.5,4.8,'#799080'],['colunas',6.5,5.4,'#e4dfd2'],['torres',4.6,6.5,'#efe9db'],['frontao',4.8,4.9,'#eee6d1'],['reto',4.5,6.1,'#b7c3bb'],['torres',4.2,7.1,'#c69179'],['frontao',4.6,5.5,'#a59981'],['reto',4.4,5.2,'#e5e7df']
+function buildTrevi(f, w=7.8, h=7.2){
+  box(f, 0, .25, 0, w, .5, 2.6, PAL.treviStone);
+  box(f, 0, .75, -.4, w*.96, h*.82, 1.4, PAL.treviStone);
+  box(f, 0, 1.1, .2, w*.34, h*.58, .2, '#c8c5bc');
+  archWindow(f, 0, 1.1, .25, w*.32, h*.56, '#bbb6aa');
+  box(f, 0, 1.1, .55, w*.15, h*.30, .65, PAL.white);
+  box(f, -w*.14, .9, .75, .55, .75, .8, '#dedcd4');
+  box(f, w*.14, .9, .75, .55, .75, .8, '#dedcd4');
+  for(const s of [-1, 1]){
+    box(f, s*w*.32, 2.2, .32, w*.15, 2.3, .12, '#c5c1b6');
+    box(f, s*w*.32, 2.4, .40, w*.08, 1.4, .25, PAL.white);
+  }
+  for(const cx of [-w*.42, -w*.19, w*.19, w*.42]){
+    cylinder(f, cx, .75, .45, .15, h*.75, PAL.white, .15, 12);
+  }
+  box(f, 0, h*.82, -.2, w, .45, 1.7, PAL.treviStone);
+  box(f, 0, h*.82+.45, -.3, w*.86, 1.25, 1.3, PAL.treviStone);
+  for(const sx of [-w*.35, -w*.12, w*.12, w*.35]){
+    cylinder(f, sx, h*.82+1.7, -.2, .07, .65, PAL.white, .07, 8);
+  }
+  box(f, 0, h*.82+1.7, -.3, w*.28, .85, .5, PAL.white);
+  box(f, 0, .25, 1.5, w*.88, .45, 1.2, PAL.treviStone);
+  box(f, 0, .45, 1.5, w*.80, .1, 1.0, '#2a6676');
+}
+
+function buildBlueBasilica(f, w=8.0, h=8.8){
+  box(f, 0, .4, -.3, w*.62, h*.65, 2.2, PAL.basilicaStone);
+  archWindow(f, 0, .6, .82, w*.26, 3.4, PAL.dark);
+  for(let j=0; j<3; j++) cylinder(f, (j-1)*w*.12, .4, .82, .1, 2.8, PAL.white, .1, 8);
+  for(const s of [-1, 1]){
+    box(f, s*w*.38, .4, -.2, w*.24, h*.78, 2.4, PAL.basilicaStone);
+    for(let r=0; r<2; r++) archWindow(f, s*w*.38, 1.4+r*2.4, 1.02, w*.12, 1.6, PAL.dark);
+    cylinder(f, s*w*.38, h*.78+.4, -.2, w*.10, 1.2, PAL.white, w*.10, 8);
+    const d = mesh(f, new T.SphereGeometry(w*.11, 14, 10, 0, Math.PI*2, 0, Math.PI/2), PAL.domeTurquoise, s*w*.38, h*.78+1.6, -.2);
+    d.scale.y = 1.2;
+    cylinder(f, s*w*.38, h*.78+2.6, -.2, .025, .6, '#c9a84d', .025, 6);
+  }
+  cylinder(f, 0, h*.65+.4, -.3, w*.24, 1.3, PAL.white, w*.24, 16);
+  for(let a=0; a<8; a++){
+    const ang = a/8*Math.PI*2;
+    box(f, Math.cos(ang)*w*.23, h*.65+1.0, -.3+Math.sin(ang)*w*.23, .14, .6, .14, PAL.dark);
+  }
+  const mainDome = mesh(f, new T.SphereGeometry(w*.25, 18, 14, 0, Math.PI*2, 0, Math.PI/2), PAL.domeTurquoise, 0, h*.65+1.7, -.3);
+  mainDome.scale.y = 1.3;
+  cylinder(f, 0, h*.65+3.5, -.3, .035, .9, '#c9a84d', .035, 6);
+}
+
+function buildTimberHouses(f, w=6.8, h=7.6){
+  const wa = w*.48;
+  box(f, -w*.25, .4, -.2, wa, h*.72, 2.4, PAL.timberPlaster);
+  for(const y of [2.2, 4.4, 6.0]){
+    box(f, -w*.25, y, 1.02, wa, .12, .12, PAL.timberWood);
+  }
+  for(const s of [-1, 1]){
+    box(f, -w*.25+s*wa*.38, .4, 1.02, .14, h*.72, .12, PAL.timberWood);
+    beam(f, [-w*.25+s*wa*.38, 2.3, 1.02], [-w*.25, 4.3, 1.02], .06, PAL.timberWood);
+    beam(f, [-w*.25, 4.5, 1.02], [-w*.25+s*wa*.38, 5.9, 1.02], .06, PAL.timberWood);
+  }
+  for(let r=0; r<2; r++) for(let c=0; c<2; c++){
+    box(f, -w*.25+(c-.5)*wa*.42, 2.8+r*1.8, 1.03, wa*.28, .85, .08, PAL.glass);
+  }
+  const roofA = mesh(f, new T.ConeGeometry(wa*.68, 2.6, 4), '#2c3238', -w*.25, h*.72+1.7, -.2);
+  roofA.rotation.y = Math.PI/4;
+  roofA.scale.set(1.1, 1.0, .85);
+
+  const wb = w*.46;
+  box(f, w*.25, .4, -.2, wb, h*.62, 2.2, PAL.timberPlaster);
+  for(const y of [2.4, 4.8]){
+    box(f, w*.25, y, .92, wb, .12, .12, PAL.timberWood);
+  }
+  box(f, w*.25, 2.6, 1.15, wb*.85, .65, .35, PAL.timberWood);
+  for(let c=0; c<3; c++) box(f, w*.25+(c-1)*wb*.3, 3.8, .93, wb*.22, .9, .08, PAL.glass);
+  const roofB = mesh(f, new T.ConeGeometry(wb*.65, 2.2, 4), '#8d4334', w*.25, h*.62+1.5, -.2);
+  roofB.rotation.y = Math.PI/4;
+  roofB.scale.set(1.0, 1.0, .85);
+}
+
+function buildBrandenburg(f, w=8.5, h=7.5){
+  for(let i=0; i<6; i++){
+    const cx = -w*.38 + i * (w*.76 / 5);
+    cylinder(f, cx, .4, .65, .18, h*.62, PAL.brandenburgStone, .18, 12);
+    cylinder(f, cx, .4, -.25, .18, h*.62, PAL.brandenburgStone, .18, 12);
+  }
+  box(f, -w*.46, .4, .2, w*.12, h*.65, 2.2, PAL.brandenburgStone);
+  box(f, w*.46, .4, .2, w*.12, h*.65, 2.2, PAL.brandenburgStone);
+  box(f, 0, h*.62+.4, .2, w*1.02, .55, 2.4, PAL.brandenburgStone);
+  box(f, 0, h*.62+.95, .2, w*.80, .85, 2.0, PAL.brandenburgStone);
+  box(f, 0, h*.62+1.8, .2, w*.35, .35, 1.4, PAL.brandenburgStone);
+  box(f, 0, h*.62+2.15, .05, 1.4, .55, .85, PAL.bronzeStatue);
+  cylinder(f, 0, h*.62+2.55, .05, .12, .95, PAL.bronzeStatue, .12, 8);
+  box(f, 0, h*.62+3.0, -.05, .85, .5, .08, PAL.bronzeStatue);
+  cylinder(f, .32, h*.62+2.8, .15, .025, 1.4, PAL.bronzeStatue, .025, 6);
+  for(let c=-.55; c<=.55; c+=.36){
+    box(f, c, h*.62+2.15, .55, .22, .75, .65, PAL.bronzeStatue);
+  }
+}
+
+function buildDutchCanal(f, w=6.5, h=7.2){
+  const wa = w*.48;
+  box(f, -w*.25, .4, -.1, wa, h*.58, 2.2, PAL.dutchBrick);
+  for(let tier=0; tier<4; tier++){
+    const tw = wa * (1 - tier * .22);
+    box(f, -w*.25, h*.58+.4+tier*.45, -.1, tw, .45, 2.0, PAL.dutchBrick);
+    box(f, -w*.25, h*.58+.4+tier*.45, 1.01, tw, .08, .12, PAL.dutchTrim);
+  }
+  beam(f, [-w*.25, h*.58+2.25, 1.0], [-w*.25, h*.58+2.25, 1.6], .04, PAL.dark);
+  for(let r=0; r<3; r++) for(let c=0; c<2; c++){
+    box(f, -w*.25+(c-.5)*wa*.42, 1.2+r*1.6, 1.02, wa*.28, .9, .08, PAL.glass);
+    box(f, -w*.25+(c-.5)*wa*.42, 2.1+r*1.6, 1.04, wa*.32, .1, .12, PAL.dutchTrim);
+  }
+
+  const wb = w*.46;
+  box(f, w*.25, .4, -.1, wb, h*.64, 2.2, '#c48b71');
+  box(f, w*.25, h*.64+.4, -.1, wb*.6, 1.2, 2.0, '#c48b71');
+  box(f, w*.25, h*.64+1.6, -.1, wb*.3, .5, 1.8, PAL.dutchTrim);
+  for(let r=0; r<3; r++) for(let c=0; c<2; c++){
+    box(f, w*.25+(c-.5)*wb*.42, 1.2+r*1.6, 1.02, wb*.28, .9, .08, PAL.glass);
+  }
+}
+
+function buildGothicTower(f, w=5.2, h=8.8){
+  box(f, 0, .4, -.2, w*.85, h*.55, 2.4, '#ded9cc');
+  archWindow(f, 0, .4, 1.02, w*.26, 2.6, PAL.dark);
+  box(f, 0, h*.55+.4, -.2, w*.42, 2.2, 2.2, '#ded9cc');
+  ring(f, 0, h*.55+1.5, .92, .38, .05, PAL.white);
+  mesh(f, new T.ConeGeometry(w*.24, 3.8, 6), '#4a5658', 0, h*.55+2.6, -.2);
+  cylinder(f, 0, h*.55+5.4, -.2, .03, .8, PAL.white, .03, 6);
+}
+
+function buildPinkPalace(f, w=8.0, h=7.6){
+  box(f, 0, .4, -.2, w*.48, h*.82, 2.2, PAL.rosePalace);
+  archWindow(f, 0, .4, .92, w*.28, 4.4, PAL.dark);
+  for(const y of [2.6, 4.6, 6.2]){
+    box(f, 0, y, .94, w*.44, .18, .22, PAL.rosePalaceTrim);
+  }
+  for(const s of [-1, 1]){
+    box(f, s*w*.36, .4, -.1, w*.24, h*.72, 1.8, PAL.rosePalace);
+    for(let r=0; r<3; r++) archWindow(f, s*w*.36, 1.2+r*1.8, .82, w*.14, 1.2, PAL.dark);
+    cylinder(f, s*w*.36, h*.72+.4, -.1, .28, .5, PAL.rosePalaceTrim, .28, 8);
+    mesh(f, new T.SphereGeometry(.32, 10, 8, 0, Math.PI*2, 0, Math.PI/2), PAL.rosePalace, s*w*.36, h*.72+.9, -.1);
+  }
+  for(let i=0; i<8; i++){
+    box(f, -w*.42+i*w*.12, h*.82+.4, -.1, .08, .3, .15, PAL.rosePalaceTrim);
+  }
+}
+
+function buildSagradaFamilia(f, w=7.6, h=10.5){
+  box(f, 0, .4, -.2, w*.92, 3.4, 2.6, PAL.gaudiSandstone);
+  for(let p=0; p<3; p++){
+    const px = (p - 1) * w*.30;
+    archWindow(f, px, .4, 1.12, w*.22, 2.8, PAL.dark);
+  }
+  const towers = [
+    {x: -w*.38, h: h*1.05},
+    {x: -w*.13, h: h*1.28},
+    {x: w*.13, h: h*1.28},
+    {x: w*.38, h: h*1.05}
+  ];
+  for(const t of towers){
+    cylinder(f, t.x, 3.4, 0, .50, t.h - 4.4, PAL.gaudiSandstone, .32, 8);
+    cylinder(f, t.x, t.h - 1.0, 0, .30, 1.5, PAL.gaudiSandstone, .20, 8);
+    cylinder(f, t.x, t.h + .5, 0, .18, 1.2, PAL.white, .06, 6);
+    mesh(f, new T.SphereGeometry(.14, 8, 6), '#f2c808', t.x, t.h + 1.2, 0);
+  }
+  box(f, 0, 6.8, 0, w*.32, .24, .3, PAL.gaudiSandstone);
+  box(f, -w*.25, 6.2, 0, w*.24, .20, .25, PAL.gaudiSandstone);
+  box(f, w*.25, 6.2, 0, w*.24, .20, .25, PAL.gaudiSandstone);
+}
+
+function buildSlavicPalace(f, w=7.0, h=6.8){
+  box(f, 0, .4, -.2, w*.92, h*.68, 2.2, PAL.slavicPink);
+  for(let i=0; i<6; i++){
+    const cx = -w*.40 + i * (w*.80 / 5);
+    cylinder(f, cx, .4, .92, .09, h*.68, PAL.white, .09, 8);
+  }
+  for(let r=0; r<2; r++) for(let c=0; c<5; c++){
+    archWindow(f, -w*.32+c*w*.16, 1.1+r*2.2, .93, w*.10, 1.4, PAL.glass);
+  }
+  box(f, 0, h*.68+.4, -.2, w*.96, .35, 2.4, PAL.white);
+  const ped = new T.Shape();
+  ped.moveTo(-w*.22, 0); ped.lineTo(w*.22, 0); ped.lineTo(0, 1.2); ped.closePath();
+  mesh(f, new T.ExtrudeGeometry(ped, {depth:.3, bevelEnabled:false}), PAL.white, 0, h*.68+.75, -.2);
+  box(f, 0, h*.68+1.0, -.4, w*.88, 1.2, 1.6, '#525d64');
+}
+
+function buildAsianCorner(f, w=8.0, h=7.2){
+  const px = -w*.24;
+  for(let k=0; k<3; k++){
+    const bw = 2.6 - k*.45, bh = 1.6 - k*.2, by = .4 + k*1.8;
+    box(f, px, by, -.2, bw, bh, bw, '#3e3226');
+    const rw = bw + 1.2, rh = .22;
+    box(f, px, by+bh, -.2, rw, rh, rw, '#23282b');
+  }
+  cylinder(f, px, 5.8, -.2, .04, 1.8, '#c9a84d', .04, 6);
+  cylinder(f, px-.75, .4, 1.4, .06, 2.2, '#c42e2e', .06, 8);
+  cylinder(f, px+.75, .4, 1.4, .06, 2.2, '#c42e2e', .06, 8);
+  box(f, px, 2.5, 1.4, 1.9, .14, .18, '#c42e2e');
+  box(f, px, 2.2, 1.4, 1.6, .09, .14, '#c42e2e');
+  const fx = w*.24;
+  const fuji = mesh(f, new T.ConeGeometry(2.6, 3.8, 20), PAL.fujiRock, fx, 1.9, -.5);
+  fuji.scale.set(1.3, 1.0, 1.0);
+  const snow = mesh(f, new T.ConeGeometry(1.1, 1.3, 20), PAL.fujiSnow, fx, 3.3, -.5);
+  snow.scale.set(1.3, 1.0, 1.0);
+}
+
+export const villageRealLandmarks = [
+  { name: 'Fachada 01 · Fontana di Trevi', fn: buildTrevi, w: 7.8, h: 7.2 },
+  { name: 'Fachada 02 · Basílica das Cúpulas Azuis', fn: buildBlueBasilica, w: 8.0, h: 8.8 },
+  { name: 'Fachada 03 · Casas Enxaimel da Baviera', fn: buildTimberHouses, w: 6.8, h: 7.6 },
+  { name: 'Fachada 04 · Portão de Brandemburgo e Quadriga', fn: buildBrandenburg, w: 8.5, h: 7.5 },
+  { name: 'Fachada 05 · Casas de Canal de Amsterdã', fn: buildDutchCanal, w: 6.5, h: 7.2 },
+  { name: 'Fachada 06 · Igreja Gótica com Pináculo', fn: buildGothicTower, w: 5.2, h: 8.8 },
+  { name: 'Fachada 07 · Palácio Rosa Indiano/Mourisco', fn: buildPinkPalace, w: 8.0, h: 7.6 },
+  { name: 'Fachada 08 · Sagrada Família de Gaudí', fn: buildSagradaFamilia, w: 7.6, h: 10.5 },
+  { name: 'Fachada 09 · Palácio Imperial Eslavo', fn: buildSlavicPalace, w: 7.0, h: 6.8 },
+  { name: 'Fachada 10 · Canto Oriental, Pagode e Monte Fuji', fn: buildAsianCorner, w: 8.0, h: 7.2 }
 ];
+
 export function buildVillage(g){
   g.name='Vila das Nações · sequência de fachadas na orla';
-  const total=villagePattern.reduce((s,p)=>s+p[1]+.2,0);
-  const half=total/2;
-  const curveZ=(x)=>-6.5*(1-Math.min(1,Math.pow(x/half,2)));
-  const curveAngle=(x)=>-Math.atan(13*x/Math.pow(half,2));
-
-  // 1. CALÇADÃO E DECK DA ORLA EM ARCO (setback 12-15m da lâmina d'água)
-  const backPts=[],frontPts=[];
-  for(let i=0;i<=32;i++){
-    const t=i/32,px=-half-3+t*(total+6),pz=curveZ(px);
-    backPts.push([px,pz-2.2]);
-    frontPts.push([px,pz+8.2]);
-  }
-  polygon(g,[...backPts,...frontPts.reverse()],PAL.concrete,.1,.35);
-
-  // Guarda-corpo e degraus de contemplação para o lago
-  for(let i=0;i<32;i++){
-    const p1x=-half-3+i/32*(total+6),p1z=curveZ(p1x)+8.2;
-    const p2x=-half-3+(i+1)/32*(total+6),p2z=curveZ(p2x)+8.2;
-    beam(g,[p1x,1.05,p1z],[p2x,1.05,p2z],.045,PAL.steel);
-    beam(g,[p1x,.4,p1z],[p2x,.4,p2z],.035,PAL.steel);
-    if(i%2===0)beam(g,[p1x,.1,p1z],[p1x,1.1,p1z],.045,PAL.steel);
-    for(let s=0;s<3;s++){
-      const sz1=p1z+.4+s*.5,sz2=p2z+.4+s*.5;
-      beam(g,[p1x,.12-s*.08,sz1],[p2x,.12-s*.08,sz2],.18,PAL.concrete);
-    }
-  }
-
-  // 2. FACHADAS TEMÁTICAS DISTRIBUÍDAS AO LONGO DO ARCO
-  let x=-half;
-  villagePattern.forEach(([type,w,h,color],i)=>{
-    const cx=x+w/2,cz=curveZ(cx),rot=curveAngle(cx);
-    const f=group(g,cx,cz,rot);
-    f.name='Fachada '+String(i+1).padStart(2,'0')+' · '+type;
-    box(f,0,.4,-.8,w,h,1.7,color);
-    box(f,0,h+.3,-.8,w+.2,.25,1.9,PAL.white);
-    for(let j=0;j<3;j++)archWindow(f,(j-1)*w*.27,.8,.07,w*.18,2.1,PAL.dark);
-    if(['reto','torres','colunas'].includes(type))for(let row=0;row<2;row++)for(let j=0;j<4;j++){box(f,(j-1.5)*w*.21,3.3+row*1.1,.075,w*.12,.7,.055,PAL.glass);}
-    if(type==='torres')for(const s of [-1,1]){box(f,s*w*.39,.4,0,w*.18,h+1.4,1.8,color);mesh(f,new T.ConeGeometry(w*.13,2.4,6),PAL.white,s*w*.39,h+3,0);}
-    if(type==='cupula'){
-      cylinder(f,0,h+.5,-.7,w*.28,.8,PAL.white);const d=mesh(f,new T.SphereGeometry(w*.29,18,12,0,Math.PI*2,0,Math.PI/2),PAL.white,0,h+1.3,-.7);d.scale.y=1.2;beam(f,[0,h+2.8,-.7],[0,h+3.4,-.7],.045,PAL.gold||'#b2a171');
-    }
-    if(type==='duplo')for(const s of [-1,1]){const d=mesh(f,new T.SphereGeometry(w*.22,14,10,0,Math.PI*2,0,Math.PI/2),PAL.white,s*w*.27,h+.5,-.5);d.scale.set(.85,1.3,.8);}
-    if(type==='frontao'||type==='colunas'){
-      const shape=new T.Shape();shape.moveTo(-w/2,0);shape.lineTo(w/2,0);shape.lineTo(0,2);shape.closePath();mesh(f,new T.ExtrudeGeometry(shape,{depth:.35,bevelEnabled:false}),PAL.white,0,h+.5,-.05);
-      if(type==='colunas')for(let j=0;j<6;j++)cylinder(f,(j-2.5)*w*.15,.4,.6,.11,h-.4,PAL.white);
-    }
-    if(type==='pagode')for(let k=0;k<3;k++){
-      const r=w*.7*(1-k*.18),hh=h*.4+k*1.5;
-      const sh=new T.Shape();sh.moveTo(-r,0);sh.quadraticCurveTo(-r*.5,-.4,0,.8);sh.quadraticCurveTo(r*.5,-.4,r,0);sh.lineTo(r,-.25);sh.quadraticCurveTo(0,.1,-r,-.25);sh.closePath();mesh(f,new T.ExtrudeGeometry(sh,{depth:2,bevelEnabled:false,curveSegments:10}),k%2?'#355349':'#533d32',0,hh,-1.5);
-    }
-    for(const s of [-1,1])box(f,s*(w/2-.15),.4,.09,.16,h,.18,PAL.white);
-    box(f,0,.45,1,w+.2,.22,1.5,PAL.concrete);
-    if(i%2===0){
-      box(f,0,2.6,1.4,w*.8,.12,1.6,['#c94a38','#335c67','#e09f3e','#556b2f'][i%4]);
-      beam(f,[-w*.35,.2,2.1],[-w*.35,2.6,2.1],.04,PAL.steel);
-      beam(f,[w*.35,.2,2.1],[w*.35,2.6,2.1],.04,PAL.steel);
-    }
-    x+=w+.2;
+  villageRealLandmarks.forEach((entry, i) => {
+    const f = group(g, 0, 0, 0);
+    f.name = entry.name;
+    entry.fn(f, entry.w, entry.h);
   });
-
-  // 3. MOBILIÁRIO URBANO, CAFÉS E ILUMINAÇÃO DA ORLA
-  for(let xx=-half+4;xx<=half-4;xx+=9){
-    const lz=curveZ(xx)+7.2;
-    lamp(g,xx,lz,4.8);
-    if(Math.abs(xx%18)<5){
-      cylinder(g,xx-1.5,.35,lz-2.2,.6,.7,PAL.concrete);
-      cylinder(g,xx-1.5,.7,lz-2.2,.04,1.8,PAL.steel);
-      mesh(g,new T.ConeGeometry(1.6,.45,8),['#d4a373','#3a5a40','#b56576'][Math.abs(Math.round(xx))%3],xx-1.5,2.4,lz-2.2);
-    }
-  }
 }
 
 export function buildParking(g){

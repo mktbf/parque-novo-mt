@@ -96,16 +96,109 @@ function rebuildGate(target){
  target.userData.provenance=D.gate.provenance;
 }
 function correctVillage(target){
- const old=target.children[0],facades=old?.children.filter(o=>o.name.startsWith('Fachada '))||[];
- for(const f of facades)old.remove(f);clearGeometry(target);
- const line=D.village.spine,lengths=[0];for(let i=1;i<line.length;i++)lengths.push(lengths.at(-1)+Math.hypot(line[i][0]-line[i-1][0],line[i][1]-line[i-1][1]));
- const total=lengths.at(-1);
- facades.forEach((f,i)=>{
-  const d=total*(i+.5)/facades.length;let j=1;while(j<lengths.length-1&&lengths[j]<d)j++;
-  const a=line[j-1],b=line[j],t=(d-lengths[j-1])/(lengths[j]-lengths[j-1]);
-  f.position.set(a[0]+(b[0]-a[0])*t,0,a[1]+(b[1]-a[1])*t);f.rotation.y=-Math.atan2(b[1]-a[1],b[0]-a[0]);f.scale.x=.80;target.add(f);
+ const facades = [];
+ target.traverse(o => {
+  if (o.isGroup && o.name.startsWith('Fachada ')) facades.push(o);
  });
- target.name='Vila das Nações · fachadas ao longo da orla';target.userData.provenance=D.village.provenance;
+ for (const f of facades) {
+  if (f.parent) f.parent.remove(f);
+ }
+ clearGeometry(target);
+
+ const line = D.village.spine;
+ const lengths = [0];
+ for (let i = 1; i < line.length; i++) lengths.push(lengths.at(-1) + Math.hypot(line[i][0] - line[i-1][0], line[i][1] - line[i-1][1]));
+ const total = lengths.at(-1);
+
+ facades.forEach((f, i) => {
+  const d = total * (i + 0.5) / facades.length;
+  let j = 1;
+  while (j < lengths.length - 1 && lengths[j] < d) j++;
+  const a = line[j-1], b = line[j], t = (d - lengths[j-1]) / (lengths[j] - lengths[j-1]);
+  f.position.set(a[0] + (b[0] - a[0]) * t, 0, a[1] + (b[1] - a[1]) * t);
+  f.rotation.y = -Math.atan2(b[1] - a[1], b[0] - a[0]);
+  f.scale.set(0.85, 0.85, 0.85);
+  target.add(f);
+ });
+
+ const steps = 36;
+ const backEdge = [], frontEdge = [], midEdge = [];
+ for (let i = 0; i <= steps; i++) {
+  const t = i / steps, d = total * t;
+  let j = 1;
+  while (j < lengths.length - 1 && lengths[j] < d) j++;
+  const a = line[j-1], b = line[j], segT = (d - lengths[j-1]) / (lengths[j] - lengths[j-1]);
+  const px = a[0] + (b[0] - a[0]) * segT, pz = a[1] + (b[1] - a[1]) * segT;
+  const dx = b[0] - a[0], dz = b[1] - a[1], len = Math.hypot(dx, dz) || 1;
+  const nx = -dz / len, nz = dx / len;
+
+  // Largura suave da esplanada: mais larga no centro onde ficam as estátuas e afunilando nas pontas
+  const esplanadeWidth = 5.5 + 7.0 * Math.sin(t * Math.PI);
+  backEdge.push([px - nx * 1.2, pz - nz * 1.2]);
+  midEdge.push([px + nx * (esplanadeWidth * 0.55), pz + nz * (esplanadeWidth * 0.55)]);
+  frontEdge.push([px + nx * esplanadeWidth, pz + nz * esplanadeWidth]);
+
+  // Vegetação nativa no talude atrás das fachadas (conforme fotos 01, 02 e 03)
+  if (i % 3 === 0) {
+   const tx = px - nx * 4.2 + (i % 2 ? 0.8 : -0.8);
+   const tz = pz - nz * 4.2 + (i % 2 ? -0.8 : 0.8);
+   P.cylinder(target, tx, 0.4, tz, 0.22, 3.2, '#5d4037', 0.16);
+   P.add(target, new T.SphereGeometry(1.6, 8, 6), i % 2 ? '#3b5e28' : '#4a6f32', tx, 3.4, tz);
+  }
+ }
+
+ const esplanadePts = [...backEdge, ...frontEdge.slice().reverse()];
+ P.polygon(target, esplanadePts, '#cec8bc', 0.135, 0.08);
+
+ // Faixas transversais listradas da esplanada (fotos 04 e 05)
+ for (let i = 2; i < steps - 2; i += 2) {
+  const p1 = backEdge[i], p2 = frontEdge[i];
+  const p1b = backEdge[i+1], p2b = frontEdge[i+1];
+  P.polygon(target, [p1, p2, p2b, p1b], '#b8b2a5', 0.142, 0.02);
+ }
+
+ for (let i = 0; i < steps; i++) {
+  const p1 = frontEdge[i], p2 = frontEdge[i+1];
+  P.beam(target, [p1[0], 0.15, p1[1]], [p2[0], 0.15, p2[1]], 0.16, '#cec8bc');
+  P.beam(target, [p1[0], 0.85, p1[1]], [p2[0], 0.85, p2[1]], 0.035, '#3d4b53');
+  if (i % 2 === 0) {
+   P.beam(target, [p1[0], 0.15, p1[1]], [p1[0], 0.85, p1[1]], 0.04, '#3d4b53');
+  }
+  if (i % 4 === 1) {
+   P.beam(target, [p1[0], 0.15, p1[1]], [p1[0], 4.0, p1[1]], 0.05, '#3d4b53');
+   P.beam(target, [p1[0], 4.0, p1[1]], [p1[0] - 0.8, 4.2, p1[1] - 0.8], 0.04, '#3d4b53');
+   P.box(target, p1[0] - 0.9, 4.15, p1[1] - 0.9, 0.4, 0.12, 0.22, '#f8fafc');
+  }
+ }
+
+ if (midEdge[18]) {
+  const ex = midEdge[18][0], ez = midEdge[18][1];
+  P.cylinder(target, ex, 0.14, ez, 1.4, 0.4, '#cec8bc', 1.4);
+  P.box(target, ex, 0.55, ez, 1.3, 0.85, 1.8, '#2e483e');
+  P.cylinder(target, ex, 1.0, ez + 1.0, 0.32, 0.65, '#2e483e');
+  P.beam(target, [ex, 1.3, ez + 1.1], [ex, 1.8, ez + 1.6], 0.11, '#2e483e');
+ }
+
+ if (midEdge[22]) {
+  const bx = midEdge[22][0], bz = midEdge[22][1];
+  P.cylinder(target, bx, 0.14, bz, 1.3, 0.35, '#cec8bc', 1.3);
+  P.box(target, bx, 0.50, bz, 1.0, 0.70, 1.6, '#2e483e');
+  P.cylinder(target, bx, 0.85, bz + 0.85, 0.28, 0.5, '#2e483e');
+  P.beam(target, [bx - 0.32, 1.2, bz + 0.9], [bx - 0.55, 1.4, bz + 1.1], 0.045, '#dcd7c4');
+  P.beam(target, [bx + 0.32, 1.2, bz + 0.9], [bx + 0.55, 1.4, bz + 1.1], 0.045, '#dcd7c4');
+ }
+
+ for (const idx of [15, 25]) {
+  if (midEdge[idx]) {
+   const qx = midEdge[idx][0], qz = midEdge[idx][1];
+   P.cylinder(target, qx, 0.14, qz, 1.1, 0.22, '#cec8bc', 1.1);
+   P.cylinder(target, qx, 0.36, qz, 0.75, 1.3, '#d8d2c4', 0.75);
+   P.add(target, new T.ConeGeometry(1.5, 1.1, 14), '#8e734c', qx, 2.0, qz);
+  }
+ }
+
+ target.name = 'Vila das Nações · fachadas ao longo da orla';
+ target.userData.provenance = D.village.provenance;
 }
 
 function geoSurface(group,geometry,material,y=.06,depth=.04,extraHoles=[]){
