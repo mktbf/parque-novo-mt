@@ -59,7 +59,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture},{createRendering},{fitDistance,fitOrtho}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=vias-acabamento-20260915-4'),import('./rendering.js?v=cenario-integral-20260914-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=gta-realismo-20260916-1'),import('./rendering.js?v=gta-realismo-20260916-1'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=gta-realismo-20260916-1')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -140,17 +140,20 @@ async function init(){
   function waterLoop(now){
    if(disposed)return;
    if(view==='3d'&&!document.hidden){
-    const wt=getWaterTexture();
-    if(wt){
-     const elapsed=now-lastWaterTime;
-     const interval=mobile()?35:16;
-     if(elapsed>=interval){
-      const dt=Math.min(elapsed/1000,0.1);
-      lastWaterTime=now;
+    const elapsed=now-lastWaterTime;
+    const interval=mobile()?35:16;
+    if(elapsed>=interval){
+     const dt=Math.min(elapsed/1000,0.1);
+     lastWaterTime=now;
+     const t=now*0.001;
+     if(waterUniforms)waterUniforms.uTime.value=t;
+     if(foliageUniforms)foliageUniforms.uTime.value=t;
+     const wt=getWaterTexture();
+     if(wt){
       wt.offset.x=(wt.offset.x+dt*0.014)%1;
       wt.offset.y=(wt.offset.y+dt*0.009)%1;
-      render();
      }
+     render();
     }
    }
    requestAnimationFrame(waterLoop);
@@ -244,7 +247,14 @@ async function init(){
  }
  function setNight(value){solarControls?.set(value?'noite':'tarde');}
  mapApi={render,focus,overview,focusDetail,setNight,focusAutoDetail:focusDetail};
- solarControls=mountSolarControls(stage,state=>{nightAuto=state.lightsOn;engine.setSolar(state);updateLayers();render();},render);
+ solarControls=mountSolarControls(stage,state=>{
+  nightAuto=state.lightsOn;
+  engine.setSolar(state);
+  if(waterUniforms)waterUniforms.uSunDir.value.fromArray(state.direction).normalize();
+  if(foliageUniforms)foliageUniforms.uSunDir.value.fromArray(state.direction).normalize();
+  updateLayers();
+  render();
+ },render);
  overview();updateLayers();solarControls.apply();
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);

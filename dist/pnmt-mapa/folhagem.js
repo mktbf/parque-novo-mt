@@ -1,4 +1,8 @@
 import * as T from 'three';
+export const foliageUniforms={
+ uTime:{value:0},
+ uSunDir:{value:new T.Vector3(-0.48,0.8,0.34).normalize()}
+};
 // Copas com silhueta irregular. Uma geometria compartilhada por todas as instâncias.
 export function createCanopyGeometry(small=false){
  const positions=[],normals=[],colors=[],uv=[],o=new T.Object3D();

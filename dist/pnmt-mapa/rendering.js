@@ -3,9 +3,50 @@ import {EffectComposer} from './vendor/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from './vendor/addons/postprocessing/RenderPass.js';
 import {GTAOPass} from './vendor/addons/postprocessing/GTAOPass.js';
 import {OutputPass} from './vendor/addons/postprocessing/OutputPass.js';
+import {ShaderPass} from './vendor/addons/postprocessing/ShaderPass.js';
 import {Sky} from './vendor/addons/objects/Sky.js';
 import {HDRLoader} from './vendor/addons/loaders/HDRLoader.js';
 import {simulation} from './solar-model.js?v=cenario-integral-20260914-2';
+
+const CinematicShader={
+ name:'CinematicShader',
+ uniforms:{
+  tDiffuse:{value:null},
+  uResolution:{value:new T.Vector2(1920,1080)},
+  uBloomIntensity:{value:0.26},
+  uContrast:{value:1.06},
+  uSaturation:{value:1.05},
+  uVignetteIntensity:{value:0.20},
+  uWarmth:{value:1.0}
+ },
+ vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+ fragmentShader:`uniform sampler2D tDiffuse;uniform vec2 uResolution;uniform float uBloomIntensity;uniform float uContrast;uniform float uSaturation;uniform float uVignetteIntensity;uniform float uWarmth;varying vec2 vUv;
+ void main(){
+  vec4 base=texture2D(tDiffuse,vUv);
+  vec3 color=base.rgb;
+  vec2 texel=1.0/max(uResolution,vec2(1.0));
+  vec3 bloom=vec3(0.0);
+  vec2 offsets[8]=vec2[8](vec2(-1.5,-1.5),vec2(0.0,-2.1),vec2(1.5,-1.5),vec2(-2.1,0.0),vec2(2.1,0.0),vec2(-1.5,1.5),vec2(0.0,2.1),vec2(1.5,1.5));
+  for(int i=0;i<8;i++){
+   vec3 s=texture2D(tDiffuse,vUv+offsets[i]*texel*3.2).rgb;
+   float lum=dot(s,vec3(0.2126,0.7152,0.0722));
+   float glint=smoothstep(0.85,1.35,lum);
+   bloom+=s*glint*0.125;
+  }
+  color+=bloom*uBloomIntensity;
+  color=max(vec3(0.0),color);
+  color=pow(color,vec3(uContrast));
+  float luma=dot(color,vec3(0.2126,0.7152,0.0722));
+  color=mix(vec3(luma),color,uSaturation);
+  color.r*=uWarmth;
+  color.b*=(2.0-uWarmth);
+  vec2 coord=(vUv-0.5)*vec2(uResolution.x/max(uResolution.y,1.0),1.0);
+  float dist=length(coord);
+  float vig=smoothstep(0.95,0.42,dist);
+  color*=mix(1.0-uVignetteIntensity,1.0,vig);
+  gl_FragColor=vec4(color,base.a);
+ }`
+};
 
 // One local, version-matched pipeline. No runtime CDN or API key is required.
 export function createRendering(scene,camera,smallScreen){
@@ -16,7 +57,7 @@ export function createRendering(scene,camera,smallScreen){
  renderer.toneMappingExposure=0.92;
  renderer.shadowMap.enabled=true;
  renderer.shadowMap.type=T.PCFSoftShadowMap;
- renderer.shadowMap.autoUpdate=false;
+ renderer.shadowMap.autoUpdate=true;
  renderer.info.autoReset=false;
  const canAO=!smallScreen&&renderer.extensions.has('EXT_color_buffer_float');
  const target=canAO?new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,samples:4}):null;
@@ -24,17 +65,22 @@ export function createRendering(scene,camera,smallScreen){
  const beauty=new RenderPass(scene,camera);
  composer?.addPass(beauty);
  const ao=canAO?new GTAOPass(scene,camera,1,1):null;
- if(ao){
- ao.blendIntensity=.65;
- ao.updateGtaoMaterial({radius:2.8,thickness:.55,distanceExponent:1.3,distanceFallOff:.5,scale:1,samples:14,screenSpaceRadius:false});
- ao.updatePdMaterial({radius:6,samples:10,rings:3});
- composer.addPass(ao);
- composer.addPass(new OutputPass());
+ let cinematicPass=null;
+ if(composer){
+  if(ao){
+   ao.blendIntensity=.72;
+   ao.updateGtaoMaterial({radius:3.2,thickness:.62,distanceExponent:1.35,distanceFallOff:.55,scale:1,samples:16,screenSpaceRadius:false});
+   ao.updatePdMaterial({radius:6,samples:10,rings:3});
+   composer.addPass(ao);
+  }
+  cinematicPass=new ShaderPass(CinematicShader);
+  composer.addPass(cinematicPass);
+  composer.addPass(new OutputPass());
  }
  const sun=new T.DirectionalLight('#fff8ee',2.55);
  let solar=simulation();const sunOffset=new T.Vector3(...solar.direction).multiplyScalar(1600);sun.position.copy(sunOffset);
  sun.castShadow=true;
- sun.shadow.radius=1.8;
+ sun.shadow.radius=1.4;
  sun.shadow.mapSize.set(smallScreen?2048:4096,smallScreen?2048:4096);
  Object.assign(sun.shadow.camera,{left:-870,right:870,top:840,bottom:-840,near:1,far:5000});
  sun.shadow.bias=-.0001;sun.shadow.normalBias=.18;
@@ -59,6 +105,11 @@ export function createRendering(scene,camera,smallScreen){
    scene.environmentIntensity=night?.25:low?.55:.88;renderer.toneMappingExposure=night?1.12:low?.96:.94;
    sky.material.uniforms.sunPosition.value.fromArray(solar.direction);sky.material.uniforms.turbidity.value=low?3.4:2.7;sky.material.uniforms.rayleigh.value=low?1.8:1.15;
    renderer.shadowMap.needsUpdate=true;
+   if(cinematicPass){
+    cinematicPass.uniforms.uWarmth.value=night?0.96:low?Math.min(1.08,1.0+(12-solar.elevation)*0.006):1.0;
+    cinematicPass.uniforms.uBloomIntensity.value=night?0.36:low?0.30:0.25;
+    cinematicPass.uniforms.uContrast.value=night?1.09:low?1.08:1.06;
+   }
   }
   dusk.visible=night;dusk.position.copy(beauty.camera.position);
   const ordered=is3d&&solar.lightsOn?sources.map(s=>({s,d:sun.target.position.distanceToSquared(s.p)})).sort((a,b)=>a.d-b.d).slice(0,spots.length):[];
@@ -79,7 +130,7 @@ export function createRendering(scene,camera,smallScreen){
  }
  return {renderer,loadEnvironment,setCamera,setLightSources(lamps){sources.splice(0);for(const l of lamps)sources.push({p:new T.Vector3(l.position[0]-620,l.height,l.position[1]-570),target:new T.Vector3(l.aim[0]-620,0,l.aim[1]-570),power:l.power||(l.kind==='via'?135:l.kind==='passeio'?92:165),color:l.color||(l.kind==='via'?'#ffe5b8':'#e9efff')});},setSolar(state){solar=state;lightingKey='';},setLighting(value){solar=simulation(solar.date,value?'noite':'tarde');lightingKey='';},setInteracting(value){interacting=Boolean(value);},
   focusShadow(target,radius=850){const extent=T.MathUtils.clamp(radius,85,900);sun.target.position.copy(target);sun.position.copy(target).add(sunOffset);Object.assign(sun.shadow.camera,{left:-extent,right:extent,top:extent,bottom:-extent});sun.shadow.camera.updateProjectionMatrix();renderer.shadowMap.needsUpdate=true;},
-  resize(w,h){renderer.setSize(w,h,false);composer?.setSize(w,h);},
+   resize(w,h){renderer.setSize(w,h,false);composer?.setSize(w,h);if(cinematicPass)cinematicPass.uniforms.uResolution.value.set(w,h);},
   render(mode,overlay){
    renderer.info.reset();lighting(mode);
    // A ortofoto mantém as próprias cores; a simulação pertence apenas ao 3D.

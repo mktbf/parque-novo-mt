@@ -18,6 +18,13 @@ export const origin=[620,570];
 export const world=(p,y=0)=>new T.Vector3(p[0]-origin[0],y,p[1]-origin[1]);
 export let waterTexture=null;
 export function getWaterTexture(){return waterTexture;}
+export const waterUniforms={
+ uTime:{value:0},
+ uSunDir:{value:new T.Vector3(-0.48,0.8,0.34).normalize()},
+ uSunColor:{value:new T.Color('#fff5df')},
+ uDeepColor:{value:new T.Color('#071f28')},
+ uShallowColor:{value:new T.Color('#1a5a64')}
+};
 const mats=new Map();
 const C={stone:'#cfd2cc',white:'#f8fafc',glass:'#345868',dark:'#182026',roof:'#f1f5f4',wood:'#6d4c41',gold:'#b8af8d',green:'#2d4e23',grass:'#486e34',water:'#163e46',road:'#24282b',blue:'#0062cc'};
 function material(color,metalness=0,roughness=.72){
@@ -30,7 +37,7 @@ function material(color,metalness=0,roughness=.72){
   const m=glass
    ? new T.MeshPhysicalMaterial({color,transmission:.86,roughness:.05,metalness:.05,clearcoat:1,clearcoatRoughness:.04,ior:1.52,envMapIntensity:2.4,transparent:true,opacity:.92})
    : water
-   ? new T.MeshPhysicalMaterial({color,transmission:.65,roughness:.04,metalness:.12,clearcoat:1,clearcoatRoughness:.03,ior:1.333,reflectivity:.92,envMapIntensity:2.8,transparent:true,opacity:.95,depthWrite:false})
+   ? new T.MeshPhysicalMaterial({color:'#143d46',roughness:.04,metalness:.12,clearcoat:1,clearcoatRoughness:.03,ior:1.333,reflectivity:.94,envMapIntensity:3.0,transparent:true,opacity:.95,depthWrite:false})
    : new T.MeshStandardMaterial({color,metalness:metalness||(isSteel?.68:isWhiteRoof?.05:0),roughness:roughness||(isSteel?.24:isWhiteRoof?.38:.74),envMapIntensity:isSteel?1.5:isWhiteRoof?1.1:.85});
   m.name=color;mats.set(key,m);
  }
@@ -40,15 +47,25 @@ function material(color,metalness=0,roughness=.72){
 export async function loadMaterials(renderer){
  const loader=new T.TextureLoader(),textures=[...configureIntegralMaterials(renderer),...configureLandscapeMaterials(renderer),...configureArchitectureMaterials(renderer),...configureArenaMaterials(renderer),...configureFinishMaterials(renderer),...configureLeisureMaterials(renderer)];
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
- const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([name==='leafy_grass'?null:load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
+ const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  textures.push(...await loadAutodromeFinishMaterials(renderer),...await loadRoadMaterials(renderer));
  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values(),...scenarioMaterials.values(),...landscapeMaterials.values()];
  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
   for(const m of allMats){
    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
-   const grass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32'].includes(m.name);
+   const isGrass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32','Cenário · terreno','Terreno recortado'].includes(m.name)||m.userData.surfaceKind==='grass';
    if(name==='clean_asphalt'&&(asphalt||m.userData.surfaceKind==='asphalt')){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);if(!m.userData.surfaceKind)m.color.set('#24282b');m.needsUpdate=true;}
-   if(name==='leafy_grass'&&(grass||m.userData.surfaceKind==='grass')){m.map=null;m.roughnessMap=maps[1];m.normalMap=maps[2];m.normalScale.setScalar(.22);m.roughness=.92;if(!m.userData.surfaceKind)m.color.set(m.name===C.grass?C.grass:'#385626');m.needsUpdate=true;}
+   if(name==='leafy_grass'&&isGrass){
+    [m.map,m.roughnessMap,m.normalMap]=maps;
+    m.normalScale.setScalar(.38);
+    m.roughness=.88;
+    m.metalness=.02;
+    if(m.map){m.map.wrapS=m.map.wrapT=T.RepeatWrapping;m.map.repeat.set(2.5,2.5);m.map.needsUpdate=true;}
+    if(m.roughnessMap){m.roughnessMap.wrapS=m.roughnessMap.wrapT=T.RepeatWrapping;m.roughnessMap.repeat.set(2.5,2.5);m.roughnessMap.needsUpdate=true;}
+    if(m.normalMap){m.normalMap.wrapS=m.normalMap.wrapT=T.RepeatWrapping;m.normalMap.repeat.set(2.5,2.5);m.normalMap.needsUpdate=true;}
+    m.color.set(m.name==='Cenário · terreno'||m.vertexColors?'#ffffff':'#5c7746');
+    m.needsUpdate=true;
+   }
   }
  }
  const size=512,data=new Uint8Array(size*size*4);
@@ -64,13 +81,67 @@ export async function loadMaterials(renderer){
  }
  const normal=new T.DataTexture(data,size,size);normal.wrapS=normal.wrapT=T.RepeatWrapping;normal.repeat.set(2.4,2.4);normal.needsUpdate=true;textures.push(normal);
  waterTexture=normal;
- for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'||m.name==='#426f70'||m.name==='#163e48'){
-  m.color.set('#163e48');
+ for(const m of allMats)if(m.userData.surfaceKind==='water'||m.name===C.water||m.name==='#163e46'||m.name==='#1a4146'||m.name==='#376c7e'||m.name==='#426f70'||m.name==='#163e48'||m.name==='#143d46'){
+  m.color.set('#143d46');
   m.normalMap=normal;
-  m.normalScale.setScalar(.30);
-  m.roughness=.06;
-  m.metalness=.08;
-  m.envMapIntensity=2.4;
+  m.normalScale.setScalar(.45);
+  m.roughness=.05;
+  m.metalness=.12;
+  m.clearcoat=1;
+  m.clearcoatRoughness=.03;
+  m.ior=1.333;
+  m.reflectivity=.95;
+  m.envMapIntensity=3.2;
+  m.userData.isWater=true;
+  m.onBeforeCompile=(shader)=>{
+   shader.uniforms.uTime=waterUniforms.uTime;
+   shader.uniforms.uSunDir=waterUniforms.uSunDir;
+   shader.uniforms.uSunColor=waterUniforms.uSunColor;
+   shader.uniforms.uDeepColor=waterUniforms.uDeepColor;
+   shader.uniforms.uShallowColor=waterUniforms.uShallowColor;
+   shader.vertexShader=`
+    varying vec3 vWorldPos;
+    ${shader.vertexShader}
+   `.replace(
+    '#include <begin_vertex>',
+    `#include <begin_vertex>
+     vWorldPos=(modelMatrix*vec4(position,1.0)).xyz;
+    `
+   );
+   shader.fragmentShader=`
+    uniform float uTime;
+    uniform vec3 uSunDir;
+    uniform vec3 uSunColor;
+    uniform vec3 uDeepColor;
+    uniform vec3 uShallowColor;
+    varying vec3 vWorldPos;
+    ${shader.fragmentShader}
+   `.replace(
+    '#include <normal_fragment_maps>',
+    `#include <normal_fragment_maps>
+     #ifdef USE_NORMALMAP
+      vec2 wUv1=vWorldPos.xz*0.065+vec2(uTime*0.016,uTime*0.009);
+      vec2 wUv2=vWorldPos.xz*0.125+vec2(-uTime*0.013,uTime*0.017);
+      vec3 nMap1=texture2D(normalMap,wUv1).xyz*2.0-1.0;
+      vec3 nMap2=texture2D(normalMap,wUv2).xyz*2.0-1.0;
+      vec3 waveNorm=normalize(vec3(nMap1.xy+nMap2.xy,nMap1.z*1.4));
+      normal=normalize(normal+vec3(waveNorm.x,waveNorm.y,0.0)*0.35);
+     #endif
+    `
+   ).replace(
+    '#include <dithering_fragment>',
+    `#include <dithering_fragment>
+     vec3 vDir=normalize(vViewPosition);
+     float fresnelTerm=pow(clamp(1.0-dot(normal,vDir),0.0,1.0),2.8);
+     vec3 waterTint=mix(uDeepColor,uShallowColor,0.40+0.60*fresnelTerm);
+     gl_FragColor.rgb=mix(waterTint,gl_FragColor.rgb,0.35+0.65*fresnelTerm);
+     vec3 sDir=normalize((viewMatrix*vec4(uSunDir,0.0)).xyz);
+     vec3 hVec=normalize(sDir+vDir);
+     float specGlitter=pow(max(0.0,dot(normal,hVec)),140.0);
+     gl_FragColor.rgb+=uSunColor*specGlitter*2.4;
+    `
+   );
+  };
   m.needsUpdate=true;
  }
  // A fotografia G04 mantém os UVs importados e participa do descarte da cena.

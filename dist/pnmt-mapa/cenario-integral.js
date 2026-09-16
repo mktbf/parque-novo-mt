@@ -1,6 +1,6 @@
 import * as T from 'three';
 import {integralData as D} from './cenario-integral-dados.js?v=cenario-integral-20260914-2';
-import {createPalmCrown} from './folhagem.js?v=cenario-integral-20260914-2';
+import {createPalmCrown,foliageUniforms} from './folhagem.js?v=gta-realismo-20260916-1';
 export {D as integralData};
 export const landscapeMaterials=new Map();
 function material(key,color,roughness=.86,metalness=0){const m=new T.MeshStandardMaterial({color,roughness,metalness,envMapIntensity:.7});m.name='Parque · '+key;landscapeMaterials.set(key,m);return m;}
@@ -40,7 +40,29 @@ export function createIntegralLandscape({smallScreen=false}){
  for(const[x,z]of D.bins)bins.push({p:[x,.61,z],s:[.30,.90,.30]});
  instances(furniture,new T.BoxGeometry(1,1,1),material('bancos-madeira','#9d7954'),seats);instances(furniture,new T.BoxGeometry(1,1,1),material('mobiliario-metal','#314648',.6,.4),steel);instances(furniture,new T.CylinderGeometry(1,1,1,12),material('lixeiras','#4c6460',.8,.15),bins);
  const trunk=[],crown=[];for(const[x,z,h]of D.palms){trunk.push({p:[x,h/2,z],s:[.16,h,.16]});crown.push({p:[x,h,z],a:x*1.71,s:[1,1,1],color:'#56734a'});}
- instances(furniture,new T.CylinderGeometry(.7,1,1,8),material('palmeiras-troncos','#9b9177'),trunk);instances(furniture,createPalmCrown(),material('palmeiras-folhas','#ffffff',.92),crown);
+ instances(furniture,new T.CylinderGeometry(.7,1,1,8),material('palmeiras-troncos','#9b9177'),trunk);
+ const palmLeaves=material('palmeiras-folhas','#ffffff',.92);
+ palmLeaves.onBeforeCompile=(shader)=>{
+  shader.uniforms.uTime=foliageUniforms.uTime;
+  shader.uniforms.uSunDir=foliageUniforms.uSunDir;
+  shader.vertexShader=`uniform float uTime;\n${shader.vertexShader}`.replace(
+   '#include <begin_vertex>',
+   `#include <begin_vertex>
+    float sway=sin(uTime*1.5+position.x*0.4+position.z*0.4)*0.045*max(0.0,position.y);
+    transformed.x+=sway;
+    transformed.z+=sway*0.7;
+   `
+  );
+  shader.fragmentShader=`uniform vec3 uSunDir;\n${shader.fragmentShader}`.replace(
+   '#include <dithering_fragment>',
+    `#include <dithering_fragment>
+     vec3 lDir=normalize((viewMatrix*vec4(uSunDir,0.0)).xyz);
+     float sss=pow(max(0.0,dot(-lDir,normal)),2.0)*0.30;
+     gl_FragColor.rgb+=vec3(0.12,0.22,0.06)*sss;
+    `
+  );
+ };
+ instances(furniture,createPalmCrown(),palmLeaves,crown);
  const shrubs=D.shrubs.filter((_,i)=>!smallScreen||i%2===0).map(([x,z,h,c])=>({p:[x,.15+h/2,z],s:[.52,h,.55],a:x+z,color:['#667b44','#74874b','#70634c'][c]}));
  instances(furniture,new T.IcosahedronGeometry(1,0),material('forracoes','#ffffff',.96),shrubs);
  return {root,surfaces,furniture,lamps:D.lamps,trees:D.trees,materials:landscapeMaterials,setBuildings(on){furniture.visible=on;},diagnostics(){return {version:D.version,lamps:D.lamps.length,benches:D.benches.length,palms:D.palms.length,shrubs:shrubs.length,pavingTriangles:D.surfaces.paving.indices.length/3,serviceTriangles:D.surfaces.service.indices.length/3};}};

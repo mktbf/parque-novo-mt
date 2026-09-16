@@ -1,5 +1,5 @@
 import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
-import {createCanopyGeometry} from './folhagem.js?v=cenario-integral-20260914-2';
+import {createCanopyGeometry,foliageUniforms} from './folhagem.js?v=gta-realismo-20260916-1';
 import {createIntegralLandscape} from './cenario-integral.js?v=cenario-integral-20260914-2';
 import * as T from 'three';
 import {scenarioData as D} from './cenario-dados.js?v=cenario-integral-20260914-2';
@@ -34,6 +34,33 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
   crowns.push({p:[x,h*.74,z],s:[r,h*.37,r],a:c*.73+x,color:palette[c]});
  }
  const bark=material('troncos','#ffffff'),leaves=material('copas','#ffffff',.93);leaves.envMapIntensity=.7;leaves.vertexColors=true;
+ leaves.onBeforeCompile=(shader)=>{
+  shader.uniforms.uTime=foliageUniforms.uTime;
+  shader.uniforms.uSunDir=foliageUniforms.uSunDir;
+  shader.vertexShader=`
+   uniform float uTime;
+   ${shader.vertexShader}
+  `.replace(
+   '#include <begin_vertex>',
+   `#include <begin_vertex>
+    float wPhase=uTime*1.8+position.x*0.3+position.z*0.3;
+    float sway=sin(wPhase)*0.038*max(0.0,position.y);
+    transformed.x+=sway;
+    transformed.z+=sway*0.65;
+   `
+  );
+  shader.fragmentShader=`
+   uniform vec3 uSunDir;
+   ${shader.fragmentShader}
+  `.replace(
+   '#include <dithering_fragment>',
+   `#include <dithering_fragment>
+    vec3 lDir=normalize((viewMatrix*vec4(uSunDir,0.0)).xyz);
+    float sss=pow(max(0.0,dot(-lDir,normal)),2.0)*0.28;
+    gl_FragColor.rgb+=vec3(0.12,0.22,0.05)*sss;
+   `
+  );
+ };
  instances(trees,new T.CylinderGeometry(.65,1,1,6),bark,trunks);
  const crownMesh=instances(trees,createCanopyGeometry(smallScreen),leaves,crowns);
  const bases=[],poles=[],arms=[],heads=[],faces=[],pools=[];
@@ -54,9 +81,24 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
  const poolMaterial=new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,toneMapped:false,uniforms:{strength:{value:0}},vertexShader:'varying vec2 vPool;void main(){vPool=uv*2.0-1.0;gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(position,1.0);}',fragmentShader:'varying vec2 vPool;uniform float strength;void main(){float a=pow(max(0.0,1.0-length(vPool)),2.5)*strength;gl_FragColor=vec4(0.95,0.72,0.40,a);\n#include <colorspace_fragment>\n}'});
  const glow=instances(street,poolGeo,poolMaterial,pools,false);glow.name='Luz ambiente dos postes · simulação visual';glow.visible=false;
  // Changes only the terrain material and vertex colors, never its positions/indices.
- groundMaterial.color.set('#71805c');
- const detailedGround=groundMaterial.clone();detailedGround.name='Cenário · terreno';detailedGround.vertexColors=true;scenarioMaterials.set('terreno',detailedGround);
- landscape.traverse(o=>{if(!o.isMesh||o.material!==groundMaterial)return;const p=o.geometry.attributes.position,colors=[];for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),k=.92+.065*Math.sin(x*.039+z*.013)+.035*Math.cos(z*.065-x*.024);colors.push(k,k*.995,k*.95);}o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));o.material=detailedGround;});
+ groundMaterial.color.set('#ffffff');
+ const detailedGround=groundMaterial.clone();detailedGround.name='Cenário · terreno';detailedGround.userData.surfaceKind='grass';detailedGround.vertexColors=true;scenarioMaterials.set('terreno',detailedGround);
+ landscape.traverse(o=>{
+  if(!o.isMesh||o.material!==groundMaterial)return;
+  const p=o.geometry.attributes.position,colors=[];
+  for(let i=0;i<p.count;i++){
+   const x=p.getX(i),z=p.getZ(i);
+   const macro1=Math.sin(x*0.012+z*0.007);
+   const macro2=Math.cos(z*0.015-x*0.010);
+   const micro=Math.sin(x*0.045+z*0.022);
+   const r=0.62+0.12*macro1+0.04*micro;
+   const g=0.76+0.10*macro2+0.05*micro;
+   const b=0.48+0.08*(macro1+macro2);
+   colors.push(r,g,b);
+  }
+  o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));
+  o.material=detailedGround;
+ });
  let visible=true,night=false;
  return {root,integral,lamps:allLamps,setNight(value){integralFinish?.setNight(value);night=Boolean(value);lampFace.emissiveIntensity=night?4.6:0;poolMaterial.uniforms.strength.value=night?.38:0;glow.visible=night&&visible;},setVisible(view,buildings){visible=view==='3d';root.visible=visible;street.visible=Boolean(buildings);trees.visible=Boolean(buildings);integral.setBuildings(Boolean(buildings));glow.visible=night&&visible;},diagnostics(){return {version:'cenario-integral-20260914-2',trees:entries.length,lamps:allLamps.length,integral:integral.diagnostics(),architecture:integralFinish?.diagnostics(),sourceTreeCount:D.trees.length,roadFinishVersion:ROAD03.version,paintTriangles:{parkingBays:D.surfaces.parkingBays.indices.length/3,curbs:ROAD03.surfaces.curbs.indices.length/3,roadEdges:ROAD03.surfaces.edges.indices.length/3,roadDashes:ROAD03.surfaces.dashes.indices.length/3},canopyTriangles:crownMesh.count*(crownMesh.geometry.index?.count||crownMesh.geometry.attributes.position.count)/3};}};
 }
