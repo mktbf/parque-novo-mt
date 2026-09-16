@@ -165,8 +165,9 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
   southFloorG04.userData.skipBatch=true;
  }
  // PNMT-G04-END
- const moto=models.get('motocross');clearGeometry(moto);
- shapeMesh(moto,D.motocross.outline,[],soilMat,.015,.03);moto.name='Motocross · setor, traçado a confirmar';
+ // Motocross traçado e relevo 3D integrados pelo módulo de ambientes realistas.
+ const moto=models.get('motocross');
+ if(moto)moto.name='Pista de Motocross · Circuito Profissional 3D';
  const wake=models.get('wake-park');
  // Existing water polygon was elevated and displaced. Keep the equipment, remove only the water meshes.
  const drop=[];wake.traverse(o=>{if(o.isMesh&&o.geometry.type==='ExtrudeGeometry'&&o.material?.color){const c=o.material.color.getHexString();if(['163e46','426c6c','377c80','4e8e91','426f70'].includes(c))drop.push(o);}});

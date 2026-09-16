@@ -8,6 +8,7 @@ import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
+import {applyRealisticEnvironments} from './ambientes-realistas.js?v=ambientes-realistas-20260916-2';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {terrain,places} from './park-data.js?v=cenario-integral-20260914-2';
 import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
@@ -375,6 +376,7 @@ export function createMiniatures({smallScreen=false}={}){
  applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure});
  applySpaceArchitecture(models);
  applyLeisureArchitecture(models);
+ applyRealisticEnvironments(models);
  const integralFinish=applyIntegralFinish(models,{smallScreen});
  models.forEach((g,id)=>{batchStatic(g);g.traverse(o=>{o.userData.placeId=id;});});
  batchStatic(landscape);batchStatic(infrastructure);batchStatic(water);batchStatic(circuits);
