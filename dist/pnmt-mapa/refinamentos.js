@@ -803,20 +803,20 @@ function buildMedievalCastle(f, w=7.5, h=6.8){
 }
 
 export const villageRealLandmarks = [
-  // Ala 1 - Faixa Longitudinal ao pé da colina (Sul -> Norte)
-  { name: 'Fachada 01 · Palácio Imperial Eslavo', fn: buildSlavicPalace, w: 7.2, h: 6.8, wing: 1 },
-  { name: 'Fachada 02 · Sagrada Família de Gaudí', fn: buildSagradaFamilia, w: 7.8, h: 10.5, wing: 1 },
-  { name: 'Fachada 03 · Palácio Rosa Indiano/Mourisco', fn: buildPinkPalace, w: 8.0, h: 7.6, wing: 1 },
-  { name: 'Fachada 04 · Casas de Canal de Amsterdã', fn: buildDutchCanal, w: 6.8, h: 7.2, wing: 1 },
-  { name: 'Fachada 05 · Igreja Gótica com Pináculo', fn: buildGothicTower, w: 5.4, h: 8.8, wing: 1 },
-  { name: 'Fachada 06 · Palácio Neoclássico com Colunata', fn: buildNeoclassicPalace, w: 7.6, h: 7.5, wing: 1 },
-  { name: 'Fachada 07 · Basílica das Cúpulas Azuis', fn: buildBlueBasilica, w: 8.2, h: 8.8, wing: 1 },
-  { name: 'Fachada 08 · Casas Enxaimel da Baviera', fn: buildTimberHouses, w: 7.0, h: 7.6, wing: 1 },
-  { name: 'Fachada 09 · Portão de Brandemburgo e Quadriga', fn: buildBrandenburg, w: 8.8, h: 7.5, wing: 1 },
-  // Ala 2 - Cabeceira Norte Transversal (virando para a praça/lago)
-  { name: 'Fachada 10 · Castelo Medieval Fortificado', fn: buildMedievalCastle, w: 7.5, h: 6.8, wing: 2 },
-  { name: 'Fachada 11 · Canto Oriental, Pagode e Monte Fuji', fn: buildAsianCorner, w: 8.5, h: 7.5, wing: 2 },
-  { name: 'Fachada 12 · Fontana di Trevi e Arco Monumental', fn: buildTrevi, w: 8.2, h: 7.4, wing: 2 }
+  // Ala 1 - Faixa Longitudinal ao pé da colina (Norte -> Sul, iniciando junto à Casa Cuiabana e Anfiteatro)
+  { name: 'Fachada 01 · Sagrada Família de Gaudí', fn: buildSagradaFamilia, w: 7.8, h: 10.5, wing: 1 },
+  { name: 'Fachada 02 · Palácio Rosa Indiano/Mourisco', fn: buildPinkPalace, w: 8.0, h: 7.6, wing: 1 },
+  { name: 'Fachada 03 · Casas de Canal de Amsterdã', fn: buildDutchCanal, w: 6.8, h: 7.2, wing: 1 },
+  { name: 'Fachada 04 · Igreja Gótica com Pináculo', fn: buildGothicTower, w: 5.4, h: 8.8, wing: 1 },
+  { name: 'Fachada 05 · Palácio Neoclássico com Colunata', fn: buildNeoclassicPalace, w: 7.6, h: 7.5, wing: 1 },
+  { name: 'Fachada 06 · Portão de Brandemburgo e Quadriga', fn: buildBrandenburg, w: 8.8, h: 7.5, wing: 1 },
+  { name: 'Fachada 07 · Casas Enxaimel da Baviera', fn: buildTimberHouses, w: 7.0, h: 7.6, wing: 1 },
+  { name: 'Fachada 08 · Basílica das Cúpulas Azuis', fn: buildBlueBasilica, w: 8.2, h: 8.8, wing: 1 },
+  // Ala 2 - Curva Sul em direção ao Grande Pavilhão (virando para a praça/lago ao Sul)
+  { name: 'Fachada 09 · Castelo Medieval Fortificado', fn: buildMedievalCastle, w: 7.5, h: 6.8, wing: 2 },
+  { name: 'Fachada 10 · Canto Oriental, Pagode e Monte Fuji', fn: buildAsianCorner, w: 8.5, h: 7.5, wing: 2 },
+  { name: 'Fachada 11 · Fontana di Trevi e Arco Monumental', fn: buildTrevi, w: 8.2, h: 7.4, wing: 2 },
+  { name: 'Fachada 12 · Palácio Imperial Eslavo', fn: buildSlavicPalace, w: 7.2, h: 6.8, wing: 2 }
 ];
 
 export function buildVillage(g){
