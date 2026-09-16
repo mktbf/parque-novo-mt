@@ -18,7 +18,11 @@
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
+    "puppeteer": "^25.10.0",
     "puppeteer-core": "^25.10.0",
     "vite": "^6.3.0"
+  },
+  "allowScripts": {
+    "puppeteer@25.10.0": true
   }
 }

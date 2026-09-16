@@ -1,7 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
-const integrationVersion = 'vias-acabamento-20260915-3';
+const integrationVersion = 'vias-acabamento-20260915-4';
 
 const safeHref = (value) => {
   try {

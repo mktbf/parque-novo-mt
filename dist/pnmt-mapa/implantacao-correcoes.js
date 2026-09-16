@@ -1,4 +1,4 @@
-import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js?v=vias-acabamento-20260915-3';
+import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
 import * as T from 'three';
 import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';

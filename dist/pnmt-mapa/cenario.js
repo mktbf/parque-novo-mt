@@ -1,4 +1,4 @@
-import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=vias-acabamento-20260915-3';
+import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
 import {createCanopyGeometry} from './folhagem.js?v=cenario-integral-20260914-2';
 import {createIntegralLandscape} from './cenario-integral.js?v=cenario-integral-20260914-2';
 import * as T from 'three';

@@ -2,7 +2,7 @@ import * as T from 'three';
 import {autodromeFinishData as D} from './autodromo-superficies.js?v=autodromo-acabamento-20260913-2';
 export const AUTODROME_FINISH_VERSION='autodromo-acabamento-20260913-2';
 export const finishMaterials=new Map();
-const palette={asphalt:'#c8cfcc',grass:'#86abb0',shoulder:'#b6ab8d',runoff:'#1c79af',kerbWhite:'#ece7d1',kerbGreen:'#568671',paddock:'#b6baba',pit:'#c0c2ba',plaza:'#c0bbab',edge:'#ececdf',marking:'#eeeadd',drain:'#353e3d',steel:'#87969b',post:'#a5aeae',concrete:'#babdaf',mesh:'#818b87',lampBody:'#253239',lampFace:'#e3e3c9'};
+const palette={asphalt:'#c8cfcc',grass:'#86abb0',shoulder:'#b6ab8d',runoff:'#383d40',kerbWhite:'#ece7d1',kerbGreen:'#568671',paddock:'#b6baba',pit:'#c0c2ba',plaza:'#c0bbab',edge:'#ececdf',marking:'#eeeadd',drain:'#353e3d',steel:'#87969b',post:'#a5aeae',concrete:'#babdaf',mesh:'#818b87',lampBody:'#253239',lampFace:'#e3e3c9'};
 let nighttime=false,glowTexture=null;
 function mat(key){
  if(!finishMaterials.has(key)){
@@ -86,7 +86,7 @@ export async function loadAutodromeFinishMaterials(renderer){
  const textures=glowTexture?[glowTexture]:[],loader=new T.TextureLoader();
  const load=async(file,srgb=false)=>{const t=await loader.loadAsync(file);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());if(srgb)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const results=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async prefix=>({prefix,maps:await Promise.all([load(`./assets/materials/${prefix}_diff_1k.jpg`,true),load(`./assets/materials/${prefix}_rough_1k.jpg`),load(`./assets/materials/${prefix}_nor_gl_1k.jpg`)])})));
- for(const r of results)if(r.status==='fulfilled'){const {prefix,maps}=r.value;for(const key of prefix==='leafy_grass'?['grass']:['asphalt','paddock','pit']){const m=mat(key);[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(key==='grass'?.20:.18);m.needsUpdate=true;}}
+ for(const r of results)if(r.status==='fulfilled'){const {prefix,maps}=r.value;for(const key of prefix==='leafy_grass'?['grass']:['asphalt','paddock','pit','runoff']){const m=mat(key);[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(key==='grass'?.20:.18);m.needsUpdate=true;}}
  try{const light=await load('./assets/autodromo-acabamento/luz-piso.png');light.channel=1;light.wrapS=light.wrapT=T.ClampToEdgeWrapping;for(const key of ['asphalt',...Object.keys(D.surfaces)]){const m=mat(key);m.lightMap=light;m.lightMapIntensity=nighttime?2.4:0;m.needsUpdate=true;}}
  catch(e){console.warn('PNMT: luz de piso indisponível; iluminação local continua ativa.');}
  return textures;

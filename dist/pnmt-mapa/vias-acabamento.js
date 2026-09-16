@@ -1,6 +1,6 @@
 import * as T from 'three';
-import {roadFinishData as D} from './vias-acabamento-dados.js?v=vias-acabamento-20260915-3';
-export {roadFinishData} from './vias-acabamento-dados.js?v=vias-acabamento-20260915-3';
+import {roadFinishData as D} from './vias-acabamento-dados.js?v=vias-acabamento-20260915-4';
+export {roadFinishData} from './vias-acabamento-dados.js?v=vias-acabamento-20260915-4';
 
 const materials=new Map();
 const material=(name,color,roughness=.92)=>{
