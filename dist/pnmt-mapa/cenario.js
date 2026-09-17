@@ -27,8 +27,8 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
  const colors={curbs:'#bec1b3',roadEdges:'#eee9d6',roadDashes:'#eee9d6',parkingBays:'#e6e5ce'};
  for(const [key,data]of Object.entries(D.surfaces)){if(key!=='parkingBays'||!data.indices.length)continue;const m=material(key,colors[key]);m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;paint.add(surface(data,key==='curbs'?.18:.155,m));}
  const palette=['#3d653b','#516f3d','#5e753f','#315a3c','#687e48'],trunks=[],crowns=[];
- // Stable thinning keeps the same spatial distribution on small screens.
- const entries=integral.trees.filter((_,i)=>!smallScreen||i%2===0);
+ // Stable thinning keeps the same spatial distribution on small screens; preserva o platô da Casa Cuiabana e anfiteatro livres de árvores
+ const entries=integral.trees.filter(([x,z],i)=>(!smallScreen||i%2===0) && !(x >= 420 && x <= 488 && z >= 624 && z <= 675));
  for(const [x,z,h,r,c]of entries){
   trunks.push({p:[x,h*.32,z],s:[.18,h*.64,.18],color:c%2?'#68553f':'#594d3d'});
   crowns.push({p:[x,h*.74,z],s:[r,h*.37,r],a:c*.73+x,color:palette[c]});

@@ -234,25 +234,11 @@ function house(g){
  }
  box(f,0,base+wall-.17,-depth,width,.18,.20,M.white);
  for(const side of [-1,1]){box(f,side*width/2,base,-depth/2,.12,wall,depth,M.cream);for(let j=0;j<4;j++){const q=group(f,side*(width/2+.075),-1.3-j*2.5,side*Math.PI/2);arch(q,0,base+.65,0,.95,2.1,M.wood);}}
- // Praça e escadaria: piso e patamares curtos, sem base retangular sobre o lago.
- const plaza=[[-width/2-1.1,-.2],[width/2+1.1,-.2],[width/2+1.5,3.5],[width*.38,6.0],[-width*.35,6.0],[-width/2-1.5,3.5]];
- flat(f,plaza,.15,M.paving);box(f,0,base-.17,1.1,width+1.7,.16,2.3,M.paving);
- // Centro e duas passagens laterais; entre elas há patamares para sentar.
- for(const x of [-width/2+.7,0,width/2-.7]){
-  const n=8;for(let i=0;i<n;i++){const y=.16+(n-i)*.14,z=2.35+i*.37;box(f,x,y,z,1.15,.14,.39,i%2?M.granite:M.stoneDark);}
-  for(const side of [-1,1])rail(f,[[x+side*.60,1.44,2.15],[x+side*.60,.33,5.10]],.70,M.steel,1.3);
- }
- for(const s of [-1,1])for(let i=0;i<4;i++){
-  const w=width/2-2.1,x=s*(width/4-.1),z=2.55+i*.68,y=1.04-i*.22;
-  box(f,x,.14,z,w,y,.70,i%2?M.granite:M.rose);box(f,x,y+.12,z-.13,w-.12,.06,.38,M.wood);
- }
- // Balaustrada e molduras são geometria, sem imagem de fachada colada.
- for(const s of [-1,1]){
-  const x0=s<0?-width/2:-width/2+width*.58,x1=s<0?-width*.08:width/2;
-  beam(f,[x0,base+.75,1.85],[x1,base+.75,1.85],.045,M.white);
-  for(let x=x0;x<x1;x+=.34){cylinder(f,x,base+.04,1.85,.047,.63,M.white,8);const o=mesh(f,new T.SphereGeometry(.085,8,6),M.white);o.position.set(x,base+.32,1.85);o.scale.y=1.6;}
- }
- for(const x of [-width*.36,width*.36]){shrub(f,x,1.0,.58);light(f,x,1.45,3.2);}
+ // Soleira e embasamento limpos para conexão com a grande esplanada e o anfiteatro real
+ box(f,0,0,-depth/2,width+0.8,base,depth+0.8,M.stone);
+ box(f,0,base-.15,0.7,width+1.2,.16,1.6,M.paving);
+ box(f,0,base-.45,1.5,bay*1.5,.16,1.0,M.granite);
+ box(f,0,base-.75,2.1,bay*1.9,.16,1.0,M.granite);
  g.userData.leisureVersion=leisureVersion;g.userData.registration={corners:D.corners,front:D.front,center:[cx,cz],rotation:angle,width,depth};
  const fp=[[-width/2-2,-depth-1],[width/2+2,-depth-1],[width/2+2,6.5],[-width/2-2,6.5]].map(([x,z])=>{let p=worldPoint(f,[x,0,z]);return [p[0],p[2]];});
  const outward=new T.Vector3(0,.42,1).applyAxisAngle(new T.Vector3(0,1,0),angle);

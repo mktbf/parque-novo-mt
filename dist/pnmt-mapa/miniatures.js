@@ -1,10 +1,10 @@
 import {loadRoadMaterials} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
 import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=cenario-integral-20260914-2';
 import {applyIntegralFinish,configureIntegralMaterials} from './acabamento-integral.js?v=cenario-integral-20260914-2';
-import {createScenario,scenarioMaterials} from './cenario.js?v=vias-acabamento-20260915-4';
-import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=espacos-acabamento-20260914-3';
+import {createScenario,scenarioMaterials} from './cenario.js?v=casa-cuiabana-real-20260917-3';
+import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=casa-cuiabana-real-20260917-3';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=pista-caminhada-20260916-1';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=casa-cuiabana-real-20260917-3';
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
@@ -360,7 +360,6 @@ export function createMiniatures({smallScreen=false}={}){
  for(let x=-10.5;x<=10.5;x+=3){box(cg,x-1.4,1,6.1,.24,7.2,.3,C.white);archedWindow(cg,x,1.9,6.2,1.8,3.8);}
  for(let i=0;i<7;i++){box(cg,0,.8-i*.1,8+i*1.0,27,.35,1.1,C.stone);for(const x of [-3.5,3.5])beam(cg,[x,1.4-i*.1,8+i],[x,2.2-i*.1,8+i],.07,C.dark);}
  for(let x=-12;x<=12;x+=1)beam(cg,[x,1.1,14],[x,2.1,14],.065,C.white);beam(cg,[-12,2.1,14],[12,2.1,14],.09,C.white);
- treesSmall(cg,[[-8,8],[8,8]],.65);
  const agro=models.get('agroplace');const ap=groupAt(agro,398,701);cylinder(ap,0,1,0,19,1,C.stone);cylinder(ap,0,2,0,16,11,C.glass);cylinder(ap,0,13,0,17,1.2,'#466347');ring(ap,0,2,0,17,.14,'#99b670');ring(ap,0,12.8,0,17,.14,'#99b670');for(let i=0;i<60;i++){const a=i/60*Math.PI*2;const b=box(ap,Math.cos(a)*16.8,2,Math.sin(a)*16.8,.6,12,1.3,i%3===0?'#8aaf69':'#466b42');b.rotation.y=-a;}for(let r=21;r<=25;r+=2){const step=cylinder(ap,0,.15+(25-r)*.1,0,r,.3,C.stone);step.castShadow=false;}
  const gate=models.get('portico-de-entrada');
  const park=models.get('estrutura-e-acesso');const parkFoot=places.find(p=>p.id==='estrutura-e-acesso').footprint;polygon(park,parkFoot,'#cfccb6',.6,.15);for(let x=720;x<=864;x+=11)for(let z=948;z<1029;z+=18)if(inPolygon([x,z],parkFoot)&&inPolygon([x+6,z+9],parkFoot)){path(park,[[x,z],[x,z+8],[x+6,z+8]],.35,C.white,.9,false,false);if((x+z)%4===0){box(park,x+3,1,z+4,3,1.6,6,'#eef0d9');box(park,x+3,2.3,z+4,2.6,.8,3,C.glass);}}

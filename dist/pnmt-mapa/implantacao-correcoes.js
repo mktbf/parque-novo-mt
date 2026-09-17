@@ -95,6 +95,242 @@ function rebuildGate(target){
  }
  target.userData.provenance=D.gate.provenance;
 }
+// =========================================================================
+// AMBIENTAÇÃO REAL DA CASA CUIABANA, ANFITEATRO, ESPLANADA E VIAS DE ACESSO
+// Conforme fotografias de drone de alta resolução (media_1789656856751.jpg)
+// =========================================================================
+function buildCasaCuiabanaEnvirons(target) {
+ // Geometria e orientação rigorosamente paralelas à fachada frontal da Casa Cuiabana
+ const houseFrontDx = -7.0, houseFrontDz = 16.3;
+ const grandWidth = 34.0;
+ const uLen = Math.hypot(houseFrontDx, houseFrontDz);
+ const ux = houseFrontDx / uLen, uz = houseFrontDz / uLen; // [-0.3946, 0.9189] unitário na largura (+u = direita da foto drone, -u = esquerda da foto drone)
+ const vx = -uz, vz = ux; // [-0.9189, -0.3946] normal apontando para o lago em frente à fachada
+ const houseAngle = -Math.atan2(houseFrontDz, houseFrontDx); // -1.976 rad
+
+ const ccX = 452.0, ccZ = 654.15; // centro da fachada da Casa Cuiabana
+ const topX = ccX + vx * 7.2, topZ = ccZ + vz * 7.2; // centro do terraço superior do anfiteatro
+
+ // Extremos da balaustrada superior do anfiteatro
+ // pTopR_photo (+u): lado direito da foto do drone (em direção à esplanada leste e AgroPlace)
+ // pTopL_photo (-u): lado esquerdo da foto do drone (em direção à Sagrada Família e via de acesso)
+ const pTopR_photo = [topX + ux * (grandWidth / 2), topZ + uz * (grandWidth / 2)];
+ const pTopL_photo = [topX - ux * (grandWidth / 2), topZ - uz * (grandWidth / 2)];
+
+ // 1. GRANDE ESPLANADA DA CASA CUIABANA (Piso contínuo em placas de concreto claro a y = 1.50)
+ const esplanadePts = [
+  // Borda da balaustrada superior
+  [pTopL_photo[0], pTopL_photo[1]],
+  [pTopR_photo[0], pTopR_photo[1]],
+  // Expansão da esplanada para a direita (+u, setor dos canteiros)
+  [pTopR_photo[0] + ux * 16.0, pTopR_photo[1] + uz * 16.0],
+  [pTopR_photo[0] + ux * 16.0 - vx * 16.0, pTopR_photo[1] + uz * 16.0 - vz * 16.0],
+  // Faixa posterior atrás da Casa Cuiabana (ao pé da encosta norte)
+  [ccX - vx * 12.0 + ux * 10.0, ccZ - vz * 12.0 + uz * 10.0],
+  [ccX - vx * 12.0 - ux * 12.0, ccZ - vz * 12.0 - uz * 12.0],
+  // Conexão com o platô esquerdo (-u, junto à via e Sagrada Família)
+  [pTopL_photo[0] - ux * 8.0 - vx * 10.0, pTopL_photo[1] - uz * 8.0 - vz * 10.0],
+  [pTopL_photo[0] - ux * 8.0, pTopL_photo[1] - uz * 8.0]
+ ];
+ P.polygon(target, esplanadePts, '#ded9cf', 1.50, 0.05);
+
+ // Meio-fio perimetral da esplanada
+ for (let i = 0; i < esplanadePts.length; i++) {
+  const p1 = esplanadePts[i], p2 = esplanadePts[(i + 1) % esplanadePts.length];
+  P.beam(target, [p1[0], 1.52, p1[1]], [p2[0], 1.52, p2[1]], 0.08, '#c8c4b8');
+ }
+
+ // 2. CANTEIROS CIRCULARES DE GRAMADO NA ESPLANADA DIREITA (Fotos reais de drone)
+ const canteiroCenters = [
+  [pTopR_photo[0] + ux * 6.0 - vx * 3.5, pTopR_photo[1] + uz * 6.0 - vz * 3.5],
+  [pTopR_photo[0] + ux * 12.0 - vx * 9.0, pTopR_photo[1] + uz * 12.0 - vz * 9.0]
+ ];
+ for (const cPos of canteiroCenters) {
+  P.cylinder(target, cPos[0], 1.50, cPos[1], 4.2, 0.06, '#556e40');
+  P.tube(target, Array.from({length: 24}, (_, idx) => {
+   const a = idx / 23 * Math.PI * 2;
+   return [cPos[0] + Math.cos(a) * 4.2, 1.54, cPos[1] + Math.sin(a) * 4.2];
+  }), 0.07, '#ede9e1', true);
+  // Arbustos ornamentais baixos no centro do canteiro
+  for (let s = 0; s < 3; s++) {
+   const sa = s * Math.PI * 2 / 3;
+   const sx = cPos[0] + Math.cos(sa) * 1.5, sz = cPos[1] + Math.sin(sa) * 1.5;
+   P.cylinder(target, sx, 1.54, sz, 0.06, 0.45, '#5d4037');
+   P.add(target, new T.SphereGeometry(0.75, 6, 5), '#3e5c2b', sx, 1.95, sz);
+  }
+ }
+
+ // 3. O ANFITEATRO REAL (Arquibancada retilínea em 6 patamares com escadarias e balaustrada)
+ const aisleW = 2.8; // largura da escadaria central
+ const lateralStairW = 1.6; // escadarias laterais
+
+ // Abertura central na balaustrada superior para passagem da escadaria
+ const pAisleL = [topX - ux * (aisleW / 2 + 0.1), topZ - uz * (aisleW / 2 + 0.1)];
+ const pAisleR = [topX + ux * (aisleW / 2 + 0.1), topZ + uz * (aisleW / 2 + 0.1)];
+
+ // Ala esquerda da balaustrada superior (-u, lado Sagrada Família)
+ P.beam(target, [pTopL_photo[0], 2.45, pTopL_photo[1]], [pAisleL[0], 2.45, pAisleL[1]], 0.05, '#ede9e1');
+ P.beam(target, [pTopL_photo[0], 1.70, pTopL_photo[1]], [pAisleL[0], 1.70, pAisleL[1]], 0.04, '#ede9e1');
+ for (let b = 0; b <= 14; b++) {
+  const t = b / 14;
+  const bx = pTopL_photo[0] + (pAisleL[0] - pTopL_photo[0]) * t;
+  const bz = pTopL_photo[1] + (pAisleL[1] - pTopL_photo[1]) * t;
+  P.cylinder(target, bx, 1.55, bz, 0.05, 0.90, '#ede9e1');
+ }
+ P.box(target, pTopL_photo[0], 1.55, pTopL_photo[1], 0.45, 1.05, 0.45, '#dfdad0');
+ P.box(target, pAisleL[0], 1.55, pAisleL[1], 0.42, 1.05, 0.42, '#dfdad0');
+
+ // Ala direita da balaustrada superior (+u, lado canteiros)
+ P.beam(target, [pAisleR[0], 2.45, pAisleR[1]], [pTopR_photo[0], 2.45, pTopR_photo[1]], 0.05, '#ede9e1');
+ P.beam(target, [pAisleR[0], 1.70, pAisleR[1]], [pTopR_photo[0], 1.70, pTopR_photo[1]], 0.04, '#ede9e1');
+ for (let b = 0; b <= 14; b++) {
+  const t = b / 14;
+  const bx = pAisleR[0] + (pTopR_photo[0] - pAisleR[0]) * t;
+  const bz = pAisleR[1] + (pTopR_photo[1] - pAisleR[1]) * t;
+  P.cylinder(target, bx, 1.55, bz, 0.05, 0.90, '#ede9e1');
+ }
+ P.box(target, pAisleR[0], 1.55, pAisleR[1], 0.42, 1.05, 0.42, '#dfdad0');
+ P.box(target, pTopR_photo[0], 1.55, pTopR_photo[1], 0.45, 1.05, 0.45, '#dfdad0');
+
+ // 6 Patamares de Arquibancada (descem suavemente de y = 1.55 até y = 0.20 em direção ao lago)
+ const numTiers = 6;
+ const tierDepth = 1.35;
+ const yTop = 1.55, yBottom = 0.20;
+ const tierH = (yTop - yBottom) / numTiers; // ~0.225m
+
+ for (let k = 0; k < numTiers; k++) {
+  const yCur = yTop - (k + 1) * tierH;
+  const dCur = (k + 0.5) * tierDepth;
+  const cx = topX + vx * dCur;
+  const cz = topZ + vz * dCur;
+
+  // Ala Direita da foto (+u)
+  const halfGrandW = (grandWidth - aisleW - 2 * lateralStairW) / 2;
+  const rDist = grandWidth / 2 - lateralStairW - halfGrandW / 2;
+  const rx = cx + ux * rDist, rz = cz + uz * rDist;
+  const rBox = P.box(target, rx, yCur, rz, halfGrandW, tierH, tierDepth, '#dedad0');
+  rBox.rotation.y = houseAngle;
+  const rSeat = P.box(target, rx, yCur + tierH - 0.02, rz, halfGrandW * 0.98, 0.03, tierDepth * 0.55, '#989386');
+  rSeat.rotation.y = houseAngle;
+
+  // Ala Esquerda da foto (-u)
+  const lDist = -grandWidth / 2 + lateralStairW + halfGrandW / 2;
+  const lx = cx + ux * lDist, lz = cz + uz * lDist;
+  const lBox = P.box(target, lx, yCur, lz, halfGrandW, tierH, tierDepth, '#dedad0');
+  lBox.rotation.y = houseAngle;
+  const lSeat = P.box(target, lx, yCur + tierH - 0.02, lz, halfGrandW * 0.98, 0.03, tierDepth * 0.55, '#989386');
+  lSeat.rotation.y = houseAngle;
+
+  // Degraus da Escadaria Central
+  for (let s = 0; s < 2; s++) {
+   const stepD = (k + s * 0.5 + 0.25) * tierDepth;
+   const stepY = yTop - (k + s * 0.5 + 0.5) * tierH;
+   const scx = topX + vx * stepD, scz = topZ + vz * stepD;
+   const stepMesh = P.box(target, scx, stepY, scz, aisleW * 0.96, tierH * 0.52, tierDepth * 0.52, '#b8b4a8');
+   stepMesh.rotation.y = houseAngle;
+  }
+
+  // Degraus das Escadarias Laterais
+  const rStairDist = grandWidth / 2 - lateralStairW / 2;
+  const lStairDist = -grandWidth / 2 + lateralStairW / 2;
+  const rsBox = P.box(target, cx + ux * rStairDist, yCur, cz + uz * rStairDist, lateralStairW, tierH, tierDepth, '#c2beb4');
+  rsBox.rotation.y = houseAngle;
+  const lsBox = P.box(target, cx + ux * lStairDist, yCur, cz + uz * lStairDist, lateralStairW, tierH, tierDepth, '#c2beb4');
+  lsBox.rotation.y = houseAngle;
+
+  // Muretas laterais brancas de contenção
+  const mRDist = grandWidth / 2 + 0.15;
+  const mLDist = -grandWidth / 2 - 0.15;
+  const mRBox = P.box(target, cx + ux * mRDist, yCur, cz + uz * mRDist, 0.30, tierH + 0.65, tierDepth * 1.05, '#ede9e1');
+  mRBox.rotation.y = houseAngle;
+  const mLBox = P.box(target, cx + ux * mLDist, yCur, cz + uz * mLDist, 0.30, tierH + 0.65, tierDepth * 1.05, '#ede9e1');
+  mLBox.rotation.y = houseAngle;
+ }
+
+ // Corrimãos elegantes da escadaria central (postes verticais a cada patamar)
+ for (let k = 0; k <= numTiers; k += 2) {
+  const dP = k * tierDepth;
+  const yP = yTop - k * tierH;
+  const cx = topX + vx * dP, cz = topZ + vz * dP;
+  P.cylinder(target, cx, yP, cz, 0.04, 0.85, '#ede9e1');
+ }
+ const cTopX = topX, cTopZ = topZ;
+ const cBotX = topX + vx * (numTiers * tierDepth), cBotZ = topZ + vz * (numTiers * tierDepth);
+ P.beam(target, [cTopX, yTop + 0.82, cTopZ], [cBotX, yBottom + 0.82, cBotZ], 0.038, '#ede9e1');
+
+ // Palco e esplanada inferior (conecta a arquibancada à pista da orla de 9m)
+ const stageD = numTiers * tierDepth + 1.8;
+ const stageX = topX + vx * stageD, stageZ = topZ + vz * stageD;
+ const stageMesh = P.box(target, stageX, yBottom, stageZ, grandWidth + 2.0, 0.06, 3.6, '#ded9cf');
+ stageMesh.rotation.y = houseAngle;
+
+ // Taludes gramados laterais acompanhando o caimento da arquibancada
+ const westBerm = [
+  [pTopL_photo[0], pTopL_photo[1]],
+  [pTopL_photo[0] + vx * (numTiers * tierDepth), pTopL_photo[1] + vz * (numTiers * tierDepth)],
+  [pTopL_photo[0] + vx * (numTiers * tierDepth) - ux * 4.5, pTopL_photo[1] + vz * (numTiers * tierDepth) - uz * 4.5],
+  [pTopL_photo[0] - ux * 4.5, pTopL_photo[1] - uz * 4.5]
+ ];
+ P.polygon(target, westBerm, '#556e40', 0.85, 0.05);
+
+ const eastBerm = [
+  [pTopR_photo[0], pTopR_photo[1]],
+  [pTopR_photo[0] + vx * (numTiers * tierDepth), pTopR_photo[1] + vz * (numTiers * tierDepth)],
+  [pTopR_photo[0] + vx * (numTiers * tierDepth) + ux * 4.5, pTopR_photo[1] + vz * (numTiers * tierDepth) + uz * 4.5],
+  [pTopR_photo[0] + ux * 4.5, pTopR_photo[1] + uz * 4.5]
+ ];
+ P.polygon(target, eastBerm, '#556e40', 0.85, 0.05);
+
+ // 4. VIA DESCENDENTE DA COLINA AO LADO DA SAGRADA FAMÍLIA (Conforme foto drone media_1789656856751.jpg)
+ // Curva descendo pelo lado esquerdo da esplanada, estritamente atrás do anfiteatro e conectando à Vila
+ const hillRoadPts = [
+  [478.0, 696.0],
+  [474.0, 678.0],
+  [468.0, 658.0],
+  [462.0, 638.0],
+  [456.0, 622.0]
+ ];
+ for (let i = 0; i < hillRoadPts.length - 1; i++) {
+  const p1 = hillRoadPts[i], p2 = hillRoadPts[i + 1];
+  const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
+  const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
+  const ang = Math.atan2(dx, dz);
+  const rSeg = P.box(target, mx, 0.135, mz, 7.2, 0.03, len, '#363c40');
+  rSeg.rotation.y = ang;
+
+  // Faixas brancas de bordo
+  const nx = -dz / len * 3.3, nz = dx / len * 3.3;
+  P.beam(target, [p1[0] + nx, 0.155, p1[1] + nz], [p2[0] + nx, 0.155, p2[1] + nz], 0.045, '#f5f7f8');
+  P.beam(target, [p1[0] - nx, 0.155, p1[1] - nz], [p2[0] - nx, 0.155, p2[1] - nz], 0.045, '#f5f7f8');
+
+  // Meio-fio de concreto elevado
+  const curbNx = -dz / len * 3.6, curbNz = dx / len * 3.6;
+  P.beam(target, [p1[0] + curbNx, 0.165, p1[1] + curbNz], [p2[0] + curbNx, 0.165, p2[1] + curbNz], 0.12, '#cfcac0');
+  P.beam(target, [p1[0] - curbNx, 0.165, p1[1] - curbNz], [p2[0] - curbNx, 0.165, p2[1] - curbNz], 0.12, '#cfcac0');
+
+  // Faixa tracejada central
+  P.beam(target, [p1[0], 0.153, p1[1]], [p2[0], 0.153, p2[1]], 0.035, '#ded9cf');
+ }
+
+ // 5. PASSEIO / CONEXÃO LESTE SUBINDO EM DIREÇÃO AO AGROPLACE
+ const agroWalkPts = [
+  [pTopR_photo[0] + ux * 16.0, pTopR_photo[1] + uz * 16.0],
+  [pTopR_photo[0] + ux * 24.0 - vx * 4.0, pTopR_photo[1] + uz * 24.0 - vz * 4.0],
+  [pTopR_photo[0] + ux * 32.0 - vx * 8.0, pTopR_photo[1] + uz * 32.0 - vz * 8.0]
+ ];
+ for (let i = 0; i < agroWalkPts.length - 1; i++) {
+  const p1 = agroWalkPts[i], p2 = agroWalkPts[i + 1];
+  const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
+  const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
+  const ang = Math.atan2(dx, dz);
+  const wSeg = P.box(target, mx, 1.48, mz, 5.0, 0.03, len, '#ded9cf');
+  wSeg.rotation.y = ang;
+  const nx = -dz / len * 2.5, nz = dx / len * 2.5;
+  P.beam(target, [p1[0] + nx, 1.50, p1[1] + nz], [p2[0] + nx, 1.50, p2[1] + nz], 0.06, '#cfcac0');
+  P.beam(target, [p1[0] - nx, 1.50, p1[1] - nz], [p2[0] - nx, 1.50, p2[1] - nz], 0.06, '#cfcac0');
+ }
+}
+
 function correctVillage(target){
  const facades = [];
  target.traverse(o => {
@@ -162,22 +398,22 @@ function correctVillage(target){
   target.add(f);
  });
 
- // 3. LINHA DA ORLA DO LAGO (Contorno real da margem da água em frente à Vila)
- const shore = [
-  [404.4, 529.6],
-  [406.8, 548.0],
-  [409.2, 568.0],
-  [412.2, 591.7],
-  [414.9, 601.3],
-  [416.8, 612.7],
-  [418.7, 623.7],
-  [422.4, 637.7],
-  [426.0, 644.4],
-  [430.3, 648.7],
-  [435.0, 650.4],
-  [442.0, 652.0],
-  [448.0, 650.0]
- ];
+  const shore = [
+   [404.4, 529.6],
+   [406.8, 548.0],
+   [409.2, 568.0],
+   [412.2, 591.7],
+   [414.9, 601.3],
+   [416.8, 612.7],
+   [418.7, 623.7],
+   [422.0, 631.5],
+   [425.2, 639.0],
+   [426.5, 647.0],
+   [424.0, 655.0],
+   [419.5, 662.0],
+   [413.0, 667.5],
+   [404.0, 670.0]
+  ];
 
  // Normais internas ao longo da orla apontando para o interior da praça
  const nShore = shore.length;
@@ -223,29 +459,10 @@ function correctVillage(target){
   P.beam(target, [q1[0], 0.150, q1[1]], [q2[0], 0.150, q2[1]], 0.15, '#cfcac0');
  }
 
- // Conexão norte da pista de caminhada contornando o anfiteatro em direção à Casa Cuiabana e margem oeste
- const northLoop = [
-  [448.0, 650.0],
-  [446.0, 656.0],
-  [438.0, 658.0],
-  [430.0, 656.0],
-  [426.0, 646.0]
- ];
- for (let i = 0; i < northLoop.length - 1; i++) {
-  const p1 = northLoop[i], p2 = northLoop[i+1];
-  const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
-  const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
-  const ang = Math.atan2(dx, dz);
-  const roadSegment = P.box(target, mx, 0.118, mz, 8.0, 0.026, len, '#363c40');
-  roadSegment.rotation.y = ang;
-  P.beam(target, [p1[0], 0.146, p1[1]], [p2[0], 0.146, p2[1]], 0.04, '#f5f7f8');
- }
-
  // 5. A GRANDE ESPLANADA / PRAÇA DAS NAÇÕES (Inicia no meio-fio da pista de caminhada e sobe até as fachadas)
+ const vilaInner = promenadeInner.slice(0, 7);
  const backEdge = [
-  [456.0, 648.0], // junto à Casa Cuiabana
-  [458.0, 636.0], // anfiteatro norte
-  [457.0, 622.0], // início Ala 1 (Sagrada Família)
+  [456.0, 622.0], // início Ala 1 (Sagrada Família)
   [454.0, 606.0],
   [449.0, 588.0],
   [443.0, 570.0],
@@ -256,7 +473,7 @@ function correctVillage(target){
   [404.0, 518.0]  // conexão sul
  ];
  const plazaPts = [
-  ...promenadeInner,
+  ...vilaInner,
   ...backEdge
  ];
  P.polygon(target, plazaPts, '#ded9cf', 0.130, 0.02);
@@ -267,7 +484,7 @@ function correctVillage(target){
   for (let i = 1; i < line.length; i++) l.push(l.at(-1) + Math.hypot(line[i][0] - line[i-1][0], line[i][1] - line[i-1][1]));
   return l;
  }
- const innerLens = getLens(promenadeInner), totalInner = innerLens.at(-1);
+ const innerLens = getLens(vilaInner), totalInner = innerLens.at(-1);
  const spine = [...line2.slice().reverse(), ...line1.slice().reverse().slice(1)];
  const spineLens = getLens(spine), totalSpine = spineLens.at(-1);
 
@@ -280,7 +497,7 @@ function correctVillage(target){
  for (let s = 1; s <= 20; s++) {
   if (s % 2 !== 0) continue;
   const t = s / 21;
-  const pFront = interp(promenadeInner, innerLens, totalInner * t);
+  const pFront = interp(vilaInner, innerLens, totalInner * t);
   const pBack = interp(spine, spineLens, totalSpine * t);
   const dx = pFront[0] - pBack[0], dz = pFront[1] - pBack[1];
   const len = Math.hypot(dx, dz) || 1;
@@ -352,11 +569,13 @@ function correctVillage(target){
   [408.7, 583.5],
   [410.5, 587.5],
   [412.2, 591.7],
-  [414.0, 605.0],
-  [416.0, 620.0],
-  [420.0, 635.0],
-  [426.0, 646.0],
-  [435.0, 650.4]
+  [413.5, 605.0],
+  [414.0, 618.0],
+  [412.0, 630.0],
+  [408.0, 642.0],
+  [402.0, 652.0],
+  [394.0, 660.0],
+  [385.0, 666.0]
  ];
  for (let i = 0; i < westShore.length - 1; i++) {
   const p1 = westShore[i], p2 = westShore[i+1];
@@ -423,7 +642,7 @@ function correctVillage(target){
    const a = spine[j-1], b = spine[j], segT = (d - spineLens[j-1]) / (spineLens[j] - spineLens[j-1]);
    const bx = a[0] + (b[0] - a[0]) * segT, bz = a[1] + (b[1] - a[1]) * segT;
    const dx = b[0] - a[0], dz = b[1] - a[1], len = Math.hypot(dx, dz) || 1;
-   const hillNx = dz / len, hillNz = -dx / len; // normal apontando para o interior da colina (Leste / atrás das fachadas)
+   const hillNx = dz / len, hillNz = -dx / len;
 
    const tx = bx + hillNx * distFromSpine + (s % 2 ? 1.2 : -1.2);
    const tz = bz + hillNz * distFromSpine + (row % 2 ? 0.9 : -0.9);
@@ -431,22 +650,40 @@ function correctVillage(target){
    const rCrown = 2.2 + ((s * 3 + row * 7) % 4) * 0.45;
    const color = treeColors[(s + row * 2) % treeColors.length];
 
+   // Preservar a esplanada, anfiteatro, acessos e orla da Casa Cuiabana completamente limpos de árvores
+   if (tx >= 418 && tx <= 488 && tz >= 622 && tz <= 665) continue;
+
    P.cylinder(target, tx, yBerm, tz, 0.26, hTree * 0.6, '#523a28', 0.18);
    const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, yBerm + hTree * 0.75, tz);
    crown.scale.set(1.0 + (s % 3) * 0.1, 0.85, 1.0 + (row % 2) * 0.15);
   }
  }
 
- // Árvores adicionais na encosta atrás da Casa Cuiabana
- for (let r = 0; r < 4; r++) {
-  for (let c = 0; c < 5; c++) {
-   const tx = 464 + r * 5.2 + (c % 2 ? 1.4 : -1.4);
-   const tz = 646 + c * 5.0 + (r % 2 ? 1.0 : -1.0);
-   const yBerm = 1.0 + r * 1.1;
-   const hTree = 5.2 + ((r * 3 + c * 5) % 4) * 0.6;
-   const rCrown = 2.4 + ((r + c) % 3) * 0.4;
+ // Bosque denso de cerrado na encosta norte subindo imediatamente atrás da Casa Cuiabana (conforme media_1789656856751.jpg)
+ for (let r = 0; r < 6; r++) {
+  for (let c = 0; c < 10; c++) {
+   const tx = 432 + c * 6.0 + (r % 2 ? 1.8 : -1.8);
+   const tz = 667 + r * 5.2 + (c % 2 ? 1.2 : -1.2);
+   const yBerm = 1.5 + r * 1.15; // elevação contínua da encosta
+   const hTree = 5.2 + ((r * 3 + c * 5) % 4) * 0.65;
+   const rCrown = 2.4 + ((r + c) % 3) * 0.45;
    const color = treeColors[(r + c) % treeColors.length];
    P.cylinder(target, tx, yBerm, tz, 0.28, hTree * 0.6, '#523a28', 0.18);
+   const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, yBerm + hTree * 0.75, tz);
+   crown.scale.set(1.08, 0.88, 1.08);
+  }
+ }
+
+ // Bosque denso na colina oeste (a oeste da via de acesso descendente)
+ for (let r = 0; r < 4; r++) {
+  for (let c = 0; c < 10; c++) {
+   const tx = 398 + r * 5.2 + (c % 2 ? 1.5 : -1.5);
+   const tz = 620 + c * 7.5 + (r % 2 ? 1.8 : -1.8);
+   const yBerm = 1.0 + (420 - tx) * 0.16;
+   const hTree = 5.0 + ((r * 2 + c * 7) % 4) * 0.6;
+   const rCrown = 2.3 + ((r + c) % 3) * 0.4;
+   const color = treeColors[(r + c * 2) % treeColors.length];
+   P.cylinder(target, tx, yBerm, tz, 0.26, hTree * 0.6, '#523a28', 0.18);
    const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, yBerm + hTree * 0.75, tz);
    crown.scale.set(1.05, 0.85, 1.05);
   }
@@ -470,13 +707,8 @@ function correctVillage(target){
  archGeo.rotateY(Math.PI/2);
  P.add(target, archGeo, '#cfd8dc', pavX - pavL/2, pavH, pavZ);
 
- // Anfiteatro escalonado na curva norte do lago (em frente à Casa Cuiabana)
- const amphiX = 440, amphiZ = 642;
- for (let st = 0; st < 5; st++) {
-  const rSt = 7.5 - st * 1.1;
-  const stepGeo = new T.CylinderGeometry(rSt, rSt, 0.35, 24, 1, false, Math.PI * 0.15, Math.PI * 0.95);
-  P.add(target, stepGeo, '#dedad0', amphiX, 0.15 + st * 0.32, amphiZ);
- }
+ // 11. AMBIENTAÇÃO REAL DA CASA CUIABANA, ANFITEATRO, ESPLANADA E VIAS DE ACESSO
+ buildCasaCuiabanaEnvirons(target);
 
  target.name = 'Vila das Nações · fachadas, praça e orla completa';
  target.userData.provenance = D.village.provenance;
