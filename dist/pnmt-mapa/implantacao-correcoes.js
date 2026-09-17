@@ -2,7 +2,7 @@ import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js
 import * as T from 'three';
 import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
-import {primitives as P} from './refinamentos.js?v=vila-realista-20260916-4';
+import {primitives as P} from './refinamentos.js?v=pista-caminhada-20260916-1';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
  * O root de miniatures aplica [-620, 0, -570]. Não repetir essa transformação.
@@ -179,9 +179,70 @@ function correctVillage(target){
   [448.0, 650.0]
  ];
 
- // 4. A GRANDE ESPLANADA / PRAÇA DAS NAÇÕES (Piso contínuo unindo as fachadas, anfiteatro e orla)
- const plazaPts = [
-  ...shore,
+ // Normais internas ao longo da orla apontando para o interior da praça
+ const nShore = shore.length;
+ const inNormals = [];
+ for (let i = 0; i < nShore; i++) {
+  let dx, dz;
+  if (i === 0) {
+   dx = shore[1][0] - shore[0][0]; dz = shore[1][1] - shore[0][1];
+  } else if (i === nShore - 1) {
+   dx = shore[nShore-1][0] - shore[nShore-2][0]; dz = shore[nShore-1][1] - shore[nShore-2][1];
+  } else {
+   dx = shore[i+1][0] - shore[i-1][0]; dz = shore[i+1][1] - shore[i-1][1];
+  }
+  const len = Math.hypot(dx, dz) || 1;
+  inNormals.push([dz / len, -dx / len]);
+ }
+
+ // Linha interna que delimita a Pista de Caminhada (largura real de 9.0m) da Esplanada
+ const roadWidth = 9.0;
+ const promenadeInner = shore.map((p, i) => [
+  +(p[0] + inNormals[i][0] * roadWidth).toFixed(2),
+  +(p[1] + inNormals[i][1] * roadWidth).toFixed(2)
+ ]);
+
+ // 4. PISTA DE CAMINHADA DA ORLA (PAVIMENTO ASFÁLTICO DEDICADO DE 9M CONFORME O PROJETO E FOTOS 02, 03, 04 E 05)
+ const pistaPolygon = [...shore, ...promenadeInner.slice().reverse()];
+ P.polygon(target, pistaPolygon, '#363c40', 0.118, 0.026);
+
+ // Faixas brancas de bordo e sinalização da pista de caminhada
+ for (let i = 0; i < shore.length - 1; i++) {
+  const p1 = shore[i], p2 = shore[i+1];
+  const q1 = promenadeInner[i], q2 = promenadeInner[i+1];
+  const inNx = inNormals[i][0], inNz = inNormals[i][1];
+  const inNx2 = inNormals[i+1][0], inNz2 = inNormals[i+1][1];
+
+  // Faixa de bordo externa (junto ao parapeito/guarda-corpo da água)
+  P.beam(target, [p1[0] + inNx * 0.45, 0.146, p1[1] + inNz * 0.45], [p2[0] + inNx2 * 0.45, 0.146, p2[1] + inNz2 * 0.45], 0.045, '#f5f7f8');
+
+  // Faixa de bordo interna (junto ao meio-fio da praça)
+  P.beam(target, [q1[0] - inNx * 0.45, 0.146, q1[1] - inNz * 0.45], [q2[0] - inNx2 * 0.45, 0.146, q2[1] - inNz2 * 0.45], 0.045, '#f5f7f8');
+
+  // Meio-fio de concreto elevado delimitando a pista da esplanada
+  P.beam(target, [q1[0], 0.150, q1[1]], [q2[0], 0.150, q2[1]], 0.15, '#cfcac0');
+ }
+
+ // Conexão norte da pista de caminhada contornando o anfiteatro em direção à Casa Cuiabana e margem oeste
+ const northLoop = [
+  [448.0, 650.0],
+  [446.0, 656.0],
+  [438.0, 658.0],
+  [430.0, 656.0],
+  [426.0, 646.0]
+ ];
+ for (let i = 0; i < northLoop.length - 1; i++) {
+  const p1 = northLoop[i], p2 = northLoop[i+1];
+  const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
+  const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
+  const ang = Math.atan2(dx, dz);
+  const roadSegment = P.box(target, mx, 0.118, mz, 8.0, 0.026, len, '#363c40');
+  roadSegment.rotation.y = ang;
+  P.beam(target, [p1[0], 0.146, p1[1]], [p2[0], 0.146, p2[1]], 0.04, '#f5f7f8');
+ }
+
+ // 5. A GRANDE ESPLANADA / PRAÇA DAS NAÇÕES (Inicia no meio-fio da pista de caminhada e sobe até as fachadas)
+ const backEdge = [
   [456.0, 648.0], // junto à Casa Cuiabana
   [458.0, 636.0], // anfiteatro norte
   [457.0, 622.0], // início Ala 1 (Sagrada Família)
@@ -192,31 +253,34 @@ function correctVillage(target){
   [429.0, 538.0], // transição Ala 1 / Ala 2
   [421.0, 528.0],
   [411.0, 522.0],
-  [398.0, 516.0], // fim Ala 2 (Sul)
-  [396.0, 522.0]  // fechamento com a orla sul
+  [404.0, 518.0]  // conexão sul
+ ];
+ const plazaPts = [
+  ...promenadeInner,
+  ...backEdge
  ];
  P.polygon(target, plazaPts, '#ded9cf', 0.130, 0.02);
 
- // Faixas transversais listradas fanning através da praça (fotos reais do drone)
+ // Faixas transversais listradas fanning através da praça (param no meio-fio da pista, sem invadir a água)
  function getLens(line) {
   const l = [0];
   for (let i = 1; i < line.length; i++) l.push(l.at(-1) + Math.hypot(line[i][0] - line[i-1][0], line[i][1] - line[i-1][1]));
   return l;
  }
- const shoreLens = getLens(shore), totalShore = shoreLens.at(-1);
+ const innerLens = getLens(promenadeInner), totalInner = innerLens.at(-1);
+ const spine = [...line2.slice().reverse(), ...line1.slice().reverse().slice(1)];
+ const spineLens = getLens(spine), totalSpine = spineLens.at(-1);
+
  function interp(line, lens, d) {
   let j = 1; while (j < lens.length - 1 && lens[j] < d) j++;
   const a = line[j-1], b = line[j], t = (d - lens[j-1]) / (lens[j] - lens[j-1]);
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
  }
 
- const spine = [...line2.slice().reverse(), ...line1.slice().reverse().slice(1)];
- const spineLens = getLens(spine), totalSpine = spineLens.at(-1);
-
  for (let s = 1; s <= 20; s++) {
   if (s % 2 !== 0) continue;
   const t = s / 21;
-  const pFront = interp(shore, shoreLens, totalShore * t);
+  const pFront = interp(promenadeInner, innerLens, totalInner * t);
   const pBack = interp(spine, spineLens, totalSpine * t);
   const dx = pFront[0] - pBack[0], dz = pFront[1] - pBack[1];
   const len = Math.hypot(dx, dz) || 1;
@@ -230,7 +294,7 @@ function correctVillage(target){
   P.polygon(target, stripe, '#8c8473', 0.152, 0.018);
  }
 
- // 5. PASSEIO NOBRE ELEVADO EM FRENTE ÀS FACHADAS
+ // 6. PASSEIO NOBRE ELEVADO EM FRENTE ÀS FACHADAS
  for (let i = 0; i < line1.length - 1; i++) {
   P.beam(target, [line1[i][0], 0.155, line1[i][1]], [line1[i+1][0], 0.155, line1[i+1][1]], 0.18, '#e8e4db');
  }
@@ -251,16 +315,12 @@ function correctVillage(target){
   P.add(target, new T.SphereGeometry(0.08, 6, 6), '#3d4b53', bx, 1.0, bz);
  }
 
- // 6. PISTA DE CAMINHADA DA ORLA E MURO DE CONTENÇÃO (PARAPEITO)
+ // 7. MURO DE CONTENÇÃO DA ÁGUA (PARAPEITO) E ILUMINAÇÃO COLONIAL
  for (let i = 0; i < shore.length - 1; i++) {
   const p1 = shore[i], p2 = shore[i+1];
   const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
   const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
   const ang = Math.atan2(dx, dz);
-  const inNx = dz / len * 4.5, inNz = -dx / len * 4.5;
-
-  // Delimitação da pista de caminhada de 4.5m em relação à praça
-  P.beam(target, [p1[0] + inNx, 0.152, p1[1] + inNz], [p2[0] + inNx, 0.152, p2[1] + inNz], 0.07, '#9e988e');
 
   // Mureta de contenção / parapeito no contato com a água
   const wall = P.box(target, mx, 0.14, mz, 0.32, 0.82, len, '#ece8df');
@@ -303,6 +363,12 @@ function correctVillage(target){
   const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
   const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
   const ang = Math.atan2(dx, dz);
+  const outNx = -dz / len * 2.2, outNz = dx / len * 2.2;
+
+  // Faixa pavimentada de caminhada de 4.4m de largura na margem oposta
+  const wRoad = P.box(target, mx + outNx, 0.118, mz + outNz, 4.4, 0.026, len, '#363c40');
+  wRoad.rotation.y = ang;
+  P.beam(target, [p1[0] + outNx * 1.9, 0.144, p1[1] + outNz * 1.9], [p2[0] + outNx * 1.9, 0.144, p2[1] + outNz * 1.9], 0.04, '#f5f7f8');
 
   // Mureta baixa de proteção da margem oeste
   const wWall = P.box(target, mx, 0.14, mz, 0.28, 0.65, len, '#ece8df');
