@@ -19,9 +19,9 @@ const M={
  white:mat('paint-white','#dbe1de',.48,.12),steel:mat('steel','#687a7c',.43,.72),dark:mat('dark','#344a4d',.6,.35),
  glass:mat('glass','#5b8b90',.2,.26),glassAlt:mat('glass-alt','#8aa4a1',.27,.22),
  concrete:mat('concrete','#babdb8',.92),paving:mat('paving','#d1cdc0',.92),pavingAlt:mat('paving-alt','#b4b3a8',.94),
- cream:mat('cream','#e0dfb6',.91),yellow:mat('ochre','#d9b35c',.9),pearl:mat('pearl','#ded9e3',.45,.12),
- stone:mat('stone','#a7a99f',.94),stoneDark:mat('stone-dark','#747b78',.92),granite:mat('granite','#8c8985',.9),rose:mat('rose','#9b796b',.92),
- wood:mat('wood','#97866a',.86),soil:mat('soil','#695640',.97),grass:mat('grass','#688647',.96),
+ cream:mat('cream','#eae5db',.91),yellow:mat('ochre','#dedad0',.9),pearl:mat('pearl','#ded9e3',.45,.12),
+ stone:mat('stone','#8e8a80',.94),stoneDark:mat('stone-dark','#4a3629',.92),granite:mat('granite','#8c8985',.9),rose:mat('rose','#9b796b',.92),
+ wood:mat('wood','#5c3d28',.86),soil:mat('soil','#695640',.97),grass:mat('grass','#43752e',.96),
  leaf:mat('leaf','#416343',.92),leafAlt:mat('leaf-alt','#65713f',.94),leafWine:mat('leaf-wine','#5b4143',.96),
  blue:mat('bmx-blue','#4e87b6',.85),bank:mat('bmx-yellow','#d6b954',.91),navy:mat('bmx-navy','#183e65',.68),
  bluePanel:mat('panel-blue','#32678c',.6,.12),blueMid:mat('panel-mid','#759cac',.6,.12),joint:mat('joint','#747e79',.95)
@@ -229,8 +229,8 @@ function house(g){
  // Cobertura recuada atrás da platibanda; duas águas com junta e telhas discretas.
  const yEave=base+wall-.15,yRidge=yEave+.8;
  for(const side of [-1,1]){
-  const rows=Array.from({length:36},(_,i)=>{let x=-width/2+i*width/35;return [[x,yEave,side<0?-depth+.1:-.18],[x,yRidge,-depth/2]];});const q=ruled(f,rows,M.stoneDark,'Cobertura recuada',true);q.material.side=T.DoubleSide;
-  for(let x=-width/2+.15;x<width/2;x+=.26)beam(f,[x,yEave+.018,side<0?-depth+.1:-.18],[x,yRidge+.018,-depth/2],.018,M.granite);
+  const rows=Array.from({length:36},(_,i)=>{let x=-width/2+i*width/35;return [[x,yEave,side<0?-depth+.1:-.18],[x,yRidge,-depth/2]];});const q=ruled(f,rows,mat('clay-tile','#9e583e',.88),'Cobertura recuada',true);q.material.side=T.DoubleSide;
+  for(let x=-width/2+.15;x<width/2;x+=.26)beam(f,[x,yEave+.018,side<0?-depth+.1:-.18],[x,yRidge+.018,-depth/2],.018,mat('clay-ridge','#874630',.88));
  }
  box(f,0,base+wall-.17,-depth,width,.18,.20,M.white);
  for(const side of [-1,1]){box(f,side*width/2,base,-depth/2,.12,wall,depth,M.cream);for(let j=0;j<4;j++){const q=group(f,side*(width/2+.075),-1.3-j*2.5,side*Math.PI/2);arch(q,0,base+.65,0,.95,2.1,M.wood);}}

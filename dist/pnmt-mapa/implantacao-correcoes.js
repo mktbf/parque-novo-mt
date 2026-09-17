@@ -146,7 +146,7 @@ function buildCasaCuiabanaEnvirons(target) {
   [pTopR_photo[0] + ux * 12.0 - vx * 9.0, pTopR_photo[1] + uz * 12.0 - vz * 9.0]
  ];
  for (const cPos of canteiroCenters) {
-  P.cylinder(target, cPos[0], 1.50, cPos[1], 4.2, 0.06, '#556e40');
+  P.cylinder(target, cPos[0], 1.50, cPos[1], 4.2, 0.06, '#42782b');
   P.tube(target, Array.from({length: 24}, (_, idx) => {
    const a = idx / 23 * Math.PI * 2;
    return [cPos[0] + Math.cos(a) * 4.2, 1.54, cPos[1] + Math.sin(a) * 4.2];
@@ -271,7 +271,7 @@ function buildCasaCuiabanaEnvirons(target) {
   [pTopL_photo[0] + vx * (numTiers * tierDepth) - ux * 4.5, pTopL_photo[1] + vz * (numTiers * tierDepth) - uz * 4.5],
   [pTopL_photo[0] - ux * 4.5, pTopL_photo[1] - uz * 4.5]
  ];
- P.polygon(target, westBerm, '#556e40', 0.85, 0.05);
+ P.polygon(target, westBerm, '#42782b', 0.85, 0.05);
 
  const eastBerm = [
   [pTopR_photo[0], pTopR_photo[1]],
@@ -279,7 +279,7 @@ function buildCasaCuiabanaEnvirons(target) {
   [pTopR_photo[0] + vx * (numTiers * tierDepth) + ux * 4.5, pTopR_photo[1] + vz * (numTiers * tierDepth) + uz * 4.5],
   [pTopR_photo[0] + ux * 4.5, pTopR_photo[1] + uz * 4.5]
  ];
- P.polygon(target, eastBerm, '#556e40', 0.85, 0.05);
+ P.polygon(target, eastBerm, '#42782b', 0.85, 0.05);
 
  // 4. VIA DESCENDENTE DA COLINA AO LADO DA SAGRADA FAMÍLIA (Conforme foto drone media_1789656856751.jpg)
  // Curva descendo pelo lado esquerdo da esplanada, estritamente atrás do anfiteatro e conectando à Vila
@@ -659,20 +659,20 @@ function correctVillage(target){
   }
  }
 
- // Bosque denso de cerrado na encosta norte subindo imediatamente atrás da Casa Cuiabana (conforme media_1789656856751.jpg)
- for (let r = 0; r < 6; r++) {
-  for (let c = 0; c < 10; c++) {
-   const tx = 432 + c * 6.0 + (r % 2 ? 1.8 : -1.8);
-   const tz = 667 + r * 5.2 + (c % 2 ? 1.2 : -1.2);
-   const yBerm = 1.5 + r * 1.15; // elevação contínua da encosta
-   const hTree = 5.2 + ((r * 3 + c * 5) % 4) * 0.65;
-   const rCrown = 2.4 + ((r + c) % 3) * 0.45;
-   const color = treeColors[(r + c) % treeColors.length];
-   P.cylinder(target, tx, yBerm, tz, 0.28, hTree * 0.6, '#523a28', 0.18);
-   const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, yBerm + hTree * 0.75, tz);
-   crown.scale.set(1.08, 0.88, 1.08);
+  // Bosque denso de cerrado na encosta norte subindo atrás da Casa Cuiabana (conforme media_1789656856751.jpg e media_1789670775103.jpg)
+  for (let r = 0; r < 5; r++) {
+   for (let c = 0; c < 9; c++) {
+    const tx = 430 + c * 7.0 + (r % 2 ? 2.0 : -2.0);
+    const tz = 682 + r * 6.0 + (c % 2 ? 1.5 : -1.5);
+    const yBerm = 1.4 + r * 1.35; // elevação contínua da encosta
+    const hTree = 4.4 + ((r * 3 + c * 5) % 4) * 0.55;
+    const rCrown = 2.8 + ((r + c) % 3) * 0.45;
+    const color = treeColors[(r + c) % treeColors.length];
+    P.cylinder(target, tx, yBerm, tz, 0.28, hTree * 0.55, '#523a28', 0.18);
+    const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, yBerm + hTree * 0.7, tz);
+    crown.scale.set(1.2, 0.75, 1.2);
+   }
   }
- }
 
  // Bosque denso na colina oeste (a oeste da via de acesso descendente)
  for (let r = 0; r < 4; r++) {
@@ -688,6 +688,21 @@ function correctVillage(target){
    crown.scale.set(1.05, 0.85, 1.05);
   }
  }
+
+  // Bosque nativo na península da margem oposta ao lago (conforme fotos do drone media_1789670991364.jpg e media_1789671125597.jpg)
+  for (let r = 0; r < 5; r++) {
+   for (let c = 0; c < 8; c++) {
+    const tx = 340 + r * 10.5 + (c % 2 ? 2.5 : -2.5);
+    const tz = 540 + c * 12.0 + (r % 2 ? 3.0 : -3.0);
+    if (tx > 390 && tz > 570) continue;
+    const hTree = 5.0 + ((r * 3 + c * 7) % 5) * 0.7;
+    const rCrown = 2.4 + ((r + c * 2) % 4) * 0.5;
+    const color = treeColors[(r * 2 + c) % treeColors.length];
+    P.cylinder(target, tx, 0.2, tz, 0.28, hTree * 0.55, '#523a28', 0.18);
+    const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, 0.2 + hTree * 0.7, tz);
+    crown.scale.set(1.05, 0.88, 1.05);
+   }
+  }
 
  // 10. ELEMENTOS DE AMBIENTAÇÃO DISTANTE
  // Grande Pavilhão de Eventos com teto curvo metálico (ao SUL da esplanada, perto da curva e do lago)
@@ -723,7 +738,7 @@ function inside([x,z],ring){let ok=false;for(let i=0,j=ring.length-1;i<ring.leng
 export function applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure}){
  const R=D.registered;
  for(const g of [landscape,water,circuits,vegetation,infrastructure])clearGeometry(g);
- const grass=registeredMaterial('grass','#506344',.96),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#163e48',.06),bankMat=registeredMaterial('bank','#92856b',.97);
+ const grass=registeredMaterial('grass','#43752e',.88),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#1d8e9f',.06),bankMat=registeredMaterial('bank','#92856b',.97);
  registeredFloor(landscape,ROAD03.surfaces.ground,grass,0,'Terreno recortado');
  registeredFloor(landscape,ROAD03.surfaces.roads,roadAsphaltMaterial(),.12,'Vias · superfícies sem sobreposição');
  registeredFloor(landscape,R.meshes.banks,bankMat,.01,'Margens · interpretação da prancha');

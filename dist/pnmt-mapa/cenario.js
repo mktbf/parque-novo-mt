@@ -86,18 +86,24 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
  landscape.traverse(o=>{
   if(!o.isMesh||o.material!==groundMaterial)return;
   const p=o.geometry.attributes.position,colors=[];
-  for(let i=0;i<p.count;i++){
-   const x=p.getX(i),z=p.getZ(i);
-   const macro1=Math.sin(x*0.012+z*0.007);
-   const macro2=Math.cos(z*0.015-x*0.010);
-   const micro=Math.sin(x*0.045+z*0.022);
-   const r=0.62+0.12*macro1+0.04*micro;
-   const g=0.76+0.10*macro2+0.05*micro;
-   const b=0.48+0.08*(macro1+macro2);
-   colors.push(r,g,b);
-  }
-  o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));
-  o.material=detailedGround;
+   for(let i=0;i<p.count;i++){
+    const x=p.getX(i),z=p.getZ(i);
+    const macro1=Math.sin(x*0.012+z*0.007);
+    const macro2=Math.cos(z*0.015-x*0.010);
+    const micro=Math.sin(x*0.045+z*0.022);
+    // Grama verde vibrante e natural (conforme fotos reais de drone do Parque Novo MT)
+    let r=0.28+0.07*macro1+0.02*micro;
+    let g=0.50+0.09*macro2+0.03*micro;
+    let b=0.18+0.04*(macro1+macro2);
+    // Variação orgânica de solo avermelhado típico do cerrado em encostas
+    const earth=Math.max(0.0,Math.sin(x*0.009-z*0.013)*0.18);
+    r+=earth*0.14;
+    g-=earth*0.05;
+    b-=earth*0.03;
+    colors.push(r,g,b);
+   }
+   o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));
+   o.material=detailedGround;
  });
  let visible=true,night=false;
  return {root,integral,lamps:allLamps,setNight(value){integralFinish?.setNight(value);night=Boolean(value);lampFace.emissiveIntensity=night?4.6:0;poolMaterial.uniforms.strength.value=night?.38:0;glow.visible=night&&visible;},setVisible(view,buildings){visible=view==='3d';root.visible=visible;street.visible=Boolean(buildings);trees.visible=Boolean(buildings);integral.setBuildings(Boolean(buildings));glow.visible=night&&visible;},diagnostics(){return {version:'cenario-integral-20260914-2',trees:entries.length,lamps:allLamps.length,integral:integral.diagnostics(),architecture:integralFinish?.diagnostics(),sourceTreeCount:D.trees.length,roadFinishVersion:ROAD03.version,paintTriangles:{parkingBays:D.surfaces.parkingBays.indices.length/3,curbs:ROAD03.surfaces.curbs.indices.length/3,roadEdges:ROAD03.surfaces.edges.indices.length/3,roadDashes:ROAD03.surfaces.dashes.indices.length/3},canopyTriangles:crownMesh.count*(crownMesh.geometry.index?.count||crownMesh.geometry.attributes.position.count)/3};}};
