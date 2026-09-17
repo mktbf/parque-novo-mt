@@ -1,17 +1,17 @@
 import {loadRoadMaterials} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
-import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=realismo-lago-grama-20260917-8';
+import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=lago-satelite-20260917-11';
 import {applyIntegralFinish,configureIntegralMaterials} from './acabamento-integral.js?v=cenario-integral-20260914-2';
-import {createScenario,scenarioMaterials} from './cenario.js?v=realismo-lago-grama-20260917-8';
-import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=realismo-lago-grama-20260917-8';
+import {createScenario,scenarioMaterials} from './cenario.js?v=lago-satelite-20260917-11';
+import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=lago-satelite-20260917-11';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=realismo-lago-grama-20260917-8';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=lago-satelite-20260917-11';
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {terrain,places} from './park-data.js?v=cenario-integral-20260914-2';
 import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
-import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=realismo-lago-grama-20260917-8';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=lago-satelite-20260917-11';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];

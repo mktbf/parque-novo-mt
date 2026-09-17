@@ -1,4 +1,4 @@
-import './explore-parque.js?v=realismo-lago-grama-20260917-8';
+import './explore-parque.js?v=lago-satelite-20260917-11';
 
 /* Reutiliza as páginas do roteador do portal e apenas acrescenta o visualizador. */
 // O arquivo de rotas explicita os IDs que o mapa sabe localizar.

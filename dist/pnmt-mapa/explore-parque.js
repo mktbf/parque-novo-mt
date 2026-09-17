@@ -1,7 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
-const integrationVersion = 'realismo-lago-grama-20260917-8';
+const integrationVersion = 'lago-satelite-20260917-11';
 
 const safeHref = (value) => {
   try {
