@@ -1,17 +1,17 @@
 import {loadRoadMaterials} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
-import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=cenario-integral-20260914-2';
+import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=realismo-lago-grama-20260917-8';
 import {applyIntegralFinish,configureIntegralMaterials} from './acabamento-integral.js?v=cenario-integral-20260914-2';
-import {createScenario,scenarioMaterials} from './cenario.js?v=lago-grama-real-20260917-1';
-import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=casa-cuiabana-real-20260917-3';
+import {createScenario,scenarioMaterials} from './cenario.js?v=realismo-lago-grama-20260917-8';
+import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=realismo-lago-grama-20260917-8';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=autodromo-acabamento-20260913-2';
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=lago-grama-real-20260917-1';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=realismo-lago-grama-20260917-8';
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
 import {terrain,places} from './park-data.js?v=cenario-integral-20260914-2';
 import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
-import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=pista-caminhada-20260916-1';
+import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=realismo-lago-grama-20260917-8';
 
 // Plan coordinates are retained in all three views. Heights are illustrative.
 export const origin=[620,570];
@@ -49,21 +49,55 @@ export async function loadMaterials(renderer){
  const load=async(name,color=false)=>{const t=await loader.loadAsync('./assets/materials/'+name);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());if(color)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const sets=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async name=>({name,maps:await Promise.all([load(name+'_diff_1k.jpg',true),load(name+'_rough_1k.jpg'),load(name+'_nor_gl_1k.jpg')])})));
  textures.push(...await loadAutodromeFinishMaterials(renderer),...await loadRoadMaterials(renderer));
- const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values(),...scenarioMaterials.values(),...landscapeMaterials.values()];
- for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
-  for(const m of allMats){
-   const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
-   const isGrass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32','Cenário · terreno','Terreno recortado'].includes(m.name)||m.userData.surfaceKind==='grass';
-   if(name==='clean_asphalt'&&(asphalt||m.userData.surfaceKind==='asphalt')){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);if(!m.userData.surfaceKind)m.color.set('#24282b');m.needsUpdate=true;}
-    if(name==='leafy_grass'&&isGrass){
-     [m.map,m.roughnessMap,m.normalMap]=maps;
-     m.normalScale.setScalar(.35);
-     m.roughness=.82;
+  const grassCanvas=typeof document!=='undefined'?document.createElement('canvas'):null;
+  let grassMap=null;
+  if(grassCanvas){
+   grassCanvas.width=grassCanvas.height=512;
+   const gctx=grassCanvas.getContext('2d');
+   gctx.fillStyle='#3d7426';
+   gctx.fillRect(0,0,512,512);
+   let gSeed=24680;
+   for(let i=0;i<60000;i++){
+    gSeed=(Math.imul(gSeed,1664525)+1013904223)>>>0;
+    const gx=(gSeed%512),gy=((gSeed>>>9)%512),shade=(gSeed>>>18)/16384;
+    gctx.fillStyle=shade>0.65?'#4e922e':shade>0.35?'#32621d':'#448028';
+    gctx.fillRect(gx,gy,2,3);
+   }
+   grassMap=new T.CanvasTexture(grassCanvas);
+   grassMap.wrapS=grassMap.wrapT=T.RepeatWrapping;
+   grassMap.repeat.set(10.0,10.0);
+   grassMap.colorSpace=T.SRGBColorSpace;
+   grassMap.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());
+   textures.push(grassMap);
+  }
+
+  const allMats=[...mats.values(),...materialCache.values(),...registeredMaterials.values(),...scenarioMaterials.values(),...landscapeMaterials.values()];
+  if(grassMap){
+   for(const m of allMats){
+    const isGrass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32','Cenário · terreno','Terreno recortado'].includes(m.name)||m.userData.surfaceKind==='grass';
+    if(isGrass){
+     m.map=grassMap;
+     m.color.set(m.name==='Cenário · terreno'||m.vertexColors?'#ffffff':'#467e2a');
+     m.roughness=.84;
      m.metalness=.02;
-     if(m.map){m.map.wrapS=m.map.wrapT=T.RepeatWrapping;m.map.repeat.set(3.0,3.0);m.map.needsUpdate=true;}
-     if(m.roughnessMap){m.roughnessMap.wrapS=m.roughnessMap.wrapT=T.RepeatWrapping;m.roughnessMap.repeat.set(3.0,3.0);m.roughnessMap.needsUpdate=true;}
-     if(m.normalMap){m.normalMap.wrapS=m.normalMap.wrapT=T.RepeatWrapping;m.normalMap.repeat.set(3.0,3.0);m.normalMap.needsUpdate=true;}
-     m.color.set(m.name==='Cenário · terreno'||m.vertexColors?'#ffffff':'#46782f');
+     m.needsUpdate=true;
+    }
+   }
+  }
+
+  for(const result of sets){if(result.status!=='fulfilled')continue;const {name,maps}=result.value;
+   for(const m of allMats){
+    const asphalt=[C.road,'#4a554e','#677166','#697064','#889282','#1a1e21','#1e2225','#23292d','#101214','#24282b','#25292c'].includes(m.name);
+    const isGrass=[C.grass,'#b7c49a','#82986a','#b0ad82','#486e34','#466934','#466b32','Cenário · terreno','Terreno recortado'].includes(m.name)||m.userData.surfaceKind==='grass';
+    if(name==='clean_asphalt'&&(asphalt||m.userData.surfaceKind==='asphalt')){[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(.32);if(!m.userData.surfaceKind)m.color.set('#24282b');m.needsUpdate=true;}
+    if(name==='leafy_grass'&&isGrass){
+     if(grassMap)m.map=grassMap;
+     m.roughnessMap=maps[1];
+     m.normalMap=maps[2];
+     m.normalScale.setScalar(.28);
+     m.roughness=.84;
+     m.metalness=.02;
+     m.color.set(m.name==='Cenário · terreno'||m.vertexColors?'#ffffff':'#467e2a');
      m.needsUpdate=true;
     }
    }

@@ -1,7 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
-const integrationVersion = 'vias-acabamento-20260915-4';
+const integrationVersion = 'realismo-lago-grama-20260917-8';
 
 const safeHref = (value) => {
   try {
@@ -290,6 +290,7 @@ class ParqueExplorer extends HTMLElement {
       shadow.querySelector('.note').textContent = 'As informações do espaço e as opções de visita estão logo abaixo.';
     }
     const expanded = new URL('index.html', assets);
+    expanded.searchParams.set('v', integrationVersion);
     if (this._spaceId) expanded.searchParams.set('espaco', this._spaceId);
     if (this._spaceId === 'autodromo') expanded.searchParams.set('detalhe', 'reta');
     shadow.querySelector('.expand').href = expanded.href;

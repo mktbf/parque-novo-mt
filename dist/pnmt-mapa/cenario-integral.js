@@ -28,8 +28,8 @@ function addBridge(root,d){
 }
 export function createIntegralLandscape({smallScreen=false}){
  const root=new T.Group(),surfaces=new T.Group(),furniture=new T.Group();root.name='Praças, passeios e orlas';root.add(surfaces,furniture);
- const palette={paving:'#c8c1ab',service:'#646d69',curbs:'#d3cdb8',paverJoints:'#a49f8e',flowerBeds:'#554c37'},heights={paving:.135,service:.13,curbs:.175,paverJoints:.139,flowerBeds:.105};
- for(const [key,data]of Object.entries(D.surfaces)){if(!data.indices.length)continue;const m=material(key,palette[key]);if(key==='service')m.userData.surfaceKind='asphalt';if(key==='paverJoints'){m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;}surfaces.add(surface(data,heights[key],m));}
+ const palette={paving:'#cfcabf',service:'#646d69',curbs:'#d3cdb8',paverJoints:'#a49f8e',flowerBeds:'#3f7828'},heights={paving:.135,service:.13,curbs:.175,paverJoints:.139,flowerBeds:.105};
+ for(const [key,data]of Object.entries(D.surfaces)){if(!data.indices.length)continue;const m=material(key,palette[key]);if(key==='service')m.userData.surfaceKind='asphalt';if(key==='flowerBeds')m.userData.surfaceKind='grass';if(key==='paverJoints'){m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;}surfaces.add(surface(data,heights[key],m));}
  for(const bridge of D.bridges||[])addBridge(surfaces,bridge);
  const seats=[],steel=[],bins=[];
  for(const[x,z,a]of D.benches){const point=(xx,y,zz)=>({p:[x+Math.cos(a)*xx+Math.sin(a)*zz,y,z-Math.sin(a)*xx+Math.cos(a)*zz],a});

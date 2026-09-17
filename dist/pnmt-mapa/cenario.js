@@ -91,15 +91,15 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
     const macro1=Math.sin(x*0.012+z*0.007);
     const macro2=Math.cos(z*0.015-x*0.010);
     const micro=Math.sin(x*0.045+z*0.022);
-    // Grama verde vibrante e natural (conforme fotos reais de drone do Parque Novo MT)
-    let r=0.28+0.07*macro1+0.02*micro;
-    let g=0.50+0.09*macro2+0.03*micro;
-    let b=0.18+0.04*(macro1+macro2);
+    // Harmonização botânica: base rica com modulação orgânica sobre o mapa de grama
+    let r=0.88+0.06*macro1+0.02*micro;
+    let g=0.98+0.02*macro2+0.02*micro;
+    let b=0.82+0.05*(macro1+macro2);
     // Variação orgânica de solo avermelhado típico do cerrado em encostas
     const earth=Math.max(0.0,Math.sin(x*0.009-z*0.013)*0.18);
-    r+=earth*0.14;
-    g-=earth*0.05;
-    b-=earth*0.03;
+    r+=earth*0.10;
+    g-=earth*0.06;
+    b-=earth*0.04;
     colors.push(r,g,b);
    }
    o.geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));
