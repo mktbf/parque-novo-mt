@@ -567,6 +567,7 @@ function correctVillage(target){
    // Preservar a esplanada, anfiteatro, acessos e orla completamente limpos de árvores
    if (tx >= 418 && tx <= 490 && tz >= 620 && tz <= 675) continue;
    if (inside([tx, tz], plazaPts) || inside([tx, tz], w1Coords) || inside([tx, tz], w2Coords)) continue;
+   if (tx <= 426 && tz <= 522) continue; // Praça sul e entorno do telão completamente livres
 
    P.cylinder(target, tx, yBerm, tz, 0.26, hTree * 0.6, '#523a28', 0.18);
    const crown = P.add(target, new T.SphereGeometry(rCrown, 8, 6), color, tx, yBerm + hTree * 0.75, tz);
@@ -606,23 +607,126 @@ function correctVillage(target){
    }
   }
 
- // 10. ELEMENTOS DE AMBIENTAÇÃO DISTANTE
- // Grande Pavilhão de Eventos com teto curvo metálico (ao SUL da esplanada, perto da curva e do lago)
- const pavX = 405, pavZ = 495, pavW = 52, pavL = 34, pavH = 13.5;
- for (const px of [-pavW/2 + 2, pavW/2 - 2]) {
-  for (let z = -pavL/2; z <= pavL/2; z += 8.5) {
-   P.cylinder(target, pavX + px, 0.3, pavZ + z, 0.45, pavH, '#2a353c');
+ // 10. PRAÇA ABERTA SUL E TELÃO DE LED (CONFORME FOTOS REAIS DO DRONE MEDIA_1789741499073.JPG E MEDIA_1789741520868.PNG)
+ // A cobertura curva anteriormente colocada aqui não existe na realidade.
+ // A área é uma ampla praça aberta em piso de concreto listrado voltada ao lago,
+ // com um grande telão de LED sobre suporte arquitetônico no talude oeste.
+
+ // a. Ampliação da Praça das Nações para o Sul (Praça do Telão)
+ const southShore = [
+  [404.4, 529.6],
+  [398.0, 524.0],
+  [391.0, 516.0],
+  [385.0, 506.0],
+  [384.0, 494.0],
+  [385.5, 482.0],
+  [388.0, 474.0],
+  [394.0, 468.0],
+  [401.65, 470.12]
+ ];
+
+ const southWestBorder = [
+  [401.65, 470.12],
+  [406.0, 478.0],
+  [411.0, 488.0],
+  [414.5, 498.0],
+  [415.0, 508.0],
+  [412.0, 514.0]
+ ];
+
+ const southPlaza = [
+  ...southShore,
+  ...southWestBorder
+ ];
+ P.polygon(target, southPlaza, '#ded9cf', 0.130, 0.02);
+
+ // Listras de piso transversais na praça sul (conforme foto aérea em close-up media_1789741520868.png)
+ for (let z = 472; z <= 524; z += 3.2) {
+  let minX = 999, maxX = -999;
+  for (let x = 380; x <= 420; x += 0.8) {
+   if (P.inPolygon([x, z], southPlaza)) {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+   }
+  }
+  if (maxX > minX + 2.0) {
+   const stripeW = 0.45;
+   P.polygon(target, [
+    [minX + 0.8, z - stripeW],
+    [maxX - 0.8, z - stripeW],
+    [maxX - 0.8, z + stripeW],
+    [minX + 0.8, z + stripeW]
+   ], '#8c8473', 0.134, 0.012);
   }
  }
- const archRoof = new T.Shape();
- archRoof.moveTo(-pavW/2 - 2, 0);
- archRoof.quadraticCurveTo(0, 5.5, pavW/2 + 2, 0);
- archRoof.lineTo(pavW/2 + 2, 0.6);
- archRoof.quadraticCurveTo(0, 6.1, -pavW/2 - 2, 0.6);
- archRoof.closePath();
- const archGeo = new T.ExtrudeGeometry(archRoof, {depth: pavL, bevelEnabled: false});
- archGeo.rotateY(Math.PI/2);
- P.add(target, archGeo, '#cfd8dc', pavX - pavL/2, pavH, pavZ);
+
+ // b. Mureta de contenção, guarda-corpo e postes coloniais na orla sul
+ for (let i = 0; i < southShore.length - 1; i++) {
+  const p1 = southShore[i], p2 = southShore[i+1];
+  const dx = p2[0] - p1[0], dz = p2[1] - p1[1], len = Math.hypot(dx, dz) || 1;
+  const mx = (p1[0] + p2[0]) / 2, mz = (p1[1] + p2[1]) / 2;
+  const ang = Math.atan2(dx, dz);
+  const wall = P.box(target, mx, 0.06, mz, 0.32, 0.72, len, '#ece8df');
+  wall.rotation.y = ang;
+  P.beam(target, [p1[0], 0.82, p1[1]], [p2[0], 0.82, p2[1]], 0.045, '#3d4b53');
+  P.box(target, p1[0], 0.06, p1[1], 0.42, 0.82, 0.42, '#ece8df');
+  if (i % 2 === 0) {
+   const hLamp = 4.4;
+   P.cylinder(target, p1[0], 0.12, p1[1], 0.075, hLamp, '#1f2428', 0.055);
+   const armNx = dz / len * 1.2, armNz = -dx / len * 1.2;
+   P.beam(target, [p1[0], hLamp, p1[1]], [p1[0] + armNx, hLamp + 0.28, p1[1] + armNz], 0.042, '#1f2428');
+   P.cylinder(target, p1[0] + armNx, hLamp + 0.16, p1[1] + armNz, 0.16, 0.24, '#1f2428', 0.08);
+   P.add(target, new T.SphereGeometry(0.12, 6, 6), '#fdf6e2', p1[0] + armNx, hLamp + 0.12, p1[1] + armNz);
+  }
+ }
+
+ // c. Talude de grama a oeste (separando a praça da via de serviço da Arena)
+ const westBerm = [
+  [412.0, 514.0],
+  [415.0, 508.0],
+  [414.5, 498.0],
+  [411.0, 488.0],
+  [406.0, 478.0],
+  [401.65, 470.12],
+  [408.0, 468.0],
+  [416.0, 476.0],
+  [422.0, 488.0],
+  [426.0, 502.0],
+  [424.0, 514.0]
+ ];
+ P.polygon(target, westBerm, '#42782b', 0.14, 0.22);
+
+ // d. O GRANDE TELÃO DE LED (MONUMENTAL)
+ // Conforme fotos reais: localizado junto à borda oeste da praça, virado em direção à praça e ao lago.
+ const screenPos = [413.5, 495.0];
+ const screenAngle = -Math.PI / 2.3;
+ const telao = P.groupAt(target, screenPos[0], screenPos[1], screenAngle);
+ telao.name = 'Telão de LED · Praça das Nações';
+
+ // Base de fundação em concreto
+ P.box(telao, 0, 0.15, 0, 20.6, 0.5, 2.2, '#b0b5b2');
+
+ // Gabinete estrutural branco/cinza claro (corpo do telão)
+ P.box(telao, 0, 0.55, 0, 19.8, 8.8, 1.6, '#eaece8');
+
+ // Moldura perimetral e testeira superior
+ P.box(telao, 0, 9.15, 0, 20.2, 0.35, 1.8, '#d4d8d3');
+ P.box(telao, -10.0, 0.55, 0, 0.5, 8.8, 1.7, '#d4d8d3');
+ P.box(telao, 10.0, 0.55, 0, 0.5, 8.8, 1.7, '#d4d8d3');
+
+ // Painel da tela LED frontal (voltado para a praça/lago: +z local)
+ const screenMesh = P.box(telao, 0, 0.95, 0.82, 19.0, 7.8, 0.08, '#101518');
+ screenMesh.name = 'Painel LED';
+ // Moldura preta fosca fina ao redor da tela ativa
+ P.box(telao, 0, 0.95, 0.83, 19.2, 8.0, 0.04, '#262d31');
+
+ // Pilares metálicos traseiros de reforço estrutural (face voltada ao talude)
+ for (const bx of [-7.5, 0, 7.5]) {
+  P.beam(telao, [bx, 0.4, -0.85], [bx, 9.1, -0.85], 0.12, '#3e484e');
+  P.beam(telao, [bx, 0.4, -1.3], [bx, 5.0, -0.85], 0.08, '#3e484e');
+ }
+ P.beam(telao, [-9.6, 3.2, -0.85], [9.6, 3.2, -0.85], 0.07, '#3e484e');
+ P.beam(telao, [-9.6, 6.4, -0.85], [9.6, 6.4, -0.85], 0.07, '#3e484e');
 
  // 11. AMBIENTAÇÃO REAL DA CASA CUIABANA, ANFITEATRO, ESPLANADA E VIAS DE ACESSO
  buildCasaCuiabanaEnvirons(target);
