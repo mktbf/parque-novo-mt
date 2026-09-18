@@ -1,7 +1,7 @@
 /* Bloco independente: não altera estilos, roteador ou dados do site principal. */
 const assets = new URL('./', import.meta.url);
 const siteRoot = new URL('../', import.meta.url);
-const integrationVersion = 'lago-satelite-20260917-11';
+const integrationVersion = 'showcase-emons-20260918-1';
 
 const safeHref = (value) => {
   try {

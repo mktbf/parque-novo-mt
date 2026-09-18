@@ -4,6 +4,7 @@ import {sunDirection} from './solar-model.js?v=cenario-integral-20260914-2';
 import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
 import {openPortalPlace,portalSelection,portalSpaceId,reportPortalFallback} from './portal-flow.js?v=portal-espacos-20260914-1';
 import {places,colors} from './park-data.js?v=cenario-integral-20260914-2';
+import {PNMTShowcaseController,SHOWCASE_WAYPOINTS} from './showcase.js?v=showcase-emons-20260918-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
@@ -21,7 +22,14 @@ function drawList(){
  $('#place-list').innerHTML=found.length?found.map(p=>`<div class="place-row"><button class="place-focus" type="button" data-locate="${p.id}" aria-label="Localizar ${p.name}"><img class="place-thumb" src="${imageFor(p)}" alt="" width="47" height="42" loading="lazy"><span><span class="place-name">${p.name}</span><span class="place-category">${escapeHtml(p.kind==='parking'?p.zone:category(p))}</span></span></button>${p.url?`<a class="place-link" data-destination="${p.id}" href="${p.url}" target="_top" aria-label="Conhecer ${p.name}">↗</a>`:''}</div>`).join(''):'<p class="empty">Não encontramos esse espaço.<br>Tente outro nome ou escolha Todos.</p>';
  mapApi?.render();
 }
-function activatePlace(id){const p=places.find(p=>p.id===id);if(!openPortalPlace(p))selectPlace(id);}
+function activatePlace(id){
+ const p=places.find(p=>p.id===id);
+ if(window._showcase&&$('.explorer').classList.contains('showcase-active')){
+  const wp=SHOWCASE_WAYPOINTS.find(w=>w.id===id);
+  if(wp){window._showcase.goToPlace(id);return;}
+ }
+ if(!openPortalPlace(p))selectPlace(id);
+}
 function selectPlace(id,focus=true){
  const p=places.find(p=>p.id===id);if(!p)return;if(focus||selectedId!==id)autoDetail=null;lastTrigger=document.activeElement;selectedId=id;
  const nearest=relatedPlaces(p,places);
@@ -50,6 +58,17 @@ const sidebarToggle=$('#sidebar-toggle');
 if(sidebarToggle)sidebarToggle.addEventListener('click',()=>{
  const exp=$('.explorer');exp.classList.toggle('sidebar-collapsed');const col=exp.classList.contains('sidebar-collapsed');
  sidebarToggle.setAttribute('aria-label',col?'Expandir lista de espaços':'Recolher lista de espaços');sidebarToggle.title=col?'Expandir lista de espaços':'Recolher lista de espaços';
+ if(window._showcase){
+  if(col){
+   exp.classList.add('showcase-active');
+   window._showcase.dom.card?.classList.remove('minimized');
+   window._showcase.resume();
+  }else{
+   exp.classList.remove('showcase-active');
+   window._showcase.dom.card?.classList.add('minimized');
+   window._showcase.pause();
+  }
+ }
  setTimeout(()=>{if(selectedId)mapApi?.focus(places.find(p=>p.id===selectedId));else mapApi?.overview();},280);
 });
 drawList();
@@ -259,7 +278,32 @@ async function init(){
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
  if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
- const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');if(places.some(p=>p.id===requested))selectPlace(requested);if(validDetail(requested,detail))focusDetail(detail);
+ const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');
+ const showcaseController=new PNMTShowcaseController({
+  camera,
+  controls,
+  render,
+  three:T,
+  onSelectPlace:activatePlace,
+  onToggleSidebar:expanded=>{
+   const exp=$('.explorer');
+   if(expanded){
+    exp.classList.remove('sidebar-collapsed','showcase-active');
+    if(sidebarToggle){sidebarToggle.setAttribute('aria-label','Recolher lista de espaços');sidebarToggle.title='Recolher lista de espaços';}
+   }else{
+    exp.classList.add('sidebar-collapsed','showcase-active');
+    if(sidebarToggle){sidebarToggle.setAttribute('aria-label','Expandir lista de espaços');sidebarToggle.title='Expandir lista de espaços';}
+   }
+  }
+ });
+ window._showcase=showcaseController;
+ if(places.some(p=>p.id===requested)){
+  showcaseController.setMode('list');
+  selectPlace(requested);
+ }else{
+  showcaseController.setMode('showcase');
+ }
+ if(validDetail(requested,detail))focusDetail(detail);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();solarControls?.dispose();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
 }
