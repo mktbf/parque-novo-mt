@@ -8,7 +8,7 @@ import * as T from 'three';
 // Heights, details and material values are visual parameters, not surveyed meters.
 export const arenaLayout={
  pavilion:{position:[479,441.5],rotation:Math.PI/2,width:96,depth:68},
- ticketOffice:{position:[565,476],rotation:Math.PI/4},
+ plaza:{position:[555,478],rotation:Math.PI/4},
 };
 
 export const ARENA_ARCHITECTURE_VERSION='arena-arquitetura-20260913-1';
@@ -258,79 +258,58 @@ export function buildArenaShow(arena,{add,box,beam,tube,path,polygon,cylinder,gr
   previous=point;
  }
 
- // 7. PAVILHÃO DE ACESSO / BILHETERIA (SETOR SHOW 13)
- const office=arenaLayout.ticketOffice;
- const ticket=groupAt(arena,...office.position,office.rotation);
- ticket.name='Setor Show 13 · Bilheteria e Controle de Acesso';
+ // 7. PRAÇA ABERTA — TELÃO DE LED E PÉRGOLA
+ // Fotos aéreas: não há bilheteria fechada nesta posição. A área entre
+ // a Arena e a orla/Vila das Nações é uma praça aberta com pavimento,
+ // um telão de LED sobre suporte metálico e uma pérgola em Y na borda.
+ const plazaRef=arenaLayout.plaza;
+ const plaza=groupAt(arena,...plazaRef.position,plazaRef.rotation);
+ plaza.name='Praça Aberta · Telão e Pérgola';
 
- const entryPaving=[[-22,-10],[22,-10],[24,12],[21,42],[-19,42],[-22,12]];
- polygon(ticket,entryPaving,'#c8ccc5',.04,.26);
- path(ticket,[[-22,-10],[-22,12],[-19,42]],.65,C.white,.36,false,false);
- path(ticket,[[22,-10],[24,12],[21,42]],.65,C.white,.36,false,false);
+ // Piso pavimentado aberto
+ const plazaPaving=[[-22,-10],[22,-10],[24,14],[21,42],[-19,42],[-22,14]];
+ polygon(plaza,plazaPaving,'#c4c6be',.04,.26);
+ path(plaza,[[-22,-10],[-22,14],[-19,42]],.55,C.white,.36,false,false);
+ path(plaza,[[22,-10],[24,14],[21,42]],.55,C.white,.36,false,false);
 
- const officeOutline=[[-17,-7],[18,-7],[18,7.5],[5.5,7.5],[5.5,2.0],[-5.5,2.0],[-5.5,7.5],[-17,7.5]];
- polygon(ticket,officeOutline,C.white,.35,.45);
- polygon(ticket,officeOutline,'#e2e7e4',5.2,.45).name='Platibanda e cobertura plana';
+ // Juntas do piso
+ for(let z=-6;z<40;z+=3.2)
+  path(plaza,[[-20,z],[20,z]],.05,'#aaada5',.30,false,false);
+ for(let x=-19;x<=20;x+=3.2)
+  path(plaza,[[x,-8],[x,40]],.05,'#aaada5',.30,false,false);
 
- box(ticket,.5,.8,-6.7,35,4.4,.5,'#dbe2df');
- box(ticket,-16.7,.8,.25,.5,4.4,14.5,'#dbe2df');
- box(ticket,17.7,.8,.25,.5,4.4,14.5,'#dbe2df');
-
- for(const [px,pw] of [[-14.2,5.5],[14.8,6.5]]){
-  box(ticket,px,2.6,7.35,pw,2.6,.25,'#2b393f');
-  box(ticket,px<0?-16.95:17.95,2.6,4.8,.25,2.6,4.5,'#2b393f');
+ // Telão de LED sobre suporte metálico (referência: prints 3 e 4)
+ painted(box(plaza,0,3.4,4,8.5,5,.30,'#181c1c'),'dark');
+ painted(box(plaza,0,.50,4,9.2,.22,.85,'#363a3a'),'concrete');
+ for(const dx of [-3.2,3.2]){
+  beam(plaza,[dx,.6,4],[dx,6,4],.14,'#556062');
+  beam(plaza,[dx,.6,4.5],[dx,5.2,4.15],.065,'#556062');
  }
+ painted(box(plaza,0,5.95,4,9,.14,.38,'#404444'),'panel');
+ painted(box(plaza,0,.88,4,9,.14,.38,'#404444'),'panel');
+ for(const s of [-1,1])painted(box(plaza,s*4.35,3.4,4,.14,5.2,.38,'#404444'),'panel');
 
- const glassWall=(x0,z0,x1,z1)=>{
-  const dx=x1-x0,dz=z1-z0,len=Math.hypot(dx,dz);
-  const wall=groupAt(ticket,(x0+x1)/2,(z0+z1)/2,-Math.atan2(dz,dx));
-  painted(box(wall,0,.9,0,len,4.2,.15,C.glass),'glass');
-  for(let i=0,n=Math.ceil(len/1.2);i<=n;i++)painted(box(wall,-len/2+i*len/n,.8,.05,.07,4.3,.2,'#90a4ae'),'frame');
-  for(const gy of [.9,2.5,5.0])painted(box(wall,0,gy,.05,len,.08,.18,'#90a4ae'),'frame');
- };
- glassWall(-16.5,7.2,-5.5,7.2);glassWall(5.5,7.2,17.5,7.2);
- glassWall(-5.5,7.2,-5.5,1.8);glassWall(5.5,1.8,5.5,7.2);glassWall(-5.5,1.8,5.5,1.8);
+ // Pérgola em Y na borda junto à orla (referência: print 3 close-up)
+ const perg=groupAt(plaza,2,34);
+ // Tronco do Y
+ polygon(perg,[[-2,-5],[2,-5],[2.5,0],[-2.5,0]],'#d8d4c6',3.5,.10);
+ // Braço esquerdo
+ polygon(perg,[[-2.5,0],[-6.5,6],[-3.5,6],[0,0]],'#d8d4c6',3.5,.10);
+ // Braço direito
+ polygon(perg,[[0,0],[3.5,6],[6.5,6],[2.5,0]],'#d8d4c6',3.5,.10);
+ // Pilares
+ for(const [px,pz] of [[0,-3],[-5,5],[5,5],[0,0],[-1.5,-3.5],[1.5,-3.5]])
+  beam(perg,[px,.05,pz],[px,3.5,pz],.09,'#889088');
+ // Drip edge (borda contínua)
+ path(perg,[[-2,-5],[2,-5],[2.5,0],[6.5,6],[-6.5,6],[-2.5,0],[-2,-5]],.05,C.white,3.6,true,false);
 
- // Recessed access doors, opaque plinths, handles and roof drip edges.
- // The independent U-shaped footprint and all paving polygons are retained.
- for(const dx of [-2.4,0,2.4]){
-  painted(box(ticket,dx,1,1.96,2.15,3.95,.11,C.glass),'glass');
-  for(const side of [-1,1])painted(box(ticket,dx+side*1.05,1,2.04,.07,4,.10,C.white),'frame');
-  painted(box(ticket,dx+.72,2.2,2.12,.075,.85,.11,C.white),'frame');
- }
- for(const [cx,w] of [[-11,11],[11.5,12]]){
-  painted(box(ticket,cx,.8,7.37,w,.72,.27,'#afb8b6'),'concrete');
-  painted(box(ticket,cx,5.61,7.46,w,.12,.25,C.white),'white');
- }
- for(const [px,pw] of [[-14.2,5.5],[14.8,6.5]]){
-  painted(box(ticket,px,2.6,7.51,pw,2.6,.10,'#2b393f'),'panel');
-  for(let x=px-pw/2+.8;x<px+pw/2;x+=.8)painted(box(ticket,x,2.65,7.58,.018,2.48,.035,'#90a4ae'),'frame');
- }
- painted(box(ticket,.5,5.62,-6.95,35.2,.13,.24,C.white),'white');
- // Mapped services, not event-only decoration: no proposed sculpture, posters or wet paving.
-
- // 8. PRAÇA FRONTAL COM ILHAS DE PAISAGISMO GEOMÉTRICO
- const gardenBeds=[
-  [[-4.5,4.0],[-1.0,4.0],[-4.5,7.2]],
-  [[1.0,4.0],[4.5,4.0],[4.5,7.2]],
-  [[-12.5,11],[-4.5,11],[-8.5,16.5]],
-  [[4.5,11],[12.5,11],[8.5,16.5]],
-  [[-17.5,19],[-13.5,25],[-17.5,32]],
-  [[18.5,19],[14.5,25],[18.5,32]]
- ];
- for(const pts of gardenBeds){
-  path(ticket,[...pts,pts[0]],.4,C.white,.45,true,false);
-  polygon(ticket,pts,'#4d7c36',.42,.12);
- }
-
- path(ticket,[[-19,9],[20,36]],.9,'#dadcd2',.44,false,false);
- path(ticket,[[19,9],[-18,36]],.9,'#dadcd2',.44,false,false);
- path(ticket,[[0,8],[0,40]],1.6,'#dadcd2',.45,false,false);
-
- for(const side of [-1,1])for(let z=14;z<=38;z+=4){
-  const shrub=add(ticket,new T.SphereGeometry(.85,10,8),'#335c24',side*19.2,.95,z);
-  shrub.scale.set(1.1,.7,1.1);
- }
+ // 8. FAIXAS DE GRAMADO LATERAIS
+ // Fotos aéreas: gramado entre a calçada da praça e o passeio da orla.
+ for(const pts of [
+  [[-21,-6],[-23,-6],[-23,38],[-21,38]],
+  [[21,-6],[23,-6],[24,38],[22,38]],
+  [[-16,40],[-10,44],[10,44],[16,40]]
+ ]) polygon(plaza,pts,'#4d7636',.06,.12);
 
  // Superpostes de iluminação de estádio
  for(const [lx,lz] of [[548,420],[567,448],[545,488],[583,501]]){
