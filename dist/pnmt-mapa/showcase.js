@@ -142,9 +142,14 @@ export class PNMTShowcaseController {
             <span class="showcase-step-badge" id="sc-step">01 / 07</span>
             <span class="showcase-category-pill" id="sc-category">Complexo</span>
           </div>
-          <div class="showcase-tour-status" id="sc-status">
-            <span class="showcase-pulse-dot"></span>
-            <span id="sc-status-text">Tour Ativo</span>
+          <div class="showcase-header-actions">
+            <div class="showcase-tour-status" id="sc-status">
+              <span class="showcase-pulse-dot"></span>
+              <span id="sc-status-text">Tour Ativo</span>
+            </div>
+            <button class="showcase-close-btn" id="sc-btn-close" type="button" aria-label="Fechar card de apresentação" title="Fechar card">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
           </div>
         </div>
 
@@ -179,6 +184,24 @@ export class PNMTShowcaseController {
       document.querySelector('#map-stage')?.appendChild(card);
     }
 
+    // 3. Injeta Botão Flutuante para Reabrir o Card (quando minimizado)
+    let btnReopen = document.querySelector('#sc-btn-reopen');
+    if (!btnReopen) {
+      btnReopen = document.createElement('button');
+      btnReopen.className = 'showcase-reopen-btn';
+      btnReopen.id = 'sc-btn-reopen';
+      btnReopen.type = 'button';
+      btnReopen.hidden = true;
+      btnReopen.setAttribute('aria-label', 'Reabrir card de apresentação');
+      btnReopen.title = 'Reabrir card de apresentação';
+      btnReopen.innerHTML = `
+        <span class="showcase-pulse-dot"></span>
+        <span id="sc-reopen-label">Ver Apresentação</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+      `;
+      document.querySelector('#map-stage')?.appendChild(btnReopen);
+    }
+
     this.dom = {
       topBar,
       card,
@@ -195,12 +218,41 @@ export class PNMTShowcaseController {
       playIcon: document.querySelector('#sc-play-icon'),
       btnNext: document.querySelector('#sc-btn-next'),
       btnExplore: document.querySelector('#sc-btn-explore'),
+      btnClose: document.querySelector('#sc-btn-close'),
+      btnReopen: document.querySelector('#sc-btn-reopen'),
+      reopenLabel: document.querySelector('#sc-reopen-label'),
       btnShowcaseMode: document.querySelector('#btn-showcase-mode'),
       btnListMode: document.querySelector('#btn-list-mode')
     };
   }
 
+  closeCard() {
+    this.dom.card?.classList.add('minimized');
+    if (this.dom.btnReopen) {
+      this.dom.btnReopen.hidden = false;
+      const wp = SHOWCASE_WAYPOINTS[this.currentIndex];
+      if (this.dom.reopenLabel) {
+        this.dom.reopenLabel.textContent = wp?.name ? `Ver ${wp.name}` : 'Ver Apresentação';
+      }
+    }
+  }
+
+  openCard() {
+    this.dom.card?.classList.remove('minimized');
+    if (this.dom.btnReopen) {
+      this.dom.btnReopen.hidden = true;
+    }
+  }
+
   bindEvents() {
+    this.dom.btnClose?.addEventListener('click', () => {
+      this.closeCard();
+    });
+
+    this.dom.btnReopen?.addEventListener('click', () => {
+      this.openCard();
+    });
+
     this.dom.btnNext?.addEventListener('click', () => {
       this.next();
       this.resetTimer();
@@ -247,7 +299,7 @@ export class PNMTShowcaseController {
       }, 3000);
     });
 
-    // Teclas de atalho (Esquerda / Direita / Espaço)
+    // Teclas de atalho (Esquerda / Direita / Espaço / Escape)
     window.addEventListener('keydown', (e) => {
       if (document.activeElement?.tagName === 'INPUT') return;
       if (e.key === 'ArrowRight') {
@@ -259,6 +311,8 @@ export class PNMTShowcaseController {
       } else if (e.code === 'Space') {
         e.preventDefault();
         this.togglePlay();
+      } else if (e.key === 'Escape') {
+        this.closeCard();
       }
     });
   }
@@ -272,11 +326,12 @@ export class PNMTShowcaseController {
 
     if (isShowcase) {
       explorer?.classList.add('showcase-active', 'sidebar-collapsed');
-      this.dom.card?.classList.remove('minimized');
+      this.openCard();
       this.resume();
     } else {
       explorer?.classList.remove('showcase-active', 'sidebar-collapsed');
-      this.dom.card?.classList.add('minimized');
+      this.closeCard();
+      if (this.dom.btnReopen) this.dom.btnReopen.hidden = true;
       this.pause();
     }
 
@@ -334,6 +389,7 @@ export class PNMTShowcaseController {
   goToPlace(placeId) {
     const idx = SHOWCASE_WAYPOINTS.findIndex(w => w.id === placeId);
     if (idx !== -1) {
+      this.openCard();
       this.goToIndex(idx);
     }
   }
@@ -344,6 +400,9 @@ export class PNMTShowcaseController {
     this.updateCardContent(wp);
     this.flyToWaypoint(wp);
     this.resetTimer();
+    if (this.dom.reopenLabel && wp) {
+      this.dom.reopenLabel.textContent = `Ver ${wp.name}`;
+    }
   }
 
   updateCardContent(wp) {

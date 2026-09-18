@@ -4,7 +4,7 @@ import {sunDirection} from './solar-model.js?v=cenario-integral-20260914-2';
 import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
 import {openPortalPlace,portalSelection,portalSpaceId,reportPortalFallback} from './portal-flow.js?v=portal-espacos-20260914-1';
 import {places,colors} from './park-data.js?v=cenario-integral-20260914-2';
-import {PNMTShowcaseController,SHOWCASE_WAYPOINTS} from './showcase.js?v=showcase-emons-20260918-1';
+import {PNMTShowcaseController,SHOWCASE_WAYPOINTS} from './showcase.js?v=showcase-emons-20260918-2';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
