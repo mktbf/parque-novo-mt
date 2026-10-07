@@ -694,7 +694,7 @@ async function updateAgenda() {
     if (!n) return notFound();
 
     // Make hero image clickable if we can't find a gallery, otherwise just show it
-    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px; cursor: pointer;" onclick="document.getElementById('media-title').textContent = '${esc(n.title)}'; document.getElementById('media-content').innerHTML = '<div class=\'lightbox-viewer\'><img src=\'${asset(n.image)}\' style=\'width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;\'><div style=\'margin-top: 15px; text-align: center;\'><a href=\'${asset(n.image)}\' download class=\'button\'>Baixar foto de capa &darr;</a></div></div>'; document.getElementById('media-dialog').showModal();"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
+    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px; cursor: pointer;" onclick="window.showSimplePhoto('${asset(n.image)}', '${esc(n.title)}')"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
 
     // Try to find related space
     const relatedSpace = data.spaces.find(s => s.category.toLowerCase().includes(n.category.toLowerCase()) || n.title.toLowerCase().includes(s.name.toLowerCase()));
@@ -742,7 +742,7 @@ async function updateAgenda() {
           <div class="related-header"><h2>Galeria de fotos</h2></div>
           <div class="space-photo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom: 60px;">
             ${gallery.map((img, i) => `
-              <img src="${asset(img)}" alt="Foto da galeria" loading="lazy" style="width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='none'" onclick="document.getElementById('media-title').textContent = 'Galeria da mat&eacute;ria'; document.getElementById('media-content').innerHTML = '<div class=\'lightbox-viewer\'><img src=\'${asset(img)}\' style=\'width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;\'><div style=\'margin-top: 15px; text-align: center;\'><a href=\'${asset(img)}\' download class=\'button\'>Baixar foto &darr;</a></div></div>'; document.getElementById('media-dialog').showModal();">
+              <img src="${asset(img)}" alt="Foto da galeria" loading="lazy" style="width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='none'" onclick="window.showSimplePhoto('${asset(img)}')">
             `).join('')}
           </div>
         </section>
