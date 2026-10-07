@@ -1054,13 +1054,13 @@
       </section>
       <section class="wrap jobs-board" style="padding-top: 0;">
         ${heading('OPORTUNIDADES', `${jobsCount} vagas abertas`, '<span style="float: right; margin-top: -40px; font-size: 14px; color: #475569;">Oportunidades presenciais e operacionais em Cuiabá-MT.</span>')}
-        ${jobsCount > 0 ? \`
+        ${jobsCount > 0 ? `
           <div class="jobs-grid">
             ${jobsHtml}
           </div>
-        \` : \`
+        ` : `
           <p>Não há vagas abertas no momento.</p>
-        \`}
+        `}
       </section>
       <section class="related" id="cadastro-vagas">
         <div class="wrap service-layout">
