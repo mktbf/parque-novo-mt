@@ -228,7 +228,7 @@ window.PNMT_CONTENT = {
       "name": "Wake Park",
       "category": "Esportes",
       "image": "assets/gallery/wake-park-01.jpg",
-      "tagline": "Diversão e adrenalina na água.",
+      "tagline": "Adrenalina pura sobre as águas de Mato Grosso.",
       "text": [
         "Adrenalina sobre as águas do cerrado. O Wake Park conta com um avançado sistema de cabos suspensos distribuídos em duas pistas no lago.",
         "Uma das pistas possui formato \"Vai e Vem\", ideal para o aprendizado e primeiros passos de iniciantes, enquanto a outra revela um circuito de 520 metros com rampas e 11 obstáculos para elevar o nível dos praticantes mais experientes e audaciosos."
@@ -297,7 +297,7 @@ window.PNMT_CONTENT = {
       "name": "Árvore da Vida",
       "category": "Experiências",
       "image": "assets/gallery/arvore-da-vida-01.jpg",
-      "tagline": "A maior árvore artificial do mundo.",
+      "tagline": "A maior escultura de vida verde do mundo.",
       "numbers": [
         [
           "65 m",
@@ -321,7 +321,7 @@ window.PNMT_CONTENT = {
       "name": "Splash Parque",
       "category": "Família",
       "image": "assets/gallery/splash-parque-01.jpg",
-      "tagline": "Diversão em escala gigante.",
+      "tagline": "Alegria e frescor em escala monumental.",
       "text": [
         "Um verdadeiro oásis de diversão em escala gigante. Equivalente a mais de oito piscinas olímpicas (12.000 m²), este monumental playground aquático refresca e surpreende os visitantes.",
         "Seu grande destaque é abrigar o maior toboágua do mundo, garantindo experiências emocionantes e memoráveis para toda a família sob o sol vibrante de Mato Grosso."
@@ -379,7 +379,7 @@ window.PNMT_CONTENT = {
       "name": "AgroPlace",
       "category": "Cultura",
       "image": "assets/gallery/agroplace-01.jpg",
-      "tagline": "A história do agro que alimenta o mundo.",
+      "tagline": "O pulsar do agronegócio que abastece o planeta.",
       "numbers": [
         [
           "10 mil m²",
