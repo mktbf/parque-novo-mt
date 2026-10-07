@@ -533,11 +533,14 @@ async function updateAgenda() {
 
         listHtml += `
           <article class="past-card">
-            <span class="past-date">${dayStr} ${shortMonth} ${e.parsedStart.getFullYear()}</span>
-            <span class="past-category">${e.categoria}</span>
-            <h4>${e.nome}</h4>
-            <p class="past-location">${e.espaco}</p>
-            ${cobertura}
+            <img src="${asset('spaces/' + (e.slugEspaco || 'parque-da-familia'))}.webp" alt="${e.espaco}" class="past-card-img" onerror="this.src='${asset('spaces/parque-da-familia.webp')}'">
+            <div class="past-card-content">
+              <span class="past-date">${dayStr} ${shortMonth} ${e.parsedStart.getFullYear()}</span>
+              <span class="past-category">${e.categoria}</span>
+              <h4>${e.nome}</h4>
+              <p class="past-location">${e.espaco}</p>
+              ${cobertura}
+            </div>
           </article>
         `;
       }
