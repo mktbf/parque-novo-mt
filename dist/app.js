@@ -585,17 +585,36 @@
           'Buscamos profissionais dedicados e com paixão por fazer história. Conheça as principais áreas do parque e candidate-se às oportunidades ou envie seu currículo para nosso banco de talentos.'
         )}
 
-        <!-- Banner de Vagas Oficiais no LinkedIn -->
-        <div class="careers-linkedin-banner">
-          <div class="careers-linkedin-copy">
-            <span class="careers-linkedin-badge">📢 VAGAS & PROCESSOS SELETIVOS</span>
-            <h3>Acompanhe as vagas abertas no LinkedIn Oficial</h3>
-            <p>Confira os requisitos, atribuições e etapas dos processos seletivos ativos do Parque Novo Mato Grosso em nossa página corporativa.</p>
-          </div>
-          <a class="button light" href="https://www.linkedin.com/company/parque-novo-mato-grosso/" target="_blank" rel="noopener">
-            Ver Vagas no LinkedIn <span>↗</span>
-          </a>
+        <!-- Grid de Vagas -->
+        <div class="jobs-board">
+          ${(window.PNMT_CONTENT.jobs && window.PNMT_CONTENT.jobs.length > 0) ? `
+            <div class="jobs-grid">
+              ${window.PNMT_CONTENT.jobs.map(job => `
+                <article class="job-card">
+                  ${job.image ? `<img src="${job.image}" alt="Arte da vaga ${job.title}" class="job-image">` : ''}
+                  <div class="job-content">
+                    <span class="job-badge">${job.type || 'Tempo Integral'}</span>
+                    <h3 class="job-title">${job.title}</h3>
+                    <p class="job-desc">${job.description}</p>
+                    <a href="${job.link || '#trabalhe-conosco'}" class="button light" target="_blank">Candidatar-se <span>↗</span></a>
+                  </div>
+                </article>
+              `).join('')}
+            </div>
+          ` : `
+            <div class="careers-linkedin-banner">
+              <div class="careers-linkedin-copy">
+                <span class="careers-linkedin-badge">📢 VAGAS & PROCESSOS SELETIVOS</span>
+                <h3>Acompanhe as vagas abertas no LinkedIn Oficial</h3>
+                <p>Nenhuma vaga cadastrada diretamente no site no momento. Confira as oportunidades ativas na nossa página corporativa.</p>
+              </div>
+              <a class="button light" href="https://www.linkedin.com/company/parque-novo-mato-grosso/" target="_blank" rel="noopener">
+                Ver Vagas no LinkedIn <span>↗</span>
+              </a>
+            </div>
+          `}
         </div>
+
 
         <!-- Cards das Áreas -->
         <div class="service-cards">
