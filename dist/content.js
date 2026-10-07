@@ -659,862 +659,985 @@ window.PNMT_CONTENT = {
       "id": "gallery-portico-de-entrada-0",
       "image": "assets/gallery/portico-de-entrada-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: portico de entrada",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pórtico de Entrada",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-portico-de-entrada-1",
       "image": "assets/gallery/portico-de-entrada-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: portico de entrada",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pórtico de Entrada",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-portico-de-entrada-2",
       "image": "assets/gallery/portico-de-entrada-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: portico de entrada",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pórtico de Entrada",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-portico-de-entrada-3",
       "image": "assets/gallery/portico-de-entrada-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: portico de entrada",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pórtico de Entrada",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-0",
       "image": "assets/gallery/arena-show-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-1",
       "image": "assets/gallery/arena-show-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-2",
       "image": "assets/gallery/arena-show-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-3",
       "image": "assets/gallery/arena-show-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-4",
       "image": "assets/gallery/arena-show-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-5",
       "image": "assets/gallery/arena-show-06.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-6",
       "image": "assets/gallery/arena-show-07.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-7",
       "image": "assets/gallery/arena-show-08.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arena-show-8",
       "image": "assets/gallery/arena-show-09.jpg",
       "category": "Projeto",
-      "title": "Projeto: arena show",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Arena Show",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-cavalaria-0",
       "image": "assets/gallery/cavalaria-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: cavalaria",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Regimento de Policiamento Montado",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-cavalaria-1",
       "image": "assets/gallery/cavalaria-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: cavalaria",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Regimento de Policiamento Montado",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-cavalaria-2",
       "image": "assets/gallery/cavalaria-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: cavalaria",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Regimento de Policiamento Montado",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-0",
       "image": "assets/gallery/motocross-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-1",
       "image": "assets/gallery/motocross-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-2",
       "image": "assets/gallery/motocross-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-3",
       "image": "assets/gallery/motocross-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-4",
       "image": "assets/gallery/motocross-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-5",
       "image": "assets/gallery/motocross-06.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-motocross-6",
       "image": "assets/gallery/motocross-07.jpg",
       "category": "Projeto",
-      "title": "Projeto: motocross",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Motocross",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-bmx-0",
       "image": "assets/gallery/bmx-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: bmx",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pista BMX",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-bmx-1",
       "image": "assets/gallery/bmx-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: bmx",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pista BMX",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-bmx-2",
       "image": "assets/gallery/bmx-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: bmx",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pista BMX",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-bmx-3",
       "image": "assets/gallery/bmx-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: bmx",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pista BMX",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-bmx-4",
       "image": "assets/gallery/bmx-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: bmx",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Pista BMX",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-kartodromo-0",
       "image": "assets/gallery/kartodromo-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: kartodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Kartódromo",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-kartodromo-1",
       "image": "assets/gallery/kartodromo-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: kartodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Kartódromo",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-kartodromo-2",
       "image": "assets/gallery/kartodromo-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: kartodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Kartódromo",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-kartodromo-3",
       "image": "assets/gallery/kartodromo-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: kartodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Kartódromo",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-kartodromo-4",
       "image": "assets/gallery/kartodromo-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: kartodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Kartódromo",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-roda-gigante-0",
       "image": "assets/gallery/roda-gigante-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: roda gigante",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Roda-Gigante",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-roda-gigante-1",
       "image": "assets/gallery/roda-gigante-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: roda gigante",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Roda-Gigante",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-roda-gigante-2",
       "image": "assets/gallery/roda-gigante-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: roda gigante",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Roda-Gigante",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-roda-gigante-3",
       "image": "assets/gallery/roda-gigante-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: roda gigante",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Roda-Gigante",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-agroplace-0",
       "image": "assets/gallery/agroplace-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: agroplace",
-      "description": "Perspectiva oficial do projeto."
+      "title": "AgroPlace",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-agroplace-1",
       "image": "assets/gallery/agroplace-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: agroplace",
-      "description": "Perspectiva oficial do projeto."
+      "title": "AgroPlace",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-agroplace-2",
       "image": "assets/gallery/agroplace-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: agroplace",
-      "description": "Perspectiva oficial do projeto."
+      "title": "AgroPlace",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-agroplace-3",
       "image": "assets/gallery/agroplace-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: agroplace",
-      "description": "Perspectiva oficial do projeto."
+      "title": "AgroPlace",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-agroplace-4",
       "image": "assets/gallery/agroplace-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: agroplace",
-      "description": "Perspectiva oficial do projeto."
+      "title": "AgroPlace",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-alimentacao-0",
       "image": "assets/gallery/praca-alimentacao-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-alimentacao-1",
       "image": "assets/gallery/praca-alimentacao-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-alimentacao-2",
       "image": "assets/gallery/praca-alimentacao-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-alimentacao-3",
       "image": "assets/gallery/praca-alimentacao-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-museus-0",
       "image": "assets/gallery/museus-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: museus",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Museus",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-museus-1",
       "image": "assets/gallery/museus-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: museus",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Museus",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-museus-2",
       "image": "assets/gallery/museus-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: museus",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Museus",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arvore-da-vida-0",
       "image": "assets/gallery/arvore-da-vida-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: arvore da vida",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Árvore da Vida",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arvore-da-vida-1",
       "image": "assets/gallery/arvore-da-vida-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: arvore da vida",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Árvore da Vida",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arvore-da-vida-2",
       "image": "assets/gallery/arvore-da-vida-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: arvore da vida",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Árvore da Vida",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arvore-da-vida-3",
       "image": "assets/gallery/arvore-da-vida-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: arvore da vida",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Árvore da Vida",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arvore-da-vida-4",
       "image": "assets/gallery/arvore-da-vida-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: arvore da vida",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Árvore da Vida",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-parque-da-familia-0",
       "image": "assets/gallery/parque-da-familia-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: parque da familia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Parque da Família",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-parque-da-familia-1",
       "image": "assets/gallery/parque-da-familia-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: parque da familia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Parque da Família",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-parque-da-familia-2",
       "image": "assets/gallery/parque-da-familia-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: parque da familia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Parque da Família",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-parque-da-familia-3",
       "image": "assets/gallery/parque-da-familia-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: parque da familia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Parque da Família",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-circo-do-futuro-0",
       "image": "assets/gallery/circo-do-futuro-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: circo do futuro",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Circo do Futuro",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-circo-do-futuro-1",
       "image": "assets/gallery/circo-do-futuro-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: circo do futuro",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Circo do Futuro",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-circo-do-futuro-2",
       "image": "assets/gallery/circo-do-futuro-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: circo do futuro",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Circo do Futuro",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-circo-do-futuro-3",
       "image": "assets/gallery/circo-do-futuro-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: circo do futuro",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Circo do Futuro",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-circo-do-futuro-4",
       "image": "assets/gallery/circo-do-futuro-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: circo do futuro",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Circo do Futuro",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-splash-parque-0",
       "image": "assets/gallery/splash-parque-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: splash parque",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Splash Parque",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-splash-parque-1",
       "image": "assets/gallery/splash-parque-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: splash parque",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Splash Parque",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-splash-parque-2",
       "image": "assets/gallery/splash-parque-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: splash parque",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Splash Parque",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-wake-park-0",
       "image": "assets/gallery/wake-park-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: wake park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Wake Park",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-wake-park-1",
       "image": "assets/gallery/wake-park-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: wake park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Wake Park",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-wake-park-2",
       "image": "assets/gallery/wake-park-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: wake park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Wake Park",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-wake-park-3",
       "image": "assets/gallery/wake-park-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: wake park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Wake Park",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-quadras-areia-0",
       "image": "assets/gallery/quadras-areia-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: quadras areia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-quadras-areia-1",
       "image": "assets/gallery/quadras-areia-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: quadras areia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-quadras-areia-2",
       "image": "assets/gallery/quadras-areia-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: quadras areia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-quadras-areia-3",
       "image": "assets/gallery/quadras-areia-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: quadras areia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-quadras-areia-4",
       "image": "assets/gallery/quadras-areia-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: quadras areia",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-centro-de-eventos-0",
       "image": "assets/gallery/centro-de-eventos-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: centro de eventos",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Centro de Eventos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-centro-de-eventos-1",
       "image": "assets/gallery/centro-de-eventos-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: centro de eventos",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Centro de Eventos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-centro-de-eventos-2",
       "image": "assets/gallery/centro-de-eventos-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: centro de eventos",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Centro de Eventos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-centro-de-eventos-3",
       "image": "assets/gallery/centro-de-eventos-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: centro de eventos",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Centro de Eventos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-vila-das-nacoes-0",
       "image": "assets/gallery/vila-das-nacoes-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: vila das nacoes",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Vila das Nações",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-vila-das-nacoes-1",
       "image": "assets/gallery/vila-das-nacoes-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: vila das nacoes",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Vila das Nações",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-vila-das-nacoes-2",
       "image": "assets/gallery/vila-das-nacoes-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: vila das nacoes",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Vila das Nações",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-vila-das-nacoes-3",
       "image": "assets/gallery/vila-das-nacoes-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: vila das nacoes",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Vila das Nações",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-vila-das-nacoes-4",
       "image": "assets/gallery/vila-das-nacoes-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: vila das nacoes",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Vila das Nações",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-vila-das-nacoes-5",
       "image": "assets/gallery/vila-das-nacoes-06.jpg",
       "category": "Projeto",
-      "title": "Projeto: vila das nacoes",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Vila das Nações",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-0",
       "image": "assets/gallery/casa-cuiabana-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-1",
       "image": "assets/gallery/casa-cuiabana-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-2",
       "image": "assets/gallery/casa-cuiabana-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-3",
       "image": "assets/gallery/casa-cuiabana-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-4",
       "image": "assets/gallery/casa-cuiabana-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-5",
       "image": "assets/gallery/casa-cuiabana-06.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-casa-cuiabana-6",
       "image": "assets/gallery/casa-cuiabana-07.jpg",
       "category": "Projeto",
-      "title": "Projeto: casa cuiabana",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Casa Cuiabana",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-0",
       "image": "assets/gallery/autodromo-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-1",
       "image": "assets/gallery/autodromo-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-2",
       "image": "assets/gallery/autodromo-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-3",
       "image": "assets/gallery/autodromo-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-4",
       "image": "assets/gallery/autodromo-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-5",
       "image": "assets/gallery/autodromo-06.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-6",
       "image": "assets/gallery/autodromo-07.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-7",
       "image": "assets/gallery/autodromo-08.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-8",
       "image": "assets/gallery/autodromo-09.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-9",
       "image": "assets/gallery/autodromo-10.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-10",
       "image": "assets/gallery/autodromo-11.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-autodromo-11",
       "image": "assets/gallery/autodromo-12.jpg",
       "category": "Projeto",
-      "title": "Projeto: autodromo",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Autódromo Internacional",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-estacionamento-0",
       "image": "assets/gallery/estacionamento-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: estacionamento",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Estacionamentos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-estacionamento-1",
       "image": "assets/gallery/estacionamento-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: estacionamento",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Estacionamentos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-estacionamento-2",
       "image": "assets/gallery/estacionamento-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: estacionamento",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Estacionamentos",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-usina-solar-0",
       "image": "assets/gallery/usina-solar-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: usina solar",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Usina Solar",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-usina-solar-1",
       "image": "assets/gallery/usina-solar-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: usina solar",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Usina Solar",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-usina-solar-2",
       "image": "assets/gallery/usina-solar-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: usina solar",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Usina Solar",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-skate-park-0",
       "image": "assets/gallery/skate-park-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: skate park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Complexo de Skate",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-skate-park-1",
       "image": "assets/gallery/skate-park-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: skate park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Complexo de Skate",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-skate-park-2",
       "image": "assets/gallery/skate-park-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: skate park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Complexo de Skate",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-skate-park-3",
       "image": "assets/gallery/skate-park-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: skate park",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Complexo de Skate",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-de-alimentacao-0",
       "image": "assets/gallery/praca-de-alimentacao-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca de alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-de-alimentacao-1",
       "image": "assets/gallery/praca-de-alimentacao-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca de alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-de-alimentacao-2",
       "image": "assets/gallery/praca-de-alimentacao-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca de alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-praca-de-alimentacao-3",
       "image": "assets/gallery/praca-de-alimentacao-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: praca de alimentacao",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Praça de Alimentação",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arenas-beach-0",
       "image": "assets/gallery/arenas-beach-01.jpg",
       "category": "Projeto",
-      "title": "Projeto: arenas beach",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arenas-beach-1",
       "image": "assets/gallery/arenas-beach-02.jpg",
       "category": "Projeto",
-      "title": "Projeto: arenas beach",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arenas-beach-2",
       "image": "assets/gallery/arenas-beach-03.jpg",
       "category": "Projeto",
-      "title": "Projeto: arenas beach",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arenas-beach-3",
       "image": "assets/gallery/arenas-beach-04.jpg",
       "category": "Projeto",
-      "title": "Projeto: arenas beach",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     },
     {
       "id": "gallery-arenas-beach-4",
       "image": "assets/gallery/arenas-beach-05.jpg",
       "category": "Projeto",
-      "title": "Projeto: arenas beach",
-      "description": "Perspectiva oficial do projeto."
+      "title": "Quadras de Areia",
+      "description": "Perspectiva oficial do projeto.",
+      "type": "Perspectiva"
     }
   ],
   "jobs": [
