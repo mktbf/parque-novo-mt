@@ -635,15 +635,7 @@
         </div>
 
 
-        <!-- Cards das Áreas -->
-        <div class="service-cards">
-          ${areas
-            .map(
-              (a) =>
-                `<article class="service-card career-card"><span class="career-icon" aria-hidden="true">${a.icon}</span><span class="kicker">${a.tag}</span><h3>${a.title}</h3><p>${a.desc}</p></article>`
-            )
-            .join('')}
-        </div>
+        
       </section>
 
       <!-- Formulário de Cadastro de Currículo -->

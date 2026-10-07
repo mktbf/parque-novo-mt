@@ -388,21 +388,21 @@ window.PNMT_CONTENT = {
       "type": "Tempo Integral",
       "description": "Se você tem experiência com processos de aquisição, cotações, negociação estratégica com fornecedores e quer um novo desafio, essa oportunidade é para você. (Necessário superior completo/andamento em áreas afins, Excel e CNH B).\n\n🔹 Local: Parque Novo Mato Grosso\n🔹 Regime: CLT (44h semanais)\n\n🤝 Como se candidatar: Envie seu currículo para rh@parquenovomt.com com o assunto 'Analista de Compras' e venha crescer com a gente!",
       "link": "https://pt.linkedin.com/posts/parque-novo-mato-grosso_o-parque-novo-mato-grosso-est%C3%A1-contratando-activity-7511917887939391488-DhWr",
-      "image": null
+      "image": "assets/vaga-analista-compras.jpg"
     },
     {
       "title": "Analista Contábil",
       "type": "Tempo Integral",
       "description": "Se você tem vivência em rotinas contábeis, conciliações, fechamento mensal e bom domínio em Excel, venha fazer parte de um dos maiores complexos da região.\n\n🔹 Local: Parque Novo Mato Grosso\n🔹 Regime: CLT (44h semanais)\n\n💼 Como se candidatar: Envie seu currículo para rh@parquenovomt.com com o assunto 'Analista Contábil' e dê o próximo passo na sua carreira!",
       "link": "https://pt.linkedin.com/posts/parque-novo-mato-grosso_buscamos-uma-novoa-analista-cont%C3%A1bil-activity-7511917550054879232-ciU6",
-      "image": null
+      "image": "assets/vaga-analista-contabil.jpg"
     },
     {
       "title": "Mestre de Obras",
       "type": "Tempo Integral",
       "description": "Estamos com oportunidade aberta para Mestre de Obras.\n\nSe você tem experiência sólida na construção civil, forte capacidade de liderança de equipes e domínio na leitura de projetos, essa vaga é sua.\n\n🔹 Local: Parque Novo Mato Grosso\n🔹 Regime: CLT (44h semanais)\n\n🚀 Como se candidatar: Envie seu currículo agora para rh@parquenovomt.com",
       "link": "https://pt.linkedin.com/posts/parque-novo-mato-grosso_o-parque-novo-mato-grosso-est%C3%A1-crescendo-activity-7511916883827433472-_ciK",
-      "image": null
+      "image": "assets/vaga-mestre-obras.jpg"
     }
   ]
 };
