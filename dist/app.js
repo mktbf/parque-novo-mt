@@ -375,11 +375,20 @@
   }
 
   function updateNews() {
+    if (!data.news || !data.news.length) return;
     document.getElementById('news-results').innerHTML = data.news
       .filter((n) => state.newsFilter === 'Todos' || state.newsFilter === n.category)
       .map(
         (n) =>
-          `<article class="news-item"><small>${n.category} · ${fmt(n.date)} · ${n.source}</small><h3>${n.title}</h3><p>${n.description}</p>${external(n.url, 'Leia a cobertura')}</article>`
+          `<article class="news-item">
+            ${n.image ? `<div class="news-item-img"><img src="${asset(n.image)}" alt="Foto da materia ${n.title}"></div>` : ''}
+            <div class="news-item-content">
+              <small>${n.category} &middot; ${fmt(n.date)} &middot; ${n.source}</small>
+              <h3>${n.title}</h3>
+              <p>${n.description}</p>
+              ${external(n.url, 'Leia a cobertura')}
+            </div>
+          </article>`
       )
       .join('');
   }

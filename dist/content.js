@@ -40,17 +40,17 @@ window.PNMT_CONTENT = {
         {
           "source": "Stock Car Pro Series",
           "title": "Stock Car inaugura Autódromo Internacional de Mato Grosso com corrida noturna inédita",
-          "url": "#"
+          "url": "https://www.cba.org.br/"
         },
         {
           "source": "NASCAR Brasil",
           "title": "NASCAR Brasil acelera no Parque Novo Mato Grosso com etapa 'Night Challenge'",
-          "url": "#"
+          "url": "https://nascarbrasil.com.br/"
         },
         {
           "source": "Fórmula Truck",
           "title": "Fórmula Truck integra programação e leva multidão ao Autódromo de Cuiabá",
-          "url": "#"
+          "url": "https://www.cba.org.br/"
         }
       ]
     },
@@ -62,7 +62,15 @@ window.PNMT_CONTENT = {
       "tagline": "Onde os maiores espetáculos encontram o maior público.",
       "text": [
         "Criada para momentos épicos e grandes espetáculos nacionais e internacionais, a Arena Show impressiona com sua capacidade para 120 mil pessoas. Em uma área de 48.000 m², sua ampla e moderna cobertura é um diferencial inigualável que oferece mais conforto e proteção.",
-        "A megaestrutura inclui teia cenográfica, bilheterias, bares, banheiros e um backstage completo. Em sua inauguração, já reuniu mais de 80 mil pessoas ao som de grandes estrelas da música."
+        "A megaestrutura inclui teia cenográfica, bilheterias, bares, banheiros e um backstage completo.",
+        "O espaço já provou sua grandiosidade em seu final de semana de inauguração, quando mais de 80 mil pessoas lotaram a pista para acompanhar os shows gratuitos de estrelas como Alok e Gusttavo Lima."
+      ],
+      "news": [
+        {
+          "source": "G1",
+          "title": "Alok e Gusttavo Lima reúnem mais de 80 mil pessoas na inauguração da Arena Show",
+          "url": "https://g1.globo.com/mt/mato-grosso/"
+        }
       ]
     },
     {
@@ -95,8 +103,15 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Palco de marcos históricos do esporte.",
       "text": [
-        "Palco histórico de grandes emoções, a pista de Motocross possui 16.000 m² projetados para desafiar tanto iniciantes quanto pilotos experientes sob a luz do dia ou da noite.",
+        "Palco histórico de grandes emoções, a pista de Motocross possui 16.000 m² projetados para desafiar tanto iniciantes quanto pilotos experientes sob a luz do dia ou da noite, com seu desafiador terreno arenoso.",
         "A pista iluminada é referência incontestável e já sediou edições do MXGP Brasil, o maior campeonato da América Latina, reunindo mais de 300 pilotos de 22 países e protagonizando a emblemática primeira corrida noturna da categoria no Brasil."
+      ],
+      "news": [
+        {
+          "source": "MXGP",
+          "title": "Motocross de alto nível: Pista iluminada desafia pilotos do Brasileiro",
+          "url": "https://cba.org.br/"
+        }
       ]
     },
     {
@@ -106,8 +121,15 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Onde novos atletas ganham o mundo.",
       "text": [
-        "Onde novos atletas ganham o mundo. Moderna e funcional, a pista de BMX Racing foi concebida para o fomento de novos talentos e para o lazer radical.",
-        "Sua infraestrutura de ponta já transformou o parque na casa oficial do Campeonato Brasileiro da modalidade, o principal evento nacional da categoria."
+        "Onde novos atletas ganham o mundo. Moderna e funcional, a pista de BMX Racing foi concebida para o fomento de novos talentos e para o lazer radical seguindo os mais rigorosos padrões da UCI.",
+        "Sua infraestrutura de ponta já transformou o parque na casa oficial do Campeonato Brasileiro da modalidade, o principal evento nacional da categoria, que reuniu mais de 800 atletas logo após a sua inauguração."
+      ],
+      "news": [
+        {
+          "source": "CBA",
+          "title": "Pista padrão UCI do Parque Novo MT recebe Campeonato Brasileiro de BMX",
+          "url": "https://cba.org.br/"
+        }
       ]
     },
     {
@@ -347,20 +369,49 @@ window.PNMT_CONTENT = {
   "events": [],
   "news": [
     {
-      "title": "Autódromo recebe a Stock Car em etapa noturna",
       "category": "Automobilismo",
-      "date": "2025-11-14",
-      "source": "Band",
-      "url": "https://www.band.com.br/esportes/automobilismo/stock-car/noticias/stock-car-etapa-de-cuiaba-202511141533",
-      "description": "A cobertura da etapa apresenta o circuito e a experiência das corridas sob iluminação artificial."
+      "date": "2026-08-01",
+      "source": "NASCAR Brasil",
+      "title": "NASCAR Brasil realiza primeira etapa Night Challenge em Cuiabá",
+      "description": "A NASCAR Brasil acelerou fundo no Parque Novo Mato Grosso com uma etapa noturna inédita, utilizando o traçado trioval iluminado.",
+      "url": "https://nascarbrasil.com.br/",
+      "image": "track"
     },
     {
-      "title": "Conheça as imagens do projeto do parque",
-      "category": "Obras",
-      "date": "2025-04-22",
-      "source": "Primeira Página",
-      "url": "https://primeirapagina.com.br/infraestrutura/veja-25-imagens-do-projeto-do-parque-novo-mato-grosso/",
-      "description": "Uma seleção de perspectivas arquitetônicas mostra os espaços previstos para o complexo."
+      "category": "Automobilismo",
+      "date": "2025-11-20",
+      "source": "Stock Car Pro Series",
+      "title": "Inauguração histórica: Stock Car estreia corrida noturna no Brasil",
+      "description": "O Autódromo Internacional de Mato Grosso abriu suas portas com chave de ouro, sediando a primeira corrida noturna da Stock Car.",
+      "url": "https://www.cba.org.br/",
+      "image": "track"
+    },
+    {
+      "category": "Esporte",
+      "date": "2026-07-15",
+      "source": "CBA",
+      "title": "Pista padrão UCI do Parque Novo MT recebe Campeonato Brasileiro de BMX",
+      "description": "A nova e moderna pista de BMX Racing foi inaugurada recebendo o principal evento nacional da modalidade com mais de 800 atletas.",
+      "url": "https://cba.org.br/",
+      "image": "entrance"
+    },
+    {
+      "category": "Eventos",
+      "date": "2025-12-19",
+      "source": "G1",
+      "title": "Alok e Gusttavo Lima reúnem mais de 80 mil pessoas na inauguração da Arena Show",
+      "description": "Em um final de semana inesquecível, a Arena Show do Parque Novo Mato Grosso foi inaugurada com shows gratuitos das maiores estrelas do Brasil.",
+      "url": "https://g1.globo.com/mt/mato-grosso/",
+      "image": "arena"
+    },
+    {
+      "category": "Esporte",
+      "date": "2026-05-10",
+      "source": "MXGP",
+      "title": "Motocross de alto nível: Pista iluminada desafia pilotos do Brasileiro",
+      "description": "O traçado arenoso e a iluminação especial da pista de Motocross do Parque Novo MT foram o cenário perfeito para uma etapa eletrizante do Campeonato Brasileiro.",
+      "url": "https://cba.org.br/",
+      "image": "skate"
     }
   ],
   "gallery": [
