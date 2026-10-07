@@ -397,7 +397,7 @@
       <section id="galeria-secao" class="wrap" style="background: #f4f7f9; padding-top: 60px; padding-bottom: 60px; border-radius: 12px; margin-bottom: 60px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
           <div style="flex: 1 1 400px;">
-            ${heading('GALERIA DE FOTOS', 'Imagens oficiais do projeto para uso editorial.', 'Cr&eacute;dito obrigat&oacute;rio: Parque Novo Mato Grosso.')}
+            ${heading('IMPRENSA', 'Galeria de fotos', 'Imagens oficiais do projeto para uso editorial. Cr&eacute;dito obrigat&oacute;rio: Parque Novo Mato Grosso.')}
           </div>
         </div>
         <div id="gallery-albums"></div>
@@ -612,6 +612,19 @@
     html += `</div>`;
     resultsContainer.innerHTML = html;
   }
+
+  function gallery() {
+    return (
+      intro(
+        'O parque que está nascendo.',
+        'Cada imagem é um capítulo em construção. Acompanhe de perto o que está sendo erguido para Mato Grosso e para o mundo.',
+        'Galeria de fotos'
+      ) +
+      `<section class="wrap">${filters(['Todas', 'Obras e estrutura', 'Vista aérea', 'Eventos', 'Espaços', 'Gente'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
+    );
+  }
+
+  
 
   function updateGallery() {
     const entries = data.gallery
@@ -1134,7 +1147,7 @@
           
           <span style="font-size:13px;opacity:0.8; display:flex; align-items:center; gap: 15px;">
             ${index + 1} de ${total}
-            <a href="${asset(g.image)}" download="${g.title.replace(/\s+/g, '-').toLowerCase()}-${index}.jpg" title="Baixar imagem" style="color:var(--navy);"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            <a href="${asset(g.image)}" download="${(g.title || "imagem").replace(/\s+/g, '-').toLowerCase()}-${index}.jpg" title="Baixar imagem" style="color:var(--navy);"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
           </span>
           
           <button class="button secondary" data-action="photo-next" aria-label="Pr&oacute;xima foto" style="padding:6px 14px;font-size:14px;">Pr&oacute;xima &rarr;</button>
