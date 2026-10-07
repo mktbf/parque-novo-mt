@@ -386,12 +386,12 @@
     const n = data.news?.find(x => x.id === id);
     if (!n) return notFound();
 
-    const hero = `<section class="space-hero"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
+    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px;"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
 
     return (
       hero +
       `<section class="wrap detail-layout"><article class="prose">${n.fullText ? n.fullText.map(p => `<p>${esc(p)}</p>`).join('') : `<p>${esc(n.description)}</p>`}</article>
-      <aside class="detail-sidebar"><div class="space-card"><span class="kicker">ASSESSORIA</span><h3>Fale com a equipe.</h3><p>Para credenciamento ou informações detalhadas sobre as coberturas.</p><div class="space-actions"><a href="#imprensa" class="button">Acessar portal <span>↗</span></a></div></div></aside></section>`
+      <aside class="detail-aside"><span class="kicker">ASSESSORIA DE IMPRENSA</span><h3>Fale com a equipe.</h3><p>Solicite credenciamento, entrevistas ou informações detalhadas sobre as coberturas e obras do parque.</p><a class="button" href="#imprensa">Acessar portal <span>↗</span></a></aside></section>`
     );
   }
 
