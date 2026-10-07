@@ -1132,7 +1132,7 @@
     }
   }
 
-  function showPhoto(index) {
+  window.showPhoto = function showPhoto(index) {
     state.currentPhotoIndex = index;
     const g = data.gallery[index];
     if (!g) return;
