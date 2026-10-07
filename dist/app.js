@@ -253,10 +253,10 @@
 
   function about() {
     const g = adminData?.general || {};
-    const aboutTitle = g.aboutTitle || 'Mato Grosso já Nasceu Grande';
-    const aboutLead = g.aboutLead || 'NO CENTRO DO CONTINENTE,<br>GRANDEZA NUNCA FOI AMBIÇÃO.<br><span>FOI ORIGEM. FOI DESTINO. FOI VOCAÇÃO.</span>';
-    const aboutCopy1 = g.aboutCopy1 || 'É aqui que Amazônia, Cerrado e Pantanal se encontram, e a própria natureza<br class="desktop-break"> se expressa em sua maior escala. O agro fez de Mato Grosso uma potência.<br class="desktop-break"> Por meio da coragem de um povo hospitaleiro que transforma horizonte em futuro.';
-    const aboutCopy2 = g.aboutCopy2 || 'para transformar o centro geográfico em centro de encontro.<br>O lugar onde o Brasil e o mundo vêm celebrar grandes eventos,<br>fazer negócios e viver experiências à altura de Mato Grosso.';
+    const aboutTitle = g.aboutTitle || 'O Novo Começa Aqui';
+    const aboutLead = g.aboutLead || 'NO CENTRO GEODÉSICO DA AMÉRICA DO SUL,<br>A NATUREZA E A INOVAÇÃO SE ENCONTRAM.<br><span>AQUI, MATO GROSSO SE APRESENTA PARA O MUNDO.</span>';
+    const aboutCopy1 = g.aboutCopy1 || 'O Parque Novo Mato Grosso é um marco onde a grandeza de nossa terra se revela em sua maior escala. Com aproximadamente 500 hectares — sendo 130 hectares de espelho d\'água e 330 hectares de infraestrutura construída — este é o maior parque multieventos da América Latina.';
+    const aboutCopy2 = g.aboutCopy2 || 'para celebrar o esporte, a cultura, os negócios e o lazer.<br>O complexo transforma o coração do continente no ponto de encontro do Brasil e do mundo,<br>oferecendo uma experiência monumental à altura da vocação do estado.';
 
     return `<section class="reference-about"><section class="reference-about-title"><h1>${esc(aboutTitle)}</h1><p><a href="#inicio">Página Principal</a> / Quem Somos</p></section><section class="reference-origin"><div class="reference-origin-heading"><h2>${aboutLead}</h2></div><div class="reference-origin-copy"><p>${aboutCopy1}</p><p><strong>FOI DESSA GRANDEZA QUE NASCEU O PARQUE NOVO MATO GROSSO:</strong></p><p>${aboutCopy2}</p></div><img class="reference-map" src="${asset('map')}" alt="Mato Grosso, sua natureza e sua produção"><img class="reference-wheel" src="${asset('wheel-cutout')}" alt="Roda-gigante, imagem de referência da proposta"></section><section class="reference-values"><h2><span aria-hidden="true">—</span> NOSSOS VALORES</h2><div class="reference-values-grid">${data.values.map((v, i) => `<article class="reference-value value-${i}"><h3>${esc(v[0])}</h3><p>${esc(v[1])}</p></article>`).join('')}</div></section><figure class="reference-about-aerial"><img src="${asset('aerial')}" alt="Vista panorâmica do Parque Novo Mato Grosso"></figure></section>
 `;

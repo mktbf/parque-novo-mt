@@ -10,7 +10,8 @@ window.PNMT_CONTENT = {
       "image": "entrance",
       "tagline": "O voo do tuiuiú recebe o mundo.",
       "text": [
-        "Inspirado no voo do tuiuiú, o Pórtico de Entrada do Parque Novo Mato Grosso é um marco visual que recebe os visitantes com uma estrutura coberta de 580 m² e paisagismo sofisticado. Seu design celebra a fauna local proporcionando, uma recepção acolhedora."
+        "Inspirado no voo do tuiuiú, ave símbolo do Pantanal, o Pórtico de Entrada é um marco arquitetônico que transforma a recepção em um espetáculo. Com uma estrutura coberta de 580 m² e paisagismo sofisticado, o espaço celebra a fauna local e dá as boas-vindas.",
+        "É por aqui que cada visitante cruza a linha entre o horizonte e o novo. Seja bem-vindo ao Parque Novo Mato Grosso!"
       ]
     },
     {
@@ -31,17 +32,19 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "O Autódromo internacional de Mato Grosso ocupa uma área de 90 hectares e conta com infraestrutura completa, composta por pista de arrancada, circuito externo e circuito principal com 4.500m de extensão. O complexo foi projetado e estruturado para receber competições regionais, nacionais e internacionais, atendendo padrões técnicos e as normas de segurança, em conformidade com a homologação da Confederação Brasileira de Automobilismo (CBA), Confederação Brasileira de Motociclismo (CBM), Confederação Internacional Automóvel (FIA) e Federação Internacional de Motociclismos (FIM). O complexo dispõem ainda 36 boxes, arquibancadas e camarotes, com iluminação padrão internacional, garantindo infraestrutura adequada para equipes, organizadores e públicos."
+        "Projetado para colocar o estado no mapa dos grandes eventos do automobilismo e motociclismo, o Autódromo Internacional ocupa uma área de 90 hectares. O complexo de padrão internacional possui mais de 4.800 metros de circuito misto, circuito externo e pista de arrancada, além de 36 boxes, arquibancadas e camarotes.",
+        "Sendo o primeiro autódromo iluminado do Brasil, já fez história ao sediar a primeira prova noturna da Stock Car no país, além de atrair modalidades de peso como a Fórmula Truck, NASCAR Brasil, Copa Truck e TCR South America."
       ]
     },
     {
       "id": "arena-show",
-      "name": "Espaço Show",
+      "name": "Arena Show",
       "category": "Eventos",
       "image": "arena",
       "tagline": "Onde os maiores espetáculos encontram o maior público.",
       "text": [
-        "Este espaço destinado a shows nacionais e internacionais possui capacidade para 120 mil pessoas e uma área total de 48.000 m². Sua infraestrutura é composta por quatro banheiros, com área total de 1.340,20 m²; dois bares, com 257,67 m²; área de backstage com 1.946,18 m²; palco com 602,40 m²; bilheteria com 1.335,77 m² e área de alimentação com 198,61 m²."
+        "Criada para momentos épicos e grandes espetáculos nacionais e internacionais, a Arena Show impressiona com sua capacidade para 120 mil pessoas. Em uma área de 48.000 m², sua ampla e moderna cobertura é um diferencial inigualável que oferece mais conforto e proteção.",
+        "A megaestrutura inclui teia cenográfica, bilheterias, bares, banheiros e um backstage completo. Em sua inauguração, já reuniu mais de 80 mil pessoas ao som de grandes estrelas da música."
       ]
     },
     {
@@ -52,7 +55,8 @@ window.PNMT_CONTENT = {
       "kind": "Perspectiva do projeto",
       "tagline": "A experiência de receber o mundo.",
       "text": [
-        "O Centro de Eventos Novo Mato Grosso tem capacidade para 26.564 pessoas e ocupa uma área de 36.643,86 m². Composto por 5 pavilhões interligados, o projeto permite usos simultâneos e independentes. Conta com áreas de serviço, docas e acessos exclusivos, garantindo versatilidade e eficiência para diversos tipos de eventos."
+        "Versatilidade em dimensões superlativas. O Centro de Eventos tem capacidade para mais de 26 mil pessoas em uma área monumental de 36.600 m².",
+        "Seus cinco pavilhões interligados foram meticulosamente projetados para usos simultâneos ou independentes, contando com áreas de serviço exclusivas, docas e infraestrutura inteligente para feiras, congressos e grandes realizações corporativas."
       ]
     },
     {
@@ -62,7 +66,8 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Velocidade que forma campeões.",
       "text": [
-        "Com uma infraestrutura de 95.571,42 m², o Kartódromo oferece arquibancada, bilheteria, paddock, estacionamento, salas de apoio, pódio e torre de controle. A pista foi projetada para receber competições regionais, nacionais e internacionais com homologação Confederação Brasileira de automobilismo (CBA) e (FIA KART) Federação Internacional do Automóvel."
+        "Velocidade que forma campeões. Projetado sob os rigorosos padrões da FIA Kart, o complexo de 95.500 m² recebe competições regionais, nacionais e internacionais.",
+        "Com arquibancadas, paddock, pódio e torre de controle de última geração, a estrutura robusta já é amplamente reconhecida por especialistas do automobilismo como uma das pistas mais completas e modernas do mundo."
       ]
     },
     {
@@ -72,7 +77,8 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Palco de marcos históricos do esporte.",
       "text": [
-        "Com uma área de 16.000 m², o espaço conta com uma pista iluminada de referência, projetada para oferecer desafios tanto para iniciantes quanto para pilotos experientes em provas diurnas ou noturnas."
+        "Palco histórico de grandes emoções, a pista de Motocross possui 16.000 m² projetados para desafiar tanto iniciantes quanto pilotos experientes sob a luz do dia ou da noite.",
+        "A pista iluminada é referência incontestável e já sediou edições do MXGP Brasil, o maior campeonato da América Latina, reunindo mais de 300 pilotos de 22 países e protagonizando a emblemática primeira corrida noturna da categoria no Brasil."
       ]
     },
     {
@@ -82,17 +88,19 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Onde novos atletas ganham o mundo.",
       "text": [
-        "Moderna e funcional, projetada para o lazer e a formação de novos atletas. Casa do Campeonato Brasileiro de BMX Racing."
+        "Onde novos atletas ganham o mundo. Moderna e funcional, a pista de BMX Racing foi concebida para o fomento de novos talentos e para o lazer radical.",
+        "Sua infraestrutura de ponta já transformou o parque na casa oficial do Campeonato Brasileiro da modalidade, o principal evento nacional da categoria."
       ]
     },
     {
       "id": "skate-park",
-      "name": "Skate Park",
+      "name": "Complexo de Skate",
       "category": "Esportes",
       "image": "skate",
       "tagline": "O maior da América Latina.",
       "text": [
-        "O Skatepark conta com área total de 15.311 m² e é, portanto, o maior da América Latina. Ele conta com 8 pistas para todos os tipos de modalidades e público: Bowl; Plaza; Street Park; Flow Park; Pumptrack; Super Park; Simulador de Surf; Área de Iniciante."
+        "Bem-vindo ao maior complexo de skate da América Latina. Com uma extensão impressionante de mais de 15.000 m², o espaço conta com 8 pistas conectadas para todas as modalidades: Bowl, Plaza, Street, Flow, Pumptrack, Super Park, Simulador de Surf e Iniciantes.",
+        "Um equipamento de nível global que atrai os maiores campeões mundiais e sedia eventos épicos como o STU National e o Campeonato Brasileiro."
       ]
     },
     {
@@ -102,7 +110,8 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Diversão e adrenalina na água.",
       "text": [
-        "O Wake Park utiliza um sistema de cabos suspensos por torres metálicas e motores elétricos que puxam os praticantes pelo lago. Conta com duas pistas: uma avançada, com 520 metros, 11 obstáculos e capacidade para 7 atletas; e uma para iniciantes, com sistema de vai-e-volta, ideal para o aprendizado."
+        "Adrenalina sobre as águas do cerrado. O Wake Park conta com um avançado sistema de cabos suspensos distribuídos em duas pistas no lago.",
+        "Uma das pistas possui formato \"Vai e Vem\", ideal para o aprendizado e primeiros passos de iniciantes, enquanto a outra revela um circuito de 520 metros com rampas e 11 obstáculos para elevar o nível dos praticantes mais experientes e audaciosos."
       ]
     },
     {
@@ -118,12 +127,13 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "O novo complexo de quadras de areia, com cinco quadras dedicadas a esportes como beach tennis, vôlei de praia e futvôlei, foi projetado para oferecer uma estrutura de alta qualidade tanto para atletas quanto para o público em geral. O complexo contará com uma arquibancada, pensada para acomodar os espectadores durante eventos esportivos de porte, oferecendo uma visão privilegiada das partidas. Além disso, foi projetada uma edificação de apoio."
+        "Areia, lago e esporte em alta performance. Situado às margens do nosso lago, o complexo oferece cinco quadras premium dedicadas ao beach tennis, vôlei de praia e futevôlei.",
+        "Equipado com arquibancadas projetadas para o público, edificações de apoio e muito conforto, o espaço está sempre pronto para sediar desde as partidas do dia a dia até grandiosos torneios internacionais."
       ]
     },
     {
       "id": "roda-gigante",
-      "name": "Roda Gigante",
+      "name": "Roda-gigante",
       "category": "Experiências",
       "image": "wheel",
       "kind": "Imagem de referência da proposta",
@@ -139,7 +149,8 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "A roda gigante tem 108 metros de altura, com 42 cabines que comportam até 336 pessoas. Sua estrutura conta com três níveis, térreo, 1º pavimento e cobertura, usada para o embarque. O complexo inclui uma praça de 12.000 m²."
+        "Uma nova e espetacular forma de ver Mato Grosso. Elevando-se a imponentes 108 metros de altura, esta é a maior roda-gigante da América Latina.",
+        "Integrada a uma belíssima praça de embarque, suas 42 cabines comportam até 336 pessoas simultaneamente, proporcionando vistas panorâmicas de tirar o fôlego do parque e de todo o horizonte geodésico."
       ]
     },
     {
@@ -155,7 +166,8 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "Árvore da Vida com 65 metros altura. Que possui um mirante no nível 52m com uma área de 696,95 m² total que oferece vistas panorâmicas do Parque Novo Mato Grosso. O acesso ao topo é feito por um elevador, garantindo conforto e acessibilidade aos visitantes."
+        "A maior árvore artificial do mundo. Com seus incríveis 65 metros de altura e totalmente revestida em painéis imersivos de LED, ela é o coração pulsante e luminoso do complexo.",
+        "Acessada por elevadores confortáveis, a estrutura leva os visitantes até o seu deslumbrante mirante no topo, revelando uma vista 360º de toda a grandiosidade do Parque Novo Mato Grosso."
       ]
     },
     {
@@ -165,7 +177,8 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Diversão em escala gigante.",
       "text": [
-        "O Splash Parque é um playground aquático de cerca de 12.000 m². Destaca-se pelo maior toboágua da América Latina e oferece diversos brinquedos para diversão e refresco de moradores e visitantes."
+        "Um verdadeiro oásis de diversão em escala gigante. Equivalente a mais de oito piscinas olímpicas (12.000 m²), este monumental playground aquático refresca e surpreende os visitantes.",
+        "Seu grande destaque é abrigar o maior toboágua do mundo, garantindo experiências emocionantes e memoráveis para toda a família sob o sol vibrante de Mato Grosso."
       ]
     },
     {
@@ -175,12 +188,13 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Convivência e memória em família.",
       "text": [
-        "Com uma área de 15.000 m², oferecendo uma ampla gama de brinquedos e atividades para garantir momentos de alegria e descontração para as crianças. Sua atmosfera acolhedora, combinada com uma área coberta e uma variedade de brinquedos temáticos, proporciona uma experiência completa para crianças de todas as idades."
+        "Convivência, memórias inesquecíveis e muitos sorrisos. Em uma generosa área de 15.000 m², o Parque da Família é um destino de pura alegria.",
+        "O ambiente acolhedor reúne mais de 40 brinquedos temáticos espalhados por áreas amplas e parcialmente cobertas, garantindo um lazer seguro e super divertido para crianças (e adultos) em qualquer hora do dia."
       ]
     },
     {
       "id": "circo-do-futuro",
-      "name": "Pérola do Cerrado",
+      "name": "Pérola do Cerrado & Circo do Futuro",
       "category": "Cultura",
       "image": "circus",
       "kind": "Imagem de referência da proposta",
@@ -192,7 +206,8 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "Pérola do Cerrado, com 14.201 m² e inclui um teatro arena com capacidade para 400 pessoas, um prédio de apoio com sanitários, salas técnicas, camarins e depósito, além de uma passarela com mirante. O projeto também prevê um domo que cobre o espaço e serve para projeções mapeadas."
+        "Onde a tecnologia, a arte e a cultura viram espetáculo. A Pérola do Cerrado é um complexo cultural inovador que inclui o \"Circo do Futuro\": um imenso domo arquitetônico perfeitamente preparado para projeções mapeadas e imersões visuais.",
+        "O espaço abriga também um Teatro de Arena para até 400 espectadores e um mirante externo que integra o edifício de forma fluida à deslumbrante paisagem do lago."
       ]
     },
     {
@@ -208,7 +223,8 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "Com cerca de 10.000 m² o AgroPlace será um espaço inovador, com exposições interativas, que celebram a história, evolução e a transformação do cerrado Matogrossenses no maior celeiro de produção de alimentos do mundo. Destacando o papel de Mato Grosso na agricultura global."
+        "O orgulho de alimentar e inspirar o mundo. Com quase 10.000 m², o AgroPlace é um pavilhão vivo de exposições interativas de altíssima tecnologia.",
+        "Ele imortaliza a força, a história fascinante e a transformação do cerrado mato-grossense, destacando sua inquestionável vocação como o maior celeiro de produção de alimentos e fibras sustentáveis do planeta."
       ]
     },
     {
@@ -219,8 +235,8 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "Memória e futuro, lado a lado.",
       "text": [
-        "Com arquitetura moderna e identidades próprias, o Museu Mato Grosso e o Museu Natural completam a experiência cultural do parque.",
-        "De um lado, a história do povo mato-grossense. Do outro, a riqueza natural de um estado onde Amazônia, Cerrado e Pantanal se encontram. Dois acervos, uma mesma grandeza."
+        "Memória e futuro, lado a lado em um projeto que impressiona. Com arquitetura moderna e galerias imersivas, os museus abrigam a grandiosa história do nosso povo e os tesouros inestimáveis da biodiversidade do nosso estado.",
+        "É a experiência cultural definitiva dentro do parque: preservando raízes centenárias enquanto projeta o pensamento de Mato Grosso para o mundo."
       ]
     },
     {
@@ -240,7 +256,8 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "O projeto da Casa Cuiabana integra harmoniosamente o antigo e o novo. Externamente, a edificação homenageia a tradição mato-grossense com uma fachada rústica e materiais simples, evocando a época colonial de Cuiabá. Por outro lado, o interior adota um design contemporâneo, utilizando materiais modernos que refletem tecnologia e inovação. A estrutura com 726,31 m² e capacidade para 250 pessoas, complementada por uma praça contemplativa de 3.507,52 m², criando um espaço que valoriza a história e promove a modernidade."
+        "A síntese perfeita entre as nossas raízes e o amanhã. A Casa Cuiabana é uma grandiosa obra que reverencia a clássica arquitetura colonial de Cuiabá por meio de fachadas rústicas e texturas autênticas.",
+        "No seu interior, entretanto, o espaço surpreende com um design contemporâneo arrojado, sistemas inteligentes e materiais inovadores, provando que tradição e vanguarda podem habitar os mesmos 726 m² de conforto."
       ]
     },
     {
@@ -250,7 +267,8 @@ window.PNMT_CONTENT = {
       "image": null,
       "tagline": "O mundo às margens do lago.",
       "text": [
-        "A Vila das Nações ocupa 27.000 m² às margens de um lago e apresenta fachadas temáticas que representam países que influenciaram a formação sociocultural de Mato Grosso: Alemanha, África, Espanha, Itália, Japão, Líbano e Portugal. O espaço celebra a diversidade cultural e oferece lazer e entretenimento aos visitantes."
+        "Uma verdadeira viagem cultural e gastronômica ao redor do mundo. Ocupando suntuosos 27.000 m² nas margens do lago central, a Vila dá vida a belíssimas fachadas temáticas e ruas charmosas.",
+        "Ela homenageia os sete cantos do mundo que mais influenciaram a rica miscigenação de Mato Grosso: Alemanha, África do Sul, Espanha, Itália, Japão, Líbano e Portugal. O epicentro do turismo e do lazer."
       ]
     },
     {
@@ -266,18 +284,19 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "Com uma área coberta de 3.000 m², o espaço conta com áreas de estar, banheiros com fraldários, lanchonetes e restaurantes, garantindo conforto e conveniência para todos os visitantes. O design visa proporcionar um ambiente funcional e acolhedor, atendendo às necessidades e preferências das pessoas."
+        "O ponto de encontro perfeito para relaxar e celebrar. Com 3.000 m² de modernas áreas cobertas, a Praça de Alimentação reúne os melhores sabores da nossa gastronomia e lounges de descanso.",
+        "Seu ambiente amplo e extremamente acolhedor oferece conforto absoluto para as famílias e amigos recarregarem as energias com estilo entre uma atração e outra."
       ]
     },
     {
       "id": "estrutura-e-acesso",
-      "name": "Estacionamento e Cavalaria",
+      "name": "Excelência em Infraestrutura e Acessos",
       "category": "Convivência",
       "image": "aerial",
       "tagline": "Preparado para receber grandes públicos.",
       "text": [
-        "O parque conta com amplos conjuntos de estacionamentos para atender as mais diversas capacidades de público. Ao total, serão mais de 21 mil vagas disponíveis para veículos.",
-        "O Complexo da Cavalaria da Polícia Militar do Mato Grosso possui área de 14.651,11 m² e está localizado na entrada do Parque Novo Mato Grosso, a fim de garantir a segurança do parque e atender às necessidades da corporação."
+        "Preparado para operar em dimensões superlativas. O parque orgulha-se de possuir o maior sistema de estacionamentos da região: 21 mil vagas distribuídas de maneira inteligente, garantindo fluidez e organização máxima mesmo durante múltiplos eventos.",
+        "Complementando essa experiência impecável, a presença do imponente Complexo da Cavalaria da Polícia Militar de Mato Grosso (14.651 m²) assegura tradição e monitoramento ostensivo, provendo tranquilidade irrestrita para todos os nossos visitantes."
       ]
     }
   ],
