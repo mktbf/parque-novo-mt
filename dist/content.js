@@ -141,6 +141,13 @@ window.PNMT_CONTENT = {
       "text": [
         "Bem-vindo ao maior complexo de skate da América Latina. Com uma extensão impressionante de mais de 15.000 m², o espaço conta com 8 pistas conectadas para todas as modalidades: Bowl, Plaza, Street, Flow, Pumptrack, Super Park, Simulador de Surf e Iniciantes.",
         "Um equipamento de nível global que atrai os maiores campeões mundiais e sedia eventos épicos como o STU National e o Campeonato Brasileiro."
+      ],
+      "news": [
+        {
+          "source": "STU National",
+          "title": "Cuiabá Skatepark sedia etapa inédita do STU National",
+          "url": "https://stuskateboard.com/"
+        }
       ]
     },
     {
@@ -411,6 +418,15 @@ window.PNMT_CONTENT = {
       "title": "Motocross de alto nível: Pista iluminada desafia pilotos do Brasileiro",
       "description": "O traçado arenoso e a iluminação especial da pista de Motocross do Parque Novo MT foram o cenário perfeito para uma etapa eletrizante do Campeonato Brasileiro.",
       "url": "https://cba.org.br/",
+      "image": "skate"
+    },
+    {
+      "category": "Esporte",
+      "date": "2026-06-28",
+      "source": "STU National",
+      "title": "Cuiabá Skatepark sedia etapa inédita do STU National",
+      "description": "A 4ª etapa do STU National 2026 invadiu a capital com os maiores nomes do skate nacional em competições de Street e Park, reunindo multidões no maior skatepark da América Latina.",
+      "url": "https://stuskateboard.com/",
       "image": "skate"
     }
   ],
