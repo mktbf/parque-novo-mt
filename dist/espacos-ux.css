@@ -179,3 +179,15 @@
 .news-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: #dce4e0; }
 .news-card .kicker { color: #287845; font-size: 11px; margin-bottom: 8px; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 .news-card h4 { font-size: 16px; line-height: 1.4; color: #1a3243; margin: 0; }
+
+.news-item { display: flex; flex-direction: column; background: #fff; border: 1px solid #e0e9ef; border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+.news-item:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
+.news-item-img { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: #e0e9ef; }
+.news-item-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.news-item:hover .news-item-img img { transform: scale(1.05); }
+.news-item-content { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+.news-item-content small { font-size: 11px; color: #526474; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.news-item-content h3 { font-size: 20px; line-height: 1.25; color: #1a3243; margin: 0 0 12px; letter-spacing: -0.01em; }
+.news-item-content p { font-size: 15px; color: #4a6274; margin: 0 0 20px; line-height: 1.5; }
+.news-item-content a { margin-top: auto; font-weight: 700; color: #287845; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.news-item-content a:hover { text-decoration: underline; }
