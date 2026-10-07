@@ -365,7 +365,241 @@ async function updateAgenda() {
   if (!root) return;
 
   if (!window.agendaData) {
-    window.agendaData = [{"id":"track-day-nmt","nome":"Track Day Novo Mato Grosso","dataInicio":"2026-10-24","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"confirmado"},{"id":"camp-estadual-ciclismo","nome":"Campeonato Estadual de Ciclismo de Estrada","dataInicio":"2026-11-08","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"confirmado"},{"id":"final-estadual-motocross","nome":"Final Estadual Moto Cross","dataInicio":"2026-11-20","dataFim":"2026-11-21","espaco":"Motocross","slugEspaco":"motocross","categoria":"Motociclismo","status":"confirmado"},{"id":"kart-endurance","nome":"Kart Estadual de Endurance","dataInicio":"2026-12-05","espaco":"Kart├│dromo","slugEspaco":"kartodromo","categoria":"Automobilismo","status":"confirmado"},{"id":"triathlon-3a","nome":"Triathlon MT, 3┬¬ Etapa Estadual","dataInicio":"2026-12-13","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"confirmado"},{"id":"corrida-reis","nome":"Corrida de Reis","dataInicio":"2026-01-11","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Corridas de rua","status":"concluido"},{"id":"semana-cavalo","nome":"Semana do Cavalo","dataInicio":"2026-03-04","dataFim":"2026-03-14","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"triathlon-1a","nome":"Triathlon MT, 1┬¬ Etapa Estadual","dataInicio":"2026-03-29","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"concluido"},{"id":"circuito-bb","nome":"Circuito Banco do Brasil de Corrida de Rua 2026","dataInicio":"2026-04-12","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Corridas de rua","status":"concluido"},{"id":"classic-pantanal","nome":"Classic Pantanal","dataInicio":"2026-05-08","dataFim":"2026-05-09","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"motocross-5a","nome":"Moto Cross, 5┬¬ Etapa Campeonato Brasileiro","dataInicio":"2026-05-21","dataFim":"2026-05-24","espaco":"Motocross","slugEspaco":"motocross","categoria":"Motociclismo","status":"concluido","linkCobertura":"#noticia/5-etapa-campeonato-brasileiro-de-motocross"},{"id":"green-farm","nome":"Green Farm","dataInicio":"2026-05-27","dataFim":"2026-05-31","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"formula-truck","nome":"F├│rmula Truck","dataInicio":"2026-06-13","dataFim":"2026-06-14","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido","linkCobertura":"#noticia/formula-truck-no-parque-novo-mato-grosso"},{"id":"stock-car","nome":"Stock Car","dataInicio":"2026-06-20","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido"},{"id":"conesv","nome":"CONESV, Congresso Nacional de Seguran├ºa","dataInicio":"2026-06-24","dataFim":"2026-06-26","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Corporativo","status":"concluido"},{"id":"stu-nacional","nome":"STU Nacional, Campeonato Brasileiro de Skate","dataInicio":"2026-06-25","dataFim":"2026-06-28","espaco":"Complexo de Skate","slugEspaco":"skate-park","categoria":"Esporte","status":"concluido","linkCobertura":"#noticia/stu-nacional-etapa-cuiaba"},{"id":"triathlon-2a","nome":"Triathlon MT, 2┬¬ Etapa Estadual","dataInicio":"2026-06-28","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"concluido"},{"id":"bmx","nome":"BMX Campeonato Brasileiro de Bicicross","dataInicio":"2026-07-05","espaco":"Pista de BMX","slugEspaco":"bmx","categoria":"Esporte","status":"concluido","linkCobertura":"#noticia/campeonato-brasileiro-de-bicicross-bmx","obs":"data a confirmar: planilha 01/06 a 05/07, materia 15/07"},{"id":"live-run","nome":"Corrida Live Run","dataInicio":"2026-07-05","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Corridas de rua","status":"concluido"},{"id":"arrancada","nome":"Copa Brasil de Arrancada","dataInicio":"2026-07-10","dataFim":"2026-07-11","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido"},{"id":"nascar-brasil","nome":"NASCAR Brasil e Copa Truck","dataInicio":"2026-08-01","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido","linkCobertura":"#noticia/nascar-brasil-e-copa-truck"},{"id":"pbr-brasil","nome":"PBR Brasil, Agrofestival","dataInicio":"2026-08-07","dataFim":"2026-08-09","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"formula-a","nome":"F├│rmula A e Turismo Centro Oeste","dataInicio":"2026-09-11","dataFim":"2026-09-12","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido"},{"id":"circuito-mt-skate","nome":"Circuito Matogrossense de Skate","dataInicio":"2026-09-26","espaco":"Complexo de Skate","slugEspaco":"skate-park","categoria":"Esporte","status":"concluido"}];
+    window.agendaData = [
+  {
+    "id": "track-day-nmt",
+    "nome": "Track Day Novo Mato Grosso",
+    "dataInicio": "2026-10-24",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Automobilismo",
+    "status": "confirmado"
+  },
+  {
+    "id": "estadual-ciclismo",
+    "nome": "Campeonato Estadual de Ciclismo de Estrada",
+    "dataInicio": "2026-11-08",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Esporte",
+    "status": "confirmado"
+  },
+  {
+    "id": "final-estadual-motocross",
+    "nome": "Final Estadual Moto Cross",
+    "dataInicio": "2026-11-20",
+    "dataFim": "2026-11-21",
+    "espaco": "Motocross",
+    "slugEspaco": "motocross",
+    "categoria": "Motociclismo",
+    "status": "confirmado"
+  },
+  {
+    "id": "kart-estadual-endurance",
+    "nome": "Kart Estadual de Endurance",
+    "dataInicio": "2026-12-05",
+    "espaco": "Kartódromo",
+    "slugEspaco": "kartodromo",
+    "categoria": "Automobilismo",
+    "status": "confirmado"
+  },
+  {
+    "id": "triathlon-3-etapa",
+    "nome": "Triathlon MT, 3ª Etapa Estadual",
+    "dataInicio": "2026-12-13",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Esporte",
+    "status": "confirmado"
+  },
+  {
+    "id": "corrida-de-reis",
+    "nome": "Corrida de Reis",
+    "dataInicio": "2026-01-11",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Corridas de rua",
+    "status": "concluido"
+  },
+  {
+    "id": "semana-do-cavalo",
+    "nome": "Semana do Cavalo",
+    "dataInicio": "2026-03-04",
+    "dataFim": "2026-03-14",
+    "espaco": "Arena Show",
+    "slugEspaco": "arena-show",
+    "categoria": "Festivais e Agro",
+    "status": "concluido"
+  },
+  {
+    "id": "triathlon-1-etapa",
+    "nome": "Triathlon MT, 1ª Etapa Estadual",
+    "dataInicio": "2026-03-29",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Esporte",
+    "status": "concluido"
+  },
+  {
+    "id": "circuito-bb-corrida",
+    "nome": "Circuito Banco do Brasil de Corrida de Rua 2026",
+    "dataInicio": "2026-04-12",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Corridas de rua",
+    "status": "concluido"
+  },
+  {
+    "id": "classic-pantanal",
+    "nome": "Classic Pantanal",
+    "dataInicio": "2026-05-08",
+    "dataFim": "2026-05-09",
+    "espaco": "Arena Show",
+    "slugEspaco": "arena-show",
+    "categoria": "Festivais e Agro",
+    "status": "concluido"
+  },
+  {
+    "id": "motocross-brasileiro",
+    "nome": "Moto Cross, 5ª Etapa Campeonato Brasileiro",
+    "dataInicio": "2026-05-21",
+    "dataFim": "2026-05-24",
+    "espaco": "Motocross",
+    "slugEspaco": "motocross",
+    "categoria": "Motociclismo",
+    "status": "concluido",
+    "linkCobertura": "#imprensa/motocross"
+  },
+  {
+    "id": "green-farm",
+    "nome": "Green Farm",
+    "dataInicio": "2026-05-27",
+    "dataFim": "2026-05-31",
+    "espaco": "Arena Show",
+    "slugEspaco": "arena-show",
+    "categoria": "Festivais e Agro",
+    "status": "concluido"
+  },
+  {
+    "id": "formula-truck",
+    "nome": "Fórmula Truck",
+    "dataInicio": "2026-06-13",
+    "dataFim": "2026-06-14",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Automobilismo",
+    "status": "concluido",
+    "linkCobertura": "#imprensa/formula-truck"
+  },
+  {
+    "id": "stock-car",
+    "nome": "Stock Car",
+    "dataInicio": "2026-06-20",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Automobilismo",
+    "status": "concluido"
+  },
+  {
+    "id": "conesv",
+    "nome": "CONESV, Congresso Nacional de Segurança",
+    "dataInicio": "2026-06-24",
+    "dataFim": "2026-06-26",
+    "espaco": "Arena Show",
+    "slugEspaco": "arena-show",
+    "categoria": "Corporativo",
+    "status": "concluido"
+  },
+  {
+    "id": "stu-nacional",
+    "nome": "STU Nacional, Campeonato Brasileiro de Skate",
+    "dataInicio": "2026-06-25",
+    "dataFim": "2026-06-28",
+    "espaco": "Complexo de Skate",
+    "slugEspaco": "complexo-de-skate",
+    "categoria": "Esporte",
+    "status": "concluido",
+    "linkCobertura": "#imprensa/stu"
+  },
+  {
+    "id": "triathlon-2-etapa",
+    "nome": "Triathlon MT, 2ª Etapa Estadual",
+    "dataInicio": "2026-06-28",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Esporte",
+    "status": "concluido"
+  },
+  {
+    "id": "bmx-brasileiro",
+    "nome": "BMX Campeonato Brasileiro de Bicicross",
+    "dataInicio": "2026-07-05",
+    "espaco": "Pista de BMX",
+    "slugEspaco": "pista-de-bmx",
+    "categoria": "Esporte",
+    "status": "concluido",
+    "linkCobertura": "#imprensa/bmx",
+    "obs": "data a confirmar: planilha 01/06 a 05/07, materia 15/07"
+  },
+  {
+    "id": "corrida-live-run",
+    "nome": "Corrida Live Run",
+    "dataInicio": "2026-07-05",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Corridas de rua",
+    "status": "concluido"
+  },
+  {
+    "id": "copa-brasil-arrancada",
+    "nome": "Copa Brasil de Arrancada",
+    "dataInicio": "2026-07-10",
+    "dataFim": "2026-07-11",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Automobilismo",
+    "status": "concluido"
+  },
+  {
+    "id": "nascar-brasil",
+    "nome": "NASCAR Brasil e Copa Truck",
+    "dataInicio": "2026-08-01",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Automobilismo",
+    "status": "concluido",
+    "linkCobertura": "#imprensa/nascar"
+  },
+  {
+    "id": "pbr-brasil",
+    "nome": "PBR Brasil, Agrofestival",
+    "dataInicio": "2026-08-07",
+    "dataFim": "2026-08-09",
+    "espaco": "Arena Show",
+    "slugEspaco": "arena-show",
+    "categoria": "Festivais e Agro",
+    "status": "concluido"
+  },
+  {
+    "id": "formula-a",
+    "nome": "Fórmula A e Turismo Centro Oeste",
+    "dataInicio": "2026-09-11",
+    "dataFim": "2026-09-12",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Automobilismo",
+    "status": "concluido"
+  },
+  {
+    "id": "circuito-mt-skate",
+    "nome": "Circuito Matogrossense de Skate",
+    "dataInicio": "2026-09-26",
+    "espaco": "Complexo de Skate",
+    "slugEspaco": "complexo-de-skate",
+    "categoria": "Esporte",
+    "status": "concluido"
+  }
+];
   }
 
   const now = new Date();
@@ -467,7 +701,7 @@ async function updateAgenda() {
 
       const destaqueHtml = `
         <div class="agenda-destaque wrap">
-          <img src="${asset('spaces/' + (nextEvent.slugEspaco || 'parque-da-familia'))}.webp" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.src='${asset('spaces/parque-da-familia.webp')}'">
+          <img src="${asset('gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg')}" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.src='${asset('gallery/parque-da-familia-01.jpg')}'">
           <div class="destaque-info">
             <div class="destaque-tags">
               <span class="tag-proximo">Próximo evento</span>
@@ -548,7 +782,7 @@ async function updateAgenda() {
 
         listHtml += `
           <article class="past-card">
-            <img src="${asset('spaces/' + (e.slugEspaco || 'parque-da-familia'))}.webp" alt="${e.espaco}" class="past-card-img" onerror="this.src='${asset('spaces/parque-da-familia.webp')}'">
+            <img src="${asset('spaces/' + (e.slugEspaco || 'parque-da-familia'))}.webp" alt="${e.espaco}" class="past-card-img" onerror="this.src='${asset('gallery/parque-da-familia-01.jpg')}'">
             <div class="past-card-content">
               <span class="past-date">${dayStr} ${shortMonth} ${e.parsedStart.getFullYear()}</span>
               <span class="past-category">${e.categoria}</span>
@@ -1267,7 +1501,7 @@ async function updateAgenda() {
         </div>
       </section>
       <section class="wrap jobs-board" style="padding-top: 0;">
-        ${heading('OPORTUNIDADES', `${jobsCount} vagas abertas`, '<span style="float: right; margin-top: -40px; font-size: 14px; color: #475569;">Oportunidades presenciais e operacionais em Cuiabá-MT.</span>')}
+        ${heading('OPORTUNIDADES', `${jobsCount} vagas abertas`, 'Oportunidades presenciais e operacionais em Cuiabá-MT.')}
         ${jobsCount > 0 ? `
           <div class="jobs-grid">
             ${jobsHtml}

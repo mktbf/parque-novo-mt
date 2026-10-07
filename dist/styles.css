@@ -3144,3 +3144,6 @@ dialog::backdrop {
   opacity: 0.8;
   margin-bottom: 24px;
 }
+
+.agenda-destaque .button.secondary { color: white; border-color: rgba(255,255,255,0.3); }
+.agenda-destaque .button.secondary:hover { background: rgba(255,255,255,0.1); }
