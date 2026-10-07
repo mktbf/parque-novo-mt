@@ -32,8 +32,26 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "Projetado para colocar o estado no mapa dos grandes eventos do automobilismo e motociclismo, o Autódromo Internacional ocupa uma área de 90 hectares. O complexo de padrão internacional possui mais de 4.800 metros de circuito misto, circuito externo e pista de arrancada, além de 36 boxes, arquibancadas e camarotes.",
-        "Sendo o primeiro autódromo iluminado do Brasil, já fez história ao sediar a primeira prova noturna da Stock Car no país, além de atrair modalidades de peso como a Fórmula Truck, NASCAR Brasil, Copa Truck e TCR South America."
+        "Projetado para colocar o estado no mapa dos grandes eventos do automobilismo e motociclismo, o Autódromo Internacional ocupa uma área de 90 hectares. O complexo de padrão internacional possui mais de 4.800 metros de circuito misto, pista de arrancada e circuito externo, além de infraestrutura completa para receber competições regionais, nacionais e internacionais.",
+        "Como o primeiro autódromo iluminado do Brasil com padrão internacional, fez história ao sediar a primeira prova noturna da Stock Car no país. O evento contou com a participação de lendas que já correram na Fórmula 1, como Felipe Massa, Rubens Barrichello, Nelsinho Piquet e Christian Fittipaldi.",
+        "Reconhecido por sua infraestrutura robusta, o circuito atrai modalidades de peso como a Fórmula Truck, NASCAR Brasil, Copa Truck, TCR South America, Turismo Nacional e Stock Light, consolidando-se como o novo templo da velocidade no Brasil."
+      ],
+      "news": [
+        {
+          "source": "Stock Car Pro Series",
+          "title": "Stock Car inaugura Autódromo Internacional de Mato Grosso com corrida noturna inédita",
+          "url": "#"
+        },
+        {
+          "source": "NASCAR Brasil",
+          "title": "NASCAR Brasil acelera no Parque Novo Mato Grosso com etapa 'Night Challenge'",
+          "url": "#"
+        },
+        {
+          "source": "Fórmula Truck",
+          "title": "Fórmula Truck integra programação e leva multidão ao Autódromo de Cuiabá",
+          "url": "#"
+        }
       ]
     },
     {
