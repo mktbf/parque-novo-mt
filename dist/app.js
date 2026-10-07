@@ -335,32 +335,244 @@
 
   // === AGENDA ===
   function agenda() {
-    return (
-      intro(
-        'O que está por vir.',
-        'Shows, corridas, campeonatos, feiras e eventos culturais. Escolha o que você quer viver.',
-        'Agenda'
-      ) +
-      `<section class="wrap">${filters(['Todos', 'Shows e Música', 'Automobilismo', 'Esporte', 'Cultura e Família', 'Corporativo', 'AgroPlace'], state.agendaFilter, 'agenda')}<div class="filterbar" role="group" aria-label="Período dos eventos"><button class="filter" data-period="upcoming" aria-pressed="${state.agendaPeriod === 'upcoming'}">Próximos eventos</button><button class="filter" data-period="past" aria-pressed="${state.agendaPeriod === 'past'}">Já aconteceu</button></div><div id="event-results" aria-live="polite"></div>${newsletter('agenda')}</section>`
-    );
+  return `<div id="agenda-root" class="agenda-root"></div>`;
+}
+
+async function updateAgenda() {
+  const root = document.getElementById('agenda-root');
+  if (!root) return;
+
+  if (!window.agendaData) {
+    root.innerHTML = '<div class="empty-state"><h3>Carregando agenda...</h3></div>';
+    try {
+      const res = await fetch('data/eventos.json');
+      window.agendaData = await res.json();
+    } catch (e) {
+      console.error(e);
+      window.agendaData = [];
+    }
   }
 
-  function updateAgenda() {
-    const list = data.events.filter(
-      (e) =>
-        (state.agendaFilter === 'Todos' || e.category === state.agendaFilter) &&
-        (state.agendaPeriod === 'past' ? e.date < today() : e.date >= today())
-    );
+  const now = new Date();
+  const parseDate = (dstr) => new Date(dstr + 'T00:00:00-04:00');
 
-    document.getElementById('event-results').innerHTML = list.length
-      ? list
-          .map(
-            (e) =>
-              `<article class="event-card"><div class="event-date">${fmt(e.date)}</div><div><span class="kicker">${esc(e.category)}</span><h3>${esc(e.name)}</h3><p>${esc(e.location)}</p><p>${esc(e.ticket)}</p>${external(e.url, 'Ver informações na fonte')}${e.date >= today() ? `<button class="button secondary" data-calendar="${esc(e.id)}">Salvar no calendário</button>` : ''}</div></article>`
-          )
-          .join('')
-      : `<div class="empty-state"><span class="kicker">${state.agendaPeriod === 'past' ? 'MEMÓRIAS DO PARQUE' : 'NOVOS ENCONTROS VÊM AÍ'}</span><h3>${state.agendaPeriod === 'past' ? 'Nenhum registro nesta categoria.' : 'A próxima experiência está a caminho.'}</h3><p>${state.agendaPeriod === 'past' ? 'Escolha outra categoria para explorar os eventos registrados.' : 'Ainda não há datas cadastradas nesta seleção. Acompanhe os canais oficiais para a programação confirmada.'}</p>${external(config.instagram, 'Acompanhe o parque', 'button secondary')}</div>`;
+  const events = window.agendaData.map(e => {
+    const parsedStart = parseDate(e.dataInicio);
+    const parsedEnd = e.dataFim ? parseDate(e.dataFim) : parsedStart;
+    const endOfDay = new Date(parsedEnd);
+    endOfDay.setHours(23, 59, 59, 999);
+    const isPast = (e.status === 'concluido') || (e.status === 'confirmado' && endOfDay < now);
+    return { ...e, parsedStart, parsedEnd, endOfDay, isPast };
+  });
+
+  if (!window.agendaInit) {
+    const hasFuture = events.some(e => !e.isPast);
+    state.agendaPeriod = hasFuture ? 'upcoming' : 'past';
+    state.agendaFilter = 'Todos';
+    window.agendaInit = true;
+    window.lastAgendaPeriod = state.agendaPeriod;
   }
+
+  if (window.lastAgendaPeriod !== state.agendaPeriod) {
+    state.agendaFilter = 'Todos';
+    window.lastAgendaPeriod = state.agendaPeriod;
+  }
+
+  const currentTabEvents = events.filter(e => state.agendaPeriod === 'upcoming' ? !e.isPast : e.isPast);
+  
+  if (state.agendaPeriod === 'upcoming') {
+    currentTabEvents.sort((a, b) => a.parsedStart - b.parsedStart);
+  } else {
+    currentTabEvents.sort((a, b) => b.parsedStart - a.parsedStart);
+  }
+
+  const availableCats = ['Todos', ...new Set(currentTabEvents.map(e => e.categoria))];
+  const list = currentTabEvents.filter(e => state.agendaFilter === 'Todos' || e.categoria === state.agendaFilter);
+
+  const formatMonth = (d) => {
+    const m = d.toLocaleString('pt-BR', { month: 'long', timeZone: 'America/Cuiaba' });
+    return m.charAt(0).toUpperCase() + m.slice(1) + ' ' + d.getFullYear();
+  };
+
+  const realized2026 = events.filter(e => e.isPast && e.parsedStart.getFullYear() === 2026).length;
+  const confirmedDec = events.filter(e => e.status === 'confirmado' && e.parsedStart.getFullYear() === 2026 && e.parsedStart.getMonth() <= 11).length;
+
+  const headerHtml = `
+    <section class="agenda-hero">
+      <div class="agenda-hero-content">
+        ${crumb('<a href="#agenda">Agenda</a>')}
+        <h1>O que está por vir.</h1>
+        <p>Shows, corridas, campeonatos, feiras e eventos culturais. Escolha o que você quer viver.</p>
+      </div>
+      <div class="agenda-hero-stats">
+        <div class="stat-box">
+          <span class="stat-num green-lime">${realized2026}</span>
+          <span class="stat-lbl">eventos realizados em 2026</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num">${confirmedDec}</span>
+          <span class="stat-lbl">confirmados até dezembro</span>
+        </div>
+      </div>
+      <div class="agenda-tabs">
+        <button class="agenda-tab ${state.agendaPeriod === 'upcoming' ? 'active' : ''}" data-period="upcoming">
+          Próximos eventos (${events.filter(e => !e.isPast).length})
+        </button>
+        <button class="agenda-tab ${state.agendaPeriod === 'past' ? 'active' : ''}" data-period="past">
+          Já aconteceu (${events.filter(e => e.isPast).length})
+        </button>
+      </div>
+    </section>
+  `;
+
+  const filtersHtml = `
+    <div class="agenda-filters wrap">
+      ${availableCats.map(c => {
+        const count = c === 'Todos' ? currentTabEvents.length : currentTabEvents.filter(e => e.categoria === c).length;
+        return `<button class="filter ${state.agendaFilter === c ? 'active' : ''}" data-filter="agenda" data-value="${c}">${c} (${count})</button>`;
+      }).join('')}
+    </div>
+  `;
+
+  let contentHtml = '';
+
+  if (state.agendaPeriod === 'upcoming') {
+    if (list.length === 0) {
+      contentHtml = `<div class="empty-state wrap">
+        <span class="kicker">NOVOS ENCONTROS VÊM AÍ</span>
+        <h3>A próxima experiência está a caminho.</h3>
+        <button class="button secondary" data-period="past">Ver o que já aconteceu</button>
+      </div>`;
+    } else {
+      const nextEvent = list[0];
+      const daysLeft = Math.ceil((nextEvent.parsedStart - now) / (1000 * 60 * 60 * 24));
+      const dateExt = nextEvent.parsedStart.toLocaleString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Cuiaba' });
+      
+      const spaceLink = nextEvent.slugEspaco ? `<a href="#espaco/${nextEvent.slugEspaco}" class="button secondary">Conhecer o ${nextEvent.espaco} ↗</a>` : '';
+
+      const destaqueHtml = `
+        <div class="agenda-destaque wrap">
+          <img src="${asset('spaces/' + (nextEvent.slugEspaco || 'parque-da-familia'))}.webp" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.src='${asset('spaces/parque-da-familia.webp')}'">
+          <div class="destaque-info">
+            <div class="destaque-tags">
+              <span class="tag-proximo">Próximo evento</span>
+              <span class="tag-dias">Faltam ${daysLeft} dias</span>
+            </div>
+            <h2>${nextEvent.nome}</h2>
+            <p>${dateExt.charAt(0).toUpperCase() + dateExt.slice(1)} • ${nextEvent.espaco}</p>
+            <div class="destaque-actions">
+              <button class="button" onclick="import('./ics-generator.js').then(m => m.downloadICS('${nextEvent.id}', window.agendaData))">Adicionar à minha agenda</button>
+              ${spaceLink}
+            </div>
+          </div>
+        </div>
+      `;
+
+      const rest = list.slice(1);
+      let listHtml = '';
+      let lastMonth = '';
+      for (const e of rest) {
+        const m = formatMonth(e.parsedStart);
+        if (m !== lastMonth) {
+          listHtml += `<h3 class="agenda-month-title wrap">${m.toUpperCase()}</h3>`;
+          lastMonth = m;
+        }
+        const startDay = String(e.parsedStart.getDate()).padStart(2, '0');
+        const endDay = e.dataFim ? String(e.parsedEnd.getDate()).padStart(2, '0') : '';
+        const shortMonth = e.parsedStart.toLocaleString('pt-BR', { month: 'short', timeZone: 'America/Cuiaba' }).toUpperCase().replace('.', '');
+        const dayStr = endDay && endDay !== startDay ? `${startDay}-${endDay}` : startDay;
+        
+        listHtml += `
+          <article class="agenda-list-card wrap">
+            <div class="card-date-box">
+              <span class="day">${dayStr}</span>
+              <span class="month">${shortMonth}</span>
+            </div>
+            <div class="card-info">
+              <span class="category green">${e.categoria}</span>
+              <h4>${e.nome}</h4>
+              <p class="location"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${e.espaco}</p>
+            </div>
+            <div class="card-status">
+              <span class="tag-confirmado">Confirmado</span>
+            </div>
+            <div class="card-action">
+              <button class="button secondary" onclick="document.querySelector('#form-aviso select').value='${e.categoria}'; document.querySelector('#form-aviso').scrollIntoView({behavior:'smooth'})">Quero ser avisado</button>
+            </div>
+          </article>
+        `;
+      }
+
+      contentHtml = destaqueHtml + listHtml;
+    }
+  } else {
+    if (list.length === 0) {
+      contentHtml = `<div class="empty-state wrap">
+        <span class="kicker">MEMÓRIAS DO PARQUE</span>
+        <h3>Nenhum registro nesta categoria.</h3>
+        <p>Escolha outra categoria para explorar os eventos registrados.</p>
+      </div>`;
+    } else {
+      let listHtml = '';
+      let lastMonth = '';
+      listHtml += '<div class="wrap past-grid">';
+      for (const e of list) {
+        const m = formatMonth(e.parsedStart);
+        if (m !== lastMonth) {
+          if (lastMonth !== '') listHtml += '</div><div class="wrap past-grid">';
+          listHtml += `<h3 class="agenda-month-title full-width">${m.toUpperCase()}</h3>`;
+          lastMonth = m;
+        }
+        
+        const startDay = String(e.parsedStart.getDate()).padStart(2, '0');
+        const endDay = e.dataFim ? String(e.parsedEnd.getDate()).padStart(2, '0') : '';
+        const shortMonth = e.parsedStart.toLocaleString('pt-BR', { month: 'short', timeZone: 'America/Cuiaba' }).toUpperCase().replace('.', '');
+        const dayStr = endDay && endDay !== startDay ? `${startDay}-${endDay}` : startDay;
+        
+        const cobertura = e.linkCobertura ? `<a href="${e.linkCobertura}" class="cobertura-link">Ver cobertura →</a>` : '';
+
+        listHtml += `
+          <article class="past-card">
+            <span class="past-date">${dayStr} ${shortMonth} ${e.parsedStart.getFullYear()}</span>
+            <span class="past-category">${e.categoria}</span>
+            <h4>${e.nome}</h4>
+            <p class="past-location">${e.espaco}</p>
+            ${cobertura}
+          </article>
+        `;
+      }
+      listHtml += '</div>';
+      contentHtml = listHtml;
+    }
+  }
+
+  const allCategories = ['Todos', 'Automobilismo', 'Motociclismo', 'Esporte', 'Corridas de rua', 'Festivais e Agro', 'Corporativo'];
+
+  const footerHtml = `
+    <section class="agenda-footer wrap">
+      <div class="agenda-newsletter">
+        <span class="kicker">FIQUE POR PERTO</span>
+        <h3>Não encontrou o que procura?</h3>
+        <p>Escolha o que você quer viver e deixe seu interesse registrado.</p>
+        <form id="form-aviso" data-form="newsletter">
+          <input type="hidden" name="origem" value="agenda">
+          ${field('nome', 'Seu nome')}
+          ${field('email', 'Seu e-mail', 'email')}
+          ${field('interesse', 'Tenho interesse em', 'text', allCategories)}
+          ${formEnd('newsletter', 'Quero ser avisado')}
+        </form>
+      </div>
+      <div class="agenda-realize">
+        <span class="kicker">QUERO REALIZAR MEU EVENTO</span>
+        <h3>Shows, feiras, competições e grandes encontros.</h3>
+        <p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para a sua transmissão, espaço e operação.</p>
+        <a href="#evento" class="button">Realize seu evento ↗</a>
+      </div>
+    </section>
+  `;
+
+  root.innerHTML = headerHtml + filtersHtml + contentHtml + footerHtml;
+}
 
   // === IMPRENSA / NEWS ===
   function press() {
