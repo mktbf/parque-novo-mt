@@ -333,7 +333,29 @@
     return `<section class="newsletter"><div><span class="kicker">FIQUE POR PERTO</span><h3>${topic === 'galeria' ? 'Não perca o próximo capítulo.' : 'Não encontrou o que procura?'}</h3><p>${topic === 'galeria' ? 'Acompanhe os novos registros do parque.' : 'Escolha o que você quer viver e deixe seu interesse registrado.'}</p></div><form data-form="newsletter"><input type="hidden" name="origem" value="${topic}">${field('nome', 'Seu nome')}${field('email', 'Seu e-mail', 'email')}${field('interesse', 'Tenho interesse em', 'text', ['Todos', 'Shows e Música', 'Automobilismo', 'Esporte', 'Cultura e Família', 'Corporativo', 'AgroPlace', 'Galeria'])}${formEnd('newsletter', 'Quero ser avisado')}</form></section>`;
   }
 
-  // === AGENDA ===
+  // === AGENDA ===\n
+window.downloadICS = function(eventId) {
+  const eventsData = window.agendaData || [];
+  const event = eventsData.find(e => e.id === eventId);
+  if (!event) return;
+  const formatDate = (date, endOfDay) => {
+    const d = new Date(date);
+    if (endOfDay) d.setHours(23, 59, 59, 999);
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
+  };
+  const start = new Date(event.dataInicio + 'T00:00:00-04:00');
+  const end = new Date((event.dataFim || event.dataInicio) + 'T00:00:00-04:00');
+  const ics = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Parque Novo MT//Agenda//PT\r\nBEGIN:VEVENT\r\nUID:${event.id}@parquenovomt.com\r\nDTSTAMP:${formatDate(new Date())}\r\nDTSTART:${formatDate(start)}\r\nDTEND:${formatDate(end, true)}\r\nSUMMARY:${event.nome}\r\nLOCATION:${event.espaco} - Parque Novo Mato Grosso\r\nDESCRIPTION:Categoria: ${event.categoria}\r\nEND:VEVENT\r\nEND:VCALENDAR`;
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.setAttribute('download', `${event.id}.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   function agenda() {
   return `<div id="agenda-root" class="agenda-root"></div>`;
 }
@@ -343,14 +365,7 @@ async function updateAgenda() {
   if (!root) return;
 
   if (!window.agendaData) {
-    root.innerHTML = '<div class="empty-state"><h3>Carregando agenda...</h3></div>';
-    try {
-      const res = await fetch('data/eventos.json');
-      window.agendaData = await res.json();
-    } catch (e) {
-      console.error(e);
-      window.agendaData = [];
-    }
+    window.agendaData = [{"id":"track-day-nmt","nome":"Track Day Novo Mato Grosso","dataInicio":"2026-10-24","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"confirmado"},{"id":"camp-estadual-ciclismo","nome":"Campeonato Estadual de Ciclismo de Estrada","dataInicio":"2026-11-08","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"confirmado"},{"id":"final-estadual-motocross","nome":"Final Estadual Moto Cross","dataInicio":"2026-11-20","dataFim":"2026-11-21","espaco":"Motocross","slugEspaco":"motocross","categoria":"Motociclismo","status":"confirmado"},{"id":"kart-endurance","nome":"Kart Estadual de Endurance","dataInicio":"2026-12-05","espaco":"Kart├│dromo","slugEspaco":"kartodromo","categoria":"Automobilismo","status":"confirmado"},{"id":"triathlon-3a","nome":"Triathlon MT, 3┬¬ Etapa Estadual","dataInicio":"2026-12-13","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"confirmado"},{"id":"corrida-reis","nome":"Corrida de Reis","dataInicio":"2026-01-11","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Corridas de rua","status":"concluido"},{"id":"semana-cavalo","nome":"Semana do Cavalo","dataInicio":"2026-03-04","dataFim":"2026-03-14","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"triathlon-1a","nome":"Triathlon MT, 1┬¬ Etapa Estadual","dataInicio":"2026-03-29","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"concluido"},{"id":"circuito-bb","nome":"Circuito Banco do Brasil de Corrida de Rua 2026","dataInicio":"2026-04-12","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Corridas de rua","status":"concluido"},{"id":"classic-pantanal","nome":"Classic Pantanal","dataInicio":"2026-05-08","dataFim":"2026-05-09","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"motocross-5a","nome":"Moto Cross, 5┬¬ Etapa Campeonato Brasileiro","dataInicio":"2026-05-21","dataFim":"2026-05-24","espaco":"Motocross","slugEspaco":"motocross","categoria":"Motociclismo","status":"concluido","linkCobertura":"#noticia/5-etapa-campeonato-brasileiro-de-motocross"},{"id":"green-farm","nome":"Green Farm","dataInicio":"2026-05-27","dataFim":"2026-05-31","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"formula-truck","nome":"F├│rmula Truck","dataInicio":"2026-06-13","dataFim":"2026-06-14","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido","linkCobertura":"#noticia/formula-truck-no-parque-novo-mato-grosso"},{"id":"stock-car","nome":"Stock Car","dataInicio":"2026-06-20","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido"},{"id":"conesv","nome":"CONESV, Congresso Nacional de Seguran├ºa","dataInicio":"2026-06-24","dataFim":"2026-06-26","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Corporativo","status":"concluido"},{"id":"stu-nacional","nome":"STU Nacional, Campeonato Brasileiro de Skate","dataInicio":"2026-06-25","dataFim":"2026-06-28","espaco":"Complexo de Skate","slugEspaco":"skate-park","categoria":"Esporte","status":"concluido","linkCobertura":"#noticia/stu-nacional-etapa-cuiaba"},{"id":"triathlon-2a","nome":"Triathlon MT, 2┬¬ Etapa Estadual","dataInicio":"2026-06-28","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Esporte","status":"concluido"},{"id":"bmx","nome":"BMX Campeonato Brasileiro de Bicicross","dataInicio":"2026-07-05","espaco":"Pista de BMX","slugEspaco":"bmx","categoria":"Esporte","status":"concluido","linkCobertura":"#noticia/campeonato-brasileiro-de-bicicross-bmx","obs":"data a confirmar: planilha 01/06 a 05/07, materia 15/07"},{"id":"live-run","nome":"Corrida Live Run","dataInicio":"2026-07-05","espaco":"Pista de Ciclismo e Caminhada","slugEspaco":"","categoria":"Corridas de rua","status":"concluido"},{"id":"arrancada","nome":"Copa Brasil de Arrancada","dataInicio":"2026-07-10","dataFim":"2026-07-11","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido"},{"id":"nascar-brasil","nome":"NASCAR Brasil e Copa Truck","dataInicio":"2026-08-01","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido","linkCobertura":"#noticia/nascar-brasil-e-copa-truck"},{"id":"pbr-brasil","nome":"PBR Brasil, Agrofestival","dataInicio":"2026-08-07","dataFim":"2026-08-09","espaco":"Arena Show","slugEspaco":"arena-show","categoria":"Festivais e Agro","status":"concluido"},{"id":"formula-a","nome":"F├│rmula A e Turismo Centro Oeste","dataInicio":"2026-09-11","dataFim":"2026-09-12","espaco":"Aut├│dromo","slugEspaco":"autodromo","categoria":"Automobilismo","status":"concluido"},{"id":"circuito-mt-skate","nome":"Circuito Matogrossense de Skate","dataInicio":"2026-09-26","espaco":"Complexo de Skate","slugEspaco":"skate-park","categoria":"Esporte","status":"concluido"}];
   }
 
   const now = new Date();
@@ -461,7 +476,7 @@ async function updateAgenda() {
             <h2>${nextEvent.nome}</h2>
             <p>${dateExt.charAt(0).toUpperCase() + dateExt.slice(1)} • ${nextEvent.espaco}</p>
             <div class="destaque-actions">
-              <button class="button" onclick="import('./ics-generator.js').then(m => m.downloadICS('${nextEvent.id}', window.agendaData))">Adicionar à minha agenda</button>
+              <button class="button" onclick="window.downloadICS('${nextEvent.id}')">Adicionar à minha agenda</button>
               ${spaceLink}
             </div>
           </div>
@@ -685,7 +700,7 @@ async function updateAgenda() {
     const relatedSpace = data.spaces.find(s => s.category.toLowerCase().includes(n.category.toLowerCase()) || n.title.toLowerCase().includes(s.name.toLowerCase()));
     
     // Try to find related events
-    const relatedEvents = data.events ? data.events.filter(e => e.category.toLowerCase().includes(n.category.toLowerCase()) || e.title.toLowerCase().includes(n.category.toLowerCase())).slice(0, 2) : [];
+    const relatedEvents = data.events ? data.events.filter(e => (e.category || e.categoria || "").toLowerCase().includes((n.category || "").toLowerCase()) || (e.title || e.name || "").toLowerCase().includes((n.category || "").toLowerCase())).slice(0, 2) : [];
     
     // If news has its own gallery, or if we can borrow the space's gallery
     const gallery = n.gallery || (relatedSpace ? relatedSpace.gallery : null);
@@ -714,7 +729,7 @@ async function updateAgenda() {
               <span class="kicker">AGENDA</span>
               <h3 style="margin: 10px 0;">Pr&oacute;ximos eventos</h3>
               <ul style="list-style:none; padding:0; margin:0;">
-                ${relatedEvents.map(e => `<li style="margin-bottom: 15px;"><strong style="display:block; color:var(--navy);">${esc(e.title)}</strong><small style="color:#666;">${fmt(e.date)}</small></li>`).join('')}
+                ${relatedEvents.map(e => `<li style="margin-bottom: 15px;"><strong style="display:block; color:var(--navy);">${esc(e.title || e.name)}</strong><small style="color:#666;">${fmt(e.date)}</small></li>`).join('')}
               </ul>
               <a class="text-link" href="#agenda">Ver agenda completa &nearr;</a>
             </div>
