@@ -1076,10 +1076,7 @@ async function updateAgenda() {
             <button class="mobile-toggle-btn" style="display: none;" onclick="this.previousElementSibling.classList.toggle('expanded'); this.textContent = this.textContent === 'Ver detalhes' ? 'Ocultar detalhes' : 'Ver detalhes'">Ver detalhes</button>
 
             ${!isClosed ? `
-            <div class="email-box">
-              <span style="font-size:18px;">&#9993;</span> 
-              <span>Envie seu currículo para <a href="mailto:rh@parquenovomt.com?subject=${encodeURIComponent(job.title)}">rh@parquenovomt.com</a> com o assunto '${job.title}'.</span>
-            </div>
+            
             <a href="#cadastro-vagas" class="button job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='${job.title}'; document.querySelector('#submit-career-btn').textContent='Enviar candidatura &nearr;'; document.querySelectorAll('.job-card').forEach(c => c.style.borderColor=''); document.getElementById('vaga-${slug}').style.borderColor='#1b8f3a';">Candidatar-se &rarr;</a>
             ` : `
             <a href="#cadastro-vagas" class="button light job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='Banco de talentos (candidatura espontânea)'; document.querySelector('#submit-career-btn').textContent='Cadastrar no Banco de Talentos &nearr;';">Cadastrar no Banco de Talentos &nearr;</a>
@@ -1161,19 +1158,8 @@ async function updateAgenda() {
           font-size: 14px;
           line-height: 1.5;
         }
-        .email-box {
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          padding: 12px;
-          border-radius: 6px;
-          font-size: 13px;
-          color: #475569;
-          margin-bottom: 15px;
-          display: flex;
-          align-items: flex-start;
-          gap: 8px;
-        }
-        .email-box a { color: #1b8f3a; text-decoration: underline; }
+        
+        
         .job-apply-btn {
           width: 100%;
           text-align: center;
@@ -1245,9 +1231,7 @@ async function updateAgenda() {
              cursor: pointer;
              font-weight: 500;
           }
-          .email-box {
-             align-items: center;
-          }
+          
         }
       </style>
     `;
