@@ -39,18 +39,18 @@ window.PNMT_CONTENT = {
       "news": [
         {
           "source": "Stock Car Pro Series",
-          "title": "Stock Car inaugura Autódromo Internacional de Mato Grosso com corrida noturna inédita",
-          "url": "https://www.cba.org.br/"
+          "title": "Inauguração histórica: Stock Car estreia corrida noturna no Brasil",
+          "id": "stock-car-inauguracao"
         },
         {
           "source": "NASCAR Brasil",
-          "title": "NASCAR Brasil acelera no Parque Novo Mato Grosso com etapa 'Night Challenge'",
-          "url": "https://nascarbrasil.com.br/"
+          "title": "NASCAR Brasil realiza primeira etapa Night Challenge em Cuiabá",
+          "id": "nascar-brasil"
         },
         {
-          "source": "Fórmula Truck",
-          "title": "Fórmula Truck integra programação e leva multidão ao Autódromo de Cuiabá",
-          "url": "https://www.cba.org.br/"
+          "source": "Copa Truck",
+          "title": "Copa Truck levanta poeira no Festival de Velocidade de Cuiabá",
+          "id": "copa-truck"
         }
       ]
     },
@@ -69,7 +69,7 @@ window.PNMT_CONTENT = {
         {
           "source": "G1",
           "title": "Alok e Gusttavo Lima reúnem mais de 80 mil pessoas na inauguração da Arena Show",
-          "url": "https://g1.globo.com/mt/mato-grosso/"
+          "id": "shows-inauguracao"
         }
       ]
     },
@@ -94,6 +94,13 @@ window.PNMT_CONTENT = {
       "text": [
         "Velocidade que forma campeões. Projetado sob os rigorosos padrões da FIA Kart, o complexo de 95.500 m² recebe competições regionais, nacionais e internacionais.",
         "Com arquibancadas, paddock, pódio e torre de controle de última geração, a estrutura robusta já é amplamente reconhecida por especialistas do automobilismo como uma das pistas mais completas e modernas do mundo."
+      ],
+      "news": [
+        {
+          "source": "FAEMT",
+          "title": "Novo Kartódromo de Cuiabá passa por testes de pista e recebe elogios",
+          "id": "kartodromo-testes"
+        }
       ]
     },
     {
@@ -110,7 +117,7 @@ window.PNMT_CONTENT = {
         {
           "source": "MXGP",
           "title": "Motocross de alto nível: Pista iluminada desafia pilotos do Brasileiro",
-          "url": "https://cba.org.br/"
+          "id": "mxgp-motocross"
         }
       ]
     },
@@ -128,7 +135,7 @@ window.PNMT_CONTENT = {
         {
           "source": "CBA",
           "title": "Pista padrão UCI do Parque Novo MT recebe Campeonato Brasileiro de BMX",
-          "url": "https://cba.org.br/"
+          "id": "bmx-brasileiro"
         }
       ]
     },
@@ -146,7 +153,7 @@ window.PNMT_CONTENT = {
         {
           "source": "STU National",
           "title": "Cuiabá Skatepark sedia etapa inédita do STU National",
-          "url": "https://stuskateboard.com/"
+          "id": "stu-national"
         }
       ]
     },
@@ -376,58 +383,130 @@ window.PNMT_CONTENT = {
   "events": [],
   "news": [
     {
+      "id": "nascar-brasil",
       "category": "Automobilismo",
       "date": "2026-08-01",
       "source": "NASCAR Brasil",
       "title": "NASCAR Brasil realiza primeira etapa Night Challenge em Cuiabá",
       "description": "A NASCAR Brasil acelerou fundo no Parque Novo Mato Grosso com uma etapa noturna inédita, utilizando o traçado trioval iluminado.",
-      "url": "https://nascarbrasil.com.br/",
-      "image": "track"
+      "image": "track",
+      "fullText": [
+        "O Autódromo Internacional de Mato Grosso entrou definitivamente para a história do automobilismo brasileiro ao sediar a quinta etapa da temporada 2026 da NASCAR Brasil.",
+        "Entre os dias 29 de julho e 1º de agosto, o complexo do Parque Novo Mato Grosso recebeu a inédita 'Night Challenge', uma corrida noturna que desafiou os pilotos sob os potentes refletores da pista.",
+        "A competição utilizou o anel externo do autódromo, um traçado trioval de 2.800 metros de extensão projetado para altíssimas velocidades. O piloto Alfredinho Ibiapina garantiu a pole position, coroando um final de semana que também contou com a presença da Copa Truck e da Copa Hyundai HB20."
+      ]
     },
     {
+      "id": "stock-car-inauguracao",
       "category": "Automobilismo",
       "date": "2025-11-20",
       "source": "Stock Car Pro Series",
       "title": "Inauguração histórica: Stock Car estreia corrida noturna no Brasil",
       "description": "O Autódromo Internacional de Mato Grosso abriu suas portas com chave de ouro, sediando a primeira corrida noturna da Stock Car.",
-      "url": "https://www.cba.org.br/",
-      "image": "track"
+      "image": "track",
+      "fullText": [
+        "Em um marco para o esporte a motor nacional, o Autódromo Internacional de Mato Grosso foi oficialmente inaugurado em novembro de 2025 com a 10ª etapa da temporada da Stock Car Pro Series.",
+        "Pela primeira vez em seus mais de 45 anos de história, a categoria máxima do automobilismo brasileiro disputou uma prova sob luzes artificiais. A estrutura contou com 128 torres e 768 refletores, garantindo um espetáculo inesquecível para o público.",
+        "A inauguração destacou o traçado de 4.500 metros homologado pela FIA, além de marcar a presença de grandes estrelas do grid como Felipe Massa, Rubens Barrichello e Nelsinho Piquet. O evento teve acesso democrático, com transporte especial e portões abertos para a população."
+      ]
     },
     {
+      "id": "copa-truck",
+      "category": "Automobilismo",
+      "date": "2026-08-01",
+      "source": "Copa Truck",
+      "title": "Copa Truck levanta poeira no Festival de Velocidade de Cuiabá",
+      "description": "A Copa Truck desembarcou no Parque Novo Mato Grosso para um evento noturno épico, dividindo a pista com a NASCAR Brasil.",
+      "image": "track",
+      "fullText": [
+        "A força bruta dos caminhões chegou a Cuiabá com a 5ª etapa da Copa Truck 2026. Em um mega festival de velocidade realizado no Parque Novo Mato Grosso, a categoria dividiu as atenções com a NASCAR Brasil.",
+        "A prova foi realizada sob iluminação artificial no início de agosto, levando os brutos a acelerarem fundo nas 13 curvas do circuito de 4.500 metros. A infraestrutura de ponta do complexo proporcionou total segurança para as disputas acirradas.",
+        "A estreia da categoria no Mato Grosso atraiu multidões para as arquibancadas do autódromo, consolidando Cuiabá como uma das novas capitais do automobilismo pesado na América Latina."
+      ]
+    },
+    {
+      "id": "formula-truck",
+      "category": "Automobilismo",
+      "date": "2026-06-14",
+      "source": "Fórmula Truck",
+      "title": "Fórmula Truck homenageia lendas e agita o Autódromo de Cuiabá",
+      "description": "A maior competição de caminhões da América Latina estreou no Autódromo do Parque Novo MT com o marcante GP Pedro Muffato.",
+      "image": "track",
+      "fullText": [
+        "Entre os dias 12 e 14 de junho de 2026, a Fórmula Truck fez sua tão aguardada estreia no Parque Novo Mato Grosso.",
+        "A 5ª etapa da temporada foi nomeada de 'GP Pedro Muffato', em uma justa homenagem à despedida oficial do lendário piloto das pistas. O evento reuniu caminhões potentes e pilotos de várias partes do continente.",
+        "O traçado veloz e desafiador do Autódromo Internacional provou ser o palco perfeito para o tamanho e a potência das máquinas, entregando corridas memoráveis e muita emoção ao público presente."
+      ]
+    },
+    {
+      "id": "bmx-brasileiro",
       "category": "Esporte",
       "date": "2026-07-15",
       "source": "CBA",
       "title": "Pista padrão UCI do Parque Novo MT recebe Campeonato Brasileiro de BMX",
       "description": "A nova e moderna pista de BMX Racing foi inaugurada recebendo o principal evento nacional da modalidade com mais de 800 atletas.",
-      "url": "https://cba.org.br/",
-      "image": "entrance"
+      "image": "entrance",
+      "fullText": [
+        "Julho de 2026 marcou a inauguração oficial da Pista Internacional de BMX no Parque Novo Mato Grosso. E o pontapé inicial não poderia ter sido melhor: o local sediou o Campeonato Brasileiro de BMX Racing.",
+        "Com o rigoroso padrão UCI (União Ciclística Internacional), a pista foi elogiada por mais de 800 atletas que participaram das disputas em diferentes categorias.",
+        "O complexo foi planejado para fomentar a formação de novos talentos e já se tornou a 'casa' oficial de grandes torneios do ciclismo radical no Brasil."
+      ]
     },
     {
-      "category": "Eventos",
-      "date": "2025-12-19",
-      "source": "G1",
-      "title": "Alok e Gusttavo Lima reúnem mais de 80 mil pessoas na inauguração da Arena Show",
-      "description": "Em um final de semana inesquecível, a Arena Show do Parque Novo Mato Grosso foi inaugurada com shows gratuitos das maiores estrelas do Brasil.",
-      "url": "https://g1.globo.com/mt/mato-grosso/",
-      "image": "arena"
-    },
-    {
-      "category": "Esporte",
-      "date": "2026-05-10",
-      "source": "MXGP",
-      "title": "Motocross de alto nível: Pista iluminada desafia pilotos do Brasileiro",
-      "description": "O traçado arenoso e a iluminação especial da pista de Motocross do Parque Novo MT foram o cenário perfeito para uma etapa eletrizante do Campeonato Brasileiro.",
-      "url": "https://cba.org.br/",
-      "image": "skate"
-    },
-    {
+      "id": "stu-national",
       "category": "Esporte",
       "date": "2026-06-28",
       "source": "STU National",
       "title": "Cuiabá Skatepark sedia etapa inédita do STU National",
-      "description": "A 4ª etapa do STU National 2026 invadiu a capital com os maiores nomes do skate nacional em competições de Street e Park, reunindo multidões no maior skatepark da América Latina.",
-      "url": "https://stuskateboard.com/",
-      "image": "skate"
+      "description": "A 4ª etapa do STU National 2026 invadiu a capital com os maiores nomes do skate nacional em competições de Street e Park.",
+      "image": "skate",
+      "fullText": [
+        "Entre os dias 26 e 28 de junho de 2026, o maior skatepark da América Latina provou a que veio. O Cuiabá Skatepark, localizado dentro do Parque Novo Mato Grosso, recebeu a 4ª etapa do circuito STU National.",
+        "Foi a estreia da capital mato-grossense no calendário oficial do esporte, trazendo grandes nomes do skate para disputas de Street, Park e Paraskate Park. As pistas, projetadas com elementos que homenageiam a cultura local, foram exaustivamente elogiadas pelos atletas olímpicos.",
+        "Com entrada gratuita e arquibancadas lotadas, o STU National reafirmou o parque como um espaço vivo de esporte, cultura urbana e entretenimento de padrão mundial."
+      ]
+    },
+    {
+      "id": "shows-inauguracao",
+      "category": "Eventos",
+      "date": "2025-12-19",
+      "source": "G1",
+      "title": "Alok e Gusttavo Lima reúnem mais de 80 mil pessoas na inauguração da Arena Show",
+      "description": "Em um final de semana inesquecível, a Arena Show do Parque Novo Mato Grosso foi inaugurada com shows gratuitos das maiores estrelas.",
+      "image": "arena",
+      "fullText": [
+        "A Arena Show do Parque Novo Mato Grosso teve sua grande inauguração testada no mais alto nível. Em dezembro de 2025, o complexo provou sua capacidade ao receber mais de 80 mil pessoas por dia em um final de semana de celebração.",
+        "No sábado, o Embaixador Gusttavo Lima comandou a festa, enquanto o domingo foi encerrado em alto nível com o som do DJ Alok. A megaestrutura, coberta e preparada com teia cenográfica de ponta, garantiu segurança e conforto para a multidão.",
+        "O sucesso dos eventos gratuitos carimbou o passaporte da Arena Show como um dos principais destinos para turnês nacionais e internacionais no Brasil."
+      ]
+    },
+    {
+      "id": "mxgp-motocross",
+      "category": "Esporte",
+      "date": "2026-05-10",
+      "source": "MXGP",
+      "title": "Motocross de alto nível: Pista iluminada desafia pilotos do Brasileiro",
+      "description": "O traçado arenoso e a iluminação especial da pista de Motocross do Parque Novo MT foram o cenário perfeito para uma etapa eletrizante.",
+      "image": "skate",
+      "fullText": [
+        "O Campeonato Brasileiro de Motocross desembarcou no Parque Novo Mato Grosso para mais uma etapa emblemática em maio de 2026.",
+        "Construída com um traçado arenoso altamente desafiador, a pista de Motocross local exige máxima técnica dos pilotos. O grande diferencial foi a disputa sob luzes, aproveitando a potente iluminação instalada no complexo para eventos noturnos.",
+        "Pilotos de todo o país aceleraram forte, e as provas reafirmaram o local não apenas como um pólo do motocross nacional, mas também com potencial para futuras edições do MXGP."
+      ]
+    },
+    {
+      "id": "kartodromo-testes",
+      "category": "Automobilismo",
+      "date": "2025-02-15",
+      "source": "Federação de Automobilismo",
+      "title": "Novo Kartódromo de Cuiabá passa por testes de pista e recebe elogios",
+      "description": "Projetado nos padrões da FIA Kart, a pista de 1.153 metros recebeu testes de pilotos profissionais que atestaram o alto nível do asfalto.",
+      "image": "track",
+      "fullText": [
+        "A pré-inauguração do Kartódromo do Parque Novo Mato Grosso foi marcada por intensas sessões de testes no início de 2025.",
+        "Com 1.153 metros de extensão e uma reta principal de 197 metros, o circuito atende rigorosamente aos padrões internacionais estabelecidos pela FIA Kart. Pilotos profissionais foram convidados para as primeiras baterias experimentais e não pouparam elogios.",
+        "O traçado veloz, a aderência do asfalto e as áreas de escape generosas colocaram a pista imediatamente no radar das grandes competições de kart da América do Sul."
+      ]
     }
   ],
   "gallery": [

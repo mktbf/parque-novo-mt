@@ -318,7 +318,7 @@
 
     return (
       hero +
-      `<section class="wrap detail-layout"><article class="prose">${s.id === 'autodromo' ? `<img class="endorsement" src="${asset('autodromo-logo')}" alt="Autódromo Internacional de Mato Grosso — submarca do parque">` : ''}${s.image ? `<h2>${esc(s.tagline)}</h2>` : ''}${s.text.map((p) => `<p>${esc(p)}</p>`).join('')}${s.numbers ? `<div class="detail-numbers">${s.numbers.map((n) => `<div><strong>${esc(n[0])}</strong><p>${esc(n[1])}</p></div>`).join('')}</div>` : ''}</article><aside class="detail-aside"><span class="kicker">SUA PRÓXIMA EXPERIÊNCIA</span><h3>Viva o parque de perto.</h3><p>Visitas mediante agendamento e confirmação das áreas liberadas.</p><a class="button" href="#visitar">Quero visitar <span>↗</span></a><a class="button secondary" href="#evento/${esc(s.id)}">Realize seu evento <span>↗</span></a><a class="text-link" href="#agenda">Confira a agenda ↗</a></aside></section>${s.news && s.news.length ? `<section class="wrap detail-news"><div class="related-header"><h2>Na Mídia</h2></div><div class="news-list">${s.news.map(n => `<article class="news-card"><span class="kicker">${n.source}</span><h4>${n.title}</h4></article>`).join('')}</div></section>` : ''}<section class="related"><div class="wrap">${heading('CONTINUE EXPLORANDO', 'Outros espaços.<br>Novas descobertas.')}<div class="catalog-grid">${related.map(catalogCard).join('')}</div></div></section>`
+      `<section class="wrap detail-layout"><article class="prose">${s.id === 'autodromo' ? `<img class="endorsement" src="${asset('autodromo-logo')}" alt="Autódromo Internacional de Mato Grosso — submarca do parque">` : ''}${s.image ? `<h2>${esc(s.tagline)}</h2>` : ''}${s.text.map((p) => `<p>${esc(p)}</p>`).join('')}${s.numbers ? `<div class="detail-numbers">${s.numbers.map((n) => `<div><strong>${esc(n[0])}</strong><p>${esc(n[1])}</p></div>`).join('')}</div>` : ''}</article><aside class="detail-aside"><span class="kicker">SUA PRÓXIMA EXPERIÊNCIA</span><h3>Viva o parque de perto.</h3><p>Visitas mediante agendamento e confirmação das áreas liberadas.</p><a class="button" href="#visitar">Quero visitar <span>↗</span></a><a class="button secondary" href="#evento/${esc(s.id)}">Realize seu evento <span>↗</span></a><a class="text-link" href="#agenda">Confira a agenda ↗</a></aside></section>${s.news && s.news.length ? `<section class="wrap detail-news"><div class="related-header"><h2>Na Mídia</h2></div><div class="news-list">${s.news.map(n => `<a href="#noticia/${n.id}" class="news-card-link" style="text-decoration:none;"><article class="news-card"><span class="kicker">${n.source}</span><h4>${n.title}</h4></article></a>`).join('')}</div></section>` : ''}<section class="related"><div class="wrap">${heading('CONTINUE EXPLORANDO', 'Outros espaços.<br>Novas descobertas.')}<div class="catalog-grid">${related.map(catalogCard).join('')}</div></div></section>`
     );
   }
 
@@ -374,6 +374,20 @@
     );
   }
 
+  
+  function newsArticle(id) {
+    const n = data.news?.find(x => x.id === id);
+    if (!n) return notFound();
+
+    const hero = `<section class="space-hero"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
+
+    return (
+      hero +
+      `<section class="wrap detail-layout"><article class="prose">${n.fullText ? n.fullText.map(p => `<p>${esc(p)}</p>`).join('') : `<p>${esc(n.description)}</p>`}</article>
+      <aside class="detail-sidebar"><div class="space-card"><span class="kicker">ASSESSORIA</span><h3>Fale com a equipe.</h3><p>Para credenciamento ou informações detalhadas sobre as coberturas.</p><div class="space-actions"><a href="#imprensa" class="button">Acessar portal <span>↗</span></a></div></div></aside></section>`
+    );
+  }
+
   function updateNews() {
     if (!data.news || !data.news.length) return;
     document.getElementById('news-results').innerHTML = data.news
@@ -386,7 +400,7 @@
               <small>${n.category} &middot; ${fmt(n.date)} &middot; ${n.source}</small>
               <h3>${n.title}</h3>
               <p>${n.description}</p>
-              ${external(n.url, 'Leia a cobertura')}
+              <a href="#noticia/${n.id}" class="inline-link" style="text-decoration:none;font-weight:bold;color:#287845;">Ler matéria completa <span>&rarr;</span></a>
             </div>
           </article>`
       )
@@ -759,6 +773,8 @@
       html = about();
     } else if (route === 'espacos') {
       html = spacesPage();
+    } else if (route.startsWith('noticia/')) {
+      html = newsArticle(route.split('/')[1]);
     } else if (route.startsWith('espaco/')) {
       html = detail(route.split('/')[1]);
     } else if (route === 'agenda') {
