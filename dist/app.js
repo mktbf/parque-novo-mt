@@ -323,8 +323,8 @@
   }
 
   // === FORM BUILDERS ===
-  const field = (name, label, type = 'text', options, isRequired = true) =>
-    `<label class="field">${label}${isRequired ? ' *' : ' <small style="font-weight:400;opacity:0.75">(opcional)</small>'}${options ? `<select name="${name}" ${isRequired ? 'required' : ''}><option value="">Selecione</option>${options.map((o) => `<option value="${esc(typeof o === 'string' ? o : o.id)}" ${state.selectedSpace === (o.id || o) ? 'selected' : ''}>${typeof o === 'string' ? o : o.name}</option>`).join('')}</select>` : type === 'textarea' ? `<textarea name="${name}" ${isRequired ? 'required' : ''} maxlength="4000"></textarea>` : `<input name="${name}" type="${type}" ${isRequired ? 'required' : ''} ${type === 'date' ? `min="${today()}"` : ''} ${type === 'number' ? 'min="1" max="1000000"' : type === 'tel' ? 'autocomplete="tel" minlength="8" maxlength="25"' : type === 'email' ? 'autocomplete="email" maxlength="254"' : 'maxlength="200"'}>`}</label>`;
+    const field = (name, label, type = 'text', options, isRequired = true, extraAttrs = '') =>
+    '<label class="field">' + label + (isRequired ? ' *' : ' <small style="font-weight:400;opacity:0.75">(opcional)</small>') + (options ? '<select name="' + name + '"' + (isRequired ? ' required' : '') + '><option value="">Selecione</option>' + options.map(o => '<option value="' + esc(typeof o === 'string' ? o : o.id) + '" ' + (state.selectedSpace === (o.id || o) ? 'selected' : '') + '>' + (typeof o === 'string' ? o : o.name) + '</option>').join('') + '</select>' : type === 'textarea' ? '<textarea name="' + name + '"' + (isRequired ? ' required' : '') + ' maxlength="4000"></textarea>' : '<input name="' + name + '" type="' + type + '"' + (isRequired ? ' required' : '') + (type === 'date' ? ' min="' + today() + '"' : '') + (type === 'number' ? ' min="1" max="1000000"' : type === 'tel' ? ' autocomplete="tel" minlength="8" maxlength="25"' : type === 'email' ? ' autocomplete="email" maxlength="254"' : type === 'file' ? ' accept="' + extraAttrs + '"' : ' maxlength="200"') + '>') + '</label>';
 
   const formEnd = (kind, label) =>
     `<input type="text" name="_gotcha_honey" style="display:none !important; opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true"><label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
@@ -454,20 +454,20 @@
   }
 
   // === EVENTOS & CONTATO ===
-  function eventForm() {
+    function eventForm() {
     const eventSpaces = [
-      { id: 'orientacao', name: '— Preciso de orientação da equipe —' },
-      { id: 'arena-show', name: 'Arena Show (Até 120 mil pessoas)' },
-      { id: 'centro-de-eventos', name: 'Centro de Eventos (5 pavilhões, até 26 mil pessoas)' },
-      { id: 'autodromo', name: 'Autódromo Internacional' },
+      { id: 'orientacao', name: '- Preciso de orienta\u00e7\u00e3o da equipe -' },
+      { id: 'arena-show', name: 'Arena Show (At\u00e9 120 mil pessoas)' },
+      { id: 'centro-de-eventos', name: 'Centro de Eventos (5 pavilh\u00f5es, at\u00e9 26 mil pessoas)' },
+      { id: 'autodromo', name: 'Aut\u00f3dromo Internacional' },
       { id: 'circo-do-futuro', name: 'Teatro de Arena / Circo do Futuro' },
       { id: 'agroplace', name: 'Agroplace' },
       { id: 'arenas-beach', name: 'Quadras de Areia' },
       { id: 'skate-park', name: 'Complexo de Skate' },
-      { id: 'kartodromo', name: 'Cartódromo' },
-      { id: 'outro', name: 'Outro espaço do parque' },
+      { id: 'kartodromo', name: 'Cart\u00f3dromo' },
+      { id: 'outro', name: 'Outro espa\u00e7o do parque' },
     ];
-    return `<div class="service-form"><h3>Vamos construir seu evento.</h3><form data-form="evento">${field('nome', 'Nome')}${field('empresa', 'Empresa ou instituição', 'text', null, false)}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}${field('tipo', 'Tipo de evento', 'text', ['Show', 'Feira', 'Congresso ou convenção', 'Competição esportiva', 'Encontro corporativo', 'Outro'])}${field('espaco', 'Espaço desejado', 'text', eventSpaces)}${field('publico', 'Público estimado', 'number')}${field('data', 'Data pretendida', 'date')}<div class="full">${field('mensagem', 'Conte sobre o evento', 'textarea', null, false)}</div>${formEnd('evento', 'Enviar solicitação')}</form></div>`;
+    return '<div class="service-form"><h3>Vamos construir seu evento.</h3><form data-form="evento">' + field('nome', 'Nome') + field('empresa', 'Empresa ou institui\u00e7\u00e3o', 'text', null, false) + field('telefone', 'Telefone', 'tel') + field('email', 'E-mail', 'email') + field('tipo', 'Tipo de evento', 'text', ['Show', 'Feira', 'Congresso ou conven\u00e7\u00e3o', 'Competi\u00e7\u00e3o esportiva', 'Encontro corporativo', 'Outro']) + field('espaco', 'Espa\u00e7o desejado', 'text', eventSpaces, false) + field('publico', 'P\u00fablico estimado', 'number', null, false) + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_evento_inicio', 'Data do evento (In\u00edcio)', 'date') + field('data_evento_fim', 'Data do evento (Fim)', 'date') + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_mob_inicio', 'Data de mobiliza\u00e7\u00e3o (In\u00edcio)', 'date', null, false) + field('data_mob_fim', 'Data de mobiliza\u00e7\u00e3o (Fim)', 'date', null, false) + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_desmob_inicio', 'Data de desmobiliza\u00e7\u00e3o (In\u00edcio)', 'date') + field('data_desmob_fim', 'Data de desmobiliza\u00e7\u00e3o (Fim)', 'date') + '</div><div class="full">' + field('mensagem', 'Conte sobre o evento', 'textarea', null, false) + '</div>' + formEnd('evento', 'Enviar solicita\u00e7\u00e3o') + '</form></div>';
   }
 
   // === MAPA INTERATIVO (PÁGINA DEDICADA) ===
@@ -696,9 +696,12 @@
               ${field('area', 'Área de maior interesse', 'text', areaOptions)}
               ${field('linkedin', 'Link do LinkedIn ou Currículo online (opcional)', 'url', null, false)}
               <div class="full">
-                ${field('mensagem', 'Conte brevemente sobre sua trajetória e por que quer fazer parte do Parque Novo MT', 'textarea')}
+                ${field('cv', 'Anexar Currículo (PDF, DOC, DOCX)', 'file', null, true, '.pdf,.doc,.docx')}
               </div>
-              ${formEnd('trabalhe-conosco', 'Cadastrar no Banco de Talentos')}
+              <div class="full">
+                ${field('mensagem', 'Conte brevemente sobre sua trajetória e por que quer fazer parte do Parque Novo MT', 'textarea', null, false)}
+              </div>
+              ${formEnd('trabalhe-conosco', 'Cadastrar no Banco de Talentos')}}
             </form>
           </div>
         </div>
