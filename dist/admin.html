@@ -16,7 +16,7 @@
         <div class="login-brand">
           <img src="assets/footer-wordmark.png" alt="Parque Novo Mato Grosso" class="login-logo">
           <h1>Painel de Controle</h1>
-          <p>Gerenciador de Conteúdo e Mídia do Site</p>
+          <p>Gerenciador de ConteÃºdo e MÃ­dia do Site</p>
         </div>
 
         <form id="login-form" class="login-form">
@@ -25,7 +25,7 @@
             <input type="password" id="login-pass" placeholder="Digite a senha..." autocomplete="current-password" required autofocus>
           </div>
           <p id="login-error" class="login-error" role="alert" style="display: none;"></p>
-          <button type="submit" class="btn btn-primary btn-block">Acessar Painel <span>→</span></button>
+          <button type="submit" class="btn btn-primary btn-block">Acessar Painel <span>â†’</span></button>
         </form>
       </div>
     </div>
@@ -44,16 +44,16 @@
         <div class="topbar-center">
           <div id="sync-status" class="status-indicator">
             <span class="status-dot"></span>
-            <span class="status-text">Verificando sincronização...</span>
+            <span class="status-text">Verificando sincronizaÃ§Ã£o...</span>
           </div>
         </div>
 
         <div class="topbar-right">
           <a href="index.html#inicio" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-            🌐 Ver Site ao Vivo ↗
+            ðŸŒ Ver Site ao Vivo â†—
           </a>
-          <button id="btn-logout" class="btn btn-ghost btn-sm" title="Encerrar sessão">
-            Sair ⎋
+          <button id="btn-logout" class="btn btn-ghost btn-sm" title="Encerrar sessÃ£o">
+            Sair âŽ‹
           </button>
         </div>
       </header>
@@ -61,34 +61,34 @@
       <!-- Main Layout Body -->
       <div class="admin-body">
         <!-- Sidebar Navigation -->
-        <nav class="admin-sidebar" aria-label="Navegação do Painel">
-          <div class="nav-section-title">SEÇÕES DO SITE</div>
+        <nav class="admin-sidebar" aria-label="NavegaÃ§Ã£o do Painel">
+          <div class="nav-section-title">SEÃ‡Ã•ES DO SITE</div>
           <button class="nav-tab active" data-tab="tab-general">
-            <span class="nav-icon">🏠</span> Geral & Home
+            <span class="nav-icon">ðŸ </span> Geral & Home
           </button>
           <button class="nav-tab" data-tab="tab-spaces">
-            <span class="nav-icon">🏛️</span> Espaços do Parque
+            <span class="nav-icon">ðŸ›ï¸</span> EspaÃ§os do Parque
             <span class="count-badge" id="badge-spaces-count">21</span>
           </button>
           <button class="nav-tab" data-tab="tab-events">
-            <span class="nav-icon">📅</span> Agenda & Eventos
+            <span class="nav-icon">ðŸ“…</span> Agenda & Eventos
             <span class="count-badge" id="badge-events-count">0</span>
           </button>
           <button class="nav-tab" data-tab="tab-news">
-            <span class="nav-icon">📰</span> Notícias & Imprensa
+            <span class="nav-icon">ðŸ“°</span> NotÃ­cias & Imprensa
             <span class="count-badge" id="badge-news-count">0</span>
           </button>
           <button class="nav-tab" data-tab="tab-gallery">
-            <span class="nav-icon">🖼️</span> Galeria de Fotos
+            <span class="nav-icon">ðŸ–¼ï¸</span> Galeria de Fotos
             <span class="count-badge" id="badge-gallery-count">0</span>
           </button>
           <button class="nav-tab" data-tab="tab-about">
-            <span class="nav-icon">🏢</span> Quem Somos
+            <span class="nav-icon">ðŸ¢</span> Quem Somos
           </button>
           <div class="nav-divider"></div>
           <div class="nav-section-title">SISTEMA</div>
           <button class="nav-tab" data-tab="tab-settings">
-            <span class="nav-icon">⚙️</span> Configurações & Backup
+            <span class="nav-icon">âš™ï¸</span> ConfiguraÃ§Ãµes & Backup
           </button>
         </nav>
 
@@ -98,26 +98,26 @@
           <section id="tab-general" class="tab-pane active">
             <div class="pane-header">
               <div>
-                <h2>Informações Gerais e Página Inicial</h2>
-                <p>Altere o vídeo de apresentação, títulos de destaque, dados de localização e redes sociais.</p>
+                <h2>InformaÃ§Ãµes Gerais e PÃ¡gina Inicial</h2>
+                <p>Altere o vÃ­deo de apresentaÃ§Ã£o, tÃ­tulos de destaque, dados de localizaÃ§Ã£o e redes sociais.</p>
               </div>
-              <button class="btn btn-primary" data-action="save-general">Salvar Alterações</button>
+              <button class="btn btn-primary" data-action="save-general">Salvar AlteraÃ§Ãµes</button>
             </div>
 
             <div class="form-cards-grid">
-              <!-- Card: Vídeo do Hero -->
+              <!-- Card: VÃ­deo do Hero -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>🎬 Vídeo de Abertura (YouTube)</h3>
+                  <h3>ðŸŽ¬ VÃ­deo de Abertura (YouTube)</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="gen-video-id">ID do Vídeo do YouTube</label>
+                    <label for="gen-video-id">ID do VÃ­deo do YouTube</label>
                     <div class="input-with-action">
                       <input type="text" id="gen-video-id" placeholder="ex: ncTJbHQNq6M ou link completo do YouTube">
                       <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-video">Visualizar</button>
                     </div>
-                    <small class="hint">Cole o código do vídeo ou a URL completa (ex: <code>https://www.youtube.com/watch?v=ncTJbHQNq6M</code>).</small>
+                    <small class="hint">Cole o cÃ³digo do vÃ­deo ou a URL completa (ex: <code>https://www.youtube.com/watch?v=ncTJbHQNq6M</code>).</small>
                   </div>
                   <div id="video-preview-box" class="video-preview-container"></div>
                 </div>
@@ -126,7 +126,7 @@
               <!-- Card: Textos do Hero -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>✨ Título Principal do Hero</h3>
+                  <h3>âœ¨ TÃ­tulo Principal do Hero</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-group">
@@ -139,28 +139,28 @@
                   </div>
                   <div class="form-group">
                     <label for="gen-hero-title-3">Linha 3 (Ciano / Azul)</label>
-                    <input type="text" id="gen-hero-title-3" placeholder="DA AMÉRICA LATINA.">
+                    <input type="text" id="gen-hero-title-3" placeholder="DA AMÃ‰RICA LATINA.">
                   </div>
                 </div>
               </div>
 
-              <!-- Card: Subtítulo do Hero -->
+              <!-- Card: SubtÃ­tulo do Hero -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>📝 Frases Descritivas do Hero (Canto Inferior Direito)</h3>
+                  <h3>ðŸ“ Frases Descritivas do Hero (Canto Inferior Direito)</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-group">
                     <label for="gen-hero-text-1">Linha 1</label>
-                    <input type="text" id="gen-hero-text-1" placeholder="NO CENTRO GEODÉSICO DA">
+                    <input type="text" id="gen-hero-text-1" placeholder="NO CENTRO GEODÃ‰SICO DA">
                   </div>
                   <div class="form-group">
                     <label for="gen-hero-text-2">Linha 2</label>
-                    <input type="text" id="gen-hero-text-2" placeholder="AMÉRICA DO SUL, UM PARQUE">
+                    <input type="text" id="gen-hero-text-2" placeholder="AMÃ‰RICA DO SUL, UM PARQUE">
                   </div>
                   <div class="form-group">
                     <label for="gen-hero-text-3">Linha 3</label>
-                    <input type="text" id="gen-hero-text-3" placeholder="CONSTRUÍDO PARA RECEBER O">
+                    <input type="text" id="gen-hero-text-3" placeholder="CONSTRUÃDO PARA RECEBER O">
                   </div>
                   <div class="form-group">
                     <label for="gen-hero-text-4">Linha 4</label>
@@ -169,15 +169,15 @@
                 </div>
               </div>
 
-              <!-- Card: Fatos e Números da Home -->
+              <!-- Card: Fatos e NÃºmeros da Home -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>📍 Área Total e Localização (Barra de Fatos)</h3>
+                  <h3>ðŸ“ Ãrea Total e LocalizaÃ§Ã£o (Barra de Fatos)</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-row">
                     <div class="form-group col-6">
-                      <label for="gen-area-total">Área Total (Número)</label>
+                      <label for="gen-area-total">Ãrea Total (NÃºmero)</label>
                       <input type="text" id="gen-area-total" placeholder="500">
                     </div>
                     <div class="form-group col-6">
@@ -186,12 +186,12 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="gen-area-text">Texto Descritivo da Área</label>
-                    <textarea id="gen-area-text" rows="2" placeholder="ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS"></textarea>
+                    <label for="gen-area-text">Texto Descritivo da Ãrea</label>
+                    <textarea id="gen-area-text" rows="2" placeholder="ENTRE LAGOS,<br>CONSTRUÃ‡ÃƒO<br>E ACESSOS"></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="gen-address">Endereço Exibido</label>
-                    <input type="text" id="gen-address" placeholder="RODOVIA EMANUEL PINHEIRO (MT-251), KM 11, CUIABÁ-MT">
+                    <label for="gen-address">EndereÃ§o Exibido</label>
+                    <input type="text" id="gen-address" placeholder="RODOVIA EMANUEL PINHEIRO (MT-251), KM 11, CUIABÃ-MT">
                   </div>
                   <div class="form-group">
                     <label for="gen-map-url">Link do Google Maps (Como chegar)</label>
@@ -200,10 +200,10 @@
                 </div>
               </div>
 
-              <!-- Card: Frases de Impacto & Rodapé -->
+              <!-- Card: Frases de Impacto & RodapÃ© -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>🏷️ Frase de Impacto e Fechamento</h3>
+                  <h3>ðŸ·ï¸ Frase de Impacto e Fechamento</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-group">
@@ -212,15 +212,15 @@
                   </div>
                   <div class="form-group">
                     <label for="gen-signoff">Frase de Fechamento (Barra Verde)</label>
-                    <input type="text" id="gen-signoff" placeholder="AINDA EM OBRAS. JÁ EM MOVIMENTO.">
+                    <input type="text" id="gen-signoff" placeholder="AINDA EM OBRAS. JÃ EM MOVIMENTO.">
                   </div>
                   <div class="form-group">
-                    <label>Foto Panorâmica Aérea do Rodapé</label>
+                    <label>Foto PanorÃ¢mica AÃ©rea do RodapÃ©</label>
                     <div class="media-upload-widget" data-target="gen-sunset-photo">
                       <div class="media-preview" id="preview-sunset-photo"></div>
                       <div class="media-actions">
                         <label class="btn btn-secondary btn-sm file-upload-btn">
-                          <span>📁 Escolher Nova Foto</span>
+                          <span>ðŸ“ Escolher Nova Foto</span>
                           <input type="file" accept="image/*" class="file-input" data-target="gen-sunset-photo">
                         </label>
                         <input type="text" id="gen-sunset-photo" class="url-input" placeholder="assets/aerial-sunset.jpg ou URL">
@@ -233,7 +233,7 @@
               <!-- Card: Redes Sociais -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>🌐 Redes Sociais Oficiais</h3>
+                  <h3>ðŸŒ Redes Sociais Oficiais</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-group">
@@ -253,18 +253,18 @@
             </div>
           </section>
 
-          <!-- TAB 2: ESPAÇOS -->
+          <!-- TAB 2: ESPAÃ‡OS -->
           <section id="tab-spaces" class="tab-pane">
             <div class="pane-header">
               <div>
-                <h2>Gerenciador de Espaços</h2>
-                <p>Edite os textos, fotos, números de destaque e categorias de cada um dos espaços do parque.</p>
+                <h2>Gerenciador de EspaÃ§os</h2>
+                <p>Edite os textos, fotos, nÃºmeros de destaque e categorias de cada um dos espaÃ§os do parque.</p>
               </div>
               <div class="pane-header-actions">
                 <div class="search-box">
-                  <input type="search" id="search-spaces-input" placeholder="Filtrar espaços...">
+                  <input type="search" id="search-spaces-input" placeholder="Filtrar espaÃ§os...">
                 </div>
-                <button class="btn btn-primary" id="btn-add-space">+ Novo Espaço</button>
+                <button class="btn btn-primary" id="btn-add-space">+ Novo EspaÃ§o</button>
               </div>
             </div>
 
@@ -276,7 +276,7 @@
           <section id="tab-events" class="tab-pane">
             <div class="pane-header">
               <div>
-                <h2>Programação e Agenda de Eventos</h2>
+                <h2>ProgramaÃ§Ã£o e Agenda de Eventos</h2>
                 <p>Cadastre eventos oficiais, etapas de corridas, shows e eventos esportivos.</p>
               </div>
               <button class="btn btn-primary" id="btn-add-event">+ Novo Evento</button>
@@ -287,14 +287,14 @@
             </div>
           </section>
 
-          <!-- TAB 4: NOTÍCIAS & IMPRENSA -->
+          <!-- TAB 4: NOTÃCIAS & IMPRENSA -->
           <section id="tab-news" class="tab-pane">
             <div class="pane-header">
               <div>
-                <h2>Notícias e Imprensa</h2>
-                <p>Gerencie as matérias publicadas na mídia sobre o Parque Novo Mato Grosso.</p>
+                <h2>NotÃ­cias e Imprensa</h2>
+                <p>Gerencie as matÃ©rias publicadas na mÃ­dia sobre o Parque Novo Mato Grosso.</p>
               </div>
-              <button class="btn btn-primary" id="btn-add-news">+ Nova Notícia</button>
+              <button class="btn btn-primary" id="btn-add-news">+ Nova NotÃ­cia</button>
             </div>
 
             <div class="table-card">
@@ -307,7 +307,7 @@
             <div class="pane-header">
               <div>
                 <h2>Galeria de Fotos do Parque</h2>
-                <p>Faça upload de fotos em alta qualidade, adicione legendas, créditos e categorias.</p>
+                <p>FaÃ§a upload de fotos em alta qualidade, adicione legendas, crÃ©ditos e categorias.</p>
               </div>
               <button class="btn btn-primary" id="btn-add-photo">+ Adicionar Foto</button>
             </div>
@@ -319,7 +319,7 @@
           <section id="tab-about" class="tab-pane">
             <div class="pane-header">
               <div>
-                <h2>Página Quem Somos e Valores</h2>
+                <h2>PÃ¡gina Quem Somos e Valores</h2>
                 <p>Edite os textos institucionais e os 6 valores fundamentais da marca.</p>
               </div>
               <button class="btn btn-primary" data-action="save-about">Salvar Textos Institucionais</button>
@@ -328,23 +328,23 @@
             <div class="form-cards-grid">
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>📜 Textos Históricos e Origem</h3>
+                  <h3>ðŸ“œ Textos HistÃ³ricos e Origem</h3>
                 </div>
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="about-title">Título Principal</label>
-                    <input type="text" id="about-title" placeholder="Mato Grosso já Nasceu Grande">
+                    <label for="about-title">TÃ­tulo Principal</label>
+                    <input type="text" id="about-title" placeholder="Mato Grosso jÃ¡ Nasceu Grande">
                   </div>
                   <div class="form-group">
                     <label for="about-lead">Chamada de Abertura (Lead)</label>
                     <textarea id="about-lead" rows="3"></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="about-copy-1">Primeiro Parágrafo</label>
+                    <label for="about-copy-1">Primeiro ParÃ¡grafo</label>
                     <textarea id="about-copy-1" rows="4"></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="about-copy-2">Segundo Parágrafo (Propósito)</label>
+                    <label for="about-copy-2">Segundo ParÃ¡grafo (PropÃ³sito)</label>
                     <textarea id="about-copy-2" rows="4"></textarea>
                   </div>
                 </div>
@@ -352,7 +352,7 @@
 
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>⭐ Nossos 6 Valores</h3>
+                  <h3>â­ Nossos 6 Valores</h3>
                 </div>
                 <div class="card-body" id="values-editor-container">
                   <!-- Dynamically populated -->
@@ -361,12 +361,12 @@
             </div>
           </section>
 
-          <!-- TAB 7: CONFIGURAÇÕES & BACKUP -->
+          <!-- TAB 7: CONFIGURAÃ‡Ã•ES & BACKUP -->
           <section id="tab-settings" class="tab-pane">
             <div class="pane-header">
               <div>
-                <h2>Configurações do Sistema e Backups</h2>
-                <p>Gerencie a segurança de acesso, exporte ou importe dados completos e verifique a integração.</p>
+                <h2>ConfiguraÃ§Ãµes do Sistema e Backups</h2>
+                <p>Gerencie a seguranÃ§a de acesso, exporte ou importe dados completos e verifique a integraÃ§Ã£o.</p>
               </div>
             </div>
 
@@ -374,7 +374,7 @@
               <!-- Card: Senha de Acesso -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>🔒 Alterar Senha de Acesso</h3>
+                  <h3>ðŸ”’ Alterar Senha de Acesso</h3>
                 </div>
                 <div class="card-body">
                   <form id="form-change-password">
@@ -383,7 +383,7 @@
                       <input type="password" id="old-pass" required placeholder="Digite a senha atual" autocomplete="current-password">
                     </div>
                     <div class="form-group">
-                      <label for="new-pass">Nova Senha (mínimo 8 caracteres)</label>
+                      <label for="new-pass">Nova Senha (mÃ­nimo 8 caracteres)</label>
                       <input type="password" id="new-pass" required minlength="8" placeholder="Digite uma senha forte" autocomplete="new-password">
                     </div>
                     <div class="form-group">
@@ -395,25 +395,25 @@
                 </div>
               </div>
 
-              <!-- Card: Backup e Restauração -->
+              <!-- Card: Backup e RestauraÃ§Ã£o -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>💾 Backup e Restauração de Dados</h3>
+                  <h3>ðŸ’¾ Backup e RestauraÃ§Ã£o de Dados</h3>
                 </div>
                 <div class="card-body">
-                  <p>Baixe uma cópia completa de todos os textos, configurações, fotos e espaços editados no formato JSON.</p>
+                  <p>Baixe uma cÃ³pia completa de todos os textos, configuraÃ§Ãµes, fotos e espaÃ§os editados no formato JSON.</p>
                   <div class="backup-actions">
                     <button class="btn btn-primary" id="btn-export-backup">
-                      📥 Baixar Backup JSON
+                      ðŸ“¥ Baixar Backup JSON
                     </button>
                     <label class="btn btn-secondary file-upload-btn">
-                      <span>📤 Restaurar de Backup JSON</span>
+                      <span>ðŸ“¤ Restaurar de Backup JSON</span>
                       <input type="file" id="input-import-backup" accept=".json">
                     </label>
                   </div>
                   <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
                   <button class="btn btn-danger-outline btn-sm" id="btn-reset-defaults">
-                    ⚠️ Restaurar Conteúdo Original de Fábrica
+                    âš ï¸ Restaurar ConteÃºdo Original de FÃ¡brica
                   </button>
                 </div>
               </div>
@@ -421,22 +421,22 @@
               <!-- Card: Status Supabase Cloud -->
               <div class="admin-card">
                 <div class="card-header">
-                  <h3>☁️ Conexão Supabase Cloud</h3>
+                  <h3>â˜ï¸ ConexÃ£o Supabase Cloud</h3>
                 </div>
                 <div class="card-body">
                   <p>O painel funciona automaticamente em <strong>Modo Local Seguro</strong> no seu navegador e sincroniza em tempo real na nuvem quando o Supabase estiver conectado.</p>
                   <div class="supabase-info-box">
                     <div class="info-row">
                       <strong>Script SQL:</strong>
-                      <span>Disponível na raiz do projeto como <code>supabase-schema.sql</code></span>
+                      <span>DisponÃ­vel na raiz do projeto como <code>supabase-schema.sql</code></span>
                     </div>
                     <div class="info-row">
                       <strong>Bucket de Fotos:</strong>
-                      <span><code>pnmt-media</code> (com permissão pública)</span>
+                      <span><code>pnmt-media</code> (com permissÃ£o pÃºblica)</span>
                     </div>
                     <div class="info-row">
-                      <strong>Tabela de Conteúdo:</strong>
-                      <span><code>site_content</code> (registro único <code>main</code>)</span>
+                      <strong>Tabela de ConteÃºdo:</strong>
+                      <span><code>site_content</code> (registro Ãºnico <code>main</code>)</span>
                     </div>
                   </div>
                 </div>
@@ -447,20 +447,20 @@
       </div>
     </div>
 
-    <!-- MODAL: EDITAR / NOVO ESPAÇO -->
+    <!-- MODAL: EDITAR / NOVO ESPAÃ‡O -->
     <dialog id="modal-space" class="admin-modal">
       <div class="modal-dialog-content">
         <div class="modal-header">
-          <h3 id="modal-space-title">Editar Espaço</h3>
-          <button class="icon-close" data-close>✕</button>
+          <h3 id="modal-space-title">Editar EspaÃ§o</h3>
+          <button class="icon-close" data-close>âœ•</button>
         </div>
         <form id="form-space" class="modal-body">
           <input type="hidden" id="space-orig-id">
 
           <div class="form-row">
             <div class="form-group col-8">
-              <label for="space-name">Nome do Espaço *</label>
-              <input type="text" id="space-name" required placeholder="Ex: Autódromo Internacional">
+              <label for="space-name">Nome do EspaÃ§o *</label>
+              <input type="text" id="space-name" required placeholder="Ex: AutÃ³dromo Internacional">
             </div>
             <div class="form-group col-4">
               <label for="space-id">Identificador (Slug) *</label>
@@ -475,14 +475,14 @@
                 <option value="Esportes">Esportes</option>
                 <option value="Eventos">Eventos</option>
                 <option value="Cultura">Cultura</option>
-                <option value="Família">Família</option>
-                <option value="Experiências">Experiências</option>
-                <option value="Convivência">Convivência</option>
+                <option value="FamÃ­lia">FamÃ­lia</option>
+                <option value="ExperiÃªncias">ExperiÃªncias</option>
+                <option value="ConvivÃªncia">ConvivÃªncia</option>
               </select>
             </div>
             <div class="form-group col-6">
               <label for="space-short">Nome Curto (Opcional)</label>
-              <input type="text" id="space-short" placeholder="Ex: Autódromo">
+              <input type="text" id="space-short" placeholder="Ex: AutÃ³dromo">
             </div>
           </div>
 
@@ -493,12 +493,12 @@
 
           <!-- Space Image Section -->
           <div class="form-group">
-            <label>Foto do Espaço</label>
+            <label>Foto do EspaÃ§o</label>
             <div class="media-upload-widget">
               <div class="media-preview" id="space-image-preview"></div>
               <div class="media-actions">
                 <label class="btn btn-secondary btn-sm file-upload-btn">
-                  <span>📁 Fazer Upload de Foto</span>
+                  <span>ðŸ“ Fazer Upload de Foto</span>
                   <input type="file" accept="image/*" id="space-file-input">
                 </label>
                 <input type="text" id="space-image" class="url-input" placeholder="Nome do arquivo ou URL da foto">
@@ -508,8 +508,8 @@
 
           <div class="form-row">
             <div class="form-group col-6">
-              <label for="space-credit">Crédito da Foto</label>
-              <input type="text" id="space-credit" placeholder="Ex: Secom-MT · 2025">
+              <label for="space-credit">CrÃ©dito da Foto</label>
+              <input type="text" id="space-credit" placeholder="Ex: Secom-MT Â· 2025">
             </div>
             <div class="form-group col-6">
               <label for="space-kind">Tipo / Legenda da Imagem</label>
@@ -520,21 +520,21 @@
           <!-- Numbers / Highlights -->
           <div class="form-group">
             <div class="label-with-action">
-              <label>Números de Destaque</label>
-              <button type="button" class="btn btn-secondary btn-xs" id="btn-add-space-number">+ Adicionar Número</button>
+              <label>NÃºmeros de Destaque</label>
+              <button type="button" class="btn btn-secondary btn-xs" id="btn-add-space-number">+ Adicionar NÃºmero</button>
             </div>
             <div id="space-numbers-list" class="dynamic-numbers-list"></div>
           </div>
 
           <!-- Description Paragraphs -->
           <div class="form-group">
-            <label for="space-texts">Textos Descritivos (um parágrafo por linha)</label>
-            <textarea id="space-texts" rows="4" placeholder="Digite os parágrafos de apresentação..."></textarea>
+            <label for="space-texts">Textos Descritivos (um parÃ¡grafo por linha)</label>
+            <textarea id="space-texts" rows="4" placeholder="Digite os parÃ¡grafos de apresentaÃ§Ã£o..."></textarea>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar Espaço</button>
+            <button type="submit" class="btn btn-primary">Salvar EspaÃ§o</button>
           </div>
         </form>
       </div>
@@ -545,13 +545,13 @@
       <div class="modal-dialog-content">
         <div class="modal-header">
           <h3 id="modal-event-title">Cadastrar Evento</h3>
-          <button class="icon-close" data-close>✕</button>
+          <button class="icon-close" data-close>âœ•</button>
         </div>
         <form id="form-event" class="modal-body">
           <input type="hidden" id="event-orig-id">
           <div class="form-group">
             <label for="event-name">Nome do Evento *</label>
-            <input type="text" id="event-name" required placeholder="Ex: Stock Car — etapa de Cuiabá">
+            <input type="text" id="event-name" required placeholder="Ex: Stock Car â€” etapa de CuiabÃ¡">
           </div>
           <div class="form-row">
             <div class="form-group col-6">
@@ -565,7 +565,7 @@
           </div>
           <div class="form-group">
             <label for="event-location">Local no Parque *</label>
-            <input type="text" id="event-location" required placeholder="Ex: Autódromo Internacional de Mato Grosso">
+            <input type="text" id="event-location" required placeholder="Ex: AutÃ³dromo Internacional de Mato Grosso">
           </div>
           <div class="form-row">
             <div class="form-group col-6">
@@ -585,18 +585,18 @@
       </div>
     </dialog>
 
-    <!-- MODAL: EDITAR / NOVA NOTÍCIA -->
+    <!-- MODAL: EDITAR / NOVA NOTÃCIA -->
     <dialog id="modal-news" class="admin-modal">
       <div class="modal-dialog-content">
         <div class="modal-header">
-          <h3 id="modal-news-title">Cadastrar Notícia</h3>
-          <button class="icon-close" data-close>✕</button>
+          <h3 id="modal-news-title">Cadastrar NotÃ­cia</h3>
+          <button class="icon-close" data-close>âœ•</button>
         </div>
         <form id="form-news" class="modal-body">
           <input type="hidden" id="news-index">
           <div class="form-group">
-            <label for="news-title">Título da Notícia *</label>
-            <input type="text" id="news-title" required placeholder="Ex: Autódromo recebe a Stock Car em etapa noturna">
+            <label for="news-title">TÃ­tulo da NotÃ­cia *</label>
+            <input type="text" id="news-title" required placeholder="Ex: AutÃ³dromo recebe a Stock Car em etapa noturna">
           </div>
           <div class="form-row">
             <div class="form-group col-6">
@@ -604,27 +604,27 @@
               <input type="text" id="news-category" required placeholder="Ex: Automobilismo, Obras, etc">
             </div>
             <div class="form-group col-6">
-              <label for="news-date">Data da Matéria *</label>
+              <label for="news-date">Data da MatÃ©ria *</label>
               <input type="date" id="news-date" required>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-6">
-              <label for="news-source">Veículo / Fonte *</label>
-              <input type="text" id="news-source" required placeholder="Ex: Band, G1, Primeira Página">
+              <label for="news-source">VeÃ­culo / Fonte *</label>
+              <input type="text" id="news-source" required placeholder="Ex: Band, G1, Primeira PÃ¡gina">
             </div>
             <div class="form-group col-6">
-              <label for="news-url">Link da Matéria *</label>
+              <label for="news-url">Link da MatÃ©ria *</label>
               <input type="url" id="news-url" required placeholder="https://...">
             </div>
           </div>
           <div class="form-group">
-            <label for="news-desc">Resumo / Descrição *</label>
-            <textarea id="news-desc" rows="3" required placeholder="Breve resumo da matéria..."></textarea>
+            <label for="news-desc">Resumo / DescriÃ§Ã£o *</label>
+            <textarea id="news-desc" rows="3" required placeholder="Breve resumo da matÃ©ria..."></textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar Notícia</button>
+            <button type="submit" class="btn btn-primary">Salvar NotÃ­cia</button>
           </div>
         </form>
       </div>
@@ -634,8 +634,8 @@
     <dialog id="modal-photo" class="admin-modal">
       <div class="modal-dialog-content">
         <div class="modal-header">
-          <h3 id="modal-photo-title">Adicionar Foto à Galeria</h3>
-          <button class="icon-close" data-close>✕</button>
+          <h3 id="modal-photo-title">Adicionar Foto Ã  Galeria</h3>
+          <button class="icon-close" data-close>âœ•</button>
         </div>
         <form id="form-photo" class="modal-body">
           <input type="hidden" id="photo-index">
@@ -646,7 +646,7 @@
               <div class="media-preview" id="photo-preview-box"></div>
               <div class="media-actions">
                 <label class="btn btn-secondary btn-sm file-upload-btn">
-                  <span>📁 Selecionar Imagem</span>
+                  <span>ðŸ“ Selecionar Imagem</span>
                   <input type="file" accept="image/*" id="gallery-file-input">
                 </label>
                 <input type="text" id="photo-image" class="url-input" required placeholder="URL ou nome da imagem">
@@ -655,7 +655,7 @@
           </div>
 
           <div class="form-group">
-            <label for="photo-title">Título / Legenda da Foto *</label>
+            <label for="photo-title">TÃ­tulo / Legenda da Foto *</label>
             <input type="text" id="photo-title" required placeholder="Ex: O parque visto de cima">
           </div>
 
@@ -663,8 +663,8 @@
             <div class="form-group col-6">
               <label for="photo-category">Categoria *</label>
               <select id="photo-category" required>
-                <option value="Vista aérea">Vista aérea</option>
-                <option value="Espaços">Espaços</option>
+                <option value="Vista aÃ©rea">Vista aÃ©rea</option>
+                <option value="EspaÃ§os">EspaÃ§os</option>
                 <option value="Obras e estrutura">Obras e estrutura</option>
                 <option value="Eventos">Eventos</option>
                 <option value="Outros">Outros</option>
@@ -678,8 +678,8 @@
 
           <div class="form-row">
             <div class="form-group col-6">
-              <label for="photo-credit">Crédito da Imagem *</label>
-              <input type="text" id="photo-credit" required placeholder="Ex: Secom-MT · 2025">
+              <label for="photo-credit">CrÃ©dito da Imagem *</label>
+              <input type="text" id="photo-credit" required placeholder="Ex: Secom-MT Â· 2025">
             </div>
             <div class="form-group col-6">
               <label for="photo-source">Link da Fonte (Opcional)</label>
@@ -699,11 +699,12 @@
     <div id="admin-toast" class="admin-toast" role="alert" aria-live="assertive"></div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="config.js?v=20260909-1"></script>
-    <script src="content.js?v=20260909-1"></script>
-    <script src="supabase.js?v=20260909-1"></script>
-    <script src="admin-data.js?v=20260909-1"></script>
-    <script src="admin.js?v=20260909-1"></script>
+    <script charset="utf-8" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script charset="utf-8" src="config.js?v=20260909-1"></script>
+    <script charset="utf-8" src="content.js?v=20260909-1"></script>
+    <script charset="utf-8" src="supabase.js?v=20260909-1"></script>
+    <script charset="utf-8" src="admin-data.js?v=20260909-1"></script>
+    <script charset="utf-8" src="admin.js?v=20260909-1"></script>
   </body>
 </html>
+
