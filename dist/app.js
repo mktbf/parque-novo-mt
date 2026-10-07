@@ -463,12 +463,61 @@
     const n = data.news?.find(x => x.id === id);
     if (!n) return notFound();
 
-    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px;"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
+    // Make hero image clickable if we can't find a gallery, otherwise just show it
+    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px; cursor: pointer;" onclick="document.getElementById('media-title').textContent = '${esc(n.title)}'; document.getElementById('media-content').innerHTML = '<div class=\'lightbox-viewer\'><img src=\'${asset(n.image)}\' style=\'width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;\'><div style=\'margin-top: 15px; text-align: center;\'><a href=\'${asset(n.image)}\' download class=\'button\'>Baixar foto de capa &darr;</a></div></div>'; document.getElementById('media-dialog').showModal();"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
+
+    // Try to find related space
+    const relatedSpace = data.spaces.find(s => s.category.toLowerCase().includes(n.category.toLowerCase()) || n.title.toLowerCase().includes(s.name.toLowerCase()));
+    
+    // Try to find related events
+    const relatedEvents = data.events ? data.events.filter(e => e.category.toLowerCase().includes(n.category.toLowerCase()) || e.title.toLowerCase().includes(n.category.toLowerCase())).slice(0, 2) : [];
+    
+    // If news has its own gallery, or if we can borrow the space's gallery
+    const gallery = n.gallery || (relatedSpace ? relatedSpace.gallery : null);
 
     return (
       hero +
-      `<section class="wrap detail-layout"><article class="prose">${n.fullText ? n.fullText.map(p => `<p>${esc(p)}</p>`).join('') : `<p>${esc(n.description)}</p>`}</article>
-      <aside class="detail-aside"><span class="kicker">ASSESSORIA DE IMPRENSA</span><h3>Fale com a equipe.</h3><p>Solicite credenciamento, entrevistas ou informações detalhadas sobre as coberturas e obras do parque.</p><a class="button" href="#imprensa">Acessar portal <span>↗</span></a></aside></section>`
+      `<section class="wrap detail-layout">
+        <article class="prose">${n.fullText ? n.fullText.map(p => `<p>${esc(p)}</p>`).join('') : `<p>${esc(n.description)}</p>`}</article>
+        <aside class="detail-aside">
+          <span class="kicker">ASSESSORIA DE IMPRENSA</span>
+          <h3>Fale com a equipe.</h3>
+          <p>Solicite credenciamento, entrevistas ou informa&ccedil;&otilde;es detalhadas sobre as coberturas e obras do parque.</p>
+          <a class="button" href="#imprensa">Acessar portal <span>&nearr;</span></a>
+          
+          ${relatedSpace ? `
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #bdcbd6;">
+              <span class="kicker">ESPA&Ccedil;O RELACIONADO</span>
+              <h3 style="margin: 10px 0;">${esc(relatedSpace.name)}</h3>
+              <p>${esc(relatedSpace.tagline)}</p>
+              <a class="text-link" href="#espaco/${relatedSpace.id}">Conhecer espa&ccedil;o &nearr;</a>
+            </div>
+          ` : ''}
+          
+          ${relatedEvents.length ? `
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #bdcbd6;">
+              <span class="kicker">AGENDA</span>
+              <h3 style="margin: 10px 0;">Pr&oacute;ximos eventos</h3>
+              <ul style="list-style:none; padding:0; margin:0;">
+                ${relatedEvents.map(e => `<li style="margin-bottom: 15px;"><strong style="display:block; color:var(--navy);">${esc(e.title)}</strong><small style="color:#666;">${fmt(e.date)}</small></li>`).join('')}
+              </ul>
+              <a class="text-link" href="#agenda">Ver agenda completa &nearr;</a>
+            </div>
+          ` : ''}
+        </aside>
+      </section>
+      
+      ${gallery && gallery.length > 0 ? `
+        <section class="wrap detail-gallery" style="margin-top: 20px;">
+          <div class="related-header"><h2>Galeria de fotos</h2></div>
+          <div class="space-photo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom: 60px;">
+            ${gallery.map((img, i) => `
+              <img src="${asset(img)}" alt="Foto da galeria" loading="lazy" style="width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='none'" onclick="document.getElementById('media-title').textContent = 'Galeria da mat&eacute;ria'; document.getElementById('media-content').innerHTML = '<div class=\'lightbox-viewer\'><img src=\'${asset(img)}\' style=\'width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;\'><div style=\'margin-top: 15px; text-align: center;\'><a href=\'${asset(img)}\' download class=\'button\'>Baixar foto &darr;</a></div></div>'; document.getElementById('media-dialog').showModal();">
+            `).join('')}
+          </div>
+        </section>
+      ` : ''}
+      `
     );
   }
 
@@ -794,7 +843,7 @@
       return `
         <article class="job-card ${isClosed ? 'closed' : ''}" id="vaga-${slug}">
           <div class="job-art-wrapper">
-             ${job.image ? \`<img src="${job.image}" alt="Vaga para ${job.title}" class="job-image" ${isClosed ? 'style="filter: grayscale(100%); opacity: 0.8;"' : ''}>\` : ''}
+             ${job.image ? `<img src="${job.image}" alt="Vaga para ${job.title}" class="job-image" ${isClosed ? 'style="filter: grayscale(100%); opacity: 0.8;"' : ''}>` : ''}
              ${isClosed ? '<span class="closed-badge">Vaga encerrada</span>' : ''}
           </div>
           <div class="job-content">
@@ -811,15 +860,15 @@
             
             <button class="mobile-toggle-btn" style="display: none;" onclick="this.previousElementSibling.classList.toggle('expanded'); this.textContent = this.textContent === 'Ver detalhes' ? 'Ocultar detalhes' : 'Ver detalhes'">Ver detalhes</button>
 
-            ${!isClosed ? \`
+            ${!isClosed ? `
             <div class="email-box">
               <span style="font-size:18px;">&#9993;</span> 
               <span>Envie seu currículo para <a href="mailto:rh@parquenovomt.com?subject=${encodeURIComponent(job.title)}">rh@parquenovomt.com</a> com o assunto '${job.title}'.</span>
             </div>
             <a href="#cadastro-vagas" class="button job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='${job.title}'; document.querySelector('#submit-career-btn').textContent='Enviar candidatura &nearr;'; document.querySelectorAll('.job-card').forEach(c => c.style.borderColor=''); document.getElementById('vaga-${slug}').style.borderColor='#1b8f3a';">Candidatar-se &rarr;</a>
-            \` : \`
+            ` : `
             <a href="#cadastro-vagas" class="button light job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='Banco de talentos (candidatura espontânea)'; document.querySelector('#submit-career-btn').textContent='Cadastrar no Banco de Talentos &nearr;';">Cadastrar no Banco de Talentos &nearr;</a>
-            \`}
+            `}
           </div>
         </article>
       `;
