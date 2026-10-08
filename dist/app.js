@@ -1334,8 +1334,8 @@ async function updateAgenda() {
            text.innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
            return;
         }
-        if (sizeMB > 5) {
-           error.textContent = 'O arquivo é muito grande. O limite é 5 MB.';
+        if (sizeMB > 3) {
+           error.textContent = 'O arquivo é muito grande. O limite é 3 MB.';
            error.style.display = 'block';
            input.value = '';
            text.innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
@@ -1348,6 +1348,24 @@ async function updateAgenda() {
         text.innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
       }
     };
+
+        async function enviarCandidaturaEmail(fields) {
+      const fileInput = document.getElementById('cv-file');
+      const file = fileInput && fileInput.files && fileInput.files[0];
+      let cv = null;
+      if (file) {
+        const data = await new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result).split(',')[1]);
+          r.onerror = reject;
+          r.readAsDataURL(file);
+        });
+        cv = { name: file.name, type: file.type, data };
+      }
+      const resp = await fetch('/api/candidatura', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields, cv }) });
+      const out = await resp.json().catch(() => ({}));
+      if (!resp.ok || !out.ok) throw new Error(out.error || 'Falha no envio');
+    }
 
     window.submitCareerForm = async function(btn) {
       const form = btn.closest('form');
@@ -1397,6 +1415,7 @@ async function updateAgenda() {
       btn.innerHTML = 'Enviando...';
       
       try {
+         await enviarCandidaturaEmail(fields);
          if (!endpoint) {
            throw new Error('Envio nao configurado');
          }
@@ -1715,7 +1734,7 @@ async function updateAgenda() {
                     <div class="cv-area" id="cv-drop-area" onclick="document.getElementById('cv-file').click()" ondragover="event.preventDefault(); this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="event.preventDefault(); this.classList.remove('dragover'); document.getElementById('cv-file').files = event.dataTransfer.files; document.getElementById('cv-file').dispatchEvent(new Event('change'));">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1b8f3a" stroke-width="2" style="margin-bottom: 10px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                       <p style="margin: 10px 0; font-weight: 500;" id="cv-text">Arraste seu currículo aqui ou clique para escolher</p>
-                      <p style="font-size: 12px; color: #64748b;">PDF, DOC ou DOCX, até 5 MB</p>
+                      <p style="font-size: 12px; color: #64748b;">PDF, DOC ou DOCX, até 3 MB</p>
                     </div>
                     <input type="file" id="cv-file" name="cv_file" accept=".pdf,.doc,.docx" style="display: none;" onchange="window.handleFileChange(this)">
                     <p id="cv-error" style="color: #d32f2f; font-size: 13px; margin-top: 5px; display: none;"></p>
