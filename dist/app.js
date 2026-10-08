@@ -701,9 +701,8 @@ async function updateAgenda() {
 
       const firstMonth = formatMonth(nextEvent.parsedStart);
       const destaqueHtml = `
-        <h3 class="agenda-month-title wrap">${firstMonth.toUpperCase()}</h3>
         <div class="agenda-destaque wrap">
-          <img src="${asset('gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg')}" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.src='${asset('gallery/parque-da-familia-01.jpg')}'">
+          <img src="${asset('assets/gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg')}" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.onerror=null;this.src='assets/gallery/parque-da-familia-01.jpg'">
           <div class="destaque-info">
             <div class="destaque-tags">
               <span class="tag-proximo">Próximo evento</span>
@@ -717,6 +716,7 @@ async function updateAgenda() {
             </div>
           </div>
         </div>
+        <h3 class="agenda-month-title wrap">${firstMonth.toUpperCase()}</h3>
       `;
 
       const rest = list;
