@@ -1283,12 +1283,28 @@ async function updateAgenda() {
   }
 
   // === TRABALHE CONOSCO / VAGAS ===
+  
   function careers() {
-    const jobs = window.PNMT_CONTENT.jobs || [];
-    const activeJobs = jobs.filter(j => j.status !== 'encerrada');
-    const jobsCount = activeJobs.length;
+    return `<div id="careers-root" class="careers-root">Carregando vagas...</div>`;
+  }
 
-    const jobOptions = ['Banco de talentos (candidatura espontânea)', ...activeJobs.map(j => j.title)];
+  async function updateCareers() {
+    const root = document.getElementById('careers-root');
+    if (!root) return;
+
+    if (!window.vagasData) {
+      try {
+        const res = await fetch('data/vagas.json');
+        window.vagasData = await res.json();
+      } catch (e) {
+        console.error('Failed to load vagas', e);
+        window.vagasData = [];
+      }
+    }
+
+    const vagas = window.vagasData;
+    const vagasAbertas = vagas.filter(v => v.status === 'aberta');
+    const N = vagasAbertas.length;
 
     const areaOptions = [
       'Operações e Produção de Eventos',
@@ -1301,720 +1317,322 @@ async function updateAgenda() {
       'Outra área de atuação',
     ];
 
-    const jobsHtml = jobs.map(job => {
-      const isClosed = job.status === 'encerrada';
-      const slug = job.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const jobOptions = ['Banco de talentos (candidatura espontânea)', ...vagasAbertas.map(j => j.titulo)];
+
+    const cardsHtml = vagas.map(vaga => {
+      const isClosed = vaga.status === 'encerrada';
+      const assunto = encodeURIComponent(vaga.titulo);
       return `
-        <article class="job-card ${isClosed ? 'closed' : ''}" id="vaga-${slug}">
-          <div class="job-art-wrapper">
-             ${job.image ? `<img src="${job.image}" alt="Vaga para ${job.title}" class="job-image" ${isClosed ? 'style="filter: grayscale(100%); opacity: 0.8;"' : ''}>` : ''}
-             ${isClosed ? '<span class="closed-badge">Vaga encerrada</span>' : ''}
+        <article class="job-card ${isClosed ? 'closed' : ''}" id="vaga-${vaga.id}" style="transition: border-color 0.3s; display: flex; flex-direction: column; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #fff;">
+          <div class="job-art-wrapper" style="position: relative; aspect-ratio: 4 / 5; ${isClosed ? 'filter: grayscale(100%); opacity: 0.7;' : ''}">
+             <img src="${vaga.arte}" alt="Vaga para ${vaga.titulo}" style="width: 100%; height: 100%; object-fit: contain; background: #f0f4f8;">
+             ${isClosed ? '<span class="closed-badge" style="position: absolute; top: 10px; right: 10px; background: #5a6c7d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Vaga encerrada</span>' : ''}
           </div>
-          <div class="job-content">
-            <h3 class="visually-hidden">${job.title}</h3>
-            <div class="job-tags">
-              <span class="job-badge" style="background: #e8f5e9; color: #1b8f3a;">Tempo integral</span>
-              <span class="job-badge" style="background: #f0f4f8; color: #5a6c7d;">CLT (44h semanais)</span>
-              <span class="job-badge" style="background: #f0f4f8; color: #5a6c7d;">Parque Novo Mato Grosso</span>
+          <div class="job-content" style="padding: 24px; display: flex; flex-direction: column; flex: 1;">
+            <h3 class="visually-hidden" style="position: absolute; width: 1px; height: 1px; overflow: hidden;">${vaga.titulo}</h3>
+            <div class="job-tags" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+              <span class="job-badge" style="background: #e8f5e9; color: #1b8f3a; padding: 4px 10px; border-radius: 12px; font-size: 13px;">Tempo integral</span>
+              <span class="job-badge" style="background: #f0f4f8; color: #5a6c7d; padding: 4px 10px; border-radius: 12px; font-size: 13px;">CLT (44h semanais)</span>
+              <span class="job-badge" style="background: #f0f4f8; color: #5a6c7d; padding: 4px 10px; border-radius: 12px; font-size: 13px;">Parque Novo Mato Grosso</span>
             </div>
             
-            <div class="job-desc-wrapper">
-              <p class="job-desc" style="white-space: pre-wrap;">${job.description}</p>
+            <div class="job-desc-wrapper" style="margin-bottom: 16px;">
+              <p class="job-desc" style="white-space: pre-wrap; font-size: 15px; color: #52687a;">${vaga.descricao}</p>
             </div>
-            
-            <button class="mobile-toggle-btn" style="display: none;" onclick="this.previousElementSibling.classList.toggle('expanded'); this.textContent = this.textContent === 'Ver detalhes' ? 'Ocultar detalhes' : 'Ver detalhes'">Ver detalhes</button>
+            <button class="mobile-toggle-btn button light" style="display: none; margin-bottom: 16px; width: 100%;" onclick="this.previousElementSibling.classList.toggle('expanded'); this.textContent = this.textContent === 'Ver detalhes' ? 'Ocultar detalhes' : 'Ver detalhes'">Ver detalhes</button>
 
             ${!isClosed ? `
-            
-            <a href="#cadastro-vagas" class="button job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='${job.title}'; document.querySelector('#submit-career-btn').textContent='Enviar candidatura &nearr;'; document.querySelectorAll('.job-card').forEach(c => c.style.borderColor=''); document.getElementById('vaga-${slug}').style.borderColor='#1b8f3a';">Candidatar-se &rarr;</a>
+            <div style="background: #f0f4f8; padding: 12px; border-radius: 6px; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0; color:#5a6c7d; margin-top: 2px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <p style="margin:0; font-size: 14px; color: #5a6c7d;">Envie seu currículo para <a href="mailto:rh@parquenovomt.com?subject=${assunto}" style="font-weight: bold; color: var(--azul);">rh@parquenovomt.com</a> com o assunto '${vaga.titulo}'.</p>
+            </div>
+            <a href="#cadastro-vagas" class="button job-apply-btn" style="width: 100%; display: block; text-align: center; margin-top: auto;" onclick="window.selectVaga('${vaga.titulo}', 'vaga-${vaga.id}')">Candidatar-se &rarr;</a>
             ` : `
-            <a href="#cadastro-vagas" class="button light job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='Banco de talentos (candidatura espontânea)'; document.querySelector('#submit-career-btn').textContent='Cadastrar no Banco de Talentos &nearr;';">Cadastrar no Banco de Talentos &nearr;</a>
+            <a href="#cadastro-vagas" class="button light job-apply-btn" style="width: 100%; display: block; text-align: center; margin-top: auto;" onclick="window.selectVaga('Banco de talentos (candidatura espontânea)')">Cadastrar no Banco de Talentos &nearr;</a>
             `}
           </div>
         </article>
       `;
     }).join('');
 
-    const css = `
+    root.innerHTML = `
       <style>
         .jobs-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 30px;
         }
-        .job-card {
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          overflow: hidden;
-          background: #fff;
-          display: flex;
-          flex-direction: column;
-          transition: border-color 0.3s;
-        }
-        .job-art-wrapper {
-          position: relative;
-          aspect-ratio: 4 / 5;
-        }
-        .job-art-wrapper img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        .closed-badge {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          background: #d32f2f;
-          color: #fff;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 12px;
-          font-weight: bold;
-        }
-        .job-content {
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-        }
-        .visually-hidden {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          border: 0;
-        }
-        .job-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 15px;
-        }
-        .job-badge {
-          font-size: 11px;
-          font-weight: 600;
-          padding: 4px 8px;
-          border-radius: 4px;
-        }
-        .job-desc-wrapper {
-          margin-bottom: 15px;
-          flex: 1;
-        }
-        .job-desc {
-          font-size: 14px;
-          line-height: 1.5;
-        }
-        
-        
-        .job-apply-btn {
-          width: 100%;
-          text-align: center;
-          display: block;
-        }
-        .how-it-works-cards {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-          margin-top: 20px;
-          margin-bottom: 40px;
-        }
-        .hiw-card {
-          background: #f8fafc;
-          padding: 24px;
-          border-radius: 8px;
-          display: flex;
-          align-items: flex-start;
-          gap: 15px;
-        }
-        .hiw-num {
-          background: #1b2838; 
-          color: #fff;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          font-weight: bold;
-          flex-shrink: 0;
-        }
-        
-        .cv-area {
-          border: 2px dashed #cbd5e1;
-          border-radius: 6px;
-          padding: 30px 20px;
-          text-align: center;
-          background: #f8fafc;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .cv-area:hover, .cv-area.dragover {
-          border-color: #1b8f3a;
-          background: #f0fdf4;
-        }
-        .cv-area.has-file {
-          border-color: #1b8f3a;
-          border-style: solid;
-        }
-        
         @media (max-width: 768px) {
           .jobs-grid { grid-template-columns: 1fr; }
-          .how-it-works-cards { grid-template-columns: 1fr; }
-          .job-desc-wrapper {
-             display: none;
-          }
-          .job-desc-wrapper.expanded {
-             display: block;
-          }
-          .mobile-toggle-btn {
-             display: block !important;
-             background: none;
-             border: none;
-             color: #1b8f3a;
-             text-decoration: underline;
-             padding: 0;
-             margin-bottom: 15px;
-             cursor: pointer;
-             font-weight: 500;
-          }
-          
+          .job-desc-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+          .job-desc-wrapper.expanded { max-height: 1000px; }
+          .mobile-toggle-btn { display: block !important; }
         }
       </style>
+      <div class="reference-hero hero-vagas" style="background: var(--navy); color: white; padding: 100px 0 60px; text-align: center; position: relative;">
+        <div style="position:absolute; top:0; left:0; width:100%; height:100%; background: url('assets/gallery/vistas_gerais_54904798320.jpg') center/cover; opacity: 0.2;"></div>
+        <div class="wrap" style="position: relative; z-index: 1;">
+          ${crumb('Trabalhe Conosco')}
+          <h1 style="font-size: clamp(36px, 6vw, 56px); margin: 20px 0;">Construa o futuro com a gente.</h1>
+          <p style="font-size: 18px; max-width: 600px; margin: 0 auto 30px; opacity: 0.9;">Mais do que um complexo de eventos, o Parque Novo Mato Grosso é um motor de oportunidades. Se você busca um ambiente dinâmico, venha fazer parte da nossa equipe.</p>
+          <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button class="button" style="background: var(--verde-limao); color: var(--navy); border: none;" onclick="document.getElementById('vagas-list').scrollIntoView({behavior:'smooth'})">Ver vagas abertas (${N})</button>
+            <button class="button secondary" style="border-color: white; color: white;" onclick="window.selectVaga('Banco de talentos (candidatura espontânea)')">Cadastrar no Banco de Talentos &nearr;</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="wrap">
+        <div class="split" style="align-items: flex-start; margin-bottom: 60px;">
+          <div>
+            <span class="kicker">Como funciona</span>
+            <h2>Talentos que movem grandes experiências.</h2>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="background: #f0f4f8; padding: 24px; border-radius: 8px;">
+              <div style="width: 30px; height: 30px; background: var(--azul); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 15px;">1</div>
+              <p style="margin:0; font-size: 15px;">Preencha seus dados de contato e trajetória profissional.</p>
+            </div>
+            <div style="background: #f0f4f8; padding: 24px; border-radius: 8px;">
+              <div style="width: 30px; height: 30px; background: var(--azul); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 15px;">2</div>
+              <p style="margin:0; font-size: 15px;">Indique sua área de interesse e adicione o link do seu LinkedIn ou currículo online.</p>
+            </div>
+            <div style="background: #f0f4f8; padding: 24px; border-radius: 8px;">
+              <div style="width: 30px; height: 30px; background: var(--azul); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 15px;">3</div>
+              <p style="margin:0; font-size: 15px;">Nosso time de Gente & Gestão entrará em contato quando surgirem vagas compatíveis com seu perfil.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap" id="vagas-list" style="padding-top: 0; padding-bottom: 60px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+          <div>
+            <span class="kicker">Oportunidades</span>
+            <h2>${N} vagas abertas</h2>
+          </div>
+          <p style="margin:0; color: #5a6c7d; max-width: 300px;">Oportunidades presenciais e operacionais em Cuiabá-MT.</p>
+        </div>
+        <div class="jobs-grid">
+          ${cardsHtml}
+        </div>
+      </section>
+
+      <section class="wrap" id="cadastro-vagas" style="padding-top: 40px; padding-bottom: 80px; border-top: 1px solid #e2e8f0;">
+        <div id="form-success-screen" style="display: none; text-align: center; padding: 60px 0;">
+            <div style="width: 60px; height: 60px; background: #e8f5e9; color: var(--verde); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+            </div>
+            <h3 id="form-success-title" style="margin-bottom: 10px;">[titulo a definir]</h3>
+            <p id="form-success-vaga" style="font-weight: bold; color: var(--azul); margin-bottom: 15px;"></p>
+            <p id="form-success-text" style="margin-bottom: 30px; color: #5a6c7d;">[texto a definir]</p>
+            <button type="button" class="button light" onclick="document.getElementById('form-success-screen').style.display='none'; document.getElementById('main-form-content').style.display='block';">Voltar ao formulário</button>
+        </div>
+        
+        <div class="split" id="main-form-content">
+          <div style="padding-right: 40px;">
+            <span class="kicker">Banco de talentos</span>
+            <h2>Cadastre seu currículo para novas oportunidades.</h2>
+            <p>Se você se identifica com o nosso propósito e quer fazer parte de uma equipe que pensa grande, deixe suas informações conosco. Assim que houver uma vaga com a sua cara, entraremos em contato.</p>
+            <p style="font-size: 14px; opacity: 0.8; margin-top: 20px;">O Parque Novo Mato Grosso é um ambiente inclusivo. Todas as candidaturas são bem-vindas, independente de gênero, orientação sexual, raça, etnia ou deficiência.</p>
+          </div>
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 40px;">
+            <form data-form="trabalhe-conosco-v2" id="vaga-form" onsubmit="return false;" novalidate>
+              <input type="hidden" name="_gotcha_honey" value="">
+              ${field('vaga_interesse', 'Vaga de interesse *', 'select', jobOptions)}
+              <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                ${field('nome', 'Nome completo *')}
+                ${field('email', 'Seu melhor e-mail *', 'email')}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;" class="full">
+                  ${field('telefone', 'Telefone / WhatsApp *', 'tel', null, true)}
+                  ${field('cidade', 'Cidade onde reside *', 'text', null, true)}
+                </div>
+                ${field('area', 'Área de maior interesse *', 'select', areaOptions)}
+                
+                <div class="full" style="margin-bottom: 20px;">
+                  <label style="display:block; font-weight:bold; margin-bottom:8px; font-size:14px;">Currículo (anexo)</label>
+                  <div id="file-drop-area" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 25px; text-align: center; cursor: pointer; transition: 0.3s; background: #f8fafc;">
+                    <input type="file" id="file-input" name="curriculo" accept=".pdf,.doc,.docx" style="display: none;">
+                    <svg width="24" height="24" fill="none" stroke="#5a6c7d" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <p style="margin:0; font-size: 15px; color: var(--navy); font-weight: bold;">Arraste seu currículo aqui ou clique para escolher</p>
+                    <p style="margin:5px 0 0; font-size: 13px; color: #5a6c7d;">PDF, DOC ou DOCX, até 5 MB</p>
+                    <p id="file-name-display" style="margin: 10px 0 0; font-size: 14px; color: var(--verde); font-weight: bold; display: none;"></p>
+                    <p id="file-error" style="margin: 10px 0 0; font-size: 14px; color: #d32f2f; font-weight: bold; display: none;"></p>
+                  </div>
+                </div>
+
+                ${field('link', 'Link do LinkedIn ou Currículo online', 'url', null, false)}
+                
+                <p id="req-error" style="color: #d32f2f; font-weight: bold; font-size: 14px; display: none; margin-top:-10px; margin-bottom: 10px;" class="full">Envie o anexo ou o link abaixo. Pelo menos um dos dois.</p>
+
+                <div class="full">
+                  ${field('mensagem', 'Conte brevemente sobre sua trajetória e por que quer fazer parte do Parque Novo MT', 'textarea', null, false)}
+                </div>
+                
+                <div class="full" style="display:flex; align-items:flex-start; gap:10px; margin-top: 10px;">
+                  <input type="checkbox" id="aceite_lgpd" required style="margin-top:4px;">
+                  <label for="aceite_lgpd" style="font-size:13px; color:#5a6c7d; line-height:1.4;">Declaro que li e concordo com a <a href="#" style="text-decoration:underline;">Política de Privacidade</a> e autorizo o armazenamento do meu currículo na base do Parque Novo Mato Grosso para processos seletivos.</label>
+                </div>
+              </div>
+              <button type="submit" id="submit-career-btn" class="button" style="width: 100%; margin-top: 25px;">Enviar candidatura &nearr;</button>
+              <p class="form-status" style="margin-top: 15px; font-size: 14px;"></p>
+            </form>
+          </div>
+        </div>
+      </section>
     `;
 
-    return css + 
-      intro('Construa o futuro com a gente.', 'Faça parte da equipe que está construindo e operando o maior complexo multieventos da América Latina no coração de Mato Grosso.', 'Trabalhe Conosco').replace('</section>', 
-      `<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
-          <button class="button" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;" onclick="document.querySelector('.jobs-board').scrollIntoView({behavior:'smooth'})">Ver vagas abertas (${jobsCount})</button>
-          <button class="button light" style="white-space: nowrap; border: 1px solid white;" onclick="document.querySelector('#cadastro-vagas').scrollIntoView({behavior:'smooth'}); document.querySelector('[name=vaga_interesse]').value='Banco de talentos (candidatura espontânea)';">Cadastrar no Banco de Talentos &nearr;</button>
-        </div></section>`) + 
-      `<section class="wrap">
-        <span class="kicker">COMO FUNCIONA</span>
-        <h2>Talentos que movem grandes experi&ecirc;ncias.</h2>
-        <div class="how-it-works-cards">
-          <div class="hiw-card"><div class="hiw-num">1</div><p>Preencha seus dados de contato e trajet&oacute;ria profissional.</p></div>
-          <div class="hiw-card"><div class="hiw-num">2</div><p>Indique sua &aacute;rea de interesse e adicione o link do seu LinkedIn ou curr&iacute;culo online.</p></div>
-          <div class="hiw-card"><div class="hiw-num">3</div><p>Nosso time de Gente &amp; Gest&atilde;o entrar&aacute; em contato quando surgirem vagas compat&iacute;veis com seu perfil.</p></div>
-        </div>
-      </section>
-      <section class="wrap jobs-board" style="padding-top: 0;">
-        ${heading('OPORTUNIDADES', `${jobsCount} vagas abertas`, 'Oportunidades presenciais e operacionais em Cuiabá-MT.')}
-        ${jobsCount > 0 ? `
-          <div class="jobs-grid">
-            ${jobsHtml}
-          </div>
-        ` : `
-          <p>Não há vagas abertas no momento.</p>
-        `}
-      </section>
-      <section class="related" id="cadastro-vagas">
-        <div class="wrap service-layout">
-          <div class="service-copy">
-            <span class="kicker">BANCO DE TALENTOS</span>
-            <h2>Cadastre seu curr&iacute;culo para novas oportunidades.</h2>
-            <p>Mesmo que voc&ecirc; n&atilde;o encontre uma vaga imediata para o seu perfil hoje, nosso banco de talentos &eacute; consultado continuamente &agrave; medida que novas fases e atra&ccedil;&otilde;es entram em opera&ccedil;&atilde;o.</p>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;" />
-            <p style="font-size: 14px; color: #475569;">Todas as vagas do Parque Novo Mato Grosso seguem crit&eacute;rios de igualdade de oportunidades e respeito &agrave; diversidade.</p>
-          </div>
+    setupCareersUI();
+  }
 
-          <div id="form-container" class="service-form" style="position: relative;">
-            <div id="form-success-screen" style="display: none; text-align: center; padding: 40px 20px;">
-                <div style="font-size: 48px; color: #1b8f3a; margin-bottom: 20px;">&#10004;</div>
-                <h3 id="form-success-title">[título a definir]</h3>
-                <p style="font-weight: bold; margin: 15px 0;" id="form-success-vaga"></p>
-                <p style="margin-bottom: 30px;" id="form-success-text">[texto a definir]</p>
-                <button type="button" class="button light" onclick="document.getElementById('form-success-screen').style.display='none'; document.getElementById('main-form-content').style.display='block';">Voltar ao formul&aacute;rio</button>
-            </div>
-            
-            <div id="main-form-content">
-              <form data-form="trabalhe-conosco-v2" onsubmit="return false;" novalidate>
-                ${field('vaga_interesse', 'Vaga de interesse *', 'select', jobOptions)}
-                <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                  ${field('nome', 'Nome completo *')}
-                  ${field('email', 'Seu melhor e-mail *', 'email')}
-                  ${field('telefone', 'Telefone / WhatsApp *', 'tel')}
-                  ${field('cidade', 'Cidade onde reside * (ex: Cuiab&aacute;-MT)')}
-                </div>
-                ${field('area', '&Aacute;rea de maior interesse *', 'select', areaOptions)}
-                
-                <div class="full" style="margin-top: 15px;">
-                  <label style="font-weight: bold; display: block; margin-bottom: 8px;">Curr&iacute;culo (anexo)</label>
-                  <div class="cv-area" id="cv-drop-area" onclick="document.getElementById('cv-file').click()" ondragover="event.preventDefault(); this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="event.preventDefault(); this.classList.remove('dragover'); document.getElementById('cv-file').files = event.dataTransfer.files; document.getElementById('cv-file').dispatchEvent(new Event('change'));">
-                    <span style="font-size: 24px; color: #1b8f3a;">&#128196;</span>
-                    <p style="margin: 10px 0; font-weight: 500;" id="cv-text">Arraste seu curr&iacute;culo aqui ou clique para escolher</p>
-                    <p style="font-size: 12px; color: #64748b;">PDF, DOC ou DOCX, at&eacute; 5 MB</p>
-                  </div>
-                  <input type="file" id="cv-file" name="cv_file" accept=".pdf,.doc,.docx" style="display: none;" onchange="window.handleFileChange(this)">
-                  <p id="cv-error" style="color: #d32f2f; font-size: 13px; margin-top: 5px; display: none;"></p>
-                </div>
-                
-                ${field('linkedin', 'Link do LinkedIn ou Curr&iacute;culo online', 'url', null, false)}
-                
-                <p id="cv-link-error" style="color: #d32f2f; font-size: 14px; font-weight: bold; padding: 10px; background: #fee2e2; border-radius: 4px; display: none;">Envie o anexo ou o link abaixo. Pelo menos um dos dois.</p>
-                
-                <div class="full">
-                  ${field('mensagem', 'Conte brevemente sobre sua trajet&oacute;ria e por que quer fazer parte do Parque Novo MT', 'textarea', null, false)}
-                </div>
-                
-                <div class="full" style="margin-top: 15px;">
-                   <label style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px;">
-                     <input type="checkbox" required name="privacy" style="margin-top: 4px;">
-                     <span>Autorizo o uso dos dados informados para atendimento desta solicita&ccedil;&atilde;o conforme as diretrizes de privacidade.</span>
-                   </label>
-                </div>
+  window.selectVaga = function(titulo, idToHighlight) {
+    document.querySelector('#cadastro-vagas').scrollIntoView({behavior: 'smooth'});
+    const sel = document.querySelector('[name=vaga_interesse]');
+    if(sel) sel.value = titulo;
+    const btn = document.querySelector('#submit-career-btn');
+    if(btn) btn.textContent = titulo.includes('Banco') ? 'Cadastrar no Banco de Talentos ↗' : 'Enviar candidatura ↗';
+    
+    document.querySelectorAll('.job-card').forEach(c => c.style.borderColor='');
+    if(idToHighlight) {
+      const card = document.getElementById(idToHighlight);
+      if(card) card.style.borderColor='#1b8f3a';
+    }
+  };
 
-                <div class="full" style="margin-top: 20px;">
-                  <button type="button" class="button" id="submit-career-btn" onclick="window.submitCareerForm(this)">Cadastrar no Banco de Talentos &nearr;</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
+  function setupCareersUI() {
+    const dropArea = document.getElementById('file-drop-area');
+    const fileInput = document.getElementById('file-input');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    const fileError = document.getElementById('file-error');
+    const reqError = document.getElementById('req-error');
+    const selVaga = document.querySelector('[name=vaga_interesse]');
+    const btnSubmit = document.getElementById('submit-career-btn');
+
+    if(selVaga) {
+      selVaga.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if(btnSubmit) btnSubmit.textContent = val.includes('Banco') ? 'Cadastrar no Banco de Talentos ↗' : 'Enviar candidatura ↗';
+      });
+    }
+
+    if (dropArea && fileInput) {
+      dropArea.addEventListener('click', () => fileInput.click());
       
-      <script>
-        setTimeout(() => {
-          const select = document.querySelector('[name=vaga_interesse]');
-          if (select) {
-            select.addEventListener('change', (e) => {
-               const btn = document.getElementById('submit-career-btn');
-               if (e.target.value === 'Banco de talentos (candidatura espontânea)') {
-                 btn.innerHTML = 'Cadastrar no Banco de Talentos &nearr;';
-               } else {
-                 btn.innerHTML = 'Enviar candidatura &nearr;';
-               }
-            });
-          }
-        }, 100);
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropArea.style.borderColor = 'var(--verde)';
+        dropArea.style.background = '#e8f5e9';
+      });
+      
+      dropArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#cbd5e1';
+        dropArea.style.background = '#f8fafc';
+      });
 
-        window.handleFileChange = function(input) {
-          const area = document.getElementById('cv-drop-area');
-          const text = document.getElementById('cv-text');
-          const error = document.getElementById('cv-error');
-          error.style.display = 'none';
-          area.classList.remove('has-file');
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#cbd5e1';
+        dropArea.style.background = '#f8fafc';
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          handleFile();
+        }
+      });
 
-          if (input.files && input.files.length > 0) {
-            const file = input.files[0];
-            const sizeMB = file.size / 1024 / 1024;
-            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            const ext = file.name.split('.').pop().toLowerCase();
-            const validExts = ['pdf', 'doc', 'docx'];
+      fileInput.addEventListener('change', handleFile);
+    }
 
-            if (!validTypes.includes(file.type) && !validExts.includes(ext)) {
-               error.textContent = 'Formato inv&aacute;lido. Por favor, envie PDF, DOC ou DOCX.';
-               error.style.display = 'block';
-               input.value = '';
-               text.innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-               return;
-            }
-            if (sizeMB > 5) {
-               error.textContent = 'O arquivo &eacute; muito grande. O limite &eacute; 5 MB.';
-               error.style.display = 'block';
-               input.value = '';
-               text.innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-               return;
-            }
+    function handleFile() {
+      const file = fileInput.files[0];
+      fileError.style.display = 'none';
+      if (!file) {
+        fileNameDisplay.style.display = 'none';
+        dropArea.style.borderColor = '#cbd5e1';
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        fileError.textContent = 'Arquivo excede 5 MB. Anexe um arquivo menor.';
+        fileError.style.display = 'block';
+        fileNameDisplay.style.display = 'none';
+        fileInput.value = '';
+        dropArea.style.borderColor = '#d32f2f';
+        return;
+      }
+      const valid = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!valid.includes(file.type) && !file.name.match(/\.(pdf|doc|docx)$/i)) {
+        fileError.textContent = 'Formato inválido. Use PDF, DOC ou DOCX.';
+        fileError.style.display = 'block';
+        fileNameDisplay.style.display = 'none';
+        fileInput.value = '';
+        dropArea.style.borderColor = '#d32f2f';
+        return;
+      }
+      fileNameDisplay.textContent = 'Anexado: ' + file.name;
+      fileNameDisplay.style.display = 'block';
+      dropArea.style.borderColor = 'var(--verde)';
+      reqError.style.display = 'none';
+    }
 
-            text.innerHTML = '<strong>' + file.name + '</strong> anexado.';
-            area.classList.add('has-file');
-            document.getElementById('cv-link-error').style.display = 'none';
-          } else {
-            text.innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-          }
-        };
+    const form = document.getElementById('vaga-form');
+    if(form) {
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        form.classList.add('was-validated');
+        if (!form.reportValidity()) return;
 
-        window.submitCareerForm = async function(btn) {
-          const form = btn.closest('form');
-          form.classList.add('was-validated');
-          
-          if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-          }
+        const file = fileInput.files[0];
+        const link = document.querySelector('[name=link]').value;
+        if (!file && !link) {
+          reqError.style.display = 'block';
+          return;
+        }
 
-          const fileInput = document.getElementById('cv-file');
-          const linkedin = form.querySelector('[name=linkedin]').value.trim();
-          const cvError = document.getElementById('cv-link-error');
-          
-          if (!fileInput.files.length && !linkedin) {
-            cvError.style.display = 'block';
-            return;
-          }
-          cvError.style.display = 'none';
-          
-          const vaga = form.querySelector('[name=vaga_interesse]').value;
-          btn.disabled = true;
-          const origText = btn.innerHTML;
-          btn.innerHTML = 'Enviando...';
-          
-          try {
-             // In a real integration, this is where FormData is sent.
-             // We'll prepare it so it works with the system.
-             const formData = new FormData(form);
-             
-             // Wait briefly to simulate request
-             await new Promise(r => setTimeout(r, 1000));
-             
+        const formData = new FormData(form);
+        const button = form.querySelector('[type=submit]');
+        button.disabled = true;
+        const original = button.innerHTML;
+        button.textContent = 'Enviando...';
+
+        try {
+          const res = await fetch('/api/candidatura', { method: 'POST', body: formData });
+          if(res.ok) {
              document.getElementById('main-form-content').style.display = 'none';
              document.getElementById('form-success-screen').style.display = 'block';
-             document.getElementById('form-success-vaga').textContent = vaga;
+             document.getElementById('form-success-title').textContent = 'Candidatura enviada com sucesso!';
+             document.getElementById('form-success-vaga').textContent = formData.get('vaga_interesse');
+             document.getElementById('form-success-text').textContent = 'Seu perfil foi registrado e nosso time de Gente & Gestão entrará em contato se houver sinergia com a vaga.';
              form.reset();
-             document.getElementById('cv-drop-area').classList.remove('has-file');
-             document.getElementById('cv-text').innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-             
-          } catch (e) {
-             alert('Ocorreu um erro ao enviar. Tente novamente.');
-          } finally {
-             btn.disabled = false;
-             btn.innerHTML = origText;
+             fileNameDisplay.style.display = 'none';
+             dropArea.style.borderColor = '#cbd5e1';
+             form.classList.remove('was-validated');
+          } else {
+             const json = await res.json().catch(()=>({}));
+             const st = form.querySelector('.form-status');
+             st.style.color = '#d32f2f';
+             st.textContent = json.error || 'Erro ao enviar. Tente novamente.';
           }
-        };
-      </script>`;
-}
-function credits() {
-    return (
-      intro('Créditos e informações.', 'As referências que dão forma a este site.', 'Créditos') +
-      `<section class="wrap credits-list"><article><h3>Identidade e conteúdo</h3><p>Manual de Aplicação da Marca PNMT, PNMT_Textos_Site_Completo e proposta de layout fornecidos pelo parque. Logos preservados a partir do manual. Informações sinalizadas para confirmação no documento original foram retiradas do texto público até validação.</p></article><article><h3>Fotografias do autódromo</h3><p>Vista do circuito: Secom-MT. Corrida noturna: Mayke Toscano / Secom-MT. Registros de novembro de 2025.</p>${data.gallery.filter((g) => g.source).map((g) => `<p>${external(g.source, g.title)}</p>`).join('')}<p>O crédito não substitui autorização de uso. Consulte os responsáveis pelos arquivos para republicação.</p></article><article><h3>Imagens da proposta</h3><p>Vista aérea, pórtico e demais imagens foram fornecidos na proposta PNMT. Perspectivas e referências estão identificadas e não representam necessariamente o estágio atual das obras.</p></article><article><h3>Vídeo de apresentação</h3><p>Parque Novo Mato Grosso, canal oficial no YouTube.</p>${external('https://www.youtube.com/watch?v=' + config.videoId, 'Assistir ao vídeo')}</article><article><h3>Formulários nesta versão</h3><p>As solicitações podem ser preenchidas e preparadas para envio. Enquanto não houver conexão com o atendimento do parque, nenhum dado é transmitido e nenhum agendamento ou cadastro de avisos é confirmado.</p></article></section>`
-    );
-  }
-
-  function notFound() {
-    return (
-      intro('Vamos voltar ao parque?', '', 'Página não encontrada') +
-      `<section class="wrap"><div class="empty-state"><h3>Este caminho não foi encontrado.</h3><p>Explore os espaços e encontre sua próxima experiência.</p><a class="button" href="#espacos">Conheça os espaços ↗</a></div></section>`
-    );
-  }
-
-  // === ROUTER & NAVIGATION ===
-  function render() {
-    let rawRoute;
-    try {
-      rawRoute = decodeURIComponent(location.hash.slice(1) || 'inicio');
-    } catch {
-      rawRoute = '404';
+        } catch(err) {
+             const st = form.querySelector('.form-status');
+             st.style.color = '#d32f2f';
+             st.textContent = 'Erro de conexão.';
+        }
+        button.disabled = false;
+        button.innerHTML = original;
+      };
     }
 
-    const [routePart, queryPart] = rawRoute.split('?');
-    let route = routePart || 'inicio';
-    const params = new URLSearchParams(queryPart || '');
-
-    if (route === 'main') {
-      route = 'inicio';
-      requestAnimationFrame(() => {
-        main.focus();
-        main.scrollIntoView({ behavior: 'smooth' });
-      });
+    const match = location.hash.match(/^#trabalhe-conosco\/(.+)$/);
+    if(match) {
+       setTimeout(() => {
+         const card = document.getElementById('vaga-' + match[1]);
+         if(card) {
+           card.scrollIntoView({behavior:'smooth'});
+           card.style.borderColor = '#1b8f3a';
+         }
+       }, 500);
     }
-
-    // Clean up active 3D map if leaving map page
-    if (state.activeMapViewer) {
-      state.activeMapViewer.destroy();
-      state.activeMapViewer = null;
-    }
-
-    state.route = route;
-    state.selectedSpace = params.get('espaco') || (route.startsWith('evento/') ? route.split('/')[1] : '');
-
-    const titles = {
-      'inicio': 'Início',
-      'quem-somos': 'O parque',
-      'espacos': 'Espaços',
-      'mapa': 'Mapa Interativo',
-      'agenda': 'Agenda',
-      'imprensa': 'Imprensa',
-      'galeria': 'Galeria',
-      'visitar': 'Quero visitar',
-      'trabalhe-conosco': 'Trabalhe Conosco',
-      'contato': 'Contato',
-      'evento': 'Realize seu evento',
-      'outros-assuntos': 'Outros assuntos',
-      'creditos': 'Créditos',
-    };
-
-    if (route === 'admin') {
-      window.location.href = 'admin.html';
-      return;
-    }
-
-    let html;
-    if (route === 'inicio') {
-      html = home();
-    } else if (route === 'mapa') {
-      html = mapPage();
-    } else if (route === 'quem-somos') {
-      html = about();
-    } else if (route === 'espacos') {
-      html = spacesPage();
-    } else if (route.startsWith('noticia/')) {
-      html = newsArticle(route.split('/')[1]);
-    } else if (route.startsWith('espaco/')) {
-      html = detail(route.split('/')[1]);
-    } else if (route === 'agenda') {
-      html = agenda();
-    } else if (route === 'imprensa') {
-      html = press();
-    } else if (route === 'galeria') {
-      html = gallery();
-    } else if (route === 'visitar') {
-      html = visits();
-    } else if (route === 'trabalhe-conosco') {
-      html = careers();
-    } else if (route === 'contato' || route === 'evento' || route.startsWith('evento/')) {
-      html = contact(route === 'evento' || route.startsWith('evento/') || params.get('tipo') === 'evento');
-    } else if (route === 'outros-assuntos') {
-      html = otherContact();
-    } else if (route === 'creditos') {
-      html = credits();
-    } else {
-      html = notFound();
-    }
-
-    main.innerHTML = html;
-    document.body.dataset.route = route;
-    document.title = `${titles[route] || byId(route.split('/')[1])?.name || 'Parque'} | Parque Novo Mato Grosso`;
-
-    nav.querySelectorAll('a').forEach((a) => {
-      a.removeAttribute('aria-current');
-      const r = a.hash.slice(1).split('?')[0];
-      if (
-        r === route ||
-        (r === 'espacos' && route.startsWith('espaco/')) ||
-        (r === 'contato' && (route === 'evento' || route.startsWith('evento/') || params.get('tipo') === 'evento'))
-      ) {
-        a.setAttribute('aria-current', 'page');
-      }
-    });
-
-    closeMenu();
-
-    if (route === 'mapa') {
-      const root = document.getElementById('map-interactive-container');
-      if (root && window.PNMTMapViewer) {
-        state.activeMapViewer = new window.PNMTMapViewer(root);
-      }
-    }
-
-    if (route === 'espacos') updateSpaces();
-    if (route === 'agenda') updateAgenda();
-    if (route === 'imprensa') { updateNews(); updateImprensaGallery(); }
-    if (route === 'galeria') updateGallery();
-
-  function disableCaptionsOnIframe(iframe) {
-    if (!iframe || !iframe.contentWindow) return;
-    const send = (func, args) => {
-      try {
-        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
-      } catch (e) {}
-    };
-    send('unloadModule', ['captions']);
-    send('unloadModule', ['cc']);
-    send('setOption', ['captions', 'track', {}]);
-    send('setOption', ['captions', 'reload', false]);
-    send('setOption', ['cc', 'track', {}]);
-  }
-
-    // Disable YouTube auto-captions via postMessage after player loads
-    if (route === 'inicio') {
-      const heroIframe = document.getElementById('hero-video');
-      if (heroIframe) {
-        [300, 800, 1500, 2500, 4000].forEach((ms) => {
-          setTimeout(() => disableCaptionsOnIframe(heroIframe), ms);
-        });
-      }
-    }
-
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }
-
-  function closeMenu() {
-    nav.classList.remove('open');
-    document.body.classList.remove('nav-open');
-    const t = document.querySelector('[data-action=menu]');
-    if (t) {
-      t.setAttribute('aria-expanded', 'false');
-      t.setAttribute('aria-label', 'Abrir menu');
-      t.textContent = '☰';
-    }
-  }
-
-  // === FILTERS ===
-  function setFilter(type, value) {
-    const key = {
-      'espaços': 'spaceFilter',
-      'agenda': 'agendaFilter',
-      'galeria': 'galleryFilter',
-      'notícias': 'newsFilter',
-    }[type];
-    if (!key) return;
-
-    state[key] = value;
-
-    document.querySelectorAll(`[data-filter="${type}"]`).forEach((b) => {
-      b.setAttribute('aria-pressed', String(b.dataset.value === value));
-    });
-
-    if (type === 'espaços') updateSpaces();
-    if (type === 'agenda') updateAgenda();
-    if (type === 'galeria') updateGallery();
-    if (type === 'notícias') updateNews();
-  }
-
-  // === MEDIA MODALS ===
-  function showVideo() {
-    const dlg = document.getElementById('media-dialog');
-    if (!dlg) return;
-
-    // Pause hero background video while modal is open
-    const heroIframe = document.getElementById('hero-video');
-    if (heroIframe) {
-      try {
-        heroIframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
-      } catch (e) {}
-    }
-
-    const rawVid = String(config.videoId || config.youtubeId || 'ncTJbHQNq6M').trim();
-    const vid = /^[\w-]{11}$/.test(rawVid) ? rawVid : 'ncTJbHQNq6M';
-    document.getElementById('media-title').textContent = 'Vídeo de apresentação — Parque Novo Mato Grosso';
-    document.getElementById('media-content').innerHTML =
-      `<div class="modal-video-wrap"><iframe id="modal-video-iframe" src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&cc_load_policy=3&iv_load_policy=3&hl=pt-BR&enablejsapi=1" title="Vídeo de apresentação — Parque Novo Mato Grosso" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><p style="margin-top:14px;color:#52687a;font-size:14px;">Vídeo institucional do canal Parque Novo Mato Grosso.</p>${external('https://www.youtube.com/watch?v=' + vid, 'Abrir diretamente no YouTube')}`;
-
-    if (!dlg.open) {
-      if (typeof dlg.showModal === 'function') {
-        dlg.showModal();
-      } else {
-        dlg.setAttribute('open', '');
-      }
-    }
-
-    const modalIframe = document.getElementById('modal-video-iframe');
-    if (modalIframe) {
-      [400, 1000, 2200].forEach((ms) => {
-        setTimeout(() => disableCaptionsOnIframe(modalIframe), ms);
-      });
-    }
-  }
-
-  window.showPhoto = function showPhoto(index) {
-    state.currentPhotoIndex = index;
-    const g = data.gallery[index];
-    if (!g) return;
-
-    const total = data.gallery.length;
-    document.getElementById('media-title').textContent = g.title;
-    document.getElementById('media-content').innerHTML = `
-      <div class="lightbox-viewer">
-        <img src="${asset(g.image)}" alt="${esc(g.title)}" style="width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;">
-        <div class="lightbox-controls" style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
-          <button class="button secondary" data-action="photo-prev" aria-label="Foto anterior" style="padding:6px 14px;font-size:14px;">&larr; Anterior</button>
-          
-          <span style="font-size:13px;opacity:0.8; display:flex; align-items:center; gap: 15px;">
-            ${index + 1} de ${total}
-            <a href="${asset(g.image)}" download="${(g.title || "imagem").replace(/\s+/g, '-').toLowerCase()}-${index}.jpg" title="Baixar imagem" style="color:var(--navy);"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
-          </span>
-          
-          <button class="button secondary" data-action="photo-next" aria-label="Pr&oacute;xima foto" style="padding:6px 14px;font-size:14px;">Pr&oacute;xima &rarr;</button>
-        </div>
-        <p>${esc(g.type)} &middot; ${esc(g.credit)}</p>
-        ${g.source ? external(g.source, 'Consulte a fonte e os cr&eacute;ditos') : ''}
-      </div>`;
-    const dlg = document.getElementById('media-dialog');
-    if (!dlg.open) dlg.showModal();
-  }
-  
-  function updateSearch() {
-    const rawVal = document.getElementById('search-input').value.trim();
-    if (!rawVal) {
-      document.getElementById('search-results').innerHTML =
-        '<p class="search-hint" style="color:var(--muted);padding:14px 0;">Digite uma palavra-chave para buscar atrações, espaços, notícias e páginas.</p>';
-      return;
-    }
-
-    const q = normal(rawVal);
-    const pages = [
-      ['O parque', 'quem-somos', 'institucional história valores'],
-      ['Conheça os espaços', 'espacos', 'catálogo todos os espaços atrações'],
-      ['Agenda', 'agenda', 'programação eventos corridas shows datas'],
-      ['Galeria de fotos', 'galeria', 'fotos imagens perspectivas registros'],
-      ['Imprensa', 'imprensa', 'notícias assessoria kit pauta'],
-      ['Quero visitar', 'visitar', 'visitas turismo escolas grupos agendamento'],
-      ['Contato e eventos', 'contato', 'shows eventos realização orçamento'],
-      ['Trabalhe Conosco', 'trabalhe-conosco', 'vagas empregos carreiras currículo oportunidades banco talentos processo seletivo'],
-      ['Outros assuntos', 'outros-assuntos', 'comercial fornecedores parcerias'],
-    ].map(([name, id, extra]) => ({ name, id, category: 'Página', searchContent: extra }));
-
-    const spaceItems = data.spaces.map((s) => ({
-      name: s.name,
-      id: 'espaco/' + s.id,
-      category: s.category,
-      tagline: s.tagline,
-      searchContent: (s.text || []).join(' '),
-    }));
-
-    const eventItems = data.events.map((e) => ({
-      name: e.name,
-      id: 'agenda',
-      category: 'Evento',
-      tagline: `${e.category} · ${fmt(e.date)}`,
-      searchContent: `${e.location} ${e.ticket}`,
-    }));
-
-    const newsItems = data.news.map((n) => ({
-      name: n.title,
-      id: 'imprensa',
-      category: 'Notícia',
-      tagline: `${n.category} · ${fmt(n.date)}`,
-      searchContent: n.description,
-    }));
-
-    const found = [
-      ...pages,
-      ...spaceItems,
-      ...eventItems,
-      ...newsItems,
-    ].filter((x) => normal(`${x.name} ${x.tagline || ''} ${x.searchContent || ''}`).includes(q));
-
-    document.getElementById('search-results').innerHTML = found.length
-      ? found.map((x) => `<a href="#${esc(x.id)}">${esc(x.name)} ↗<small>${esc(x.category)}${x.tagline ? ' · ' + esc(x.tagline) : ''}</small></a>`).join('')
-      : '<p>Nenhum resultado. Tente outro nome ou assunto.</p>';
-  }
-
-  // === CALENDAR & DOWNLOADS ===
-  function download(name, content, type) {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = name;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-
-  function makeCalendar(id) {
-    const e = data.events.find((x) => x.id === id);
-    if (!e) return;
-
-    const date = e.date.replaceAll('-', '');
-    const next = new Date(e.date + 'T12:00:00');
-    next.setDate(next.getDate() + 1);
-    const end = next.toISOString().slice(0, 10).replaceAll('-', '');
-    const safe = (s) =>
-      s
-        .replace(/\\/g, '\\\\')
-        .replace(/\n/g, '\\n')
-        .replace(/,/g, '\\,')
-        .replace(/;/g, '\\;');
-
-    download(
-      'evento-pnmt.ics',
-      `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//PNMT//Agenda//PT\r\nBEGIN:VEVENT\r\nUID:${e.id}@pnmt.local\r\nDTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}\r\nDTSTART;VALUE=DATE:${date}\r\nDTEND;VALUE=DATE:${end}\r\nSUMMARY:${safe(e.name)}\r\nLOCATION:${safe(e.location)}\r\nURL:${e.url}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`,
-      'text/calendar;charset=utf-8'
-    );
   }
 
   // === FORM HANDLING ===

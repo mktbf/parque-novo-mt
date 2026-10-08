@@ -1,0 +1,23 @@
+[
+  {
+    "id": "analista-de-compras",
+    "titulo": "Analista de Compras",
+    "descricao": "Se você tem experiência com processos de aquisição, cotações, negociação estratégica com fornecedores e quer um novo desafio, essa oportunidade é para você. (Necessário superior completo/andamento em áreas afins, Excel e CNH B).",
+    "arte": "assets/vaga-analista-compras.jpg",
+    "status": "aberta"
+  },
+  {
+    "id": "analista-contabil",
+    "titulo": "Analista Contábil",
+    "descricao": "Se você tem vivência em rotinas contábeis, conciliações, fechamento mensal e bom domínio em Excel, venha fazer parte de um dos maiores complexos da região.",
+    "arte": "assets/vaga-analista-contabil.jpg",
+    "status": "aberta"
+  },
+  {
+    "id": "mestre-de-obras",
+    "titulo": "Mestre de Obras",
+    "descricao": "Estamos com oportunidade aberta para Mestre de Obras. Se você tem experiência sólida na construção civil, forte capacidade de liderança de equipes e domínio na leitura de projetos, essa vaga é sua.",
+    "arte": "assets/vaga-mestre-obras.jpg",
+    "status": "aberta"
+  }
+]
