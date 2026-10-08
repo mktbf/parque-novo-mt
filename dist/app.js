@@ -385,6 +385,15 @@ async function updateAgenda() {
     "status": "confirmado"
   },
   {
+    "id": "corrida-mpmt-2026",
+    "nome": "Corrida do MPMT 2026",
+    "dataInicio": "2026-11-15",
+    "espaco": "Pista de Ciclismo e Caminhada",
+    "slugEspaco": "",
+    "categoria": "Corridas de rua",
+    "status": "confirmado"
+  },
+  {
     "id": "final-estadual-motocross",
     "nome": "Final Estadual Moto Cross",
     "dataInicio": "2026-11-20",
