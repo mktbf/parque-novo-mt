@@ -699,7 +699,9 @@ async function updateAgenda() {
       
       const spaceLink = nextEvent.slugEspaco ? `<a href="#espaco/${nextEvent.slugEspaco}" class="button secondary">Conhecer o ${nextEvent.espaco} ↗</a>` : '';
 
+      const firstMonth = formatMonth(nextEvent.parsedStart);
       const destaqueHtml = `
+        <h3 class="agenda-month-title wrap">${firstMonth.toUpperCase()}</h3>
         <div class="agenda-destaque wrap">
           <img src="${asset('gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg')}" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.src='${asset('gallery/parque-da-familia-01.jpg')}'">
           <div class="destaque-info">
@@ -717,9 +719,9 @@ async function updateAgenda() {
         </div>
       `;
 
-      const rest = list.slice(1);
+      const rest = list;
       let listHtml = '';
-      let lastMonth = '';
+      let lastMonth = firstMonth;
       for (const e of rest) {
         const m = formatMonth(e.parsedStart);
         if (m !== lastMonth) {
