@@ -1456,7 +1456,6 @@ async function updateAgenda() {
             ${!isClosed ? `
             
             <button type="button" class="button job-apply-btn" onclick="window.scrollToForm('${job.title}', '${slug}')">Candidatar-se &rarr;</button>
-            <a class="button secondary job-email-btn" href="mailto:rh@parquenovomt.com?subject=${encodeURIComponent(job.title)}" style="width: 100%; justify-content: center; margin-top: 10px;">Enviar currículo por e-mail</a>
             ` : `
             <button type="button" class="button light job-apply-btn" onclick="window.scrollToForm('Banco de talentos (candidatura espontânea)', null)">Cadastrar no Banco de Talentos &nearr;</button>
             `}
