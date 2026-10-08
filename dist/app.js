@@ -1303,6 +1303,133 @@ async function updateAgenda() {
       'Outra área de atuação',
     ];
 
+    window.scrollToForm = function(vaga, slug) {
+      const select = document.querySelector('[name=vaga_interesse]');
+      if (select) {
+        select.value = vaga;
+        select.dispatchEvent(new Event('change'));
+      }
+      document.getElementById('cadastro-vagas').scrollIntoView({behavior:'smooth'});
+    };
+
+    window.handleFileChange = function(input) {
+      const area = document.getElementById('cv-drop-area');
+      const text = document.getElementById('cv-text');
+      const error = document.getElementById('cv-error');
+      error.style.display = 'none';
+      area.classList.remove('has-file');
+      area.classList.remove('invalid-file');
+
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        const sizeMB = file.size / 1024 / 1024;
+        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        const ext = file.name.split('.').pop().toLowerCase();
+        const validExts = ['pdf', 'doc', 'docx'];
+
+        if (!validTypes.includes(file.type) && !validExts.includes(ext)) {
+           error.textContent = 'Formato inválido. Por favor, envie PDF, DOC ou DOCX.';
+           error.style.display = 'block';
+           input.value = '';
+           text.innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
+           return;
+        }
+        if (sizeMB > 5) {
+           error.textContent = 'O arquivo é muito grande. O limite é 5 MB.';
+           error.style.display = 'block';
+           input.value = '';
+           text.innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
+           return;
+        }
+
+        text.innerHTML = '<strong>' + file.name + '</strong> anexado.';
+        area.classList.add('has-file');
+      } else {
+        text.innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
+      }
+    };
+
+    window.submitCareerForm = async function(btn) {
+      const form = btn.closest('form');
+      form.classList.add('was-validated');
+      
+      if (!form.reportValidity()) return;
+
+      const fileInput = document.getElementById('cv-file');
+      const linkedinInput = form.querySelector('[name=linkedin]');
+      const linkedin = linkedinInput.value.trim();
+      const cvArea = document.getElementById('cv-drop-area');
+      
+      if (!fileInput.files.length && !linkedin) {
+        cvArea.classList.add('invalid-file');
+        linkedinInput.style.borderColor = '#d32f2f';
+        cvArea.scrollIntoView({behavior:'smooth', block: 'center'});
+        return;
+      }
+      cvArea.classList.remove('invalid-file');
+      linkedinInput.style.borderColor = '';
+      
+      const kind = form.dataset.form;
+      const fields = Object.fromEntries(new FormData(form).entries());
+      
+      if (fields._gotcha_honey) {
+        form.reset();
+        return;
+      }
+      delete fields._gotcha_honey;
+      delete fields.cv_file;
+
+      for (const [key, value] of Object.entries(fields)) {
+        if (typeof value === 'string') fields[key] = value.trim().slice(0, 4000);
+      }
+
+      const endpoint = typeof config !== 'undefined' && config.formsEndpoint ? config.formsEndpoint : null;
+      
+      const payload = {
+        kind,
+        submittedAt: new Date().toISOString(),
+        fields,
+      };
+
+      const vaga = form.querySelector('[name=vaga_interesse]').value;
+      btn.disabled = true;
+      const origText = btn.innerHTML;
+      btn.innerHTML = 'Enviando...';
+      
+      try {
+         if (!endpoint) {
+           throw new Error('Envio nao configurado');
+         }
+         
+         if (endpoint === '__supabase__' && window.PNMT_SUPABASE) {
+           const result = await window.PNMT_SUPABASE.submitForm(payload);
+           if (!result.ok) throw new Error(result.error || 'Erro na submissão');
+         } else {
+           const res = await fetch(endpoint, {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(payload)
+           });
+           if (!res.ok) throw new Error('Erro HTTP ' + res.status);
+           const json = await res.json();
+           if (json.ok === false) throw new Error(json.error || 'Erro na submissão');
+         }
+         
+         document.getElementById('main-form-content').style.display = 'none';
+         document.getElementById('form-success-screen').style.display = 'block';
+         document.getElementById('form-success-vaga').textContent = vaga;
+         form.reset();
+         document.getElementById('cv-drop-area').classList.remove('has-file');
+         document.getElementById('cv-text').innerHTML = 'Arraste seu currículo aqui ou clique para escolher';
+         form.classList.remove('was-validated');
+      } catch (e) {
+         alert('Ocorreu um erro ao enviar. Tente novamente.');
+      } finally {
+         btn.disabled = false;
+         btn.innerHTML = origText;
+      }
+    };
+
     const jobsHtml = jobs.map(job => {
       const isClosed = job.status === 'encerrada';
       const slug = job.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -1327,10 +1454,13 @@ async function updateAgenda() {
             <button class="mobile-toggle-btn" style="display: none;" onclick="this.previousElementSibling.classList.toggle('expanded'); this.textContent = this.textContent === 'Ver detalhes' ? 'Ocultar detalhes' : 'Ver detalhes'">Ver detalhes</button>
 
             ${!isClosed ? `
-            
-            <a href="#cadastro-vagas" class="button job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='${job.title}'; document.querySelector('#submit-career-btn').textContent='Enviar candidatura &nearr;'; document.querySelectorAll('.job-card').forEach(c => c.style.borderColor=''); document.getElementById('vaga-${slug}').style.borderColor='#1b8f3a';">Candidatar-se &rarr;</a>
+            <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; font-size: 13px; color: #475569; line-height: 1.4;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink: 0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>Envie seu currículo para <a href="mailto:rh@parquenovomt.com?subject=${encodeURIComponent(job.title)}" style="color: #1b8f3a; font-weight: bold; text-decoration: none;">rh@parquenovomt.com</a> com o assunto '${job.title}'.</span>
+            </div>
+            <button type="button" class="button job-apply-btn" onclick="window.scrollToForm('${job.title}', '${slug}')">Candidatar-se &rarr;</button>
             ` : `
-            <a href="#cadastro-vagas" class="button light job-apply-btn" onclick="document.querySelector('[name=vaga_interesse]').value='Banco de talentos (candidatura espontânea)'; document.querySelector('#submit-career-btn').textContent='Cadastrar no Banco de Talentos &nearr;';">Cadastrar no Banco de Talentos &nearr;</a>
+            <button type="button" class="button light job-apply-btn" onclick="window.scrollToForm('Banco de talentos (candidatura espontânea)', null)">Cadastrar no Banco de Talentos &nearr;</button>
             `}
           </div>
         </article>
@@ -1351,7 +1481,11 @@ async function updateAgenda() {
           background: #fff;
           display: flex;
           flex-direction: column;
-          transition: border-color 0.3s;
+          transition: border-color 0.3s, background-color 0.3s;
+        }
+        .job-card.active-card {
+          border-color: #1b8f3a;
+          background-color: #f3faf5;
         }
         .job-art-wrapper {
           position: relative;
@@ -1410,11 +1544,11 @@ async function updateAgenda() {
           line-height: 1.5;
         }
         
-        
         .job-apply-btn {
           width: 100%;
           text-align: center;
           display: block;
+          margin-top: auto;
         }
         .how-it-works-cards {
           display: grid;
@@ -1461,28 +1595,58 @@ async function updateAgenda() {
           border-color: #1b8f3a;
           border-style: solid;
         }
+        .cv-area.invalid-file {
+          border-color: #d32f2f;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+        }
+        .form-grid > .full {
+          grid-column: 1 / -1;
+        }
         
+        @media (max-width: 1200px) {
+          .jobs-grid { grid-template-columns: repeat(2, 1fr); }
+        }
         @media (max-width: 768px) {
           .jobs-grid { grid-template-columns: 1fr; }
           .how-it-works-cards { grid-template-columns: 1fr; }
+          .form-grid { grid-template-columns: 1fr; }
+          
           .job-desc-wrapper {
-             display: none;
+            max-height: 80px;
+            overflow: hidden;
+            position: relative;
+          }
+          .job-desc-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(transparent, #fff);
           }
           .job-desc-wrapper.expanded {
-             display: block;
+            max-height: none;
+          }
+          .job-desc-wrapper.expanded::after {
+            display: none;
           }
           .mobile-toggle-btn {
-             display: block !important;
-             background: none;
-             border: none;
-             color: #1b8f3a;
-             text-decoration: underline;
-             padding: 0;
-             margin-bottom: 15px;
-             cursor: pointer;
-             font-weight: 500;
+            display: block !important;
+            background: none;
+            border: none;
+            color: #1b8f3a;
+            text-decoration: underline;
+            padding: 0;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-weight: 500;
           }
-          
         }
       </style>
     `;
@@ -1491,15 +1655,15 @@ async function updateAgenda() {
       intro('Construa o futuro com a gente.', 'Faça parte da equipe que está construindo e operando o maior complexo multieventos da América Latina no coração de Mato Grosso.', 'Trabalhe Conosco').replace('</section>', 
       `<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
           <button class="button" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;" onclick="document.querySelector('.jobs-board').scrollIntoView({behavior:'smooth'})">Ver vagas abertas (${jobsCount})</button>
-          <button class="button light" style="white-space: nowrap; border: 1px solid white;" onclick="document.querySelector('#cadastro-vagas').scrollIntoView({behavior:'smooth'}); document.querySelector('[name=vaga_interesse]').value='Banco de talentos (candidatura espontânea)';">Cadastrar no Banco de Talentos &nearr;</button>
+          <button class="button light" style="white-space: nowrap; border: 1px solid white;" onclick="window.scrollToForm('Banco de talentos (candidatura espontânea)', null)">Cadastrar no Banco de Talentos &nearr;</button>
         </div></section>`) + 
       `<section class="wrap">
         <span class="kicker">COMO FUNCIONA</span>
-        <h2>Talentos que movem grandes experi&ecirc;ncias.</h2>
+        <h2>Talentos que movem grandes experiências.</h2>
         <div class="how-it-works-cards">
-          <div class="hiw-card"><div class="hiw-num">1</div><p>Preencha seus dados de contato e trajet&oacute;ria profissional.</p></div>
-          <div class="hiw-card"><div class="hiw-num">2</div><p>Indique sua &aacute;rea de interesse e adicione o link do seu LinkedIn ou curr&iacute;culo online.</p></div>
-          <div class="hiw-card"><div class="hiw-num">3</div><p>Nosso time de Gente &amp; Gest&atilde;o entrar&aacute; em contato quando surgirem vagas compat&iacute;veis com seu perfil.</p></div>
+          <div class="hiw-card"><div class="hiw-num">1</div><p>Preencha seus dados de contato e trajetória profissional.</p></div>
+          <div class="hiw-card"><div class="hiw-num">2</div><p>Indique sua área de interesse e adicione o link do seu LinkedIn ou currículo online.</p></div>
+          <div class="hiw-card"><div class="hiw-num">3</div><p>Nosso time de Gente & Gestão entrará em contato quando surgirem vagas compatíveis com seu perfil.</p></div>
         </div>
       </section>
       <section class="wrap jobs-board" style="padding-top: 0;">
@@ -1516,60 +1680,67 @@ async function updateAgenda() {
         <div class="wrap service-layout">
           <div class="service-copy">
             <span class="kicker">BANCO DE TALENTOS</span>
-            <h2>Cadastre seu curr&iacute;culo para novas oportunidades.</h2>
-            <p>Mesmo que voc&ecirc; n&atilde;o encontre uma vaga imediata para o seu perfil hoje, nosso banco de talentos &eacute; consultado continuamente &agrave; medida que novas fases e atra&ccedil;&otilde;es entram em opera&ccedil;&atilde;o.</p>
+            <h2>Cadastre seu currículo para novas oportunidades.</h2>
+            <p>Mesmo que você não encontre uma vaga imediata para o seu perfil hoje, nosso banco de talentos é consultado continuamente à medida que novas fases e atrações entram em operação.</p>
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;" />
-            <p style="font-size: 14px; color: #475569;">Todas as vagas do Parque Novo Mato Grosso seguem crit&eacute;rios de igualdade de oportunidades e respeito &agrave; diversidade.</p>
+            <p style="font-size: 14px; color: #475569;">Todas as vagas do Parque Novo Mato Grosso seguem critérios de igualdade de oportunidades e respeito à diversidade.</p>
           </div>
 
           <div id="form-container" class="service-form" style="position: relative;">
             <div id="form-success-screen" style="display: none; text-align: center; padding: 40px 20px;">
                 <div style="font-size: 48px; color: #1b8f3a; margin-bottom: 20px;">&#10004;</div>
-                <h3 id="form-success-title">[título a definir]</h3>
+                <h3 id="form-success-title">Candidatura enviada!</h3>
                 <p style="font-weight: bold; margin: 15px 0;" id="form-success-vaga"></p>
-                <p style="margin-bottom: 30px;" id="form-success-text">[texto a definir]</p>
-                <button type="button" class="button light" onclick="document.getElementById('form-success-screen').style.display='none'; document.getElementById('main-form-content').style.display='block';">Voltar ao formul&aacute;rio</button>
+                <p style="margin-bottom: 30px;" id="form-success-text">Nosso time de Gente & Gestão entrará em contato quando surgirem vagas compatíveis com seu perfil.</p>
+                <button type="button" class="button light" onclick="document.getElementById('form-success-screen').style.display='none'; document.getElementById('main-form-content').style.display='block';">Voltar ao formulário</button>
             </div>
             
             <div id="main-form-content">
-              <form data-form="trabalhe-conosco-v2" onsubmit="return false;" novalidate>
-                ${field('vaga_interesse', 'Vaga de interesse *', 'select', jobOptions)}
-                <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                  ${field('nome', 'Nome completo *')}
-                  ${field('email', 'Seu melhor e-mail *', 'email')}
-                  ${field('telefone', 'Telefone / WhatsApp *', 'tel')}
-                  ${field('cidade', 'Cidade onde reside * (ex: Cuiab&aacute;-MT)')}
-                </div>
-                ${field('area', '&Aacute;rea de maior interesse *', 'select', areaOptions)}
-                
-                <div class="full" style="margin-top: 15px;">
-                  <label style="font-weight: bold; display: block; margin-bottom: 8px;">Curr&iacute;culo (anexo)</label>
-                  <div class="cv-area" id="cv-drop-area" onclick="document.getElementById('cv-file').click()" ondragover="event.preventDefault(); this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="event.preventDefault(); this.classList.remove('dragover'); document.getElementById('cv-file').files = event.dataTransfer.files; document.getElementById('cv-file').dispatchEvent(new Event('change'));">
-                    <span style="font-size: 24px; color: #1b8f3a;">&#128196;</span>
-                    <p style="margin: 10px 0; font-weight: 500;" id="cv-text">Arraste seu curr&iacute;culo aqui ou clique para escolher</p>
-                    <p style="font-size: 12px; color: #64748b;">PDF, DOC ou DOCX, at&eacute; 5 MB</p>
+              <form data-form="trabalhe-conosco" onsubmit="return false;" novalidate>
+                <div class="form-grid">
+                  <div class="full">
+                    ${field('vaga_interesse', 'Vaga de interesse', 'select', jobOptions)}
                   </div>
-                  <input type="file" id="cv-file" name="cv_file" accept=".pdf,.doc,.docx" style="display: none;" onchange="window.handleFileChange(this)">
-                  <p id="cv-error" style="color: #d32f2f; font-size: 13px; margin-top: 5px; display: none;"></p>
-                </div>
-                
-                ${field('linkedin', 'Link do LinkedIn ou Curr&iacute;culo online', 'url', null, false)}
-                
-                <p id="cv-link-error" style="color: #d32f2f; font-size: 14px; font-weight: bold; padding: 10px; background: #fee2e2; border-radius: 4px; display: none;">Envie o anexo ou o link abaixo. Pelo menos um dos dois.</p>
-                
-                <div class="full">
-                  ${field('mensagem', 'Conte brevemente sobre sua trajet&oacute;ria e por que quer fazer parte do Parque Novo MT', 'textarea', null, false)}
-                </div>
-                
-                <div class="full" style="margin-top: 15px;">
-                   <label style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px;">
-                     <input type="checkbox" required name="privacy" style="margin-top: 4px;">
-                     <span>Autorizo o uso dos dados informados para atendimento desta solicita&ccedil;&atilde;o conforme as diretrizes de privacidade.</span>
-                   </label>
-                </div>
+                  <div>${field('nome', 'Nome completo')}</div>
+                  <div>${field('email', 'Seu melhor e-mail', 'email')}</div>
+                  <div>${field('telefone', 'Telefone / WhatsApp', 'tel')}</div>
+                  <div>${field('cidade', 'Cidade onde reside (ex: Cuiabá-MT)')}</div>
+                  <div class="full">
+                    ${field('area', 'Área de maior interesse', 'select', areaOptions)}
+                  </div>
+                  
+                  <div class="full" style="margin-top: 15px;">
+                    <label style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+                      <span style="font-weight: bold;">Currículo (anexo)</span>
+                      <span style="color: #1261A0; font-size: 13px; font-weight: 500;">Envie o anexo ou o link abaixo. Pelo menos um dos dois.</span>
+                    </label>
+                    <div class="cv-area" id="cv-drop-area" onclick="document.getElementById('cv-file').click()" ondragover="event.preventDefault(); this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="event.preventDefault(); this.classList.remove('dragover'); document.getElementById('cv-file').files = event.dataTransfer.files; document.getElementById('cv-file').dispatchEvent(new Event('change'));">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1b8f3a" stroke-width="2" style="margin-bottom: 10px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                      <p style="margin: 10px 0; font-weight: 500;" id="cv-text">Arraste seu currículo aqui ou clique para escolher</p>
+                      <p style="font-size: 12px; color: #64748b;">PDF, DOC ou DOCX, até 5 MB</p>
+                    </div>
+                    <input type="file" id="cv-file" name="cv_file" accept=".pdf,.doc,.docx" style="display: none;" onchange="window.handleFileChange(this)">
+                    <p id="cv-error" style="color: #d32f2f; font-size: 13px; margin-top: 5px; display: none;"></p>
+                  </div>
+                  
+                  <div class="full">
+                    ${field('linkedin', 'Link do LinkedIn ou Currículo online', 'url', null, false)}
+                  </div>
+                  
+                  <div class="full" style="margin-top: 15px;">
+                    ${field('mensagem', 'Conte brevemente sobre sua trajetória e por que quer fazer parte do Parque Novo MT', 'textarea', null, false)}
+                  </div>
+                  
+                  <div class="full" style="margin-top: 15px;">
+                     <label style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px;">
+                       <input type="checkbox" required name="privacy" style="margin-top: 4px;">
+                       <span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span>
+                     </label>
+                  </div>
 
-                <div class="full" style="margin-top: 20px;">
-                  <button type="button" class="button" id="submit-career-btn" onclick="window.submitCareerForm(this)">Cadastrar no Banco de Talentos &nearr;</button>
+                  <div class="full" style="margin-top: 20px;">
+                    <button type="button" class="button" id="submit-career-btn" onclick="window.submitCareerForm(this)">Cadastrar no Banco de Talentos &nearr;</button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -1588,95 +1759,20 @@ async function updateAgenda() {
                } else {
                  btn.innerHTML = 'Enviar candidatura &nearr;';
                }
+               document.querySelectorAll('.job-card').forEach(c => c.classList.remove('active-card'));
+               if (e.target.value !== 'Banco de talentos (candidatura espontânea)') {
+                 const jobs = ${JSON.stringify(jobs)};
+                 const job = jobs.find(j => j.title === e.target.value);
+                 if (job) {
+                   const slug = job.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                   const card = document.getElementById('vaga-' + slug);
+                   if (card) card.classList.add('active-card');
+                 }
+               }
             });
           }
         }, 100);
-
-        window.handleFileChange = function(input) {
-          const area = document.getElementById('cv-drop-area');
-          const text = document.getElementById('cv-text');
-          const error = document.getElementById('cv-error');
-          error.style.display = 'none';
-          area.classList.remove('has-file');
-
-          if (input.files && input.files.length > 0) {
-            const file = input.files[0];
-            const sizeMB = file.size / 1024 / 1024;
-            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            const ext = file.name.split('.').pop().toLowerCase();
-            const validExts = ['pdf', 'doc', 'docx'];
-
-            if (!validTypes.includes(file.type) && !validExts.includes(ext)) {
-               error.textContent = 'Formato inv&aacute;lido. Por favor, envie PDF, DOC ou DOCX.';
-               error.style.display = 'block';
-               input.value = '';
-               text.innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-               return;
-            }
-            if (sizeMB > 5) {
-               error.textContent = 'O arquivo &eacute; muito grande. O limite &eacute; 5 MB.';
-               error.style.display = 'block';
-               input.value = '';
-               text.innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-               return;
-            }
-
-            text.innerHTML = '<strong>' + file.name + '</strong> anexado.';
-            area.classList.add('has-file');
-            document.getElementById('cv-link-error').style.display = 'none';
-          } else {
-            text.innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-          }
-        };
-
-        window.submitCareerForm = async function(btn) {
-          const form = btn.closest('form');
-          form.classList.add('was-validated');
-          
-          if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-          }
-
-          const fileInput = document.getElementById('cv-file');
-          const linkedin = form.querySelector('[name=linkedin]').value.trim();
-          const cvError = document.getElementById('cv-link-error');
-          
-          if (!fileInput.files.length && !linkedin) {
-            cvError.style.display = 'block';
-            return;
-          }
-          cvError.style.display = 'none';
-          
-          const vaga = form.querySelector('[name=vaga_interesse]').value;
-          btn.disabled = true;
-          const origText = btn.innerHTML;
-          btn.innerHTML = 'Enviando...';
-          
-          try {
-             // In a real integration, this is where FormData is sent.
-             // We'll prepare it so it works with the system.
-             const formData = new FormData(form);
-             
-             // Wait briefly to simulate request
-             await new Promise(r => setTimeout(r, 1000));
-             
-             document.getElementById('main-form-content').style.display = 'none';
-             document.getElementById('form-success-screen').style.display = 'block';
-             document.getElementById('form-success-vaga').textContent = vaga;
-             form.reset();
-             document.getElementById('cv-drop-area').classList.remove('has-file');
-             document.getElementById('cv-text').innerHTML = 'Arraste seu curr&iacute;culo aqui ou clique para escolher';
-             
-          } catch (e) {
-             alert('Ocorreu um erro ao enviar. Tente novamente.');
-          } finally {
-             btn.disabled = false;
-             btn.innerHTML = origText;
-          }
-        };
-      </script>`;
-}
+      </script>`}
 function credits() {
     return (
       intro('Créditos e informações.', 'As referências que dão forma a este site.', 'Créditos') +
