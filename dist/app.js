@@ -1448,17 +1448,15 @@ async function updateAgenda() {
             </div>
             
             <div class="job-desc-wrapper">
-              <p class="job-desc" style="white-space: pre-wrap;">${job.description}</p>
+              <p class="job-desc" style="white-space: pre-wrap;">${(job.description || '').split(/\n\s*\n/)[0].trim()}</p>
             </div>
             
             <button class="mobile-toggle-btn" style="display: none;" onclick="this.previousElementSibling.classList.toggle('expanded'); this.textContent = this.textContent === 'Ver detalhes' ? 'Ocultar detalhes' : 'Ver detalhes'">Ver detalhes</button>
 
             ${!isClosed ? `
-            <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; font-size: 13px; color: #475569; line-height: 1.4;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink: 0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              <span>Envie seu currículo para <a href="mailto:rh@parquenovomt.com?subject=${encodeURIComponent(job.title)}" style="color: #1b8f3a; font-weight: bold; text-decoration: none;">rh@parquenovomt.com</a> com o assunto '${job.title}'.</span>
-            </div>
+            
             <button type="button" class="button job-apply-btn" onclick="window.scrollToForm('${job.title}', '${slug}')">Candidatar-se &rarr;</button>
+            <a class="button secondary job-email-btn" href="mailto:rh@parquenovomt.com?subject=${encodeURIComponent(job.title)}" style="width: 100%; justify-content: center; margin-top: 10px;">Enviar currículo por e-mail</a>
             ` : `
             <button type="button" class="button light job-apply-btn" onclick="window.scrollToForm('Banco de talentos (candidatura espontânea)', null)">Cadastrar no Banco de Talentos &nearr;</button>
             `}

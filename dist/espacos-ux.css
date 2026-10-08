@@ -59,7 +59,7 @@
 }
 /* Trabalhe Conosco - Vagas */
 .jobs-board {
-  margin: 40px 0;
+  margin: 40px auto;
 }
 .jobs-grid {
   display: grid;
