@@ -1,6 +1,7 @@
 {
   "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin.html", "destination": "/admin.html" },
     { "source": "/pnmt-mapa/:match*", "destination": "/pnmt-mapa/:match*" },
