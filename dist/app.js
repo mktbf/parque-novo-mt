@@ -1600,6 +1600,7 @@ async function updateAgenda() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 15px;
+          grid-column: 1 / -1;
         }
         .form-grid > .full {
           grid-column: 1 / -1;
