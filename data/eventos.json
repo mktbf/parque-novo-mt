@@ -9,7 +9,7 @@
     "status": "confirmado"
   },
   {
-    "id": "camp-estadual-ciclismo",
+    "id": "estadual-ciclismo",
     "nome": "Campeonato Estadual de Ciclismo de Estrada",
     "dataInicio": "2026-11-08",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -18,7 +18,7 @@
     "status": "confirmado"
   },
   {
-    "id": "final-estadual-motocross",
+    "id": "final-moto-cross",
     "nome": "Final Estadual Moto Cross",
     "dataInicio": "2026-11-20",
     "dataFim": "2026-11-21",
@@ -37,7 +37,7 @@
     "status": "confirmado"
   },
   {
-    "id": "triathlon-3a",
+    "id": "triathlon-3-etapa",
     "nome": "Triathlon MT, 3ª Etapa Estadual",
     "dataInicio": "2026-12-13",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -46,7 +46,7 @@
     "status": "confirmado"
   },
   {
-    "id": "corrida-reis",
+    "id": "corrida-de-reis",
     "nome": "Corrida de Reis",
     "dataInicio": "2026-01-11",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -55,7 +55,7 @@
     "status": "concluido"
   },
   {
-    "id": "semana-cavalo",
+    "id": "semana-do-cavalo",
     "nome": "Semana do Cavalo",
     "dataInicio": "2026-03-04",
     "dataFim": "2026-03-14",
@@ -65,7 +65,7 @@
     "status": "concluido"
   },
   {
-    "id": "triathlon-1a",
+    "id": "triathlon-1-etapa",
     "nome": "Triathlon MT, 1ª Etapa Estadual",
     "dataInicio": "2026-03-29",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -74,7 +74,7 @@
     "status": "concluido"
   },
   {
-    "id": "circuito-bb",
+    "id": "circuito-bb-corrida",
     "nome": "Circuito Banco do Brasil de Corrida de Rua 2026",
     "dataInicio": "2026-04-12",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -93,7 +93,7 @@
     "status": "concluido"
   },
   {
-    "id": "motocross-5a",
+    "id": "moto-cross-brasileiro",
     "nome": "Moto Cross, 5ª Etapa Campeonato Brasileiro",
     "dataInicio": "2026-05-21",
     "dataFim": "2026-05-24",
@@ -101,7 +101,7 @@
     "slugEspaco": "motocross",
     "categoria": "Motociclismo",
     "status": "concluido",
-    "linkCobertura": "#noticia/5-etapa-campeonato-brasileiro-de-motocross"
+    "linkCobertura": "#imprensa"
   },
   {
     "id": "green-farm",
@@ -122,7 +122,7 @@
     "slugEspaco": "autodromo",
     "categoria": "Automobilismo",
     "status": "concluido",
-    "linkCobertura": "#noticia/formula-truck-no-parque-novo-mato-grosso"
+    "linkCobertura": "#imprensa"
   },
   {
     "id": "stock-car",
@@ -152,10 +152,10 @@
     "slugEspaco": "skate-park",
     "categoria": "Esporte",
     "status": "concluido",
-    "linkCobertura": "#noticia/stu-nacional-etapa-cuiaba"
+    "linkCobertura": "#imprensa"
   },
   {
-    "id": "triathlon-2a",
+    "id": "triathlon-2-etapa",
     "nome": "Triathlon MT, 2ª Etapa Estadual",
     "dataInicio": "2026-06-28",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -164,18 +164,18 @@
     "status": "concluido"
   },
   {
-    "id": "bmx",
+    "id": "bmx-brasileiro",
     "nome": "BMX Campeonato Brasileiro de Bicicross",
     "dataInicio": "2026-07-05",
     "espaco": "Pista de BMX",
-    "slugEspaco": "bmx",
+    "slugEspaco": "pista-bmx",
     "categoria": "Esporte",
     "status": "concluido",
-    "linkCobertura": "#noticia/campeonato-brasileiro-de-bicicross-bmx",
+    "linkCobertura": "#imprensa",
     "obs": "data a confirmar: planilha 01/06 a 05/07, materia 15/07"
   },
   {
-    "id": "live-run",
+    "id": "corrida-live-run",
     "nome": "Corrida Live Run",
     "dataInicio": "2026-07-05",
     "espaco": "Pista de Ciclismo e Caminhada",
@@ -184,7 +184,7 @@
     "status": "concluido"
   },
   {
-    "id": "arrancada",
+    "id": "copa-brasil-arrancada",
     "nome": "Copa Brasil de Arrancada",
     "dataInicio": "2026-07-10",
     "dataFim": "2026-07-11",
@@ -201,7 +201,7 @@
     "slugEspaco": "autodromo",
     "categoria": "Automobilismo",
     "status": "concluido",
-    "linkCobertura": "#noticia/nascar-brasil-e-copa-truck"
+    "linkCobertura": "#imprensa"
   },
   {
     "id": "pbr-brasil",
@@ -214,7 +214,7 @@
     "status": "concluido"
   },
   {
-    "id": "formula-a",
+    "id": "formula-a-turismo",
     "nome": "Fórmula A e Turismo Centro Oeste",
     "dataInicio": "2026-09-11",
     "dataFim": "2026-09-12",

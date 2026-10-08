@@ -334,29 +334,7 @@
   }
 
   // === AGENDA ===\n
-window.downloadICS = function(eventId) {
-  const eventsData = window.agendaData || [];
-  const event = eventsData.find(e => e.id === eventId);
-  if (!event) return;
-  const formatDate = (date, endOfDay) => {
-    const d = new Date(date);
-    if (endOfDay) d.setHours(23, 59, 59, 999);
-    const pad = n => String(n).padStart(2, '0');
-    return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
-  };
-  const start = new Date(event.dataInicio + 'T00:00:00-04:00');
-  const end = new Date((event.dataFim || event.dataInicio) + 'T00:00:00-04:00');
-  const ics = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Parque Novo MT//Agenda//PT\r\nBEGIN:VEVENT\r\nUID:${event.id}@parquenovomt.com\r\nDTSTAMP:${formatDate(new Date())}\r\nDTSTART:${formatDate(start)}\r\nDTEND:${formatDate(end, true)}\r\nSUMMARY:${event.nome}\r\nLOCATION:${event.espaco} - Parque Novo Mato Grosso\r\nDESCRIPTION:Categoria: ${event.categoria}\r\nEND:VEVENT\r\nEND:VCALENDAR`;
-  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = window.URL.createObjectURL(blob);
-  link.setAttribute('download', `${event.id}.ics`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-  function agenda() {
+function agenda() {
   return `<div id="agenda-root" class="agenda-root"></div>`;
 }
 
@@ -365,241 +343,13 @@ async function updateAgenda() {
   if (!root) return;
 
   if (!window.agendaData) {
-    window.agendaData = [
-  {
-    "id": "track-day-nmt",
-    "nome": "Track Day Novo Mato Grosso",
-    "dataInicio": "2026-10-24",
-    "espaco": "Autódromo",
-    "slugEspaco": "autodromo",
-    "categoria": "Automobilismo",
-    "status": "confirmado"
-  },
-  {
-    "id": "estadual-ciclismo",
-    "nome": "Campeonato Estadual de Ciclismo de Estrada",
-    "dataInicio": "2026-11-08",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Esporte",
-    "status": "confirmado"
-  },
-  {
-    "id": "final-estadual-motocross",
-    "nome": "Final Estadual Moto Cross",
-    "dataInicio": "2026-11-20",
-    "dataFim": "2026-11-21",
-    "espaco": "Motocross",
-    "slugEspaco": "motocross",
-    "categoria": "Motociclismo",
-    "status": "confirmado"
-  },
-  {
-    "id": "kart-estadual-endurance",
-    "nome": "Kart Estadual de Endurance",
-    "dataInicio": "2026-12-05",
-    "espaco": "Kartódromo",
-    "slugEspaco": "kartodromo",
-    "categoria": "Automobilismo",
-    "status": "confirmado"
-  },
-  {
-    "id": "triathlon-3-etapa",
-    "nome": "Triathlon MT, 3ª Etapa Estadual",
-    "dataInicio": "2026-12-13",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Esporte",
-    "status": "confirmado"
-  },
-  {
-    "id": "corrida-de-reis",
-    "nome": "Corrida de Reis",
-    "dataInicio": "2026-01-11",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Corridas de rua",
-    "status": "concluido"
-  },
-  {
-    "id": "semana-do-cavalo",
-    "nome": "Semana do Cavalo",
-    "dataInicio": "2026-03-04",
-    "dataFim": "2026-03-14",
-    "espaco": "Arena Show",
-    "slugEspaco": "arena-show",
-    "categoria": "Festivais e Agro",
-    "status": "concluido"
-  },
-  {
-    "id": "triathlon-1-etapa",
-    "nome": "Triathlon MT, 1ª Etapa Estadual",
-    "dataInicio": "2026-03-29",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Esporte",
-    "status": "concluido"
-  },
-  {
-    "id": "circuito-bb-corrida",
-    "nome": "Circuito Banco do Brasil de Corrida de Rua 2026",
-    "dataInicio": "2026-04-12",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Corridas de rua",
-    "status": "concluido"
-  },
-  {
-    "id": "classic-pantanal",
-    "nome": "Classic Pantanal",
-    "dataInicio": "2026-05-08",
-    "dataFim": "2026-05-09",
-    "espaco": "Arena Show",
-    "slugEspaco": "arena-show",
-    "categoria": "Festivais e Agro",
-    "status": "concluido"
-  },
-  {
-    "id": "motocross-brasileiro",
-    "nome": "Moto Cross, 5ª Etapa Campeonato Brasileiro",
-    "dataInicio": "2026-05-21",
-    "dataFim": "2026-05-24",
-    "espaco": "Motocross",
-    "slugEspaco": "motocross",
-    "categoria": "Motociclismo",
-    "status": "concluido",
-    "linkCobertura": "#imprensa/motocross"
-  },
-  {
-    "id": "green-farm",
-    "nome": "Green Farm",
-    "dataInicio": "2026-05-27",
-    "dataFim": "2026-05-31",
-    "espaco": "Arena Show",
-    "slugEspaco": "arena-show",
-    "categoria": "Festivais e Agro",
-    "status": "concluido"
-  },
-  {
-    "id": "formula-truck",
-    "nome": "Fórmula Truck",
-    "dataInicio": "2026-06-13",
-    "dataFim": "2026-06-14",
-    "espaco": "Autódromo",
-    "slugEspaco": "autodromo",
-    "categoria": "Automobilismo",
-    "status": "concluido",
-    "linkCobertura": "#imprensa/formula-truck"
-  },
-  {
-    "id": "stock-car",
-    "nome": "Stock Car",
-    "dataInicio": "2026-06-20",
-    "espaco": "Autódromo",
-    "slugEspaco": "autodromo",
-    "categoria": "Automobilismo",
-    "status": "concluido"
-  },
-  {
-    "id": "conesv",
-    "nome": "CONESV, Congresso Nacional de Segurança",
-    "dataInicio": "2026-06-24",
-    "dataFim": "2026-06-26",
-    "espaco": "Arena Show",
-    "slugEspaco": "arena-show",
-    "categoria": "Corporativo",
-    "status": "concluido"
-  },
-  {
-    "id": "stu-nacional",
-    "nome": "STU Nacional, Campeonato Brasileiro de Skate",
-    "dataInicio": "2026-06-25",
-    "dataFim": "2026-06-28",
-    "espaco": "Complexo de Skate",
-    "slugEspaco": "complexo-de-skate",
-    "categoria": "Esporte",
-    "status": "concluido",
-    "linkCobertura": "#imprensa/stu"
-  },
-  {
-    "id": "triathlon-2-etapa",
-    "nome": "Triathlon MT, 2ª Etapa Estadual",
-    "dataInicio": "2026-06-28",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Esporte",
-    "status": "concluido"
-  },
-  {
-    "id": "bmx-brasileiro",
-    "nome": "BMX Campeonato Brasileiro de Bicicross",
-    "dataInicio": "2026-07-05",
-    "espaco": "Pista de BMX",
-    "slugEspaco": "pista-de-bmx",
-    "categoria": "Esporte",
-    "status": "concluido",
-    "linkCobertura": "#imprensa/bmx",
-    "obs": "data a confirmar: planilha 01/06 a 05/07, materia 15/07"
-  },
-  {
-    "id": "corrida-live-run",
-    "nome": "Corrida Live Run",
-    "dataInicio": "2026-07-05",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Corridas de rua",
-    "status": "concluido"
-  },
-  {
-    "id": "copa-brasil-arrancada",
-    "nome": "Copa Brasil de Arrancada",
-    "dataInicio": "2026-07-10",
-    "dataFim": "2026-07-11",
-    "espaco": "Autódromo",
-    "slugEspaco": "autodromo",
-    "categoria": "Automobilismo",
-    "status": "concluido"
-  },
-  {
-    "id": "nascar-brasil",
-    "nome": "NASCAR Brasil e Copa Truck",
-    "dataInicio": "2026-08-01",
-    "espaco": "Autódromo",
-    "slugEspaco": "autodromo",
-    "categoria": "Automobilismo",
-    "status": "concluido",
-    "linkCobertura": "#imprensa/nascar"
-  },
-  {
-    "id": "pbr-brasil",
-    "nome": "PBR Brasil, Agrofestival",
-    "dataInicio": "2026-08-07",
-    "dataFim": "2026-08-09",
-    "espaco": "Arena Show",
-    "slugEspaco": "arena-show",
-    "categoria": "Festivais e Agro",
-    "status": "concluido"
-  },
-  {
-    "id": "formula-a",
-    "nome": "Fórmula A e Turismo Centro Oeste",
-    "dataInicio": "2026-09-11",
-    "dataFim": "2026-09-12",
-    "espaco": "Autódromo",
-    "slugEspaco": "autodromo",
-    "categoria": "Automobilismo",
-    "status": "concluido"
-  },
-  {
-    "id": "circuito-mt-skate",
-    "nome": "Circuito Matogrossense de Skate",
-    "dataInicio": "2026-09-26",
-    "espaco": "Complexo de Skate",
-    "slugEspaco": "complexo-de-skate",
-    "categoria": "Esporte",
-    "status": "concluido"
-  }
-];
+    try {
+      const res = await fetch('data/eventos.json');
+      window.agendaData = await res.json();
+    } catch (e) {
+      console.error('Failed to load eventos', e);
+      window.agendaData = [];
+    }
   }
 
   const now = new Date();
@@ -609,7 +359,7 @@ async function updateAgenda() {
     const parsedStart = parseDate(e.dataInicio);
     const parsedEnd = e.dataFim ? parseDate(e.dataFim) : parsedStart;
     const endOfDay = new Date(parsedEnd);
-    endOfDay.setHours(23, 59, 59, 999);
+    endOfDay.setTime(parsedEnd.getTime() + 24*60*60*1000 - 1);
     const isPast = (e.status === 'concluido') || (e.status === 'confirmado' && endOfDay < now);
     return { ...e, parsedStart, parsedEnd, endOfDay, isPast };
   });
@@ -620,6 +370,14 @@ async function updateAgenda() {
     state.agendaFilter = 'Todos';
     window.agendaInit = true;
     window.lastAgendaPeriod = state.agendaPeriod;
+    
+    // Injeta script do ICS
+    if (!document.getElementById('ics-script')) {
+      const s = document.createElement('script');
+      s.id = 'ics-script';
+      s.src = 'ics.js';
+      document.head.appendChild(s);
+    }
   }
 
   if (window.lastAgendaPeriod !== state.agendaPeriod) {
@@ -676,9 +434,11 @@ async function updateAgenda() {
 
   const filtersHtml = `
     <div class="agenda-filters wrap">
-      ${availableCats.map(c => {
-        const count = c === 'Todos' ? currentTabEvents.length : currentTabEvents.filter(e => e.categoria === c).length;
-        return `<button class="filter ${state.agendaFilter === c ? 'active' : ''}" data-filter="agenda" data-value="${c}">${c} (${count})</button>`;
+      ${availableCats.map(cat => {
+        const count = currentTabEvents.filter(e => cat === 'Todos' ? true : e.categoria === cat).length;
+        return `<button class="agenda-filter ${state.agendaFilter === cat ? 'active' : ''}" data-filter="${cat}">
+          ${cat === 'Todos' ? 'Todos' : cat} (${count})
+        </button>`;
       }).join('')}
     </div>
   `;
@@ -687,17 +447,19 @@ async function updateAgenda() {
 
   if (state.agendaPeriod === 'upcoming') {
     if (list.length === 0) {
-      contentHtml = `<div class="empty-state wrap">
-        <span class="kicker">NOVOS ENCONTROS VÊM AÍ</span>
-        <h3>A próxima experiência está a caminho.</h3>
-        <button class="button secondary" data-period="past">Ver o que já aconteceu</button>
-      </div>`;
+      contentHtml = `
+        <div class="agenda-empty wrap">
+          <h3>Novos encontros vêm aí</h3>
+          <p>A próxima experiência está a caminho.</p>
+          <button class="button" onclick="document.querySelector('[data-period=past]').click()">Ver o que já aconteceu</button>
+        </div>
+      `;
     } else {
       const nextEvent = list[0];
-      const daysLeft = Math.ceil((nextEvent.parsedStart - now) / (1000 * 60 * 60 * 24));
-      const dateExt = nextEvent.parsedStart.toLocaleString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Cuiaba' });
-      
-      const spaceLink = nextEvent.slugEspaco ? `<a href="#espaco/${nextEvent.slugEspaco}" class="button secondary">Conhecer o ${nextEvent.espaco} ↗</a>` : '';
+      const diffMs = nextEvent.parsedStart - now;
+      const daysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+      const dateExt = nextEvent.parsedStart.toLocaleString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Cuiaba' });
+      const spaceLink = nextEvent.slugEspaco ? `<a href="#espacos/${nextEvent.slugEspaco}" class="button light">Conhecer o ${nextEvent.espaco} &nearr;</a>` : `<span class="button light" style="opacity: 0.5; cursor: not-allowed;">Conhecer o ${nextEvent.espaco} &nearr;</span>`;
 
       const destaqueHtml = `
         <div class="agenda-destaque wrap">
@@ -710,7 +472,7 @@ async function updateAgenda() {
             <h2>${nextEvent.nome}</h2>
             <p>${dateExt.charAt(0).toUpperCase() + dateExt.slice(1)} • ${nextEvent.espaco}</p>
             <div class="destaque-actions">
-              <button class="button" onclick="window.downloadICS('${nextEvent.id}')">Adicionar à minha agenda</button>
+              <button class="button" onclick="if(window.downloadICS) window.downloadICS('${nextEvent.id}')">Adicionar à minha agenda</button>
               ${spaceLink}
             </div>
           </div>
@@ -729,445 +491,110 @@ async function updateAgenda() {
         const startDay = String(e.parsedStart.getDate()).padStart(2, '0');
         const endDay = e.dataFim ? String(e.parsedEnd.getDate()).padStart(2, '0') : '';
         const shortMonth = e.parsedStart.toLocaleString('pt-BR', { month: 'short', timeZone: 'America/Cuiaba' }).toUpperCase().replace('.', '');
-        const dayStr = endDay && endDay !== startDay ? `${startDay}-${endDay}` : startDay;
-        
+        const dateBlock = e.dataFim ? `${startDay}-${endDay}<br>${shortMonth}` : `${startDay}<br>${shortMonth}`;
+
         listHtml += `
-          <article class="agenda-list-card wrap">
-            <div class="card-date-box">
-              <span class="day">${dayStr}</span>
-              <span class="month">${shortMonth}</span>
-            </div>
-            <div class="card-info">
-              <span class="category green">${e.categoria}</span>
+          <div class="agenda-card inline wrap">
+            <div class="agenda-date-box">${dateBlock}</div>
+            <div class="agenda-card-info">
+              <span class="agenda-cat green">${e.categoria}</span>
               <h4>${e.nome}</h4>
-              <p class="location"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${e.espaco}</p>
+              <p><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${e.espaco}</p>
             </div>
-            <div class="card-status">
+            <div class="agenda-card-actions">
               <span class="tag-confirmado">Confirmado</span>
+              <button class="button light" onclick="const s = document.querySelector('[name=interesse]'); if(s){ s.value = '${e.categoria}'; s.scrollIntoView({behavior: 'smooth', block: 'center'}); }">Quero ser avisado</button>
             </div>
-            <div class="card-action">
-              <button class="button secondary" onclick="document.querySelector('#form-aviso select').value='${e.categoria}'; document.querySelector('#form-aviso').scrollIntoView({behavior:'smooth'})">Quero ser avisado</button>
-            </div>
-          </article>
+          </div>
         `;
       }
-
       contentHtml = destaqueHtml + listHtml;
     }
   } else {
-    if (list.length === 0) {
-      contentHtml = `<div class="empty-state wrap">
-        <span class="kicker">MEMÓRIAS DO PARQUE</span>
-        <h3>Nenhum registro nesta categoria.</h3>
-        <p>Escolha outra categoria para explorar os eventos registrados.</p>
-      </div>`;
-    } else {
-      let listHtml = '';
-      let lastMonth = '';
-      listHtml += '<div class="wrap past-grid">';
-      for (const e of list) {
-        const m = formatMonth(e.parsedStart);
-        if (m !== lastMonth) {
-          if (lastMonth !== '') listHtml += '</div><div class="wrap past-grid">';
-          listHtml += `<h3 class="agenda-month-title full-width">${m.toUpperCase()}</h3>`;
-          lastMonth = m;
+    // Já aconteceu
+    let listHtml = '<div class="agenda-grid wrap">';
+    let lastMonth = '';
+    for (const e of list) {
+      const m = formatMonth(e.parsedStart);
+      if (m !== lastMonth) {
+        if (listHtml !== '<div class="agenda-grid wrap">') listHtml += '</div><div class="agenda-grid wrap">';
+        listHtml = listHtml.replace('</div><div class="agenda-grid wrap">', `</div><h3 class="agenda-month-title wrap">${m.toUpperCase()}</h3><div class="agenda-grid wrap">`);
+        if (listHtml === '<div class="agenda-grid wrap">') {
+           listHtml = `<h3 class="agenda-month-title wrap">${m.toUpperCase()}</h3>` + listHtml;
         }
-        
-        const startDay = String(e.parsedStart.getDate()).padStart(2, '0');
-        const endDay = e.dataFim ? String(e.parsedEnd.getDate()).padStart(2, '0') : '';
-        const shortMonth = e.parsedStart.toLocaleString('pt-BR', { month: 'short', timeZone: 'America/Cuiaba' }).toUpperCase().replace('.', '');
-        const dayStr = endDay && endDay !== startDay ? `${startDay}-${endDay}` : startDay;
-        
-        const cobertura = e.linkCobertura ? `<a href="${e.linkCobertura}" class="cobertura-link">Ver cobertura →</a>` : '';
-
-        listHtml += `
-          <article class="past-card">
-            <img src="${asset('spaces/' + (e.slugEspaco || 'parque-da-familia'))}.webp" alt="${e.espaco}" class="past-card-img" onerror="this.src='${asset('gallery/parque-da-familia-01.jpg')}'">
-            <div class="past-card-content">
-              <span class="past-date">${dayStr} ${shortMonth} ${e.parsedStart.getFullYear()}</span>
-              <span class="past-category">${e.categoria}</span>
-              <h4>${e.nome}</h4>
-              <p class="past-location">${e.espaco}</p>
-              ${cobertura}
-            </div>
-          </article>
-        `;
+        lastMonth = m;
       }
-      listHtml += '</div>';
-      contentHtml = listHtml;
+      const startDay = String(e.parsedStart.getDate()).padStart(2, '0');
+      const endDay = e.dataFim ? String(e.parsedEnd.getDate()).padStart(2, '0') : '';
+      const dateText = e.dataFim ? `${startDay} a ${endDay} de ${e.parsedStart.toLocaleString('pt-BR', {month: 'long', timeZone: 'America/Cuiaba'})}` : `${startDay} de ${e.parsedStart.toLocaleString('pt-BR', {month: 'long', timeZone: 'America/Cuiaba'})}`;
+
+      listHtml += `
+        <div class="agenda-card past">
+          <span class="agenda-date-small">${dateText}</span>
+          <span class="agenda-cat">${e.categoria}</span>
+          <h4>${e.nome}</h4>
+          <p class="espaco">${e.espaco}</p>
+          ${e.linkCobertura ? `<a href="${e.linkCobertura}" class="link-cobertura">Ver cobertura &rarr;</a>` : ''}
+        </div>
+      `;
     }
+    listHtml += '</div>';
+    contentHtml = listHtml;
   }
 
-  const allCategories = ['Todos', 'Automobilismo', 'Motociclismo', 'Esporte', 'Corridas de rua', 'Festivais e Agro', 'Corporativo'];
-
+  // Fim da página: formulário e Contato lado a lado
   const footerHtml = `
-    <section class="agenda-footer wrap">
-      <div class="agenda-newsletter">
-        <span class="kicker">FIQUE POR PERTO</span>
-        <h3>Não encontrou o que procura?</h3>
-        <p>Escolha o que você quer viver e deixe seu interesse registrado.</p>
-        <form id="form-aviso" data-form="newsletter">
-          <input type="hidden" name="origem" value="agenda">
-          ${field('nome', 'Seu nome')}
-          ${field('email', 'Seu e-mail', 'email')}
-          ${field('interesse', 'Tenho interesse em', 'text', allCategories)}
-          ${formEnd('newsletter', 'Quero ser avisado')}
+    <section class="agenda-footer wrap" style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 48px; margin-bottom: 48px;">
+      <div style="flex: 2; min-width: 300px;">
+        <h3 style="margin-bottom: 8px;">Não encontrou o que procura?</h3>
+        <p style="margin-bottom: 16px; opacity: 0.8;">Cadastre-se para ser o primeiro a saber das novidades da sua área de interesse.</p>
+        <form data-form="newsletter" style="background: #f0f4f8; padding: 24px; border-radius: 8px;">
+          <input type="hidden" name="origem" value="Agenda">
+          <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;">
+            <div style="flex: 1; min-width: 200px;">
+              <label>Seu nome *</label>
+              <input type="text" name="nome" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <label>Seu e-mail *</label>
+              <input type="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label>Tenho interesse em *</label>
+            <select name="interesse" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; appearance: auto;">
+              <option value="">Selecione</option>
+              ${['Todos', ...new Set(events.map(e => e.categoria))].map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+            </select>
+          </div>
+          <button class="button" type="submit" style="width: 100%;">Quero ser avisado</button>
         </form>
       </div>
-      <div class="agenda-realize">
-        <span class="kicker">QUERO REALIZAR MEU EVENTO</span>
-        <h3>Shows, feiras, competições e grandes encontros.</h3>
-        <p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para a sua transmissão, espaço e operação.</p>
-        <a href="#evento" class="button">Realize seu evento ↗</a>
+      <div style="flex: 1; min-width: 300px; background: #0d2b4d; color: white; padding: 24px; border-radius: 8px; display: flex; flex-direction: column;">
+        <h3 style="margin-bottom: 8px;">Quero realizar meu evento</h3>
+        <p style="margin-bottom: 16px; opacity: 0.8; flex: 1;">Shows, feiras, competições e grandes encontros.</p>
+        <a href="#contato/evento" class="button light" style="text-align: center; width: 100%;">Realize seu evento &nearr;</a>
       </div>
     </section>
   `;
 
   root.innerHTML = headerHtml + filtersHtml + contentHtml + footerHtml;
+
+  root.querySelectorAll('.agenda-tab').forEach(btn => {
+    btn.onclick = (e) => {
+      state.agendaPeriod = e.target.dataset.period;
+      updateAgenda();
+    };
+  });
+  root.querySelectorAll('.agenda-filter').forEach(btn => {
+    btn.onclick = (e) => {
+      state.agendaFilter = e.target.dataset.filter;
+      updateAgenda();
+    };
+  });
 }
 
-  // === IMPRENSA / NEWS ===
-  function press() {
-    const introHtml = `
-      <section class="page-intro" style="padding: 55px 5% 45px; background: var(--navy); color: white;">
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px;">
-          <div style="flex: 1 1 500px;">
-            ${crumb('Imprensa')}
-            <h1>O parque em movimento.</h1>
-            <p style="color: #dce5ec; max-width: 620px; margin-top: 20px; font-size: 16px;">Jornalistas, ve&iacute;culos e produtores encontram aqui informa&ccedil;&otilde;es para contar essa hist&oacute;ria com precis&atilde;o.</p>
-          </div>
-          <div style="margin-bottom: 20px;">
-            <a href="#assessoria" class="button" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;">Pauta, entrevista e credenciamento &nearr;</a>
-          </div>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
-          <button class="filter" onclick="document.getElementById('noticias').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Not&iacute;cias e cobertura</button>
-          <button class="filter" onclick="document.getElementById('galeria-secao').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Galeria de fotos</button>
-          <button class="filter" onclick="document.getElementById('kit').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Kit de imprensa</button>
-          <button class="filter" onclick="document.getElementById('assessoria').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Fale com a assessoria</button>
-        </div>
-      </section>
-    `;
-
-    const newsHtml = `
-      <section id="noticias" class="wrap" style="padding-top: 60px;">
-        ${heading('NOT&Iacute;CIAS E COBERTURA', 'O que acontece<br>ganha o mundo.')}
-        <div id="news-filters"></div>
-        <div id="news-results" style="margin-top: 30px;"></div>
-      </section>
-    `;
-
-    const galleryHtml = `
-      <section id="galeria-secao" class="wrap" style="background: #f4f7f9; padding-top: 60px; padding-bottom: 60px; border-radius: 12px; margin-bottom: 60px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
-          <div style="flex: 1 1 400px;">
-            ${heading('IMPRENSA', 'Galeria de fotos', 'Imagens oficiais do projeto para uso editorial. Cr&eacute;dito obrigat&oacute;rio: Parque Novo Mato Grosso.')}
-          </div>
-        </div>
-        <div id="gallery-albums"></div>
-      </section>
-    `;
-
-    const footerHtml = `
-      <section class="wrap" style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 80px;">
-        <div id="kit" style="flex: 1 1 300px; background: var(--navy); color: white; padding: 40px; border-radius: 12px; display: flex; flex-direction: column;">
-          <span class="kicker" style="color: #bde5b5;">KIT DE IMPRENSA</span>
-          <h3 style="font-size: 32px; margin: 15px 0;">Material para conhecer a marca.</h3>
-          <p style="color: #dce5ec; margin-bottom: 30px;">Logos extra&iacute;dos do manual, ficha institucional, cr&eacute;ditos e orienta&ccedil;&otilde;es. Confira o conte&uacute;do e as condi&ccedil;&otilde;es de uso no pacote.</p>
-          <ul style="list-style: none; padding: 0; margin: 0 0 40px 0; color: #dce5ec;">
-            <li style="margin-bottom: 10px; display:flex; gap:10px;"><svg width="18" height="18" fill="none" stroke="#1B8F3A" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Logos</li>
-            <li style="margin-bottom: 10px; display:flex; gap:10px;"><svg width="18" height="18" fill="none" stroke="#1B8F3A" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Ficha institucional</li>
-            <li style="margin-bottom: 10px; display:flex; gap:10px;"><svg width="18" height="18" fill="none" stroke="#1B8F3A" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Cr&eacute;ditos e orienta&ccedil;&otilde;es</li>
-          </ul>
-          <a href="${config.kit || '#'}" download class="button" style="background: white; color: var(--navy); text-align: center; margin-top: auto; border: none; border-radius: 100px;">Baixar kit de imprensa &darr;</a>
-        </div>
-
-        <div id="assessoria" style="flex: 2 1 500px; border: 1px solid #bdcbd6; padding: 40px; border-radius: 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
-            <div>
-              <span class="kicker">FALE COM A ASSESSORIA</span>
-              <h2 style="font-size: 36px; margin: 10px 0 30px 0;">Pauta, entrevista e credenciamento.</h2>
-            </div>
-            <div style="background: #e8f5e9; color: #1B8F3A; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; max-width: 250px;">
-              A equipe responde em at&eacute; dois dias &uacute;teis ap&oacute;s o recebimento.
-            </div>
-          </div>
-          <form data-form="imprensa" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-            <div>${field('nome', 'Nome')}</div>
-            <div>${field('veiculo', 'Ve&iacute;culo')}</div>
-            <div>${field('email', 'E-mail', 'email')}</div>
-            <div>${field('telefone', 'Telefone', 'tel')}</div>
-            <div>${field('tipo', 'Tipo de solicita&ccedil;&atilde;o', 'text', ['Entrevista', 'Visita t&eacute;cnica', 'Credenciamento', 'Informa&ccedil;&otilde;es'])}</div>
-            <div>${field('editoria', 'Editoria (opcional)', 'text', null, false)}</div>
-            
-            <div style="grid-column: 1 / -1;">${field('prazo', 'Prazo de fechamento', 'date', null, false)}</div>
-            <div style="grid-column: 1 / -1; margin-bottom: 10px;">${field('mensagem', 'Mensagem', 'textarea')}</div>
-            
-            <div style="grid-column: 1 / -1;">
-              <input type="text" name="_gotcha_honey" style="display:none !important; opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true">
-              <label class="check full" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;"><input type="checkbox" name="consentimento" required><span style="font-size: 13px;">Autorizo o uso dos dados informados para atendimento desta pauta e confirmo as diretrizes de privacidade.</span></label>
-              <div class="form-actions full" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; flex-direction: row-reverse;">
-                <button class="button" type="submit" style="background-color: #1B8F3A !important; color: #fff !important; border: none;">Enviar solicita&ccedil;&atilde;o &nearr;</button>
-                <p class="form-note full" style="margin: 0; color: #666; font-size: 14px;">O envio ser&aacute; confirmado nesta p&aacute;gina.</p>
-              </div>
-              <p class="form-status" role="status"></p>
-            </div>
-          </form>
-        </div>
-      </section>
-      <style>
-        #assessoria .field.full, #assessoria .check.full { grid-column: 1 / -1; }
-      </style>
-    `;
-
-    return introHtml + newsHtml + galleryHtml + footerHtml;
-  }
-  
-  function newsArticle(id) {
-    const n = data.news?.find(x => x.id === id);
-    if (!n) return notFound();
-
-    // Make hero image clickable if we can't find a gallery, otherwise just show it
-    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px; cursor: pointer;" onclick="window.showSimplePhoto('${asset(n.image)}', '${esc(n.title)}')"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
-
-    // Try to find related space
-    const relatedSpace = data.spaces.find(s => s.category.toLowerCase().includes(n.category.toLowerCase()) || n.title.toLowerCase().includes(s.name.toLowerCase()));
-    
-    // Try to find related events
-    const relatedEvents = data.events ? data.events.filter(e => (e.category || e.categoria || "").toLowerCase().includes((n.category || "").toLowerCase()) || (e.title || e.name || "").toLowerCase().includes((n.category || "").toLowerCase())).slice(0, 2) : [];
-    
-    // If news has its own gallery, or if we can borrow the space's gallery
-    const gallery = n.gallery || (relatedSpace ? relatedSpace.gallery : null);
-
-    return (
-      hero +
-      `<section class="wrap detail-layout">
-        <article class="prose">${n.fullText ? n.fullText.map(p => `<p>${esc(p)}</p>`).join('') : `<p>${esc(n.description)}</p>`}</article>
-        <aside class="detail-aside">
-          <span class="kicker">ASSESSORIA DE IMPRENSA</span>
-          <h3>Fale com a equipe.</h3>
-          <p>Solicite credenciamento, entrevistas ou informa&ccedil;&otilde;es detalhadas sobre as coberturas e obras do parque.</p>
-          <a class="button" href="#imprensa">Acessar portal <span>&nearr;</span></a>
-          
-          ${relatedSpace ? `
-            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #bdcbd6;">
-              <span class="kicker">ESPA&Ccedil;O RELACIONADO</span>
-              <h3 style="margin: 10px 0;">${esc(relatedSpace.name)}</h3>
-              <p>${esc(relatedSpace.tagline)}</p>
-              <a class="text-link" href="#espaco/${relatedSpace.id}">Conhecer espa&ccedil;o &nearr;</a>
-            </div>
-          ` : ''}
-          
-          ${relatedEvents.length ? `
-            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #bdcbd6;">
-              <span class="kicker">AGENDA</span>
-              <h3 style="margin: 10px 0;">Pr&oacute;ximos eventos</h3>
-              <ul style="list-style:none; padding:0; margin:0;">
-                ${relatedEvents.map(e => `<li style="margin-bottom: 15px;"><strong style="display:block; color:var(--navy);">${esc(e.title || e.name)}</strong><small style="color:#666;">${fmt(e.date)}</small></li>`).join('')}
-              </ul>
-              <a class="text-link" href="#agenda">Ver agenda completa &nearr;</a>
-            </div>
-          ` : ''}
-        </aside>
-      </section>
-      
-      ${gallery && gallery.length > 0 ? `
-        <section class="wrap detail-gallery" style="margin-top: 20px;">
-          <div class="related-header"><h2>Galeria de fotos</h2></div>
-          <div class="space-photo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom: 60px;">
-            ${gallery.map((img, i) => `
-              <img src="${asset(img)}" alt="Foto da galeria" loading="lazy" style="width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='none'" onclick="window.showSimplePhoto('${asset(img)}')">
-            `).join('')}
-          </div>
-        </section>
-      ` : ''}
-      `
-    );
-  }
-
-  window.toggleMoreNews = function() {
-    const el = document.getElementById('more-news-container');
-    const btn = document.getElementById('more-news-btn');
-    if (el) el.style.display = 'grid';
-    if (btn) btn.style.display = 'none';
-  };
-
-  function updateNews() {
-    if (!data.news || !data.news.length) return;
-
-    const sortedNews = [...data.news].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    const validCategories = [...new Set(sortedNews.map(n => n.category))];
-    const categories = ['Todos', ...validCategories];
-    
-    const filtersContainer = document.getElementById('news-filters');
-    if (filtersContainer) {
-      filtersContainer.innerHTML = filters(categories, state.newsFilter, 'not&iacute;cias');
-    }
-
-    const filteredNews = sortedNews.filter((n) => state.newsFilter === 'Todos' || state.newsFilter === n.category);
-
-    const resultsContainer = document.getElementById('news-results');
-    if (!resultsContainer) return;
-
-    if (filteredNews.length === 0) {
-      resultsContainer.innerHTML = '<p>Nenhuma mat&eacute;ria encontrada.</p>';
-      return;
-    }
-
-    const featured = filteredNews[0];
-    const rest = filteredNews.slice(1);
-    const firstFour = rest.slice(0, 4);
-    const hidden = rest.slice(4);
-
-    let html = `
-      <div class="featured-news" style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 40px; background: #fff; border: 1px solid #bdcbd6; border-radius: 12px; overflow: hidden;">
-        <div style="flex: 1 1 400px; min-height: 300px;">
-          <img src="${asset(featured.image)}" alt="${esc(featured.title)}" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div style="flex: 1 1 400px; padding: 40px; display: flex; flex-direction: column; justify-content: center;">
-          <div style="margin-bottom: 15px;">
-            <span style="background: #1B8F3A; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-right: 10px;">Mais recente</span>
-            <span class="kicker" style="color: #666;">${esc(featured.category)} &middot; ${fmt(featured.date)} &middot; ${esc(featured.source)}</span>
-          </div>
-          <h3 style="font-size: 28px; margin-bottom: 15px; color: var(--navy);">${esc(featured.title)}</h3>
-          <p style="color: #666; margin-bottom: 25px;">${esc(featured.description)}</p>
-          <a href="#noticia/${featured.id}" style="color: #1B8F3A; font-weight: bold; text-decoration: none;">Ler mat&eacute;ria completa &rarr;</a>
-        </div>
-      </div>
-    `;
-
-    if (firstFour.length > 0) {
-      html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px;">`;
-      
-      const renderCard = (n) => `
-        <article style="display: flex; flex-direction: column; gap: 15px;">
-          <div style="border-radius: 8px; overflow: hidden; aspect-ratio: 16/9;">
-            <img src="${asset(n.image)}" alt="${esc(n.title)}" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <div>
-            <div class="kicker" style="color: #666; margin-bottom: 8px;">${esc(n.category)} &middot; ${fmt(n.date)}</div>
-            <h4 style="font-size: 18px; margin-bottom: 15px; color: var(--navy);">${esc(n.title)}</h4>
-            <a href="#noticia/${n.id}" style="color: #1B8F3A; font-weight: bold; text-decoration: none; font-size: 14px;">Ler mat&eacute;ria completa &rarr;</a>
-          </div>
-        </article>
-      `;
-
-      html += firstFour.map(renderCard).join('');
-      html += `</div>`;
-
-      if (hidden.length > 0) {
-        html += `
-          <div style="text-align: center; margin-top: 40px;">
-            <button id="more-news-btn" class="button light" onclick="toggleMoreNews()" style="background: white; border: 1px solid #bdcbd6; border-radius: 100px; padding: 10px 20px;">Ver mais not&iacute;cias (${hidden.length})</button>
-          </div>
-          <div id="more-news-container" style="display: none; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
-            ${hidden.map(renderCard).join('')}
-          </div>
-        `;
-      }
-    }
-
-    resultsContainer.innerHTML = html;
-  }
-
-  function updateImprensaGallery() {
-    const resultsContainer = document.getElementById('gallery-albums');
-    if (!resultsContainer || !data.gallery) return;
-
-    const imagesWithIndex = data.gallery.map((g, i) => ({...g, originalIndex: i}));
-    const albums = {};
-    imagesWithIndex.forEach(img => {
-      const space = img.title || 'Geral';
-      if (!albums[space]) albums[space] = [];
-      albums[space].push(img);
-    });
-
-    let html = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">`;
-    Object.keys(albums).forEach(space => {
-      const imgs = albums[space];
-      const mainImg = imgs[0];
-      const smallImgs = imgs.slice(1, 3);
-      const remaining = imgs.length - 3;
-
-      let mosaicHtml = `
-        <div style="display: flex; gap: 4px; height: 200px; border-radius: 8px; overflow: hidden; margin-bottom: 15px; cursor: pointer;" onclick="showPhoto(${mainImg.originalIndex})">
-          <div style="flex: 2; height: 100%;">
-            <img src="${asset(mainImg.image)}" alt="${esc(mainImg.title)}" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-      `;
-
-      if (smallImgs.length > 0) {
-        mosaicHtml += `<div style="flex: 1; display: flex; flex-direction: column; gap: 4px; height: 100%;">`;
-        smallImgs.forEach((img, idx) => {
-          const isLast = idx === 1;
-          mosaicHtml += `
-            <div style="flex: 1; position: relative; height: ${smallImgs.length === 1 ? '100%' : 'calc(50% - 2px)'};">
-              <img src="${asset(img.image)}" alt="${esc(img.title)}" style="width: 100%; height: 100%; object-fit: cover;">
-              ${isLast && remaining > 0 ? `<div style="position: absolute; inset: 0; background: rgba(13, 43, 77, 0.7); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold;">+${remaining}</div>` : ''}
-            </div>
-          `;
-        });
-        mosaicHtml += `</div>`;
-      }
-      mosaicHtml += `</div>`;
-
-      const creditText = mainImg.credit ? esc(mainImg.credit) : 'Divulgação PNMT';
-      html += `
-        <article>
-          ${mosaicHtml}
-          <h4 style="font-size: 18px; color: var(--navy); margin-bottom: 5px;">${esc(space)}</h4>
-          <p style="color: #666; font-size: 13px; margin-bottom: 10px;">${imgs.length} imagens &middot; ${creditText}</p>
-          <button class="inline-link" onclick="showPhoto(${mainImg.originalIndex})" style="color: #1B8F3A; font-weight: bold; font-size: 14px; background: none; border: none; padding: 0; cursor: pointer;">Ver álbum &nearr;</button>
-        </article>
-      `;
-    });
-    html += `</div>`;
-    resultsContainer.innerHTML = html;
-  }
-
-  function gallery() {
-    return (
-      intro(
-        'O parque que está nascendo.',
-        'Cada imagem é um capítulo em construção. Acompanhe de perto o que está sendo erguido para Mato Grosso e para o mundo.',
-        'Galeria de fotos'
-      ) +
-      `<section class="wrap">${filters(['Todas', 'Obras e estrutura', 'Vista aérea', 'Eventos', 'Espaços', 'Gente'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
-    );
-  }
-
-  
-
-  function updateGallery() {
-    const entries = data.gallery
-      .map((g, i) => ({ ...g, index: i }))
-      .filter((g) => state.galleryFilter === 'Todas' || g.category === state.galleryFilter);
-
-    document.getElementById('gallery-results').innerHTML = entries.length
-      ? entries
-          .map(
-            (g) =>
-              `<button class="gallery-item" data-photo="${g.index}" aria-label="Ampliar ${g.title}"><img loading="lazy" src="${asset(g.image)}" alt="${g.title}"><strong>${g.title} ↗</strong><small>${g.type} · ${g.credit}</small></button>`
-          )
-          .join('')
-      : `<div class="empty-state"><h3>Novos capítulos em breve.</h3><p>Ainda não há fotos publicadas nesta coleção. Explore as outras categorias.</p><button class="button secondary" data-filter="galeria" data-value="Todas">Ver todas as imagens</button></div>`;
-  }
-
-  // === VISITAS ===
-  function visits() {
-    return (
-      intro(
-        'Venha conhecer de perto.',
-        'O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul.',
-        'Quero visitar'
-      ) +
-      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section>${s.news && s.news.length ? `<section class="wrap detail-news"><div class="related-header"><h2>Na Mídia</h2></div><div class="news-list">${s.news.map(n => `<article class="news-card"><span class="kicker">${n.source}</span><h4>${n.title}</h4></article>`).join('')}</div></section>` : ''}<section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O parque está em obras em vários setores. O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
-    );
-  }
-
-  // === EVENTOS & CONTATO ===
-    function eventForm() {
+  function eventForm() {
     const eventSpaces = [
       { id: 'orientacao', name: '- Preciso de orienta\u00e7\u00e3o da equipe -' },
       { id: 'arena-show', name: 'Arena Show (At\u00e9 120 mil pessoas)' },
@@ -1482,7 +909,56 @@ async function updateAgenda() {
           }
           
         }
-      </style>
+      
+.agenda-root { font-family: 'Barlow', sans-serif; }
+.agenda-hero { background: #0d2b4d; color: white; padding: 48px 24px 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.agenda-hero-content h1 { font-size: 3rem; margin: 16px 0; }
+.agenda-hero-content p { font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto 32px; }
+.agenda-hero-stats { display: flex; gap: 32px; justify-content: center; margin-bottom: 48px; flex-wrap: wrap; }
+.stat-box { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 8px; min-width: 200px; }
+.stat-num { font-size: 2.5rem; font-weight: bold; }
+.stat-num.green-lime { color: #58b947; }
+.stat-lbl { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-top: 4px; }
+.agenda-tabs { display: flex; justify-content: center; width: 100%; max-width: 800px; margin-top: auto; }
+.agenda-tab { flex: 1; padding: 16px; font-size: 1.1rem; font-weight: bold; text-align: center; cursor: pointer; border: none; background: rgba(255,255,255,0.1); color: white; border-radius: 12px 12px 0 0; transition: background 0.3s; margin: 0 4px; }
+.agenda-tab.active { background: white; color: #0d2b4d; }
+.agenda-filters { padding: 24px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.agenda-filter { padding: 8px 16px; border: 1px solid #ccc; border-radius: 20px; background: transparent; cursor: pointer; font-weight: 500; transition: all 0.3s; }
+.agenda-filter.active { background: #0d2b4d; color: white; border-color: #0d2b4d; }
+.agenda-destaque { display: flex; background: #0d2b4d; color: white; border-radius: 12px; overflow: hidden; margin-bottom: 48px; flex-direction: row; }
+@media(max-width: 768px) { .agenda-destaque { flex-direction: column; } }
+.destaque-img { width: 50%; object-fit: cover; }
+@media(max-width: 768px) { .destaque-img { width: 100%; height: 250px; } }
+.destaque-info { width: 50%; padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+@media(max-width: 768px) { .destaque-info { width: 100%; padding: 24px; } }
+.destaque-tags { display: flex; gap: 8px; margin-bottom: 16px; }
+.tag-proximo { background: #58b947; color: #0d2b4d; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+.tag-dias { background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+.destaque-info h2 { font-size: 2rem; margin-bottom: 8px; }
+.destaque-info p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 24px; }
+.destaque-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.agenda-month-title { font-size: 1.5rem; margin: 48px auto 24px; border-bottom: 2px solid #eee; padding-bottom: 8px; color: #0d2b4d; }
+.agenda-card.inline { display: flex; background: white; border: 1px solid #eee; border-radius: 8px; margin-bottom: 16px; align-items: center; padding: 16px; gap: 24px; transition: box-shadow 0.3s; flex-wrap: wrap; }
+.agenda-card.inline:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.agenda-date-box { background: #f0f4f8; padding: 16px; border-radius: 8px; text-align: center; font-weight: bold; color: #0d2b4d; line-height: 1.2; min-width: 80px; }
+.agenda-card-info { flex: 1; min-width: 200px; }
+.agenda-cat.green { color: #1b8f3a; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+.agenda-card-info h4 { font-size: 1.2rem; margin: 4px 0; }
+.agenda-card-info p { color: #666; font-size: 0.9rem; display: flex; align-items: center; gap: 4px; margin: 0; }
+.agenda-card-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 150px; }
+@media(max-width: 600px) { .agenda-card-actions { align-items: flex-start; width: 100%; } }
+.tag-confirmado { background: #e8f5e9; color: #1b8f3a; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+.agenda-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+@media(max-width: 768px) { .agenda-grid { grid-template-columns: 1fr; } }
+.agenda-card.past { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; }
+.agenda-date-small { font-size: 0.85rem; color: #666; margin-bottom: 8px; font-weight: bold; }
+.agenda-cat { font-size: 0.8rem; font-weight: bold; color: #1b8f3a; text-transform: uppercase; margin-bottom: 4px; }
+.agenda-card.past h4 { font-size: 1.1rem; margin: 0 0 8px 0; color: #0d2b4d; }
+.agenda-card.past p.espaco { font-size: 0.9rem; color: #666; margin: 0 0 16px 0; flex: 1; }
+.link-cobertura { color: #1261a0; font-weight: bold; text-decoration: none; font-size: 0.9rem; display: inline-block; margin-top: auto; }
+.link-cobertura:hover { text-decoration: underline; }
+
+</style>
     `;
 
     return css + 
