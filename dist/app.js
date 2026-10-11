@@ -2026,7 +2026,25 @@ function credits() {
     }
   }
 
+
+  window.showSimplePhoto = function(url, title = 'Imagem') {
+    document.getElementById('media-title').textContent = title;
+    document.getElementById('media-content').innerHTML = `
+      <div class="lightbox-viewer">
+        <img src="${url}" alt="${esc(title)}" style="width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;">
+        <div class="lightbox-controls" style="display:flex;justify-content:center;align-items:center;margin:12px 0 6px;">
+          <a class="button secondary" href="${url}" download title="Baixar imagem" style="padding:6px 14px;font-size:14px;">Baixar imagem</a>
+        </div>
+      </div>
+    `;
+    const dialog = document.getElementById('media-dialog');
+    dialog.showModal();
+    nav.setAttribute('inert', '');
+    main.setAttribute('inert', '');
+  };
+
   window.showPhoto = function showPhoto(index) {
+
     state.currentPhotoIndex = index;
     const g = data.gallery[index];
     if (!g) return;
