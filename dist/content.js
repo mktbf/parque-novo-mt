@@ -352,14 +352,9 @@ window.PNMT_CONTENT = {
         "assets/gallery/imported_1791753366978_playground_castelo_do_parquinho_em_contra_plong_e.png",
         "assets/gallery/imported_1791753366991_playground_castelo_pirata_visto_de_baixo.png",
         "assets/gallery/imported_1791753367002_playground_e899239b_3c75_4986_9061_8b21644c7a0e.png",
-        "assets/gallery/imported_1791753367012_playground_img_2313_tratada.jpg",
         "assets/gallery/imported_1791753367023_playground_img_2329_tratada.jpg",
-        "assets/gallery/imported_1791753367036_playground_img_2334_tratada.jpg",
-        "assets/gallery/imported_1791753367045_playground_img_2337_tratada.jpg",
         "assets/gallery/imported_1791753367057_playground_img_2347_tratada.jpg",
-        "assets/gallery/imported_1791753367067_playground_img_2350_tratada.jpg",
         "assets/gallery/imported_1791753367075_playground_img_2356_tratada.jpg",
-        "assets/gallery/imported_1791753367086_playground_img_2358_tratada.jpg",
         "assets/gallery/imported_1791753367095_playground_img_e2311_tratada.jpg",
         "assets/gallery/imported_1791753367102_playground_img_e2312_tratada.jpg",
         "assets/gallery/imported_1791753367114_playground_img_e2313_tratada.jpg",
@@ -1672,520 +1667,540 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753366959_playground_0809fff2_6188_47d1_8524_c1d49faf3494.png",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-124",
       "image": "assets/gallery/imported_1791753366969_playground_5e38d08d_c08b_43b5_9c76_de74d5a006c0.png",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-125",
       "image": "assets/gallery/imported_1791753366978_playground_castelo_do_parquinho_em_contra_plong_e.png",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-126",
       "image": "assets/gallery/imported_1791753366991_playground_castelo_pirata_visto_de_baixo.png",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-127",
       "image": "assets/gallery/imported_1791753367002_playground_e899239b_3c75_4986_9061_8b21644c7a0e.png",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-128",
-      "image": "assets/gallery/imported_1791753367012_playground_img_2313_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-129",
       "image": "assets/gallery/imported_1791753367023_playground_img_2329_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-130",
-      "image": "assets/gallery/imported_1791753367036_playground_img_2334_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-131",
-      "image": "assets/gallery/imported_1791753367045_playground_img_2337_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-132",
       "image": "assets/gallery/imported_1791753367057_playground_img_2347_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-133",
-      "image": "assets/gallery/imported_1791753367067_playground_img_2350_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-134",
       "image": "assets/gallery/imported_1791753367075_playground_img_2356_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-135",
-      "image": "assets/gallery/imported_1791753367086_playground_img_2358_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-136",
       "image": "assets/gallery/imported_1791753367095_playground_img_e2311_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-137",
       "image": "assets/gallery/imported_1791753367102_playground_img_e2312_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-138",
       "image": "assets/gallery/imported_1791753367114_playground_img_e2313_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-139",
       "image": "assets/gallery/imported_1791753367123_playground_img_e2317_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-140",
       "image": "assets/gallery/imported_1791753367132_playground_img_e2327_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-141",
       "image": "assets/gallery/imported_1791753367144_playground_img_e2333_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-142",
       "image": "assets/gallery/imported_1791753367154_playground_img_e2334_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-143",
       "image": "assets/gallery/imported_1791753367160_playground_img_e2337_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-144",
       "image": "assets/gallery/imported_1791753367170_playground_img_e2338_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-145",
       "image": "assets/gallery/imported_1791753367177_playground_img_e2339_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-146",
       "image": "assets/gallery/imported_1791753367193_playground_img_e2340_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-147",
       "image": "assets/gallery/imported_1791753367208_playground_img_e2349_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-148",
       "image": "assets/gallery/imported_1791753367225_playground_img_e2350_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-149",
       "image": "assets/gallery/imported_1791753367239_playground_img_e2358_tratada.jpg",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico: Fotos Playground 20 JPG",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-150",
       "image": "assets/gallery/imported_1791753367255_lotes_dji_20261010080647_0001_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-151",
       "image": "assets/gallery/imported_1791753367266_lotes_dji_20261010080701_0002_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-152",
       "image": "assets/gallery/imported_1791753367280_lotes_dji_20261010081216_0007_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-153",
       "image": "assets/gallery/imported_1791753367291_lotes_dji_20261010081223_0008_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-154",
       "image": "assets/gallery/imported_1791753367304_lotes_dji_20261010081321_0010_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-155",
       "image": "assets/gallery/imported_1791753367314_lotes_dji_20261010081326_0011_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-156",
       "image": "assets/gallery/imported_1791753367322_lotes_dji_20261010082530_0019_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-157",
       "image": "assets/gallery/imported_1791753367332_lotes_dji_20261010082608_0020_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-158",
       "image": "assets/gallery/imported_1791753367343_lotes_dji_20261010082620_0021_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-159",
       "image": "assets/gallery/imported_1791753367355_lotes_dji_20261010082629_0022_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-160",
       "image": "assets/gallery/imported_1791753367368_lotes_dji_20261010082646_0023_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-161",
       "image": "assets/gallery/imported_1791753367374_lotes_dji_20261010082653_0024_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-162",
       "image": "assets/gallery/imported_1791753367386_lotes_dji_20261010082923_0026_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-163",
       "image": "assets/gallery/imported_1791753367395_lotes_dji_20261010082938_0027_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-164",
       "image": "assets/gallery/imported_1791753367406_lotes_dji_20261010083003_0028_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-165",
       "image": "assets/gallery/imported_1791753367418_lotes_dji_20261010085601_0035_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-166",
       "image": "assets/gallery/imported_1791753367431_lotes_dji_20261010085607_0036_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-167",
       "image": "assets/gallery/imported_1791753367439_lotes_dji_20261010085634_0037_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-168",
       "image": "assets/gallery/imported_1791753367445_lotes_dji_20261010085646_0038_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-169",
       "image": "assets/gallery/imported_1791753367451_lotes_dji_20261010090548_0045_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-170",
       "image": "assets/gallery/imported_1791753367458_lotes_dji_20261010090828_0049_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-171",
       "image": "assets/gallery/imported_1791753367470_lotes_dji_20261010090925_0051_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-172",
       "image": "assets/gallery/imported_1791753367480_lotes_dji_20261010090934_0052_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-173",
       "image": "assets/gallery/imported_1791753367491_lotes_dji_20261010091059_0055_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-174",
       "image": "assets/gallery/imported_1791753367503_lotes_dji_20261010091108_0056_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-175",
       "image": "assets/gallery/imported_1791753367512_lotes_dji_20261010092243_0063_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-176",
       "image": "assets/gallery/imported_1791753367522_lotes_dji_20261010092315_0064_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-177",
       "image": "assets/gallery/imported_1791753367530_lotes_dji_20261010092327_0065_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-178",
       "image": "assets/gallery/imported_1791753367540_lotes_dji_20261010092509_0067_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-179",
       "image": "assets/gallery/imported_1791753367553_lotes_dji_20261010092517_0068_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-180",
       "image": "assets/gallery/imported_1791753367565_lotes_dji_20261010093247_0070_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-181",
       "image": "assets/gallery/imported_1791753367575_lotes_dji_20261010093439_0073_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-182",
       "image": "assets/gallery/imported_1791753367588_lotes_dji_20261010093447_0074_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-183",
       "image": "assets/gallery/imported_1791753367597_lotes_dji_20261010093625_0076_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-184",
       "image": "assets/gallery/imported_1791753367607_lotes_dji_20261010093633_0077_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-185",
       "image": "assets/gallery/imported_1791753367619_lotes_dji_20261010093657_0078_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-186",
       "image": "assets/gallery/imported_1791753367627_lotes_dji_20261010093711_0079_d_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Todos Os Lotes 37 Fotos",
-      "type": "Foto"
+      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-imported-187",
       "image": "assets/gallery/imported_1791754134496_selecao_parque_infantil_com_castelo_e_lago.png",
       "category": "Andamento da Obra",
       "title": "Parque da Família",
-      "description": "Registro fotográfico extra",
-      "type": "Foto"
+      "description": "Registro fotográfico do Parque da Família.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     }
   ],
   "jobs": [

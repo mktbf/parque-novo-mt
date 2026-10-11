@@ -318,11 +318,7 @@
 
     return (
       hero +
-      `<section class="wrap detail-layout"><article class="prose">${s.id === 'autodromo' ? `<img class="endorsement" src="${asset('autodromo-logo')}" alt="Autódromo Internacional de Mato Grosso — submarca do parque">` : ''}${s.image ? `<h2>${esc(s.tagline)}</h2>` : ''}${s.text.map((p) => `<p>${esc(p)}</p>`).join('')}${s.numbers ? `<div class="detail-numbers">${s.numbers.map((n) => `<div><strong>${esc(n[0])}</strong><p>${esc(n[1])}</p></div>`).join('')}</div>` : ''}</article><aside class="detail-aside"><span class="kicker">SUA PRÓXIMA EXPERIÊNCIA</span><h3>Viva o parque de perto.</h3><p>Visitas mediante agendamento e confirmação das áreas liberadas.</p><a class="button" href="#visitar">Quero visitar <span>↗</span></a><a class="button secondary" href="#evento/${esc(s.id)}">Realize seu evento <span>↗</span></a><a class="text-link" href="#agenda">Confira a agenda ↗</a></aside></section>${s.gallery && s.gallery.length > 0 ? `<section class="wrap detail-gallery"><div class="related-header"><h2>Galeria do Espaço</h2></div><div class="space-photo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom: 60px;">${s.gallery.map(img => {
-  const gIdx = data.gallery.findIndex(g => g.image === img || g.image.includes(img) || img.includes(g.image));
-  const click = gIdx >= 0 ? `onclick="window.showPhoto(${gIdx})"` : '';
-  return `<img src="${asset(img)}" alt="Foto do espaço" loading="lazy" style="width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='none'" ${click}>`;
-}).join('')}</div></section>` : ''}${s.news && s.news.length ? `<section class="wrap detail-news"><div class="related-header"><h2>Na Mídia</h2></div><div class="news-list">${s.news.map(n => `<a href="#noticia/${n.id}" class="news-card-link" style="text-decoration:none;"><article class="news-card"><span class="kicker">${n.source}</span><h4>${n.title}</h4></article></a>`).join('')}</div></section>` : ''}<section class="related"><div class="wrap">${heading('CONTINUE EXPLORANDO', 'Outros espaços.<br>Novas descobertas.')}<div class="catalog-grid">${related.map(catalogCard).join('')}</div></div></section>`
+      `<section class="wrap detail-layout"><article class="prose">${s.id === 'autodromo' ? `<img class="endorsement" src="${asset('autodromo-logo')}" alt="Autódromo Internacional de Mato Grosso — submarca do parque">` : ''}${s.image ? `<h2>${esc(s.tagline)}</h2>` : ''}${s.text.map((p) => `<p>${esc(p)}</p>`).join('')}${s.numbers ? `<div class="detail-numbers">${s.numbers.map((n) => `<div><strong>${esc(n[0])}</strong><p>${esc(n[1])}</p></div>`).join('')}</div>` : ''}</article><aside class="detail-aside"><span class="kicker">SUA PRÓXIMA EXPERIÊNCIA</span><h3>Viva o parque de perto.</h3><p>Visitas mediante agendamento e confirmação das áreas liberadas.</p><a class="button" href="#visitar">Quero visitar <span>↗</span></a><a class="button secondary" href="#evento/${esc(s.id)}">Realize seu evento <span>↗</span></a><a class="text-link" href="#agenda">Confira a agenda ↗</a></aside></section>${s.gallery && s.gallery.length > 0 ? `<section class="wrap detail-gallery"><div class="related-header"><h2>Galeria do Espaço</h2></div><div class="space-photo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom: 60px;">${s.gallery.map((img, i) => lbThumb(img, 'espaco-' + s.id, s.name, i)).join('')}</div></section>` : ''}${s.news && s.news.length ? `<section class="wrap detail-news"><div class="related-header"><h2>Na Mídia</h2></div><div class="news-list">${s.news.map(n => `<a href="#noticia/${n.id}" class="news-card-link" style="text-decoration:none;"><article class="news-card"><span class="kicker">${n.source}</span><h4>${n.title}</h4></article></a>`).join('')}</div></section>` : ''}<section class="related"><div class="wrap">${heading('CONTINUE EXPLORANDO', 'Outros espaços.<br>Novas descobertas.')}<div class="catalog-grid">${related.map(catalogCard).join('')}</div></div></section>`
     );
   }
 
@@ -943,10 +939,10 @@ async function updateAgenda() {
     if (!n) return notFound();
 
     // Make hero image clickable if we can't find a gallery, otherwise just show it
-    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px; cursor: pointer;" onclick="window.showSimplePhoto('${asset(n.image)}', '${esc(n.title)}')"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
+    const hero = `<section class="space-hero news-hero" style="min-height: 60vh; padding-top: 140px; cursor: zoom-in;" data-lb-hero="noticia-${esc(n.id)}" data-lb-src="${esc(asset(n.image))}" data-lb-title="${esc(n.title)}" data-lb-caption="${esc(n.source ? 'Fonte: ' + n.source : '')}"><img src="${asset(n.image)}" alt="${esc(n.title)}"><div class="space-hero-copy" style="padding-top: 0;">${crumb(`<a href="#imprensa">Imprensa</a> / ${esc(n.title)}`)}<span class="kicker">${esc(n.category)} &middot; ${fmt(n.date)}</span><h1>${esc(n.title)}</h1><p class="image-note">Fonte: ${esc(n.source)}</p></div></section>`;
 
     // Try to find related space
-    const relatedSpace = data.spaces.find(s => s.category.toLowerCase().includes(n.category.toLowerCase()) || n.title.toLowerCase().includes(s.name.toLowerCase()));
+    const relatedSpace = (n.spaceId && data.spaces.find(s => s.id === n.spaceId)) || data.spaces.find(s => (s.gallery || []).includes(n.image) || s.image === n.image) || data.spaces.find(s => normal(n.title).includes(normal(s.name)));
     
     // Try to find related events
     const relatedEvents = data.events ? data.events.filter(e => (e.category || e.categoria || "").toLowerCase().includes((n.category || "").toLowerCase()) || (e.title || e.name || "").toLowerCase().includes((n.category || "").toLowerCase())).slice(0, 2) : [];
@@ -990,9 +986,7 @@ async function updateAgenda() {
         <section class="wrap detail-gallery" style="margin-top: 20px;">
           <div class="related-header"><h2>Galeria de fotos</h2></div>
           <div class="space-photo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom: 60px;">
-            ${gallery.map((img, i) => `
-              <img src="${asset(img)}" alt="Foto da galeria" loading="lazy" style="width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='none'" onclick="window.showSimplePhoto('${asset(img)}')">
-            `).join('')}
+            ${gallery.map((img, i) => lbThumb(img, 'noticia-' + n.id, n.title, i)).join('')}
           </div>
         </section>
       ` : ''}
@@ -1148,7 +1142,7 @@ async function updateAgenda() {
         'Cada imagem é um capítulo em construção. Acompanhe de perto o que está sendo erguido para Mato Grosso e para o mundo.',
         'Galeria de fotos'
       ) +
-      `<section class="wrap">${filters(['Todas', 'Obras e estrutura', 'Vista aérea', 'Eventos', 'Espaços', 'Gente'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
+      `<section class="wrap">${filters(['Todas', 'Andamento da Obra', 'Vista aérea', 'Projeto'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
     );
   }
 
@@ -1163,7 +1157,7 @@ async function updateAgenda() {
       ? entries
           .map(
             (g) =>
-              `<button class="gallery-item" data-photo="${g.index}" aria-label="Ampliar ${g.title}"><img loading="lazy" src="${asset(g.image)}" alt="${g.title}"><strong>${g.title} ↗</strong><small>${g.type} · ${g.credit}</small></button>`
+              `<button class="gallery-item" data-photo="${g.index}" aria-label="Ampliar ${g.title}"><img loading="lazy" src="${asset(g.image)}" alt="${esc(g.title)}"><strong>${esc(g.title)} ↗</strong><small>${esc([g.type, g.credit].filter(Boolean).join(' · '))}</small></button>`
           )
           .join('')
       : `<div class="empty-state"><h3>Novos capítulos em breve.</h3><p>Ainda não há fotos publicadas nesta coleção. Explore as outras categorias.</p><button class="button secondary" data-filter="galeria" data-value="Todas">Ver todas as imagens</button></div>`;
@@ -1177,7 +1171,7 @@ async function updateAgenda() {
         'O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul.',
         'Quero visitar'
       ) +
-      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section>${s.news && s.news.length ? `<section class="wrap detail-news"><div class="related-header"><h2>Na Mídia</h2></div><div class="news-list">${s.news.map(n => `<article class="news-card"><span class="kicker">${n.source}</span><h4>${n.title}</h4></article>`).join('')}</div></section>` : ''}<section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O parque está em obras em vários setores. O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
+      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O parque está em obras em vários setores. O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
     );
   }
 
@@ -2027,49 +2021,119 @@ function credits() {
   }
 
 
-  window.showSimplePhoto = function(url, title = 'Imagem') {
-    document.getElementById('media-title').textContent = title;
-    document.getElementById('media-content').innerHTML = `
-      <div class="lightbox-viewer">
-        <img src="${url}" alt="${esc(title)}" style="width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;">
-        <div class="lightbox-controls" style="display:flex;justify-content:center;align-items:center;margin:12px 0 6px;">
-          <a class="button secondary" href="${url}" download title="Baixar imagem" style="padding:6px 14px;font-size:14px;">Baixar imagem</a>
-        </div>
-      </div>
-    `;
-    const dialog = document.getElementById('media-dialog');
-    dialog.showModal();
-    nav.setAttribute('inert', '');
-    main.setAttribute('inert', '');
+  // === VISUALIZADOR DE FOTOS (único para o site todo) ===
+  const lb = { items: [], index: 0 };
+
+  (function injectLightboxStyles() {
+    if (document.getElementById('lb-styles')) return;
+    const st = document.createElement('style');
+    st.id = 'lb-styles';
+    st.textContent = [
+      '.lb-trigger{display:block;width:100%;padding:0;border:0;background:#e9eef2;border-radius:12px;overflow:hidden;cursor:zoom-in}',
+      '.lb-trigger img{display:block;width:100%;height:220px;object-fit:cover;transition:transform .35s ease}',
+      '.lb-trigger:hover img,.lb-trigger:focus-visible img{transform:scale(1.04)}',
+      '.lb-trigger:focus-visible{outline:3px solid #1B8F3A;outline-offset:2px}',
+      '#media-dialog.is-lightbox{width:min(1200px,96vw);padding:14px 18px 18px;background:#0b1622;color:#fff}',
+      '#media-dialog.is-lightbox .dialog-top{margin-bottom:10px}',
+      '#media-dialog.is-lightbox .dialog-top h2{font-size:20px;color:#fff}',
+      '#media-dialog.is-lightbox .icon-button{color:#fff;background:transparent;border-color:rgba(255,255,255,.4)}',
+      '.lb-stage{position:relative;display:flex;align-items:center;justify-content:center;background:#000;border-radius:10px;min-height:220px;touch-action:pan-y}',
+      '#media-content .lb-img{display:block;background:transparent;max-width:100%;max-height:min(72vh,calc(90vh - 200px));width:auto;height:auto;object-fit:contain;border-radius:10px;user-select:none}',
+      '.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#0d2b4d;font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}',
+      '.lb-nav:hover{background:#fff}.lb-prev{left:12px}.lb-next{right:12px}',
+      '.lb-bar{display:flex;align-items:center;gap:16px;margin-top:12px;font-size:14px;color:rgba(255,255,255,.85)}',
+      '.lb-counter{font-weight:700;white-space:nowrap}',
+      '.lb-caption{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '#media-content .lb-download{margin-top:0;font-size:14px;color:#fff;text-decoration:underline;white-space:nowrap}',
+      '.lb-source{margin-top:8px;font-size:13px}#media-content .lb-source a{color:#9fd3ff}',
+      '.lb-thumbs{display:flex;gap:6px;overflow-x:auto;margin-top:12px;padding-bottom:4px;scrollbar-width:thin}',
+      '.lb-thumb{flex:0 0 auto;width:72px;height:50px;padding:0;border:2px solid transparent;border-radius:6px;overflow:hidden;background:none;cursor:pointer;opacity:.55}',
+      '#media-content .lb-thumb img{width:100%;height:100%;max-height:none;object-fit:cover;display:block;background:#1d2a38}',
+      '.lb-thumb.is-active{border-color:#fff;opacity:1}.lb-thumb:hover{opacity:1}',
+      '@media (max-width:640px){.lb-nav{width:38px;height:38px;font-size:26px}.lb-prev{left:6px}.lb-next{right:6px}.lb-img{max-height:62vh}.lb-thumbs,.lb-caption{display:none}#media-dialog.is-lightbox{padding:12px}}'
+    ].join('');
+    document.head.appendChild(st);
+  })();
+
+  // Miniatura padrão (espaços e notícias). Itens do mesmo grupo navegam juntos.
+  function lbThumb(img, group, title, i) {
+    const g = (data.gallery || []).find((x) => x.image === img);
+    const caption = g ? [g.type, g.credit].filter(Boolean).join(' · ') : '';
+    const src = asset(img);
+    return `<button type="button" class="lb-trigger" data-lb="${esc(group)}" data-lb-src="${esc(src)}" data-lb-title="${esc(title || 'Imagem')}" data-lb-caption="${esc(caption)}" aria-label="Ampliar foto ${i + 1}"><img src="${esc(src)}" alt="${esc(title || 'Foto')}" loading="lazy"></button>`;
+  }
+
+  function renderLightbox() {
+    const it = lb.items[lb.index];
+    if (!it) return;
+    const total = lb.items.length;
+    const multi = total > 1;
+    document.getElementById('media-title').textContent = it.title || 'Imagem';
+    document.getElementById('media-content').innerHTML =
+      `<div class="lb">` +
+      `<div class="lb-stage"><img class="lb-img" src="${esc(it.src)}" alt="${esc(it.title || 'Imagem')}">` +
+      (multi ? `<button type="button" class="lb-nav lb-prev" data-action="photo-prev" aria-label="Foto anterior">&#8249;</button><button type="button" class="lb-nav lb-next" data-action="photo-next" aria-label="Próxima foto">&#8250;</button>` : '') +
+      `</div>` +
+      `<div class="lb-bar"><span class="lb-counter">${multi ? `${lb.index + 1} / ${total}` : ''}</span><span class="lb-caption">${esc(it.caption || '')}</span><a class="lb-download" href="${esc(it.src)}" download>Baixar</a></div>` +
+      (it.source ? `<div class="lb-source">${external(it.source, 'Consulte a fonte e os créditos')}</div>` : '') +
+      (multi && total <= 120 ? `<div class="lb-thumbs">${lb.items.map((x, i) => `<button type="button" class="lb-thumb${i === lb.index ? ' is-active' : ''}" data-lb-go="${i}" aria-label="Ver foto ${i + 1}"><img src="${esc(x.src)}" alt="" loading="lazy"></button>`).join('')}</div>` : '') +
+      `</div>`;
+    const strip = document.querySelector('#media-content .lb-thumbs');
+    const active = strip && strip.querySelector('.is-active');
+    if (active) strip.scrollLeft = active.offsetLeft - strip.clientWidth / 2 + active.clientWidth / 2;
+    if (multi) {
+      [1, -1].forEach((d) => {
+        const nx = lb.items[(lb.index + d + total) % total];
+        if (nx) new Image().src = nx.src;
+      });
+    }
+  }
+
+  function openLightbox(items, index) {
+    lb.items = (items || []).filter((x) => x && x.src);
+    if (!lb.items.length) return;
+    lb.index = Math.min(Math.max(0, Number(index) || 0), lb.items.length - 1);
+    const dlg = document.getElementById('media-dialog');
+    if (!dlg) return;
+    dlg.classList.add('is-lightbox');
+    renderLightbox();
+    if (!dlg.open) {
+      if (typeof dlg.showModal === 'function') dlg.showModal();
+      else dlg.setAttribute('open', '');
+    }
+  }
+
+  function stepLightbox(d) {
+    if (lb.items.length < 2) return;
+    lb.index = (lb.index + d + lb.items.length) % lb.items.length;
+    renderLightbox();
+  }
+
+  function openLightboxGroup(group, el) {
+    const seen = new Set();
+    const nodes = [...document.querySelectorAll('[data-lb-hero], [data-lb]')]
+      .filter((x) => (x.dataset.lbHero || x.dataset.lb) === group)
+      .filter((x) => x.dataset.lbSrc && !seen.has(x.dataset.lbSrc) && seen.add(x.dataset.lbSrc));
+    const start = Math.max(0, nodes.findIndex((x) => x.dataset.lbSrc === el.dataset.lbSrc));
+    openLightbox(nodes.map((x) => ({ src: x.dataset.lbSrc, title: x.dataset.lbTitle || 'Imagem', caption: x.dataset.lbCaption || '' })), start);
+  }
+
+  const galleryItem = (g) => ({ src: asset(g.image), title: g.title || 'Imagem', caption: [g.type, g.credit].filter(Boolean).join(' · '), source: g.source || '' });
+
+  window.openLightbox = openLightbox;
+  window.showSimplePhoto = function (url, title) {
+    openLightbox([{ src: url, title: title || 'Imagem' }], 0);
   };
 
-  window.showPhoto = function showPhoto(index) {
-
-    state.currentPhotoIndex = index;
+  // Abre uma foto da galeria geral. Sem escopo: navega pelo álbum (mesmo título).
+  window.showPhoto = function showPhoto(index, scope) {
     const g = data.gallery[index];
     if (!g) return;
-
-    const total = data.gallery.length;
-    document.getElementById('media-title').textContent = g.title;
-    document.getElementById('media-content').innerHTML = `
-      <div class="lightbox-viewer">
-        <img src="${asset(g.image)}" alt="${esc(g.title)}" style="width:100%;border-radius:6px;max-height:70vh;object-fit:contain;background:#000;">
-        <div class="lightbox-controls" style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
-          <button class="button secondary" data-action="photo-prev" aria-label="Foto anterior" style="padding:6px 14px;font-size:14px;">&larr; Anterior</button>
-          
-          <span style="font-size:13px;opacity:0.8; display:flex; align-items:center; gap: 15px;">
-            ${index + 1} de ${total}
-            <a href="${asset(g.image)}" download="${(g.title || "imagem").replace(/\s+/g, '-').toLowerCase()}-${index}.jpg" title="Baixar imagem" style="color:var(--navy);"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
-          </span>
-          
-          <button class="button secondary" data-action="photo-next" aria-label="Pr&oacute;xima foto" style="padding:6px 14px;font-size:14px;">Pr&oacute;xima &rarr;</button>
-        </div>
-        <p>${esc(g.type)} &middot; ${esc(g.credit)}</p>
-        ${g.source ? external(g.source, 'Consulte a fonte e os cr&eacute;ditos') : ''}
-      </div>`;
-    const dlg = document.getElementById('media-dialog');
-    if (!dlg.open) dlg.showModal();
-  }
+    const idxs = Array.isArray(scope) && scope.length
+      ? scope
+      : data.gallery.map((_, i) => i).filter((i) => (data.gallery[i].title || '') === (g.title || ''));
+    openLightbox(idxs.map((i) => galleryItem(data.gallery[i])), Math.max(0, idxs.indexOf(index)));
+  };
   
   function updateSearch() {
     const rawVal = document.getElementById('search-input').value.trim();
@@ -2290,6 +2354,12 @@ function credits() {
       return;
     }
 
+    const lbHero = e.target.closest('[data-lb-hero]');
+    if (lbHero && !e.target.closest('a, button')) {
+      openLightboxGroup(lbHero.dataset.lbHero, lbHero);
+      return;
+    }
+
     const b = e.target.closest('button');
     if (b) {
       if (b.dataset.filter) {
@@ -2306,8 +2376,21 @@ function credits() {
         return;
       }
 
+      if (b.dataset.lbGo !== undefined) {
+        lb.index = Number(b.dataset.lbGo);
+        renderLightbox();
+        return;
+      }
+
+      if (b.dataset.lb) {
+        openLightboxGroup(b.dataset.lb, b);
+        return;
+      }
+
       if (b.dataset.photo !== undefined) {
-        showPhoto(Number(b.dataset.photo));
+        const scopeRoot = b.closest('#gallery-results') || b.parentElement;
+        const scope = [...scopeRoot.querySelectorAll('[data-photo]')].map((x) => Number(x.dataset.photo));
+        showPhoto(Number(b.dataset.photo), scope);
         return;
       }
 
@@ -2352,13 +2435,9 @@ function credits() {
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
         });
       } else if (action === 'photo-prev') {
-        const total = data.gallery.length;
-        const prev = ((state.currentPhotoIndex ?? 0) - 1 + total) % total;
-        showPhoto(prev);
+        stepLightbox(-1);
       } else if (action === 'photo-next') {
-        const total = data.gallery.length;
-        const next = ((state.currentPhotoIndex ?? 0) + 1) % total;
-        showPhoto(next);
+        stepLightbox(1);
       } else if (action === 'reset-spaces') {
         state.spaceQuery = '';
         document.getElementById('space-search').value = '';
@@ -2438,14 +2517,13 @@ function credits() {
       document.querySelector('[data-action=search]').click();
     }
     const mediaDlg = document.getElementById('media-dialog');
-    if (mediaDlg && mediaDlg.open && state.currentPhotoIndex !== undefined) {
-      const total = data.gallery.length;
+    if (mediaDlg && mediaDlg.open && lb.items.length > 1) {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        showPhoto((state.currentPhotoIndex - 1 + total) % total);
+        stepLightbox(-1);
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
-        showPhoto((state.currentPhotoIndex + 1) % total);
+        stepLightbox(1);
       }
     }
   });
@@ -2468,6 +2546,8 @@ function credits() {
     d.addEventListener('close', () => {
       if (d.id === 'media-dialog') {
         document.getElementById('media-content').innerHTML = '';
+        lb.items = [];
+        d.classList.remove('is-lightbox');
         const heroIframe = document.getElementById('hero-video');
         if (heroIframe) {
           try {
@@ -2477,6 +2557,25 @@ function credits() {
       }
     });
   });
+
+  (function lightboxSwipe() {
+    const d = document.getElementById('media-dialog');
+    if (!d) return;
+    let x0 = null;
+    let y0 = null;
+    d.addEventListener('touchstart', (e) => {
+      if (lb.items.length < 2) return;
+      x0 = e.changedTouches[0].clientX;
+      y0 = e.changedTouches[0].clientY;
+    }, { passive: true });
+    d.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      const dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) stepLightbox(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  })();
 
   // === INITIALIZATION ===
   window.addEventListener('pnmt:content-updated', () => {
