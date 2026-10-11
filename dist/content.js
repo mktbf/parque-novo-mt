@@ -373,7 +373,8 @@ window.PNMT_CONTENT = {
         "assets/gallery/imported_1791753367193_playground_img_e2340_tratada.jpg",
         "assets/gallery/imported_1791753367208_playground_img_e2349_tratada.jpg",
         "assets/gallery/imported_1791753367225_playground_img_e2350_tratada.jpg",
-        "assets/gallery/imported_1791753367239_playground_img_e2358_tratada.jpg"
+        "assets/gallery/imported_1791753367239_playground_img_e2358_tratada.jpg",
+        "assets/gallery/imported_1791754134496_selecao_parque_infantil_com_castelo_e_lago.png"
       ]
     },
     {
@@ -2180,162 +2181,10 @@ window.PNMT_CONTENT = {
     },
     {
       "id": "gallery-imported-187",
-      "image": "assets/gallery/imported_1791753367637_sol_dji_20261010080647_0001_d_tratada.jpg",
+      "image": "assets/gallery/imported_1791754134496_selecao_parque_infantil_com_castelo_e_lago.png",
       "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-188",
-      "image": "assets/gallery/imported_1791753367647_sol_dji_20261010080701_0002_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-189",
-      "image": "assets/gallery/imported_1791753367659_sol_dji_20261010081216_0007_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-190",
-      "image": "assets/gallery/imported_1791753367670_sol_dji_20261010081223_0008_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-191",
-      "image": "assets/gallery/imported_1791753367681_sol_dji_20261010081321_0010_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-192",
-      "image": "assets/gallery/imported_1791753367693_sol_dji_20261010081326_0011_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-193",
-      "image": "assets/gallery/imported_1791753367701_sol_dji_20261010082530_0019_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-194",
-      "image": "assets/gallery/imported_1791753367711_sol_dji_20261010082608_0020_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-195",
-      "image": "assets/gallery/imported_1791753367729_sol_dji_20261010082620_0021_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-196",
-      "image": "assets/gallery/imported_1791753367746_sol_dji_20261010082629_0022_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-197",
-      "image": "assets/gallery/imported_1791753367755_sol_dji_20261010082646_0023_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-198",
-      "image": "assets/gallery/imported_1791753367766_sol_dji_20261010082653_0024_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-199",
-      "image": "assets/gallery/imported_1791753367774_sol_dji_20261010082923_0026_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-200",
-      "image": "assets/gallery/imported_1791753367783_sol_dji_20261010082938_0027_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-201",
-      "image": "assets/gallery/imported_1791753367794_sol_dji_20261010083003_0028_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-202",
-      "image": "assets/gallery/imported_1791753367805_sol_dji_20261010085601_0035_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-203",
-      "image": "assets/gallery/imported_1791753367815_sol_dji_20261010085607_0036_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-204",
-      "image": "assets/gallery/imported_1791753367823_sol_dji_20261010085634_0037_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-205",
-      "image": "assets/gallery/imported_1791753367834_sol_dji_20261010085646_0038_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
-      "type": "Foto"
-    },
-    {
-      "id": "gallery-imported-206",
-      "image": "assets/gallery/imported_1791753367845_sol_dji_20261010090548_0045_d_tratada.jpg",
-      "category": "Andamento da Obra",
-      "title": "Vistas Gerais",
-      "description": "Registro fotográfico: Fotos Parque Sol Ceu Claro",
+      "title": "Parque da Família",
+      "description": "Registro fotográfico extra",
       "type": "Foto"
     }
   ],
