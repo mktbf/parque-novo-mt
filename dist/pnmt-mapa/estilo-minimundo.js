@@ -182,33 +182,33 @@ function texturaFaixas(THREE) {
   return t;
 }
 
-// Pórtico (drone out/2026 + render): duas cascas de nervuras brancas que nascem juntas no canteiro central
-// e abrem em leque até a borda de cada pista; canteiro em forma de oito com meio-fio branco e flores.
+// Pórtico (drone out/2026): duas cascas de nervuras brancas, uma sobre cada pista, perpendiculares à avenida.
+// Nascem juntas no canteiro central e abrem em leque até o meio-fio de fora. Canteiro em oito no meio.
 function construirPortico(scene, THREE) {
   const antigos = []; scene.traverse(o => { if (o.isMesh && /Pórtico/.test(grupoDe(o, scene))) antigos.push(o); });
   if (!antigos.length) return 0;
   antigos.forEach(o => { o.visible = false; });
   const g = new THREE.Group(); g.name = 'Pórtico · cascas em nervuras';
   const C = new THREE.Vector2(303, 398);
-  const m = new THREE.Vector2(0.919, 0.393).normalize();
-  const branco = new THREE.MeshStandardMaterial({ color: '#f2f2ee', roughness: 0.7 });
-  const arcos = [new THREE.Vector2(321, 387), new THREE.Vector2(301.5, 417)];
+  const m = new THREE.Vector2(0.919, 0.393).addScaledVector(new THREE.Vector2(-0.393, 0.919), 0.042).normalize(); // eixo real da avenida
+  const perp = new THREE.Vector2(-m.y, m.x);
+  const branco = new THREE.MeshStandardMaterial({ color: '#f4f4f0', roughness: 0.6 });
   const N = 9;
-  for (const O of arcos) {
-    const H = O.distanceTo(C) * 0.62; const ribs = [];
+  for (const [ini, fim] of [[-0.4, -15.4], [0.4, 15.0]]) { // do canteiro até o meio-fio de cada pista
+    const span = Math.abs(fim - ini), H = span * 0.6, ribs = [];
     for (let k = 0; k < N; k++) {
       const f = k - (N - 1) / 2;
-      const c0 = C.clone().addScaledVector(m, f * 0.55), o0 = O.clone().addScaledVector(m, f * 2.7);
-      const pts = []; for (let i = 0; i <= 24; i++) { const t = i / 24; const p = c0.clone().lerp(o0, t); pts.push(new THREE.Vector3(p.x, H * Math.sin(Math.PI * t) + 0.1, p.y)); }
+      const c0 = C.clone().addScaledVector(perp, ini).addScaledVector(m, f * 0.42);
+      const o0 = C.clone().addScaledVector(perp, fim).addScaledVector(m, f * 2.3);
+      const pts = []; for (let i = 0; i <= 28; i++) { const t = i / 28; const p = c0.clone().lerp(o0, t); pts.push(new THREE.Vector3(p.x, H * Math.sin(Math.PI * t) + 0.15, p.y)); }
       ribs.push(pts);
-      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 40, 0.26, 6, false), branco));
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, 0.22, 6, false), branco));
     }
-    for (const t of [0.12, 0.25, 0.38, 0.5, 0.62, 0.75, 0.88]) {
-      const i = Math.round(t * 24);
-      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ribs.map(r => r[i])), 24, 0.16, 5, false), branco));
+    for (const t of [0.1, 0.22, 0.36, 0.5, 0.64, 0.78, 0.9]) {
+      const i = Math.round(t * 28);
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ribs.map(r => r[i])), 24, 0.12, 5, false), branco));
     }
   }
-  const perp = new THREE.Vector2(-m.y, m.x);
   const elipse = (cx, cz, a, b, y, r) => {
     const pts = []; for (let i = 0; i < 64; i++) { const ang = i / 64 * Math.PI * 2; const p = new THREE.Vector2(cx, cz).addScaledVector(m, Math.cos(ang) * a).addScaledVector(perp, Math.sin(ang) * b); pts.push(new THREE.Vector3(p.x, y, p.y)); }
     return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 96, r, 5, true), branco);
@@ -218,10 +218,11 @@ function construirPortico(scene, THREE) {
     const d = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: cor, roughness: 1 }));
     d.scale.set(a, 1, b); d.position.set(cx, y, cz); d.rotation.y = -Math.atan2(m.y, m.x); return d;
   };
+  g.add(disco(C.x, C.y, 12, 2.4, 0.16, '#4f9a3c')); // faixa de grama do canteiro central
   for (const sgn of [-1, 1]) {
     const c = C.clone().addScaledVector(m, sgn * 4.8);
-    g.add(elipse(c.x, c.y, 5, 1.5, 0.3, 0.24)); g.add(elipse(c.x, c.y, 3.2, 0.85, 0.28, 0.18));
-    g.add(disco(c.x, c.y, 4.8, 1.35, 0.2, '#3f8f3a')); g.add(disco(c.x, c.y, 3, 0.7, 0.24, '#c8452f'));
+    g.add(elipse(c.x, c.y, 5, 1.7, 0.3, 0.22)); g.add(elipse(c.x, c.y, 3.2, 0.95, 0.28, 0.16));
+    g.add(disco(c.x, c.y, 4.8, 1.55, 0.2, '#3f8f3a')); g.add(disco(c.x, c.y, 3, 0.8, 0.24, '#c8452f'));
   }
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   scene.add(g); return 1;
@@ -649,6 +650,57 @@ function cascataArena(scene, THREE) {
   scene.add(g); return 1;
 }
 
+// Complexo da Cavalaria da PM (Regimento de Policiamento Montado), na beira da avenida de acesso,
+// antes do Pórtico (fotos da galeria e drone out/2026): picadeiro coberto, duas cocheiras compridas,
+// prédio administrativo branco, caixa d'água, redondel de areia e pórtico azul de entrada.
+function construirCavalaria(scene, THREE) {
+  const m = new THREE.Vector2(0.919, 0.393).normalize(), u = new THREE.Vector2(-m.y, m.x);
+  const C = new THREE.Vector2(303, 398).addScaledVector(m, 112).addScaledVector(u, -44); // centro do complexo
+  const g = new THREE.Group(); g.name = 'Cavalaria da PM · regimento montado';
+  g.position.set(C.x, 0, C.y); g.rotation.y = Math.PI - Math.atan2(m.y, m.x); // eixo x local = avenida, z local = para longe da pista
+  const branco = new THREE.MeshStandardMaterial({ color: '#f2f1ec', roughness: 0.7 });
+  const telha = new THREE.MeshStandardMaterial({ color: '#e9eaea', roughness: 0.5, metalness: 0.2, side: THREE.DoubleSide });
+  const cinza = new THREE.MeshStandardMaterial({ color: '#8a9096', roughness: 0.8 });
+  const vidro = new THREE.MeshStandardMaterial({ color: '#4c6470', roughness: 0.3 });
+  const azul = new THREE.MeshStandardMaterial({ color: '#1f4fbf', roughness: 0.5 });
+  const piso = new THREE.MeshStandardMaterial({ color: '#d8d2c4', roughness: 1 });
+  const areia = new THREE.MeshStandardMaterial({ color: '#d9b27a', roughness: 1 });
+  const caixa = (w, h, d, x, y, z, mat) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); b.position.set(x, y + h / 2, z); g.add(b); return b; };
+  const galpao = (L, W, H, x, z, aberto) => { // galpão de duas águas
+    const s = new THREE.Shape(); s.moveTo(-W / 2, 0); s.lineTo(W / 2, 0); s.lineTo(W / 2 + 0.6, -0.2); s.lineTo(0, W * 0.16); s.lineTo(-W / 2 - 0.6, -0.2); s.closePath();
+    const geo = new THREE.ExtrudeGeometry(s, { depth: L, bevelEnabled: false }); geo.translate(0, 0, -L / 2); geo.rotateY(Math.PI / 2);
+    const teto = new THREE.Mesh(geo, telha); teto.position.set(x, H, z); g.add(teto);
+    if (aberto) { for (let i = 0; i <= 8; i++) for (const sz of [-1, 1]) caixa(0.5, H, 0.5, x - L / 2 + i * L / 8, 0, z + sz * W / 2, branco); caixa(L, 0.4, W, x, 0, z, areia); }
+    else { caixa(L, H, W, x, 0, z, branco); for (let i = 0; i < 12; i++) caixa(0.1, H * 0.55, 1.6, x - L / 2 + 2.4 + i * (L - 4.8) / 11, 0.4, z - W / 2 - 0.02, cinza); }
+  };
+  caixa(120, 0.12, 74, 0, 0, 22, piso);              // pátio do complexo
+  galpao(66, 28, 7.5, 6, 18, true);                  // picadeiro coberto
+  galpao(58, 7, 3.6, 4, 40, false);                  // cocheira 1
+  galpao(58, 7, 3.6, 4, 50, false);                  // cocheira 2
+  caixa(22, 4.2, 14, -46, 0, 14, branco); caixa(22.4, 0.5, 14.4, -46, 4.2, 14, telha); // administração
+  caixa(14, 4.2, 10, -46, 0, 32, branco); caixa(14.4, 0.5, 10.4, -46, 4.2, 32, telha);
+  caixa(20, 1.6, 0.2, -46, 1.4, 6.92, vidro);
+  const torre = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 14, 16), branco); torre.position.set(-30, 7, 46); g.add(torre);
+  const tanque = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.2, 3.4, 16), cinza); tanque.position.set(-30, 15.4, 46); g.add(tanque);
+  const redondel = new THREE.Mesh(new THREE.CircleGeometry(1, 40), areia); redondel.rotation.x = -Math.PI / 2; redondel.scale.set(13, 9, 1); redondel.position.set(46, 0.16, 46); g.add(redondel);
+  const cerca = new THREE.Mesh(new THREE.TorusGeometry(1, 0.03, 4, 48), branco); cerca.rotation.x = Math.PI / 2; cerca.scale.set(13, 9, 30); cerca.position.set(46, 1, 46); g.add(cerca);
+  caixa(1, 5, 1, -54, 0, -4, azul); caixa(1, 5, 1, -38, 0, -4, azul); caixa(17, 1.6, 1.4, -46, 5, -4, azul); // pórtico azul
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(g); g.updateMatrixWorld(true);
+  // tira as árvores que caíam dentro do pátio do complexo
+  const inv = new THREE.Matrix4().copy(g.matrixWorld).invert(), mi = new THREE.Matrix4(), p = new THREE.Vector3(), zero = new THREE.Matrix4().makeScale(0, 0, 0);
+  scene.traverse(o => {
+    if (!o.isInstancedMesh || o.parent === g || /Carros|Vida/.test((o.name || '') + (o.parent?.name || ''))) return;
+    let mudou = false;
+    for (let i = 0; i < o.count; i++) {
+      o.getMatrixAt(i, mi); p.setFromMatrixPosition(mi).applyMatrix4(o.matrixWorld).applyMatrix4(inv);
+      if (Math.abs(p.x) < 62 && p.z > -16 && p.z < 61 && p.y < 30) { o.setMatrixAt(i, zero); mudou = true; }
+    }
+    if (mudou) o.instanceMatrix.needsUpdate = true;
+  });
+  return 1;
+}
+
 export function aplicarEspacosReais(scene, THREE) {
   let n = 0; const box = new THREE.Box3(), c = new THREE.Vector3(); let tri = null;
   // Casa Cuiabana: laje plana atrás da platibanda, sem cumeeiras de telha
@@ -701,6 +753,7 @@ export function aplicarEspacosReais(scene, THREE) {
   n += aguaDoWake(scene, THREE);
   n += arquibancadaCasa(scene, THREE);
   n += cascataArena(scene, THREE);
+  n += construirCavalaria(scene, THREE);
   return n;
 }
 
