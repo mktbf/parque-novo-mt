@@ -182,48 +182,87 @@ function texturaFaixas(THREE) {
   return t;
 }
 
-// Pórtico (drone out/2026): duas cascas de nervuras brancas, uma sobre cada pista, perpendiculares à avenida.
-// Nascem juntas no canteiro central e abrem em leque até o meio-fio de fora. Canteiro em oito no meio.
+// Pórtico (drone out/2026 + render do projeto): dois arcos largos, revestidos de branco, um sobre cada pista.
+// Vistos de cima formam um V: nascem juntos no fundo do canteiro central e os pés de fora avançam
+// em direção à rodovia. Por baixo aparecem as nervuras. Canteiro em oito com muros de pedra e meio-fio branco.
 function construirPortico(scene, THREE) {
   const antigos = []; scene.traverse(o => { if (o.isMesh && /Pórtico/.test(grupoDe(o, scene))) antigos.push(o); });
   if (!antigos.length) return 0;
   antigos.forEach(o => { o.visible = false; });
-  const g = new THREE.Group(); g.name = 'Pórtico · cascas em nervuras';
+  const g = new THREE.Group(); g.name = 'Pórtico · arcos em V';
   const C = new THREE.Vector2(303, 398);
-  const m = new THREE.Vector2(0.919, 0.393).addScaledVector(new THREE.Vector2(-0.393, 0.919), 0.042).normalize(); // eixo real da avenida
-  const perp = new THREE.Vector2(-m.y, m.x);
-  const branco = new THREE.MeshStandardMaterial({ color: '#f4f4f0', roughness: 0.6 });
-  const N = 9;
-  for (const [ini, fim] of [[-0.4, -15.4], [0.4, 15.0]]) { // do canteiro até o meio-fio de cada pista
-    const span = Math.abs(fim - ini), H = span * 0.6, ribs = [];
-    for (let k = 0; k < N; k++) {
-      const f = k - (N - 1) / 2;
-      const c0 = C.clone().addScaledVector(perp, ini).addScaledVector(m, f * 0.42);
-      const o0 = C.clone().addScaledVector(perp, fim).addScaledVector(m, f * 2.3);
-      const pts = []; for (let i = 0; i <= 28; i++) { const t = i / 28; const p = c0.clone().lerp(o0, t); pts.push(new THREE.Vector3(p.x, H * Math.sin(Math.PI * t) + 0.15, p.y)); }
-      ribs.push(pts);
-      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, 0.22, 6, false), branco));
+  const m = new THREE.Vector2(0.919, 0.393).addScaledVector(new THREE.Vector2(-0.393, 0.919), 0.042).normalize(); // eixo da avenida (+m = rodovia)
+  const u = new THREE.Vector2(-m.y, m.x);
+  const P = (a, b) => C.clone().addScaledVector(m, a).addScaledVector(u, b); // a = ao longo da avenida, b = para o lado
+  // textura de nervuras: linhas finas ao longo do arco
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 8; const cx = cv.getContext('2d');
+  cx.fillStyle = '#f5f5f2'; cx.fillRect(0, 0, 64, 8); cx.fillStyle = '#b9bdc0'; for (let i = 0; i < 8; i++) cx.fillRect(i * 8, 0, 2, 8);
+  const nerv = new THREE.CanvasTexture(cv); nerv.colorSpace = THREE.SRGBColorSpace; nerv.wrapS = nerv.wrapT = THREE.RepeatWrapping;
+  const casca = new THREE.MeshStandardMaterial({ color: '#ffffff', map: nerv, emissive: '#2a2a28', roughness: 0.55, side: THREE.DoubleSide });
+  const baixo = new THREE.MeshStandardMaterial({ color: '#d9dcde', map: nerv, roughness: 0.7, side: THREE.DoubleSide });
+  const lado = new THREE.MeshStandardMaterial({ color: '#f4f4f0', emissive: '#4a4a48', roughness: 0.6, side: THREE.DoubleSide });
+  // um arco: raiz R (fundo do canteiro) até o pé F (beira de fora da pista); faixa larga ao longo da avenida
+  const arco = (R, F, H) => {
+    const NT = 56, NS = 10, esp = 1.5;
+    const ponto = (t, s, dy) => {
+      const c = R.clone().lerp(F, t), hw = 1.1 + 1.8 * Math.sin(Math.PI * Math.min(t, 0.7) / 1.4);
+      const q = c.addScaledVector(m, s * hw); return [q.x, H * Math.sin(Math.PI * t) + 0.2 + dy, q.y];
+    };
+    const faixa = (dy, mat) => {
+      const p = [], t2 = [], ix = [];
+      for (let i = 0; i <= NT; i++) for (let j = 0; j <= NS; j++) { p.push(...ponto(i / NT, j / NS * 2 - 1, dy)); t2.push(j / NS * 8, i / NT * 6); }
+      for (let i = 0; i < NT; i++) for (let j = 0; j < NS; j++) { const a = i * (NS + 1) + j, b = a + NS + 1; ix.push(a, b, a + 1, b, b + 1, a + 1); }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(t2, 2)); geo.setIndex(ix); geo.computeVertexNormals();
+      g.add(new THREE.Mesh(geo, mat));
+    };
+    faixa(0, casca); faixa(-esp, baixo);
+    for (const s of [-1, 1]) { // bordas da faixa (espessura)
+      const p = [], ix = [];
+      for (let i = 0; i <= NT; i++) { p.push(...ponto(i / NT, s, 0), ...ponto(i / NT, s, -esp)); }
+      for (let i = 0; i < NT; i++) { const a = i * 2; ix.push(a, a + 2, a + 1, a + 2, a + 3, a + 1); }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setIndex(ix); geo.computeVertexNormals();
+      g.add(new THREE.Mesh(geo, lado));
     }
-    for (const t of [0.1, 0.22, 0.36, 0.5, 0.64, 0.78, 0.9]) {
-      const i = Math.round(t * 28);
-      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ribs.map(r => r[i])), 24, 0.12, 5, false), branco));
-    }
-  }
-  const elipse = (cx, cz, a, b, y, r) => {
-    const pts = []; for (let i = 0; i < 64; i++) { const ang = i / 64 * Math.PI * 2; const p = new THREE.Vector2(cx, cz).addScaledVector(m, Math.cos(ang) * a).addScaledVector(perp, Math.sin(ang) * b); pts.push(new THREE.Vector3(p.x, y, p.y)); }
-    return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 96, r, 5, true), branco);
   };
-  const disco = (cx, cz, a, b, y, cor) => {
-    const geo = new THREE.CircleGeometry(1, 40); geo.rotateX(-Math.PI / 2);
+  const avanco = 8; // quanto os pés de fora avançam para o lado da rodovia
+  arco(P(-4.5, -0.3), P(-4.5 + avanco, -15.6), 9.6);
+  arco(P(-4.5, 0.3), P(-4.5 + avanco, 15.2), 9.4);
+  // canteiro em oito: grama, muros de pedra em dois níveis, meio-fio branco e plantas
+  const pedra = texturaPedras(THREE); pedra.repeat.set(6, 1);
+  const muro = new THREE.MeshStandardMaterial({ map: pedra, roughness: 0.95 });
+  const anel = (cxz, a, b, y0, h, mat) => { // parede baixa em elipse
+    const pts = []; for (let i = 0; i <= 64; i++) { const ang = i / 64 * Math.PI * 2; const q = cxz.clone().addScaledVector(m, Math.cos(ang) * a).addScaledVector(u, Math.sin(ang) * b); pts.push(q); }
+    const p = [], t2 = [], ix = [];
+    pts.forEach((q, i) => { p.push(q.x, y0, q.y, q.x, y0 + h, q.y); t2.push(i / 8, 0, i / 8, 1); });
+    for (let i = 0; i < 64; i++) { const k = i * 2; ix.push(k, k + 2, k + 1, k + 2, k + 3, k + 1); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(t2, 2)); geo.setIndex(ix); geo.computeVertexNormals();
+    const me = new THREE.Mesh(geo, mat); me.material.side = THREE.DoubleSide; g.add(me);
+  };
+  const disco = (cxz, a, b, y, cor) => {
+    const geo = new THREE.CircleGeometry(1, 48); geo.rotateX(-Math.PI / 2);
     const d = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: cor, roughness: 1 }));
-    d.scale.set(a, 1, b); d.position.set(cx, y, cz); d.rotation.y = -Math.atan2(m.y, m.x); return d;
+    d.scale.set(a, 1, b); d.position.set(cxz.x, y, cxz.y); d.rotation.y = -Math.atan2(m.y, m.x); g.add(d);
   };
-  g.add(disco(C.x, C.y, 12, 2.4, 0.16, '#4f9a3c')); // faixa de grama do canteiro central
-  for (const sgn of [-1, 1]) {
-    const c = C.clone().addScaledVector(m, sgn * 4.8);
-    g.add(elipse(c.x, c.y, 5, 1.7, 0.3, 0.22)); g.add(elipse(c.x, c.y, 3.2, 0.95, 0.28, 0.16));
-    g.add(disco(c.x, c.y, 4.8, 1.55, 0.2, '#3f8f3a')); g.add(disco(c.x, c.y, 3, 0.8, 0.24, '#c8452f'));
+  disco(P(0, 0), 17, 3.0, 0.12, '#4f9a3c'); // grama do canteiro
+  const meioFio = new THREE.MeshStandardMaterial({ color: '#f6f6f2', roughness: 0.5, side: THREE.DoubleSide });
+  for (const [a0, A, B] of [[-3.2, 4.2, 2.2], [3.6, 4.6, 2.3]]) {
+    const c0 = P(a0, 0);
+    anel(c0, A + 0.5, B + 0.35, 0.1, 0.22, meioFio);   // meio-fio branco em volta
+    anel(c0, A, B, 0.1, 0.75, muro);                    // muro de pedra de baixo
+    disco(c0, A, B, 0.85, '#5aa344');
+    anel(c0, A * 0.62, B * 0.62, 0.85, 0.6, muro);      // muro de pedra de cima
+    disco(c0, A * 0.62, B * 0.62, 1.45, '#6c4a2e');
   }
+  // plantas: agaves verdes e flores vermelhas no nível de cima
+  const agave = new THREE.InstancedMesh(new THREE.ConeGeometry(0.45, 0.9, 5), new THREE.MeshStandardMaterial({ color: '#4d8a52', flatShading: true }), 22);
+  const flor = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.32, 0), new THREE.MeshStandardMaterial({ color: '#d6402f', flatShading: true }), 24);
+  const tmp = new THREE.Object3D(); let sd = 3; const rnd = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+  let ia = 0, ifl = 0;
+  for (const [a0, A, B] of [[-3.2, 4.2, 2.2], [3.6, 4.6, 2.3]]) {
+    for (let i = 0; i < 11; i++) { const ang = rnd() * 6.28, r = Math.sqrt(rnd()) * 0.85; const q = P(a0 + Math.cos(ang) * A * 0.6 * r, Math.sin(ang) * B * 0.6 * r); tmp.position.set(q.x, 1.9, q.y); tmp.rotation.set(0, rnd() * 3, 0); tmp.scale.setScalar(0.8 + rnd() * 0.5); tmp.updateMatrix(); agave.setMatrixAt(ia++, tmp.matrix); }
+    for (let i = 0; i < 12; i++) { const ang = i / 12 * 6.28 + rnd() * 0.3, r = 0.8; const q = P(a0 + Math.cos(ang) * A * r, Math.sin(ang) * B * r); tmp.position.set(q.x, 1.0, q.y); tmp.scale.setScalar(0.7 + rnd() * 0.3); tmp.updateMatrix(); flor.setMatrixAt(ifl++, tmp.matrix); }
+  }
+  g.add(agave); g.add(flor);
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   scene.add(g); return 1;
 }
