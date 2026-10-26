@@ -363,6 +363,64 @@ function construirAgro(scene, THREE) {
   scene.add(g); return 1;
 }
 
+// Vida no mapa: carros na avenida do Pórtico, wakeboard no Wake Park e nuvens passando.
+// Atualiza a cada quadro que o mapa já desenha (o mapa redesenha continuamente por causa da água).
+// Na vista geral, mostra o nome só dos espaços principais; os outros ficam como ponto (o nome volta ao aproximar).
+function adicionarVida(scene, THREE) {
+  const g = new THREE.Group(); g.name = 'Vida no mapa · carros, wakeboard e nuvens';
+  const agora = () => performance.now() / 1000;
+  const C = new THREE.Vector2(303, 398), m = new THREE.Vector2(0.919, 0.393), p = new THREE.Vector2(-0.393, 0.919);
+  const cores = ['#e8e8e6', '#2a2d31', '#b8bcc0', '#c0392b', '#1f4e8c', '#e8e8e6', '#7a7f85', '#d9a32b'];
+  const carros = []; [[6, -1], [11, -1], [-6, 1], [-11, 1]].forEach((f, fi) => { for (let k = 0; k < 4; k++) carros.push({ u: f[0], dir: f[1], fase: k / 4 + fi * 0.13, vel: 8 + ((k * 7 + fi * 3) % 5) }); });
+  const corpo = new THREE.BoxGeometry(1.9, 1.1, 4.3); corpo.translate(0, 0.55, 0);
+  const cabine = new THREE.BoxGeometry(1.7, 0.75, 2.2); cabine.translate(0, 1.45, -0.2);
+  const iC = new THREE.InstancedMesh(corpo, new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0.1 }), carros.length);
+  const iV = new THREE.InstancedMesh(cabine, new THREE.MeshStandardMaterial({ color: '#20262c', roughness: 0.3 }), carros.length);
+  carros.forEach((c, i) => iC.setColorAt(i, new THREE.Color(cores[i % cores.length])));
+  iC.castShadow = true; iC.frustumCulled = false; iV.frustumCulled = false; g.add(iC); g.add(iV);
+  const t0 = -50, t1 = 60, L = t1 - t0, tmp = new THREE.Object3D(), ang = Math.atan2(m.x, m.y);
+  const atualizaCarros = t => {
+    carros.forEach((c, i) => {
+      const pos = ((c.fase * L + t * c.vel) % L + L) % L; const tt = c.dir > 0 ? t0 + pos : t1 - pos;
+      const q = C.clone().addScaledVector(m, tt).addScaledVector(p, c.u);
+      tmp.position.set(q.x, 0.08, q.y); tmp.rotation.set(0, ang + (c.dir > 0 ? 0 : Math.PI), 0); tmp.updateMatrix();
+      iC.setMatrixAt(i, tmp.matrix); iV.setMatrixAt(i, tmp.matrix);
+    });
+    iC.instanceMatrix.needsUpdate = true; iV.instanceMatrix.needsUpdate = true;
+  };
+  const wake = new THREE.Group(); wake.scale.setScalar(1.5);
+  const prancha = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 1.5), new THREE.MeshStandardMaterial({ color: '#f07a1a' })); prancha.position.y = 0.75; wake.add(prancha);
+  const atleta = new THREE.Mesh(new THREE.CapsuleGeometry(0.25, 0.9, 3, 6), new THREE.MeshStandardMaterial({ color: '#1f2a36' })); atleta.position.y = 1.5; atleta.rotation.x = 0.25; wake.add(atleta);
+  const espuma = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 4), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.55 }));
+  espuma.rotation.x = -Math.PI / 2; espuma.position.set(0, 0.72, -2.6); wake.add(espuma); g.add(wake);
+  const atualizaWake = t => { const a = t * 0.16; wake.position.set(-457 + 15 * Math.cos(a), 0, 95 + 38 * Math.sin(a)); wake.rotation.y = Math.atan2(-15 * Math.sin(a), 38 * Math.cos(a)); };
+  const nuvGeo = new THREE.IcosahedronGeometry(1, 1);
+  const nuvMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 1, flatShading: true, transparent: true, opacity: 0.92 });
+  const nuvens = []; let seed = 3; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let i = 0; i < 7; i++) {
+    const n = new THREE.Group(); const k = 4 + Math.floor(rnd() * 3);
+    for (let j = 0; j < k; j++) { const b = new THREE.Mesh(nuvGeo, nuvMat); const r = 6 + rnd() * 6; b.scale.set(r * 1.3, r * 0.7, r); b.position.set((j - k / 2) * 8 + rnd() * 4, rnd() * 3, rnd() * 8 - 4); n.add(b); }
+    n.position.set(-600 + rnd() * 1200, 95 + rnd() * 30, -500 + rnd() * 1000); n.userData.vel = 3 + rnd() * 3; nuvens.push(n); g.add(n);
+  }
+  const principais = new Set(['autodromo', 'arena-show', 'roda-gigante', 'centro-de-eventos', 'wake-park', 'portico-de-entrada', 'parque-da-familia', 'splash-parque', 'vila-das-nacoes', 'casa-cuiabana', 'perola-do-cerrado']);
+  if (!document.getElementById('estilo-nomes')) {
+    const st = document.createElement('style'); st.id = 'estilo-nomes';
+    st.textContent = '#markers.visao-geral .marker.secundario:not(.selected) .pin-name{display:none}#markers.visao-geral .marker.secundario:not(.selected) .pin-stem{opacity:.5}';
+    document.head.appendChild(st);
+  }
+  const marcar = () => document.querySelectorAll('#markers .marker').forEach(el => { if (!principais.has(el.dataset.id || '') && !el.classList.contains('parking-marker')) el.classList.add('secundario'); });
+  marcar(); atualizaCarros(agora());
+  let ultimo = agora(), visao = null;
+  iC.onBeforeRender = (renderer, sc, cam) => {
+    const t = agora(), dt = Math.min(t - ultimo, 0.1); ultimo = t;
+    atualizaCarros(t); atualizaWake(t);
+    nuvens.forEach(n => { n.position.x += n.userData.vel * dt; if (n.position.x > 650) n.position.x = -650; });
+    const geral = cam.isOrthographicCamera ? (cam.top - cam.bottom) / cam.zoom > 700 : cam.position.y > 420;
+    if (geral !== visao) { visao = geral; const mk = document.getElementById('markers'); if (mk) { marcar(); mk.classList.toggle('visao-geral', geral); } }
+  };
+  scene.add(g); return 1;
+}
+
 export function aplicarEspacosReais(scene, THREE) {
   let n = 0; const box = new THREE.Box3(), c = new THREE.Vector3(); let tri = null;
   // Casa Cuiabana: laje plana atrás da platibanda, sem cumeeiras de telha
@@ -408,6 +466,7 @@ export function aplicarEspacosReais(scene, THREE) {
   n += construirSplash(scene, THREE);
   n += construirArenas(scene, THREE);
   n += construirAgro(scene, THREE);
+  n += adicionarVida(scene, THREE);
   return n;
 }
 
