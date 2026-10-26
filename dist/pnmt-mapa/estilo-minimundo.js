@@ -18,11 +18,15 @@ const PALETA = {
 
 // grupo (regex sobre o ancestral nomeado mais alto) | mesh.name OU cor original (#hex) | nova cor
 const RECOLORIR = [
-  [/Casa Cuiabana/, 'Lazer · clay-tile', '#b94a33'],
-  [/Casa Cuiabana/, 'Lazer · clay-ridge', '#8f3626'],
-  [/Casa Cuiabana/, 'Lazer · wood', '#b0342a'],
-  [/Casa Cuiabana/, 'Lazer · cream', '#f3ead8'],
-  [/Casa Cuiabana/, 'Lazer · ochre', '#efe6d2'],
+  // Casa Cuiabana conforme drone de out/2026: paredes amarelo claro, faixa ouro, molduras brancas, madeira, laje clara
+  [/Casa Cuiabana/, 'Lazer · cream', '#f2e3a0'],
+  [/Casa Cuiabana/, 'Lazer · ochre', '#d9a92a'],
+  [/Casa Cuiabana/, 'Lazer · paint-white', '#f6f4ee'],
+  [/Casa Cuiabana/, 'Lazer · wood', '#b5763c'],
+  [/Casa Cuiabana/, 'Lazer · glass', '#c99a5e'],
+  [/Casa Cuiabana/, 'Lazer · clay-tile', '#cfcbc1'],
+  [/Casa Cuiabana/, 'Lazer · stone', '#bdb4a3'],
+  [/Casa Cuiabana/, 'Lazer · stone-dark', '#8a7f6e'],
   [/Autódromo · pista/, 'Autódromo · runoff', '#2b7fc4'],
   [/Autódromo · pista/, 'Autódromo · kerbGreen', '#cc3a2e'],
   [/Autódromo · pista/, 'Autódromo · kerbWhite', '#f4f1ea'],
@@ -35,11 +39,14 @@ const RECOLORIR = [
   [/Roda-gigante/, 'Lazer · steel', '#d83a2b'],
   [/Roda-gigante/, 'Lazer · dark', '#d9d3dd'],
   [/Roda-gigante/, 'Lazer · paint-white', '#f4f1f6'],
-  [/Pórtico/, '#d9dfdd', '#f3f3ee'],
-  [/Pórtico/, '#69777c', '#b58fd6'],
+  // Pórtico conforme drone: cascas brancas com nervuras cinza claro
+  [/Pórtico/, '#d9dfdd', '#f4f4f0'],
+  [/Pórtico/, '#69777c', '#b8bdc1'],
   [/Motocross/, '#9a7554', '#b2552c'],
   [/Skate Park/, '#639ab7', '#2f86c9'],
-  [/Cobertura Branca Ondulada/, 'Cobertura Branca Ondulada', '#f6f6f2'],
+  [/Cobertura Branca Ondulada/, 'Cobertura Branca Ondulada', '#dcdedb'],
+  // Parque da Família conforme drone: piso laranja, azul, verde e cinza; toldos azul claro, verde água e laranja
+  ...[['#1565c0','#3b74b6'],['#0d47a1','#2f62a3'],['#1976d2','#4a86c4'],['#f57c00','#de7a3e'],['#ef6c00','#de7a3e'],['#fb8c00','#e99760'],['#2e7d32','#2f9058'],['#43a047','#3ea56a'],['#388e3c','#2f9058'],['#81c784','#93c9b3'],['#0288d1','#86b6d9'],['#29b6f6','#86b6d9'],['#263238','#2b2e33'],['#37474f','#8f949a'],['#d7d4cc','#9da1a6']].map(([a, b]) => [/Parque da Família/, a, b]),
   [/paisagismo/, 'Parque · flowerBeds', '#5aa83a'],
 ];
 
@@ -102,6 +109,306 @@ function contornoDaIlha(geo) {
     if (laco.length > melhor.length) melhor = laco;
   }
   return melhor.length >= 8 ? melhor.map(i => pontos[i]) : null;
+}
+
+// Espaços sem grupo nomeado: identificados pela posição no mapa (centro x,z e raio) + cor original.
+const POR_POSICAO = [
+  // Arena Show: fachada cinza
+  { x: -141, z: -128, r: 80, cor: '#639fc0', nova: '#6a6f74' },
+  // Árvore da Vida: fuste em concreto claro
+  { x: -337, z: 28, r: 12, cor: '#163d44', nova: '#e6e4de' },
+  // Splash Parque (render do projeto): guarda-sóis amarelos com miolo laranja, piscina azul clara
+  { x: -382.5, z: 64.9, r: 45, cor: '#d79152', nova: '#f2bf2e' },
+  { x: -382.5, z: 64.9, r: 45, cor: '#c06940', nova: '#e0662f' },
+  { x: -382.5, z: 64.9, r: 45, cor: '#e4bb54', nova: '#f2bf2e' },
+  { x: -382.5, z: 64.9, r: 45, cor: '#dfb65e', nova: '#f6c93c' },
+  { x: -382.5, z: 64.9, r: 45, cor: '#80b8b7', nova: '#a7dcea' },
+  { x: -382.5, z: 64.9, r: 45, cor: '#478f9d', nova: '#62bcd8' },
+  { x: -382.5, z: 64.9, r: 45, cor: '#b8af8d', nova: '#d8dde2' },
+  // Arenas Beach (render): cobertura cinza grafite, arquibancada branca, areia clara
+  { x: -419, z: -264, r: 45, cor: '#182026', nova: '#5a6066' },
+  { x: -419, z: -264, r: 45, cor: '#acbdc3', nova: '#f2f2ef' },
+  { x: -419, z: -264, r: 45, cor: '#e2cc9b', nova: '#e9d29c' },
+  // AgroPlace: miolo escuro atrás das lâminas
+  { x: -222, z: 131, r: 25, cor: '#52777a', nova: '#5b5f63' },
+  { x: -222, z: 131, r: 25, cor: '#71928e', nova: '#5b5f63' },
+];
+
+function texturaTriangulos(THREE) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128;
+  const g = cv.getContext('2d'); const cores = ['#1c1e21', '#3a3d42', '#5e6268', '#8d9197', '#c3c6ca', '#eeeeec'];
+  let seed = 11; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const w = 32, h = 32;
+  for (let y = 0; y < 128; y += h) {
+    for (let x = -w; x < 512 + w; x += w / 2) {
+      const up = ((x / (w / 2)) + (y / h)) % 2 === 0;
+      g.fillStyle = cores[Math.floor(rnd() * cores.length)]; g.beginPath();
+      if (up) { g.moveTo(x, y + h); g.lineTo(x + w / 2, y); g.lineTo(x + w, y + h); }
+      else { g.moveTo(x, y); g.lineTo(x + w, y); g.lineTo(x + w / 2, y + h); }
+      g.closePath(); g.fill();
+    }
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4;
+  return t;
+}
+
+// Escamas da cobertura da Pérola do Cerrado (render do projeto): brancas com miolo vermelho, amarelo, azul e laranja.
+function texturaPetalas(THREE) {
+  const S = 512, cv = document.createElement('canvas'); cv.width = cv.height = S;
+  const g = cv.getContext('2d'); g.fillStyle = '#d9d4c8'; g.fillRect(0, 0, S, S);
+  const acc = ['#c8372b', '#e3a92a', '#2f62a8', '#d9772b', '#c8372b', '#e3a92a'];
+  let seed = 5; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const n = 4, cw = S / n, ch = S / n;
+  for (let r = -1; r <= n; r++) {
+    for (let c = -1; c <= n; c++) {
+      const x = c * cw + (r % 2 ? cw / 2 : 0), y = r * ch;
+      g.save(); g.translate(x + cw / 2, y + ch * 0.15);
+      g.beginPath(); g.moveTo(-cw * 0.55, 0); g.quadraticCurveTo(-cw * 0.55, ch * 1.05, 0, ch * 1.15); g.quadraticCurveTo(cw * 0.55, ch * 1.05, cw * 0.55, 0); g.closePath();
+      g.fillStyle = '#f6f4ee'; g.fill(); g.strokeStyle = '#b9b3a6'; g.lineWidth = 3; g.stroke();
+      g.beginPath(); g.moveTo(-cw * 0.38, ch * 0.35); g.quadraticCurveTo(-cw * 0.3, ch * 0.95, 0, ch * 1.05); g.quadraticCurveTo(cw * 0.3, ch * 0.95, cw * 0.38, ch * 0.35); g.quadraticCurveTo(0, ch * 0.62, -cw * 0.38, ch * 0.35);
+      g.fillStyle = acc[Math.floor(rnd() * acc.length)]; g.fill(); g.restore();
+    }
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(0.38, 0.38); t.anisotropy = 4;
+  return t;
+}
+
+// Piso da orla da Vila das Nações (drone): faixas largas claras com faixas cinza.
+function texturaFaixas(THREE) {
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 128;
+  const g = cv.getContext('2d'); g.fillStyle = '#dcd9d2'; g.fillRect(0, 0, 64, 128);
+  g.fillStyle = '#a3a3a1'; g.fillRect(0, 88, 64, 28); g.fillStyle = '#c9c6bf'; g.fillRect(0, 0, 64, 6);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1, 1.1);
+  return t;
+}
+
+// Pórtico (drone out/2026 + render): duas cascas de nervuras brancas que nascem juntas no canteiro central
+// e abrem em leque até a borda de cada pista; canteiro em forma de oito com meio-fio branco e flores.
+function construirPortico(scene, THREE) {
+  const antigos = []; scene.traverse(o => { if (o.isMesh && /Pórtico/.test(grupoDe(o, scene))) antigos.push(o); });
+  if (!antigos.length) return 0;
+  antigos.forEach(o => { o.visible = false; });
+  const g = new THREE.Group(); g.name = 'Pórtico · cascas em nervuras';
+  const C = new THREE.Vector2(303, 398);
+  const m = new THREE.Vector2(0.919, 0.393).normalize();
+  const branco = new THREE.MeshStandardMaterial({ color: '#f2f2ee', roughness: 0.7 });
+  const arcos = [new THREE.Vector2(321, 387), new THREE.Vector2(301.5, 417)];
+  const N = 9;
+  for (const O of arcos) {
+    const H = O.distanceTo(C) * 0.62; const ribs = [];
+    for (let k = 0; k < N; k++) {
+      const f = k - (N - 1) / 2;
+      const c0 = C.clone().addScaledVector(m, f * 0.55), o0 = O.clone().addScaledVector(m, f * 2.7);
+      const pts = []; for (let i = 0; i <= 24; i++) { const t = i / 24; const p = c0.clone().lerp(o0, t); pts.push(new THREE.Vector3(p.x, H * Math.sin(Math.PI * t) + 0.1, p.y)); }
+      ribs.push(pts);
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 40, 0.26, 6, false), branco));
+    }
+    for (const t of [0.12, 0.25, 0.38, 0.5, 0.62, 0.75, 0.88]) {
+      const i = Math.round(t * 24);
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ribs.map(r => r[i])), 24, 0.16, 5, false), branco));
+    }
+  }
+  const perp = new THREE.Vector2(-m.y, m.x);
+  const elipse = (cx, cz, a, b, y, r) => {
+    const pts = []; for (let i = 0; i < 64; i++) { const ang = i / 64 * Math.PI * 2; const p = new THREE.Vector2(cx, cz).addScaledVector(m, Math.cos(ang) * a).addScaledVector(perp, Math.sin(ang) * b); pts.push(new THREE.Vector3(p.x, y, p.y)); }
+    return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 96, r, 5, true), branco);
+  };
+  const disco = (cx, cz, a, b, y, cor) => {
+    const geo = new THREE.CircleGeometry(1, 40); geo.rotateX(-Math.PI / 2);
+    const d = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: cor, roughness: 1 }));
+    d.scale.set(a, 1, b); d.position.set(cx, y, cz); d.rotation.y = -Math.atan2(m.y, m.x); return d;
+  };
+  for (const sgn of [-1, 1]) {
+    const c = C.clone().addScaledVector(m, sgn * 4.8);
+    g.add(elipse(c.x, c.y, 5, 1.5, 0.3, 0.24)); g.add(elipse(c.x, c.y, 3.2, 0.85, 0.28, 0.18));
+    g.add(disco(c.x, c.y, 4.8, 1.35, 0.2, '#3f8f3a')); g.add(disco(c.x, c.y, 3, 0.7, 0.24, '#c8452f'));
+  }
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(g); return 1;
+}
+
+// Praça de Alimentação (drone out/2026 + render): volume oval de um pavimento sobre pilotis,
+// fachada contínua de triângulos preto, cinza e branco e cobertura branca de borda arredondada.
+function construirPraca(scene, THREE) {
+  const cx = -290, cz = 3, L = 44, W = 26, R = W / 2, reta = L - W;
+  const box = new THREE.Box3(), c = new THREE.Vector3(), sz = new THREE.Vector3(); let n = 0;
+  scene.traverse(o => {
+    if (!o.isMesh || o.isInstancedMesh || !o.visible) return;
+    box.setFromObject(o); box.getCenter(c); box.getSize(sz);
+    if (Math.hypot(c.x - cx, c.z - cz) > 26 || sz.x > 80 || (sz.x < 15 && sz.z < 15)) return;
+    if (box.max.y > 2.5) { o.visible = false; n++; }
+  });
+  if (!n) return 0;
+  const g = new THREE.Group(); g.name = 'Praça de Alimentação · volume oval';
+  const contorno = (inset, k = 120) => {
+    const pts = []; const r = R - inset, hx = reta / 2; const per = 2 * reta + 2 * Math.PI * r;
+    for (let i = 0; i < k; i++) {
+      let d = i / k * per, p;
+      if (d < reta) p = [-hx + d, -r];
+      else if ((d -= reta) < Math.PI * r) { const a = -Math.PI / 2 + d / r; p = [hx + Math.cos(a) * r, Math.sin(a) * r]; }
+      else if ((d -= Math.PI * r) < reta) p = [hx - d, r];
+      else { d -= reta; const a = Math.PI / 2 + d / r; p = [-hx + Math.cos(a) * r, Math.sin(a) * r]; }
+      pts.push(p);
+    }
+    return pts;
+  };
+  const anel = (inset, y0, y1, mat, uvU, uvV) => {
+    const pts = contorno(inset); pts.push(pts[0]);
+    const pos = [], uv = [], idx = []; let acc = 0;
+    for (let i = 0; i < pts.length; i++) {
+      if (i > 0) acc += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+      const x = cx + pts[i][0], z = cz + pts[i][1];
+      pos.push(x, y0, z, x, y1, z); uv.push(acc / uvU, 0, acc / uvU, (y1 - y0) / uvV);
+      if (i > 0) { const a = (i - 1) * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx); geo.computeVertexNormals(); return new THREE.Mesh(geo, mat);
+  };
+  g.add(anel(0, 2.4, 8.1, new THREE.MeshStandardMaterial({ map: texturaTriangulos(THREE), roughness: 0.75, side: THREE.DoubleSide }), 24, 5.8));
+  g.add(anel(1.4, 0.2, 2.4, new THREE.MeshStandardMaterial({ color: '#3b4045', roughness: 0.6, side: THREE.DoubleSide }), 10, 10));
+  const colGeo = new THREE.CylinderGeometry(0.35, 0.35, 2.2, 8); const claro = new THREE.MeshStandardMaterial({ color: '#e8e8e4', roughness: 0.8 });
+  contorno(0.6, 28).forEach(p => { const col = new THREE.Mesh(colGeo, claro); col.position.set(cx + p[0], 1.3, cz + p[1]); g.add(col); });
+  const laje = new THREE.ExtrudeGeometry(new THREE.Shape(contorno(0, 96).map(p => new THREE.Vector2(p[0], p[1]))), { depth: 0.3, bevelEnabled: false });
+  laje.rotateX(Math.PI / 2); const mLaje = new THREE.Mesh(laje, claro); mLaje.position.set(cx, 2.45, cz); g.add(mLaje);
+  const cob = new THREE.ExtrudeGeometry(new THREE.Shape(contorno(-0.3, 96).map(p => new THREE.Vector2(p[0], p[1]))), { depth: 0.35, bevelEnabled: true, bevelThickness: 0.45, bevelSize: 0.45, bevelSegments: 3, curveSegments: 24 });
+  cob.rotateX(Math.PI / 2); const mCob = new THREE.Mesh(cob, new THREE.MeshStandardMaterial({ color: '#f3f3f0', roughness: 0.85 })); mCob.position.set(cx, 8.75, cz); g.add(mCob);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(g); return 1;
+}
+
+// Splash Parque (render do projeto): torre treliçada Tcha Bum com dois toboáguas laranja
+// e a escultura de ondas amarela e azul na entrada, do lado da Pérola do Cerrado.
+function construirSplash(scene, THREE) {
+  const C = new THREE.Vector2(-382.5, 64.9), d = new THREE.Vector2(0.438, 0.899), q = new THREE.Vector2(-0.899, 0.438);
+  const P = (t, u) => C.clone().addScaledVector(d, t).addScaledVector(q, u);
+  const g = new THREE.Group(); g.name = 'Splash Parque · torre Tcha Bum, toboáguas e onda';
+  const base = P(27, 7), H = 36, L = 4.4, ang = Math.atan2(d.x, d.y);
+  const aco = new THREE.MeshStandardMaterial({ color: '#a9afb5', roughness: 0.55, metalness: 0.25 });
+  const mats = []; const tmp = new THREE.Object3D();
+  const barra = (a, b, esp) => { tmp.position.copy(a).add(b).multiplyScalar(0.5); tmp.lookAt(b); tmp.scale.set(esp, esp, a.distanceTo(b)); tmp.updateMatrix(); mats.push(tmp.matrix.clone()); };
+  const canto = (i, y) => {
+    const lx = ((i === 0 || i === 3) ? -1 : 1) * L / 2, lz = (i < 2 ? -1 : 1) * L / 2;
+    return new THREE.Vector3(base.x + lx * Math.cos(ang) + lz * Math.sin(ang), y, base.y - lx * Math.sin(ang) + lz * Math.cos(ang));
+  };
+  for (let i = 0; i < 4; i++) barra(canto(i, 1), canto(i, H), 0.35);
+  for (let y = 1; y <= H; y += 3) {
+    for (let i = 0; i < 4; i++) {
+      barra(canto(i, y), canto((i + 1) % 4, y), 0.2);
+      if (y + 3 <= H) { barra(canto(i, y), canto((i + 1) % 4, y + 3), 0.12); barra(canto((i + 1) % 4, y), canto(i, y + 3), 0.12); }
+    }
+  }
+  const trelica = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), aco, mats.length);
+  mats.forEach((m, i) => trelica.setMatrixAt(i, m)); trelica.instanceMatrix.needsUpdate = true; g.add(trelica);
+  const laje = (y, cor) => { const m = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.45, 6.5), new THREE.MeshStandardMaterial({ color: cor, roughness: 0.7 })); m.position.set(base.x, y, base.y); m.rotation.y = ang; g.add(m); };
+  laje(H + 0.2, '#d9dde0'); laje(H + 3.2, '#f1f1ee');
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 512; const cx = cv.getContext('2d');
+  cx.fillStyle = '#1f5fa8'; cx.fillRect(0, 0, 256, 512); cx.fillStyle = '#58b6e6'; cx.beginPath(); cx.arc(128, 110, 80, 0, Math.PI * 2); cx.fill();
+  cx.fillStyle = '#f39a1e'; cx.font = 'bold 92px Arial Black, Arial, sans-serif'; cx.textAlign = 'center'; cx.fillText('TCHA', 128, 300); cx.fillText('BUM', 128, 410);
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const placa = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 7.2), new THREE.MeshStandardMaterial({ map: tx, roughness: 0.6, side: THREE.DoubleSide }));
+  const frente = P(27 - L / 2 - 0.4, 7); placa.position.set(frente.x, H - 6, frente.y); placa.rotation.y = Math.atan2(-d.x, -d.y); g.add(placa);
+  const laranja = new THREE.MeshStandardMaterial({ color: '#f07a1a', roughness: 0.45 });
+  const pilar = new THREE.CylinderGeometry(0.18, 0.18, 1, 6);
+  const tobo = pts => {
+    const curva = new THREE.CatmullRomCurve3(pts.map(([t, u, y]) => { const p = P(t, u); return new THREE.Vector3(p.x, y, p.y); }));
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(curva, 90, 0.75, 10, false), laranja));
+    for (let i = 1; i < 10; i++) { const p = curva.getPoint(i / 10); if (p.y < 3) continue; const c = new THREE.Mesh(pilar, aco); c.scale.y = p.y - 1; c.position.set(p.x, (p.y + 1) / 2, p.z); g.add(c); }
+  };
+  tobo([[25, 7, H - 0.5], [20, 10, H - 6], [12, 12, 26], [4, 11, 17], [-4, 8, 9], [-10, 5, 3.5], [-14, 3, 1.4]]);
+  tobo([[25, 5, H - 4], [20, 2, 28], [13, 0, 21], [7, -1, 13], [1, 0, 6], [-4, 1, 2.2], [-7, 1, 1.4]]);
+  const onda = (cor, fase, dt, r) => {
+    const pts = []; for (let i = 0; i <= 80; i++) { const k = i / 80; const p = P(-36 + k * 26, -19 + dt); pts.push(new THREE.Vector3(p.x, 1.4 + 2.6 * (1 + Math.sin(k * Math.PI * 4 + fase)), p.y)); }
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, r, 10, false), new THREE.MeshStandardMaterial({ color: cor, roughness: 0.5 })));
+  };
+  onda('#f2b632', 0, 0, 0.7); onda('#2f86c9', 0.5, 0.9, 0.55); onda('#56c0d8', 1.0, -0.9, 0.4);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(g); return 1;
+}
+
+// Arenas Beach (render + drone): marcação branca das quatro quadras de areia na beira do lago.
+function construirArenas(scene, THREE) {
+  const C = new THREE.Vector2(-419, -264), d = new THREE.Vector2(0.426, -0.905), q = new THREE.Vector2(0.905, 0.426), y0 = 1.72;
+  const g = new THREE.Group(); g.name = 'Arenas Beach · marcação das quadras';
+  const branco = new THREE.MeshStandardMaterial({ color: '#f7f7f4', roughness: 0.8 }); const ang = Math.atan2(d.x, d.y);
+  const faixa = (t, u, lt, lu) => { const p = C.clone().addScaledVector(d, t).addScaledVector(q, u); const m = new THREE.Mesh(new THREE.BoxGeometry(lu, 0.04, lt), branco); m.position.set(p.x, y0, p.y); m.rotation.y = ang; g.add(m); };
+  for (const tc of [-22.5, -7.5, 7.5, 22.5]) {
+    const LT = 8.5, LU = 13, e = 0.18;
+    faixa(tc - LT / 2, 0, e, LU); faixa(tc + LT / 2, 0, e, LU); faixa(tc, -LU / 2, LT, e); faixa(tc, LU / 2, LT, e);
+  }
+  scene.add(g); return 1;
+}
+
+// AgroPlace (render do projeto): cilindro revestido de lâminas verticais claras, com a fachada da entrada em verde.
+function construirAgro(scene, THREE) {
+  const cx = -222, cz = 131, R = 18.4, y0 = 1, y1 = 16.6, N = 110;
+  const box = new THREE.Box3(), c = new THREE.Vector3();
+  scene.traverse(o => {
+    if (!o.isMesh || o.isInstancedMesh || !o.material || Array.isArray(o.material) || !o.material.map) return;
+    box.setFromObject(o); box.getCenter(c);
+    if (Math.hypot(c.x - cx, c.z - cz) < 25 && box.max.y > 15 && box.min.y > 6) { const nm = o.material.clone(); nm.map = null; nm.color.set('#f2f2ef'); nm.needsUpdate = true; o.material = nm; }
+  });
+  const g = new THREE.Group(); g.name = 'AgroPlace · lâminas verticais';
+  const geo = new THREE.BoxGeometry(0.4, y1 - y0, 1.1); const tmp = new THREE.Object3D();
+  const bege = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: '#d6cdbb', roughness: 0.75 }), N);
+  const verde = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: '#3fbf5a', roughness: 0.5, emissive: '#1f8a33', emissiveIntensity: 0.35 }), N);
+  let nb = 0, nv = 0;
+  for (let i = 0; i < N; i++) {
+    const a = i / N * Math.PI * 2;
+    tmp.position.set(cx + Math.sin(a) * R, (y0 + y1) / 2, cz + Math.cos(a) * R); tmp.rotation.y = a; tmp.updateMatrix();
+    if (Math.abs(((a + Math.PI) % (2 * Math.PI)) - Math.PI) < 0.9) verde.setMatrixAt(nv++, tmp.matrix); else bege.setMatrixAt(nb++, tmp.matrix);
+  }
+  bege.count = nb; verde.count = nv; bege.instanceMatrix.needsUpdate = true; verde.instanceMatrix.needsUpdate = true;
+  bege.castShadow = verde.castShadow = true; g.add(bege); g.add(verde);
+  scene.add(g); return 1;
+}
+
+export function aplicarEspacosReais(scene, THREE) {
+  let n = 0; const box = new THREE.Box3(), c = new THREE.Vector3(); let tri = null;
+  // Casa Cuiabana: laje plana atrás da platibanda, sem cumeeiras de telha
+  scene.traverse(o => { if (o.name === 'Lazer · clay-ridge' && /Casa Cuiabana/.test(grupoDe(o, scene))) { o.visible = false; n++; } });
+  const alvos = [];
+  scene.traverse(o => { if (o.isMesh && !o.isInstancedMesh && o.material && !Array.isArray(o.material) && o.material.color) alvos.push(o); });
+  for (const o of alvos) {
+    const m = o.material; const original = m.userData.corOriginal || m.color.getHexString();
+    box.setFromObject(o); box.getCenter(c);
+    for (const regra of POR_POSICAO) {
+      if (Math.hypot(c.x - regra.x, c.z - regra.z) > regra.r) continue;
+      const bate = regra.cor === 'ffffff-com-textura'
+        ? (m.map && original === 'ffffff' && !m.userData.texturaNova)
+        : original === regra.cor.slice(1);
+      if (!bate) continue;
+      const nm = m.clone(); nm.userData = { corOriginal: original };
+      limparMapas(nm); nm.vertexColors = false; nm.color.set(regra.nova); nm.roughness = 0.85; nm.metalness = 0; nm.envMapIntensity = 0.25;
+      if (regra.textura === 'triangulos') { tri = tri || texturaTriangulos(THREE); nm.map = tri; nm.userData.texturaNova = true; }
+      o.material = nm; n++; break;
+    }
+  }
+  // Pérola do Cerrado: casca de escamas conforme o render do projeto
+  let petalas = null;
+  for (const o of alvos) {
+    const m = o.material; if (!m.map || (m.userData.corOriginal || '') !== 'ffffff') continue;
+    box.setFromObject(o); box.getCenter(c);
+    if (Math.hypot(c.x + 402, c.z + 12) > 30 || c.y < 8) continue;
+    petalas = petalas || texturaPetalas(THREE);
+    const nm = m.clone(); nm.userData = { corOriginal: 'ffffff' }; nm.map = petalas; nm.color.set('#ffffff'); nm.roughness = 0.7; nm.needsUpdate = true;
+    o.material = nm; n++;
+  }
+  // Vila das Nações: piso da orla em faixas
+  let faixas = null;
+  for (const o of alvos) {
+    const m = o.material; if ((m.userData.corOriginal || '') !== 'ded9cf' || !/Vila das Nações/.test(grupoDe(o, scene))) continue;
+    box.setFromObject(o); if (box.max.x - box.min.x < 80) continue;
+    faixas = faixas || texturaFaixas(THREE);
+    const nm = m.clone(); nm.userData = { corOriginal: 'ded9cf' }; nm.map = faixas; nm.color.set('#ffffff'); nm.needsUpdate = true;
+    o.material = nm; n++;
+  }
+  n += construirPortico(scene, THREE);
+  n += construirPraca(scene, THREE);
+  n += construirSplash(scene, THREE);
+  n += construirArenas(scene, THREE);
+  n += construirAgro(scene, THREE);
+  return n;
 }
 
 export function aplicarEstiloMinimundo(scene, renderer, THREE) {
@@ -231,8 +538,9 @@ export function aplicarEstiloMinimundo(scene, renderer, THREE) {
       o.material = nm; break;
     }
   });
+  aplicarEspacosReais(scene, THREE);
   if (torre) {
-    const nm = torre.material.clone(); nm.color.set('#2aa7c9'); nm.emissive.set('#1b6f9a'); nm.emissiveIntensity = 0.25; nm.roughness = 0.6;
+    const nm = torre.material.clone(); nm.color.set('#eeece6'); nm.roughness = 0.85; // Árvore da Vida: hoje em concreto branco (drone out/2026)
     torre.material = nm;
   }
 
