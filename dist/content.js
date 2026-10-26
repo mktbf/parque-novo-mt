@@ -7,7 +7,8 @@ window.PNMT_CONTENT = {
       "id": "portico-de-entrada",
       "name": "Pórtico de Entrada",
       "category": "Experiências",
-      "image": "assets/gallery/portico-de-entrada-01.jpg",
+      "image": "assets/gallery/imported_1791753367619_lotes_dji_20261010093657_0078_d_tratada.jpg",
+      "credit": "Foto de drone, outubro de 2026",
       "tagline": "O voo do tuiuiú recebe o mundo.",
       "text": [
         "Inspirado no voo do tuiuiú, ave símbolo do Pantanal, o Pórtico de Entrada é um marco arquitetônico que transforma a recepção em um espetáculo. Com uma estrutura coberta de 580 m² e paisagismo sofisticado, o espaço celebra a fauna local e dá as boas-vindas.",
@@ -336,7 +337,8 @@ window.PNMT_CONTENT = {
       "id": "parque-da-familia",
       "name": "Parque da Família",
       "category": "Família",
-      "image": "assets/gallery/parque-da-familia-01.jpg",
+      "image": "assets/gallery/imported_1791753367322_lotes_dji_20261010082530_0019_d_tratada.jpg",
+      "credit": "Foto de drone, outubro de 2026",
       "tagline": "Convivência e memória em família.",
       "text": [
         "Convivência, memórias inesquecíveis e muitos sorrisos. Em uma generosa área de 15.000 m², o Parque da Família é um destino de pura alegria.",
@@ -376,7 +378,8 @@ window.PNMT_CONTENT = {
       "id": "circo-do-futuro",
       "name": "Pérola do Cerrado & Circo do Futuro",
       "category": "Cultura",
-      "image": "assets/gallery/circo-do-futuro-01.jpg",
+      "image": "assets/gallery/imported_1791753367304_lotes_dji_20261010081321_0010_d_tratada.jpg",
+      "credit": "Foto de drone, outubro de 2026",
       "kind": "Imagem de referência da proposta",
       "tagline": "A tecnologia transformada em espetáculo.",
       "numbers": [
@@ -442,7 +445,8 @@ window.PNMT_CONTENT = {
       "id": "casa-cuiabana",
       "name": "Casa Cuiabana",
       "category": "Cultura",
-      "image": "assets/gallery/casa-cuiabana-01.jpg",
+      "image": "assets/gallery/imported_1791753367512_lotes_dji_20261010092243_0063_d_tratada.jpg",
+      "credit": "Foto de drone, outubro de 2026",
       "tagline": "A união entre tradição e modernidade.",
       "numbers": [
         [
@@ -472,7 +476,8 @@ window.PNMT_CONTENT = {
       "id": "vila-das-nacoes",
       "name": "Vila das Nações",
       "category": "Cultura",
-      "image": "assets/gallery/vila-das-nacoes-01.jpg",
+      "image": "assets/gallery/vila-das-nacoes-drone-out2026.jpg",
+      "credit": "Foto de drone, outubro de 2026",
       "tagline": "O mundo às margens do lago.",
       "text": [
         "Uma verdadeira viagem cultural e gastronômica ao redor do mundo. Ocupando suntuosos 27.000 m² nas margens do lago central, a Vila dá vida a belíssimas fachadas temáticas e ruas charmosas.",
@@ -491,7 +496,8 @@ window.PNMT_CONTENT = {
       "id": "praca-de-alimentacao",
       "name": "Praça de Alimentação",
       "category": "Convivência",
-      "image": "assets/gallery/praca-de-alimentacao-01.jpg",
+      "image": "assets/gallery/imported_1791753367395_lotes_dji_20261010082938_0027_d_tratada.jpg",
+      "credit": "Foto de drone, outubro de 2026",
       "tagline": "Gastronomia e bem-estar no coração do parque.",
       "numbers": [
         [
