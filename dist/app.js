@@ -2175,12 +2175,34 @@ function credits() {
       ['Outros assuntos', 'outros-assuntos', 'comercial fornecedores parcerias'],
     ].map(([name, id, extra]) => ({ name, id, category: 'Página', searchContent: extra }));
 
+    // Palavras que o visitante costuma digitar, ligadas a cada espaço
+    const sinonimos = {
+      'autodromo': 'corrida corridas automobilismo stock car formula truck nascar pista velocidade carro',
+      'arena-show': 'show shows musica palco festival cantor',
+      'parque-da-familia': 'crianca criancas infantil playground parquinho brinquedo familia',
+      'estrutura-e-acesso': 'estacionar estacionamento vaga vagas carro acesso entrada cavalaria policia',
+      'kartodromo': 'kart karting',
+      'splash-parque': 'piscina agua toboagua tobogã parque aquatico',
+      'wake-park': 'wakeboard esqui aquatico lago esporte na agua',
+      'skate-park': 'skate skatepark',
+      'bmx': 'bicicleta bike bicicross',
+      'motocross': 'moto motos trilha',
+      'roda-gigante': 'roda gigante vista mirante',
+      'centro-de-eventos': 'feira feiras congresso convencao exposicao pavilhao',
+      'agroplace': 'agro agronegocio feira agricola',
+      'vila-das-nacoes': 'paises cultura gastronomia internacional',
+      'praca-de-alimentacao': 'comida comer restaurante lanche alimentacao',
+      'museus': 'museu historia exposicao',
+      'casa-cuiabana': 'cuiaba cultura regional',
+      'arenas-beach': 'volei beach tennis futevolei areia praia',
+      'circo-do-futuro': 'circo teatro espetaculo perola',
+    };
     const spaceItems = data.spaces.map((s) => ({
       name: s.name,
       id: 'espaco/' + s.id,
       category: s.category,
       tagline: s.tagline,
-      searchContent: (s.text || []).join(' '),
+      searchContent: (s.text || []).join(' ') + ' ' + (sinonimos[s.id] || ''),
     }));
 
     const eventItems = data.events.map((e) => ({
