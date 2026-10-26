@@ -421,6 +421,49 @@ function adicionarVida(scene, THREE) {
   scene.add(g); return 1;
 }
 
+// Carros parados nos estacionamentos: lê as faixas brancas das vagas (4 vértices por faixa)
+// e estaciona um carrinho entre duas faixas vizinhas, em cerca de 4 de cada 10 vagas.
+function estacionarCarros(scene, THREE) {
+  let vagas = null; scene.traverse(o => { if (!vagas && o.isMesh && /parkingBays/.test(o.name)) vagas = o; });
+  if (!vagas) return 0;
+  vagas.updateMatrixWorld(true);
+  const pos = vagas.geometry.attributes.position, v = new THREE.Vector3(), faixas = [];
+  for (let i = 0; i + 3 < pos.count; i += 4) {
+    const q = [0, 1, 2, 3].map(k => v.fromBufferAttribute(pos, i + k).applyMatrix4(vagas.matrixWorld).clone());
+    const c = q.reduce((a, b) => a.add(b), new THREE.Vector3()).multiplyScalar(0.25);
+    let d = q[1].clone().sub(q[0]); if (q[2].distanceTo(q[1]) > d.length()) d = q[2].clone().sub(q[1]);
+    faixas.push({ c, d: d.clone().normalize(), len: d.length() });
+  }
+  let seed = 11; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const cores = ['#e8e8e6', '#2a2d31', '#b8bcc0', '#c0392b', '#1f4e8c', '#e8e8e6', '#7a7f85', '#d9a32b', '#f2f2ef'];
+  const lugares = [];
+  for (let i = 0; i + 1 < faixas.length; i++) {
+    const a = faixas[i], b = faixas[i + 1], dist = a.c.distanceTo(b.c);
+    if (dist < 0.6 || dist > 2.2 || a.len < 3 || rnd() > 0.42) continue;
+    lugares.push({ c: a.c.clone().add(b.c).multiplyScalar(0.5), ang: Math.atan2(a.d.x, a.d.z) + (rnd() < 0.5 ? Math.PI : 0), cor: cores[Math.floor(rnd() * cores.length)] });
+    i++; // pula a próxima faixa para dois carros não ocuparem a mesma vaga
+  }
+  if (!lugares.length) return 0;
+  const corpo = new THREE.BoxGeometry(1.05, 0.6, 2.3); corpo.translate(0, 0.3, 0);
+  const cabine = new THREE.BoxGeometry(0.95, 0.42, 1.2); cabine.translate(0, 0.8, -0.1);
+  const iC = new THREE.InstancedMesh(corpo, new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0.1 }), lugares.length);
+  const iV = new THREE.InstancedMesh(cabine, new THREE.MeshStandardMaterial({ color: '#20262c', roughness: 0.3 }), lugares.length);
+  const tmp = new THREE.Object3D();
+  lugares.forEach((l, i) => { tmp.position.set(l.c.x, l.c.y + 0.1, l.c.z); tmp.rotation.set(0, l.ang, 0); tmp.updateMatrix(); iC.setMatrixAt(i, tmp.matrix); iV.setMatrixAt(i, tmp.matrix); iC.setColorAt(i, new THREE.Color(l.cor)); });
+  iC.name = 'Carros parados · estacionamentos'; iV.name = 'Carros parados · cabines';
+  scene.add(iC); scene.add(iV); return lugares.length;
+}
+
+// Cor do fundo acompanha o horário escolhido (manhã, tarde, pôr do sol, noite).
+const FUNDO_POR_PERIODO = { manha: '#2f8556', tarde: '#1d5f3d', 'por-do-sol': '#6e4a2c', noite: '#0e2130' };
+function fundoPorPeriodo(chao) {
+  let ultimo = '';
+  chao.onBeforeRender = () => {
+    const p = new URLSearchParams(location.search).get('periodo') || 'tarde';
+    if (p !== ultimo) { ultimo = p; chao.material.color.set(FUNDO_POR_PERIODO[p] || FUNDO_POR_PERIODO.tarde); }
+  };
+}
+
 export function aplicarEspacosReais(scene, THREE) {
   let n = 0; const box = new THREE.Box3(), c = new THREE.Vector3(); let tri = null;
   // Casa Cuiabana: laje plana atrás da platibanda, sem cumeeiras de telha
@@ -467,6 +510,7 @@ export function aplicarEspacosReais(scene, THREE) {
   n += construirArenas(scene, THREE);
   n += construirAgro(scene, THREE);
   n += adicionarVida(scene, THREE);
+  window.__carrosParados = estacionarCarros(scene, THREE);
   return n;
 }
 
@@ -537,7 +581,7 @@ export function aplicarEstiloMinimundo(scene, renderer, THREE) {
   // 8. Fundo verde chapado da marca, sem céu
   if (chao) {
     chao.material = new THREE.MeshBasicMaterial({ color: PALETA.fundo, fog: false });
-    chao.receiveShadow = false; chao.scale.set(5, 1, 5);
+    chao.receiveShadow = false; chao.scale.set(5, 1, 5); fundoPorPeriodo(chao);
   }
   ceus.forEach(o => {
     o.visible = false;
