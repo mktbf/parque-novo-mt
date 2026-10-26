@@ -111,3 +111,8 @@ Object.assign(parkingHub,{category:'Acessos',mapMarker:false,zone:'Estacionament
 const entrance=places.find(p=>p.id==='portico-de-entrada');
 Object.assign(entrance,{category:'Acessos',searchAliases:['entrada principal','portao de entrada','acesso principal']});
 places.push(...parkingPlaces);
+// Complexo da Cavalaria da PM (Regimento de Policiamento Montado), na avenida de acesso antes do Pórtico.
+places.push({id:'cavalaria-pm',name:'Cavalaria da PM',category:'Acessos',position:[1053,979],height:8,number:places.length+1,url:null,
+ description:'Complexo do Regimento de Policiamento Montado da Polícia Militar (14.651 m²), na avenida de acesso, antes do Pórtico: picadeiro coberto, cocheiras e área administrativa. Garante tradição e policiamento ostensivo no parque.',
+ searchAliases:['cavalaria','policia montada','regimento montado','policiamento montado','pm'],relatedIds:['portico-de-entrada','estrutura-e-acesso'],
+ footprint:[[1105,1017],[989,966],[1017,905],[1133,956]]});

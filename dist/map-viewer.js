@@ -10,7 +10,7 @@
    container.replaceChildren(frame);
    this.onMessage=event=>{
     if(event.origin!==location.origin||event.source!==frame.contentWindow||event.data?.type!=='pnmt:navigate')return;
-    const id=event.data.id;if(!/^[a-z0-9-]+$/.test(id||''))return;
+    let id=event.data.id;if(!/^[a-z0-9-]+$/.test(id||''))return;id=({'perola-do-cerrado':'circo-do-futuro','cavalaria-pm':'estrutura-e-acesso'})[id]||id;
     if(window.PNMT_CONTENT?.spaces?.some(p=>p.id===id))location.hash='espaco/'+id;
    };
    window.addEventListener('message',this.onMessage);
