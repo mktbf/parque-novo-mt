@@ -326,7 +326,10 @@ class ParqueExplorer extends HTMLElement {
     // O cadastro do portal é a fonte das páginas disponíveis. Configura antes do primeiro clique.
     const currentSpaces = window.PNMT_CONTENT?.spaces;
     if (Array.isArray(currentSpaces)) {
-      this.configure({ routes: Object.fromEntries(currentSpaces.map(p => [p.id, '#espaco/' + p.id])) });
+      const routes = Object.fromEntries(currentSpaces.map(p => [p.id, '#espaco/' + p.id]));
+      const ids = new Set(currentSpaces.map(p => p.id));
+      for (const [mapa, pagina] of Object.entries({ 'perola-do-cerrado': 'circo-do-futuro', 'cavalaria-pm': 'estrutura-e-acesso' })) if (ids.has(pagina)) routes[mapa] = '#espaco/' + pagina;
+      this.configure({ routes });
     } else fetch(new URL('rotas.json', assets))
       .then((r) => {
         if (!r.ok) throw Error('Rotas indisponíveis');

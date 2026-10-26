@@ -18,6 +18,7 @@
   "agroplace": "#espaco/agroplace",
   "portico-de-entrada": "#espaco/portico-de-entrada",
   "estrutura-e-acesso": "#espaco/estrutura-e-acesso",
-  "perola-do-cerrado": null,
+  "perola-do-cerrado": "#espaco/circo-do-futuro",
+  "cavalaria-pm": "#espaco/estrutura-e-acesso",
   "motocross": "#espaco/motocross"
 }

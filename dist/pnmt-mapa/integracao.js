@@ -5,8 +5,14 @@ import './explore-parque.js?v=showcase-emons-20260918-1';
 // Não converte Circo do Futuro em Pérola do Cerrado por semelhança de nomes.
 const mapPages = fetch(new URL('./rotas.json?v=portal-ux-20260914-2', import.meta.url))
   .then(response => { if (!response.ok) throw Error('Rotas indisponíveis'); return response.json(); })
-  .then(routes => new Set(Object.entries(routes).filter(([id, route]) => route === '#espaco/' + id).map(([id]) => id)))
-  .catch(() => new Set());
+  .then(routes => {
+    // página do site -> ID no mapa (igual na maioria; a Pérola do Cerrado é a página circo-do-futuro)
+    const pages = new Map();
+    for (const [id, route] of Object.entries(routes)) if (route === '#espaco/' + id) pages.set(id, id);
+    for (const [id, route] of Object.entries(routes)) { const page = typeof route === 'string' ? route.replace('#espaco/', '') : ''; if (page && !pages.has(page)) pages.set(page, id); }
+    return pages;
+  })
+  .catch(() => new Map());
 
 async function insertMap() {
   const main = document.getElementById('main');
@@ -31,7 +37,7 @@ async function insertMap() {
   const block = document.createElement('pnmt-explore');
   block.id = space ? 'espaco-em-3d' : 'explore-o-parque';
   if (space) {
-    block.setAttribute('space-id', space.id);
+    block.setAttribute('space-id', (await mapPages).get(space.id) || space.id);
     block.setAttribute('space-name', space.name);
   }
   anchor.after(block);

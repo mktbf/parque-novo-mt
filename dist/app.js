@@ -848,7 +848,7 @@ async function updateAgenda() {
             <p style="color: #dce5ec; max-width: 620px; margin-top: 20px; font-size: 16px;">Jornalistas, ve&iacute;culos e produtores encontram aqui informa&ccedil;&otilde;es para contar essa hist&oacute;ria com precis&atilde;o.</p>
           </div>
           <div style="margin-bottom: 20px;">
-            <a href="#assessoria" class="button" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;">Pauta, entrevista e credenciamento &nearr;</a>
+            <button type="button" class="button" onclick="document.getElementById('assessoria').scrollIntoView({behavior:'smooth'})" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;">Pauta, entrevista e credenciamento &nearr;</button>
           </div>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
@@ -1800,7 +1800,7 @@ async function updateAgenda() {
 function credits() {
     return (
       intro('Créditos e informações.', 'As referências que dão forma a este site.', 'Créditos') +
-      `<section class="wrap credits-list"><article><h3>Identidade e conteúdo</h3><p>Manual de Aplicação da Marca PNMT, PNMT_Textos_Site_Completo e proposta de layout fornecidos pelo parque. Logos preservados a partir do manual. Informações sinalizadas para confirmação no documento original foram retiradas do texto público até validação.</p></article><article><h3>Fotografias do autódromo</h3><p>Vista do circuito: Secom-MT. Corrida noturna: Mayke Toscano / Secom-MT. Registros de novembro de 2025.</p>${data.gallery.filter((g) => g.source).map((g) => `<p>${external(g.source, g.title)}</p>`).join('')}<p>O crédito não substitui autorização de uso. Consulte os responsáveis pelos arquivos para republicação.</p></article><article><h3>Imagens da proposta</h3><p>Vista aérea, pórtico e demais imagens foram fornecidos na proposta PNMT. Perspectivas e referências estão identificadas e não representam necessariamente o estágio atual das obras.</p></article><article><h3>Vídeo de apresentação</h3><p>Parque Novo Mato Grosso, canal oficial no YouTube.</p>${external('https://www.youtube.com/watch?v=' + config.videoId, 'Assistir ao vídeo')}</article><article><h3>Formulários nesta versão</h3><p>As solicitações podem ser preenchidas e preparadas para envio. Enquanto não houver conexão com o atendimento do parque, nenhum dado é transmitido e nenhum agendamento ou cadastro de avisos é confirmado.</p></article></section>`
+      `<section class="wrap credits-list"><article><h3>Identidade e conteúdo</h3><p>Manual de Aplicação da Marca PNMT, PNMT_Textos_Site_Completo e proposta de layout fornecidos pelo parque. Logos preservados a partir do manual. Informações sinalizadas para confirmação no documento original foram retiradas do texto público até validação.</p></article><article><h3>Fotografias do autódromo</h3><p>Vista do circuito: Secom-MT. Corrida noturna: Mayke Toscano / Secom-MT. Registros de novembro de 2025.</p>${data.gallery.filter((g) => g.source).map((g) => `<p>${external(g.source, g.title)}</p>`).join('')}<p>O crédito não substitui autorização de uso. Consulte os responsáveis pelos arquivos para republicação.</p></article><article><h3>Imagens da proposta</h3><p>Vista aérea, pórtico e demais imagens foram fornecidos na proposta PNMT. Perspectivas e referências estão identificadas e não representam necessariamente o estágio atual das obras.</p></article><article><h3>Vídeo de apresentação</h3><p>Parque Novo Mato Grosso, canal oficial no YouTube.</p>${external('https://www.youtube.com/watch?v=' + config.videoId, 'Assistir ao vídeo')}</article><article><h3>Formulários</h3><p>As solicitações enviadas pelos formulários chegam à equipe do parque. Visitas, eventos e credenciamentos só ficam confirmados depois do retorno da equipe.</p></article></section>`
     );
   }
 
@@ -1897,7 +1897,7 @@ function credits() {
 
     main.innerHTML = html;
     document.body.dataset.route = route;
-    document.title = `${titles[route] || byId(route.split('/')[1])?.name || 'Parque'} | Parque Novo Mato Grosso`;
+    document.title = `${titles[route] || (route.startsWith('noticia/') ? data.news?.find((x) => x.id === route.split('/')[1])?.title : '') || byId(route.split('/')[1])?.name || 'Parque'} | Parque Novo Mato Grosso`;
 
     nav.querySelectorAll('a').forEach((a) => {
       a.removeAttribute('aria-current');
