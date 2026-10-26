@@ -327,7 +327,7 @@
     '<label class="field">' + label + (isRequired ? ' *' : ' <small style="font-weight:400;opacity:0.75">(opcional)</small>') + (options ? '<select name="' + name + '"' + (isRequired ? ' required' : '') + '><option value="">Selecione</option>' + options.map(o => '<option value="' + esc(typeof o === 'string' ? o : o.id) + '" ' + (state.selectedSpace === (o.id || o) ? 'selected' : '') + '>' + (typeof o === 'string' ? o : o.name) + '</option>').join('') + '</select>' : type === 'textarea' ? '<textarea name="' + name + '"' + (isRequired ? ' required' : '') + ' maxlength="4000"></textarea>' : '<input name="' + name + '" type="' + type + '"' + (isRequired ? ' required' : '') + (type === 'date' ? ' min="' + today() + '"' : '') + (type === 'number' ? ' min="1" max="1000000"' : type === 'tel' ? ' autocomplete="tel" minlength="8" maxlength="25"' : type === 'email' ? ' autocomplete="email" maxlength="254"' : type === 'file' ? ' accept="' + extraAttrs + '"' : ' maxlength="200"') + '>') + '</label>';
 
   const formEnd = (kind, label) =>
-    `<input type="text" name="_gotcha_honey" style="display:none !important; opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true"><label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
+    `<input type="text" name="_gotcha_honey" style="display:none !important; opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true"><label class="check full"><input type="checkbox" name="consentimento" required><span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme a <a href="#privacidade" target="_blank" rel="noopener">política de privacidade</a>.</span></label><p class="form-note full">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? 'O envio será confirmado nesta página.' : 'Nesta versão de apresentação, você pode preencher e gerar uma cópia da solicitação. Os dados não são enviados ao parque.'}</p><div class="form-actions full"><button class="button" type="submit">${(kind === 'newsletter' ? config.newsletterEndpoint : config.formsEndpoint) ? label : 'Preparar solicitação'} <span>↗</span></button><p class="form-status" role="status"></p></div>`;
 
   function newsletter(topic) {
     return `<section class="newsletter"><div><span class="kicker">FIQUE POR PERTO</span><h3>${topic === 'galeria' ? 'Não perca o próximo capítulo.' : 'Não encontrou o que procura?'}</h3><p>${topic === 'galeria' ? 'Acompanhe os novos registros do parque.' : 'Escolha o que você quer viver e deixe seu interesse registrado.'}</p></div><form data-form="newsletter"><input type="hidden" name="origem" value="${topic}">${field('nome', 'Seu nome')}${field('email', 'Seu e-mail', 'email')}${field('interesse', 'Tenho interesse em', 'text', ['Todos', 'Shows e Música', 'Automobilismo', 'Esporte', 'Cultura e Família', 'Corporativo', 'AgroPlace', 'Galeria'])}${formEnd('newsletter', 'Quero ser avisado')}</form></section>`;
@@ -916,7 +916,7 @@ async function updateAgenda() {
             
             <div style="grid-column: 1 / -1;">
               <input type="text" name="_gotcha_honey" style="display:none !important; opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="off" aria-hidden="true">
-              <label class="check full" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;"><input type="checkbox" name="consentimento" required><span style="font-size: 13px;">Autorizo o uso dos dados informados para atendimento desta pauta e confirmo as diretrizes de privacidade.</span></label>
+              <label class="check full" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;"><input type="checkbox" name="consentimento" required><span style="font-size: 13px;">Autorizo o uso dos dados informados para atendimento desta pauta e li a <a href="#privacidade" target="_blank" rel="noopener">política de privacidade</a>.</span></label>
               <div class="form-actions full" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; flex-direction: row-reverse;">
                 <button class="button" type="submit" style="background-color: #1B8F3A !important; color: #fff !important; border: none;">Enviar solicita&ccedil;&atilde;o &nearr;</button>
                 <p class="form-note full" style="margin: 0; color: #666; font-size: 14px;">O envio ser&aacute; confirmado nesta p&aacute;gina.</p>
@@ -1758,7 +1758,7 @@ async function updateAgenda() {
                   <div class="full" style="margin-top: 15px;">
                      <label style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px;">
                        <input type="checkbox" required name="privacy" style="margin-top: 4px;">
-                       <span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme as diretrizes de privacidade.</span>
+                       <span>Autorizo o uso dos dados informados para atendimento desta solicitação conforme a <a href="#privacidade" target="_blank" rel="noopener">política de privacidade</a>.</span>
                      </label>
                   </div>
 
@@ -1801,6 +1801,22 @@ function credits() {
     return (
       intro('Créditos e informações.', 'As referências que dão forma a este site.', 'Créditos') +
       `<section class="wrap credits-list"><article><h3>Identidade e conteúdo</h3><p>Manual de Aplicação da Marca PNMT, PNMT_Textos_Site_Completo e proposta de layout fornecidos pelo parque. Logos preservados a partir do manual. Informações sinalizadas para confirmação no documento original foram retiradas do texto público até validação.</p></article><article><h3>Fotografias do autódromo</h3><p>Vista do circuito: Secom-MT. Corrida noturna: Mayke Toscano / Secom-MT. Registros de novembro de 2025.</p>${data.gallery.filter((g) => g.source).map((g) => `<p>${external(g.source, g.title)}</p>`).join('')}<p>O crédito não substitui autorização de uso. Consulte os responsáveis pelos arquivos para republicação.</p></article><article><h3>Imagens da proposta</h3><p>Vista aérea, pórtico e demais imagens foram fornecidos na proposta PNMT. Perspectivas e referências estão identificadas e não representam necessariamente o estágio atual das obras.</p></article><article><h3>Vídeo de apresentação</h3><p>Parque Novo Mato Grosso, canal oficial no YouTube.</p>${external('https://www.youtube.com/watch?v=' + config.videoId, 'Assistir ao vídeo')}</article><article><h3>Formulários</h3><p>As solicitações enviadas pelos formulários chegam à equipe do parque. Visitas, eventos e credenciamentos só ficam confirmados depois do retorno da equipe.</p></article></section>`
+    );
+  }
+
+  function privacy() {
+    return (
+      intro('Política de Privacidade.', 'Como tratamos os dados que você informa neste site.', 'Política de Privacidade') +
+      `<section class="wrap credits-list">
+        <article><p>O Parque Novo Mato Grosso respeita a sua privacidade. Esta política explica, de forma simples, como tratamos os dados pessoais informados neste site, de acordo com a Lei Geral de Proteção de Dados (Lei 13.709/2018).</p></article>
+        <article><h3>Quais dados coletamos</h3><p>Coletamos apenas os dados que você informa nos formulários do site, como nome, e-mail, telefone, empresa ou instituição, a mensagem enviada e, no Trabalhe Conosco, o currículo ou o perfil do LinkedIn.</p></article>
+        <article><h3>Para que usamos</h3><p>Usamos esses dados para responder ao seu contato, organizar visitas e eventos, atender a imprensa, avaliar candidaturas e, se você pedir, enviar novidades do parque. Não vendemos nem cedemos seus dados para fins de propaganda.</p></article>
+        <article><h3>Com quem compartilhamos</h3><p>Os dados são acessados apenas pela equipe do parque e pelos fornecedores que mantêm o site funcionando, como hospedagem e armazenamento. Também podemos compartilhar quando a lei exigir.</p></article>
+        <article><h3>Por quanto tempo guardamos</h3><p>Guardamos os dados apenas pelo tempo necessário para atender ao seu pedido ou cumprir obrigações legais. Depois disso, eles são excluídos.</p></article>
+        <article><h3>Seus direitos</h3><p>Você pode, a qualquer momento, pedir acesso, correção ou exclusão dos seus dados, ou deixar de receber nossas novidades. Basta escrever para <a href="mailto:novomatogrossoparque@gmail.com">novomatogrossoparque@gmail.com</a>.</p></article>
+        <article><h3>Cookies</h3><p>O site não usa cookies de propaganda. O vídeo do YouTube e o mapa do Google podem usar cookies próprios, conforme as políticas do Google.</p></article>
+        <article><h3>Contato</h3><p>Associação Parque Novo Mato Grosso, CNPJ 66.040.667/0001-26, Rodovia Emanuel Pinheiro (MT-251), km 11, Jardim Vitória, Cuiabá/MT, CEP 78.055-733. E-mail: <a href="mailto:novomatogrossoparque@gmail.com">novomatogrossoparque@gmail.com</a>.</p><p>Esta política pode ser atualizada. Última atualização: outubro de 2026.</p></article>
+      </section>`
     );
   }
 
@@ -1855,6 +1871,7 @@ function credits() {
       'evento': 'Realize seu evento',
       'outros-assuntos': 'Outros assuntos',
       'creditos': 'Créditos',
+      'privacidade': 'Política de Privacidade',
     };
 
     if (route === 'admin') {
@@ -1889,6 +1906,8 @@ function credits() {
       html = contact(route === 'evento' || route.startsWith('evento/') || params.get('tipo') === 'evento');
     } else if (route === 'outros-assuntos') {
       html = otherContact();
+    } else if (route === 'privacidade') {
+      html = privacy();
     } else if (route === 'creditos') {
       html = credits();
     } else {
