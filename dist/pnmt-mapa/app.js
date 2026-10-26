@@ -9,7 +9,7 @@ const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
 import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-acabamento-20260914-3';
-import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=estilo-minimundo-20261025-8';
+import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=estilo-minimundo-20261025-9';
 let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';

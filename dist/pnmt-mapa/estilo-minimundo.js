@@ -464,6 +464,125 @@ function fundoPorPeriodo(chao) {
   };
 }
 
+// Roda-gigante girando: tira a roda original (aro, cabines, raios e cubo, que vieram fundidos com o pavilhão)
+// e monta uma roda nova no mesmo lugar. A roda gira devagar e as 42 cabines ficam sempre em pé.
+function construirRoda(scene, THREE) {
+  const n = new THREE.Vector3(0.674, 0, 0.738).normalize(), e2 = new THREE.Vector3(0.738, 0, -0.674).normalize(), up = new THREE.Vector3(0, 1, 0);
+  const AX = 48.75, HZ = -196, HY = 29.6; // eixo, posição ao longo do plano e altura do cubo
+  const H = new THREE.Vector3().addScaledVector(n, AX).addScaledVector(e2, HZ); H.y = HY;
+  const alvo = [];
+  scene.traverse(o => { if (o.isMesh && /Roda-gigante/.test(o.parent?.name || '') && /steel|paint-white|glass|dark/.test(o.name)) alvo.push(o); });
+  if (!alvo.length) return 0;
+  const v = new THREE.Vector3(); let tirados = 0;
+  for (const o of alvo) {
+    const g = o.geometry, p = g.attributes.position; o.updateMatrixWorld(true);
+    const idx = g.index ? g.index.array : null, nTri = (idx ? idx.length : p.count) / 3, fica = [];
+    const aco = /steel/.test(o.name);
+    for (let t = 0; t < nTri; t++) {
+      let cx = 0, cy = 0, cz = 0;
+      for (let k = 0; k < 3; k++) { const i = idx ? idx[t * 3 + k] : t * 3 + k; v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld); cx += v.x; cy += v.y; cz += v.z; }
+      cx /= 3; cy /= 3; cz /= 3;
+      const ax = cx * n.x + cz * n.z, hz = cx * e2.x + cz * e2.z - HZ, r = Math.hypot(hz, cy - HY);
+      const dev = Math.abs(ax - AX);
+      // aro e cabines (anel externo), cubo (centro) e raios vermelhos; as pernas do cavalete ficam
+      const sai = (dev < 3.3 && r > 21.3 && r < 27.5) || (r < 2.6 && dev < 7) || (aco && r < 23.5 && dev < 4.8 * (1 - r / 23) + 0.8);
+      if (sai) { tirados++; continue; }
+      for (let k = 0; k < 3; k++) fica.push(idx ? idx[t * 3 + k] : t * 3 + k);
+    }
+    const ng = g.clone(); ng.setIndex(fica); ng.clearGroups(); o.geometry = ng;
+  }
+  // roda nova, montada no plano XY e virada para o eixo real
+  const base = new THREE.Group(); base.name = 'Roda-gigante · roda que gira';
+  base.position.copy(H); base.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(e2, up, n));
+  const roda = new THREE.Group(); base.add(roda);
+  const branco = new THREE.MeshStandardMaterial({ color: '#f4f2f0', roughness: 0.5, metalness: 0.15 });
+  const vermelho = new THREE.MeshStandardMaterial({ color: '#d83a2b', roughness: 0.5, metalness: 0.2 });
+  const R = 23.2;
+  [-0.9, 0.9].forEach(z => { const aro = new THREE.Mesh(new THREE.TorusGeometry(R, 0.32, 6, 112), branco); aro.position.z = z; aro.castShadow = true; roda.add(aro); });
+  const aroInt = new THREE.Mesh(new THREE.TorusGeometry(R - 1.6, 0.18, 5, 96), branco); roda.add(aroInt);
+  const cubo = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 7.5, 16), vermelho); cubo.rotation.x = Math.PI / 2; roda.add(cubo);
+  const tampa = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, 0.6, 20), vermelho); tampa.rotation.x = Math.PI / 2; roda.add(tampa);
+  const N = 42, cil = new THREE.CylinderGeometry(0.09, 0.09, 1, 4); cil.translate(0, 0.5, 0);
+  const raios = new THREE.InstancedMesh(cil, vermelho, N * 2 + N), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), a = new THREE.Vector3(), b = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
+  let k = 0;
+  const liga = (p0, p1) => { const d = b.copy(p1).sub(p0); const len = d.length(); q.setFromUnitVectors(Y, d.normalize()); m4.compose(p0, q, new THREE.Vector3(1, len, 1)); raios.setMatrixAt(k++, m4); };
+  for (let i = 0; i < N; i++) {
+    const th = (i / N) * Math.PI * 2, c = Math.cos(th), s = Math.sin(th);
+    liga(new THREE.Vector3(0, 0, 3.6), new THREE.Vector3(R * c, R * s, 0.9));
+    liga(new THREE.Vector3(0, 0, -3.6), new THREE.Vector3(R * c, R * s, -0.9));
+    liga(new THREE.Vector3(R * c, R * s, -0.9), new THREE.Vector3(R * c, R * s, 0.9));
+  }
+  roda.add(raios);
+  // cabines: corpo branco e faixa de vidro, sempre em pé
+  const corpo = new THREE.IcosahedronGeometry(1.2, 1); corpo.scale(1, 1.15, 1);
+  const vidro = new THREE.CylinderGeometry(1.24, 1.24, 0.62, 12);
+  const iCorpo = new THREE.InstancedMesh(corpo, new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.4, flatShading: true }), N);
+  const iVidro = new THREE.InstancedMesh(vidro, new THREE.MeshStandardMaterial({ color: '#4f9096', roughness: 0.15, metalness: 0.3 }), N);
+  iCorpo.castShadow = true; iCorpo.frustumCulled = false; iVidro.frustumCulled = false; raios.frustumCulled = false;
+  base.add(iCorpo); base.add(iVidro);
+  const tmp = new THREE.Object3D(), RC = R + 1.5;
+  const atualiza = ang => {
+    roda.rotation.z = ang;
+    for (let i = 0; i < N; i++) {
+      const th = ang + (i / N) * Math.PI * 2;
+      tmp.position.set(RC * Math.cos(th), RC * Math.sin(th), 0); tmp.rotation.set(0, 0, 0); tmp.updateMatrix();
+      iCorpo.setMatrixAt(i, tmp.matrix); iVidro.setMatrixAt(i, tmp.matrix);
+    }
+    iCorpo.instanceMatrix.needsUpdate = true; iVidro.instanceMatrix.needsUpdate = true;
+  };
+  atualiza(0);
+  const t0 = performance.now();
+  cubo.onBeforeRender = () => atualiza(-((performance.now() - t0) / 1000) * (Math.PI * 2 / 90)); // uma volta a cada 1 min e meio
+  scene.add(base);
+  return tirados;
+}
+
+// Skate Park: o fundo dos bowls aparecia como grama. Coloca piso de concreto dentro de cada bowl,
+// usando a borda de baixo das paredes de cada bowl como molde.
+function pisoDosBowls(scene, THREE) {
+  let w = null; scene.traverse(o => { if (!w && o.isMesh && /Skate Park/.test(o.parent?.name || '') && o.material?.color?.getHexString() === 'c2c2b8') w = o; });
+  if (!w) return 0;
+  w.updateMatrixWorld(true);
+  const p = w.geometry.attributes.position, v = new THREE.Vector3(), cel = new Map();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i).applyMatrix4(w.matrixWorld); if (v.y > -0.8) continue;
+    const k = Math.round(v.x / 2) + ',' + Math.round(v.z / 2); if (!cel.has(k)) cel.set(k, []); cel.get(k).push([v.x, v.z]);
+  }
+  const visto = new Set(), bowls = [];
+  for (const c of cel.keys()) {
+    if (visto.has(c)) continue; visto.add(c); const pilha = [c], pts = [];
+    while (pilha.length) { const k = pilha.pop(); pts.push(...cel.get(k)); const [a, b] = k.split(',').map(Number);
+      for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) { const kk = (a + da) + ',' + (b + db); if (cel.has(kk) && !visto.has(kk)) { visto.add(kk); pilha.push(kk); } } }
+    if (pts.length > 8) bowls.push(pts);
+  }
+  const casca = P => { P = P.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); const lo = [], hi = [];
+    for (const q of P) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (const q of P.reverse()) { while (hi.length >= 2 && cr(hi[hi.length - 2], hi[hi.length - 1], q) <= 0) hi.pop(); hi.push(q); }
+    hi.pop(); lo.pop(); return lo.concat(hi); };
+  const mat = new THREE.MeshStandardMaterial({ color: '#cdc6b6', roughness: 0.95 }), g = new THREE.Group(); g.name = 'Skate Park · fundo de concreto dos bowls';
+  for (const b of bowls) {
+    const h = casca(b), cx = h.reduce((a, q) => a + q[0], 0) / h.length, cz = h.reduce((a, q) => a + q[1], 0) / h.length;
+    const geo = new THREE.ShapeGeometry(new THREE.Shape(h.map(q => new THREE.Vector2(cx + (q[0] - cx) * 1.4, -(cz + (q[1] - cz) * 1.4)))));
+    geo.rotateX(-Math.PI / 2); const m = new THREE.Mesh(geo, mat); m.position.y = 0.08; m.receiveShadow = true; g.add(m);
+  }
+  scene.add(g); return bowls.length;
+}
+
+// Wake Park: água da raia em verde-água e torres do cabo e rampas brancas, como nas fotos do parque.
+function aguaDoWake(scene, THREE) {
+  const box = new THREE.Box3(), c = new THREE.Vector3(); let n = 0;
+  scene.traverse(o => {
+    if (!o.isMesh || !o.material || Array.isArray(o.material)) return;
+    const cor = o.material.color?.getHexString(); if (cor !== '008c9f' && cor !== 'f7fafd') return;
+    box.setFromObject(o); box.getCenter(c); if (Math.hypot(c.x + 450, c.z - 100) > 40) return;
+    o.material = o.material.clone();
+    if (cor === '008c9f') o.material.color.set('#2fbcb0'); // água
+    else { o.material.color.set('#ffffff'); o.material.emissive?.set('#5a5a5a'); } // torres do cabo e rampas bem brancas
+    n++;
+  });
+  return n;
+}
+
 export function aplicarEspacosReais(scene, THREE) {
   let n = 0; const box = new THREE.Box3(), c = new THREE.Vector3(); let tri = null;
   // Casa Cuiabana: laje plana atrás da platibanda, sem cumeeiras de telha
@@ -511,6 +630,9 @@ export function aplicarEspacosReais(scene, THREE) {
   n += construirAgro(scene, THREE);
   n += adicionarVida(scene, THREE);
   window.__carrosParados = estacionarCarros(scene, THREE);
+  n += construirRoda(scene, THREE) ? 1 : 0;
+  n += pisoDosBowls(scene, THREE);
+  n += aguaDoWake(scene, THREE);
   return n;
 }
 
