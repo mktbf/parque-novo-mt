@@ -583,6 +583,72 @@ function aguaDoWake(scene, THREE) {
   return n;
 }
 
+
+// Textura de pedra arrumada (muro da arquibancada e borda da cascata): pedras cinza e bege com rejunte claro.
+function texturaPedras(THREE) {
+  const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128;
+  const g = cv.getContext('2d'); g.fillStyle = '#c9c4ba'; g.fillRect(0, 0, 128, 128);
+  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const tons = ['#8f8a80', '#a29b8e', '#7c776f', '#b0a899', '#968c7c', '#857f78'];
+  for (let y = 0; y < 128; y += 16) for (let x = -(y % 32 ? 12 : 0); x < 128; x += 22 + Math.floor(rnd() * 8)) {
+    g.fillStyle = tons[Math.floor(rnd() * tons.length)];
+    const w = 18 + rnd() * 8, h = 12 + rnd() * 3;
+    g.beginPath(); g.moveTo(x + 2, y + 2 + rnd() * 2); g.lineTo(x + w - 2, y + 1 + rnd() * 2); g.lineTo(x + w, y + h - 1); g.lineTo(x + 1, y + h); g.closePath(); g.fill();
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
+// Casa Cuiabana (drone out/2026): arquibancada da orla com degraus em granito cinza,
+// espelhos dos degraus mais escuros e o muro do terraço em pedra arrumada.
+function arquibancadaCasa(scene, THREE) {
+  const box = new THREE.Box3(), c = new THREE.Vector3(); let n = 0, pedra = null;
+  const troca = { e0dbce: '#8e9195', '9a9483': '#5b5f63', bab5a5: '#6f7377', c4bfb2: '#8e9195', e1dbce: 'pedra' };
+  scene.traverse(o => {
+    if (!o.isMesh || !o.material || Array.isArray(o.material)) return;
+    const cor = o.material.color?.getHexString(); if (!troca[cor]) return;
+    box.setFromObject(o); box.getCenter(c);
+    if (c.x < -192 || c.x > -164 || c.z < 58 || c.z > 102 || box.max.y > 4) return;
+    const m = o.material.clone(); m.vertexColors = false;
+    if (troca[cor] === 'pedra') { pedra = pedra || texturaPedras(THREE); m.map = pedra; m.map.repeat.set(4, 4); m.color.set('#ffffff'); }
+    else { m.map = null; m.color.set(troca[cor]); }
+    m.roughness = 0.9; m.needsUpdate = true; o.material = m; n++;
+  });
+  return n;
+}
+
+// Arena Show (vídeo do drone out/2026): cascata de pedras em três patamares, com lâminas d'água
+// e espelho d'água de borda de pedra, na frente do bloco cinza do palco.
+function cascataArena(scene, THREE) {
+  const g = new THREE.Group(); g.name = 'Arena Show · cascata de pedras';
+  g.position.set(-146.5, 0, -67); g.scale.setScalar(0.72);
+  const pedra = texturaPedras(THREE); pedra.repeat.set(3, 1);
+  const muro = new THREE.MeshStandardMaterial({ map: pedra, roughness: 0.95 });
+  const agua = new THREE.MeshStandardMaterial({ color: '#cfe9ee', roughness: 0.15, metalness: 0.1, transparent: true, opacity: 0.85 });
+  const espelho = new THREE.MeshStandardMaterial({ color: '#6fa9a8', roughness: 0.1, metalness: 0.2 });
+  const rocha = new THREE.MeshStandardMaterial({ color: '#9b8d7c', roughness: 1, flatShading: true });
+  // três patamares, do fundo (mais alto) para a frente
+  [[14, 3.6, 3.2, -2.8], [16, 2.4, 2.6, -0.4], [18, 1.2, 2.2, 1.8]].forEach(([w, h, d, z]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), muro); b.position.set(0, h / 2, z); b.castShadow = true; g.add(b);
+    const lam = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.82, h * 0.9), agua); lam.position.set(0, h * 0.5, z + d / 2 + 0.03); g.add(lam);
+  });
+  // pedras soltas no topo e nas bordas
+  const ico = new THREE.IcosahedronGeometry(1, 0); let seed = 5; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const pedras = new THREE.InstancedMesh(ico, rocha, 46), tmp = new THREE.Object3D();
+  for (let i = 0; i < 46; i++) {
+    const topo = i < 30; const s = 0.6 + rnd() * 0.7;
+    tmp.position.set(topo ? -6.5 + rnd() * 13 : (i % 2 ? -1 : 1) * (7.5 + rnd() * 1.6), topo ? 3.6 + rnd() * 0.4 : 0.5 + rnd() * 2.6, topo ? -4 + rnd() * 2.4 : -3 + rnd() * 5);
+    tmp.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3); tmp.scale.set(s * 1.3, s * 0.8, s); tmp.updateMatrix(); pedras.setMatrixAt(i, tmp.matrix);
+  }
+  pedras.castShadow = true; g.add(pedras);
+  // espelho d'água com borda de pedra em meia-lua
+  const forma = new THREE.Shape(); forma.moveTo(-9.5, 0); forma.absellipse(0, 0, 9.5, 4.2, Math.PI, Math.PI * 2, false);
+  const lago = new THREE.Mesh(new THREE.ShapeGeometry(forma, 24), espelho); lago.rotation.x = -Math.PI / 2; lago.position.set(0, 0.25, 2.9); g.add(lago);
+  const arco = new THREE.EllipseCurve(0, 0, 9.8, 4.5, Math.PI, Math.PI * 2, false).getPoints(32).map(q => new THREE.Vector3(q.x, 0, -q.y));
+  const borda = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(arco), 48, 0.35, 5, false), muro); borda.position.set(0, 0.3, 2.9); g.add(borda);
+  scene.add(g); return 1;
+}
+
 export function aplicarEspacosReais(scene, THREE) {
   let n = 0; const box = new THREE.Box3(), c = new THREE.Vector3(); let tri = null;
   // Casa Cuiabana: laje plana atrás da platibanda, sem cumeeiras de telha
@@ -633,6 +699,8 @@ export function aplicarEspacosReais(scene, THREE) {
   n += construirRoda(scene, THREE) ? 1 : 0;
   n += pisoDosBowls(scene, THREE);
   n += aguaDoWake(scene, THREE);
+  n += arquibancadaCasa(scene, THREE);
+  n += cascataArena(scene, THREE);
   return n;
 }
 
