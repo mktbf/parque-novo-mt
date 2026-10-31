@@ -11,6 +11,6 @@ window.PNMT_CONFIG = {
   facebook: 'https://www.facebook.com/profile.php?id=61591199398539',
   youtube: 'https://www.youtube.com/@ParqueNovoMatoGrosso',
   linkedin: 'https://www.linkedin.com/company/parque-novo-mato-grosso/',
-  map: 'https://www.google.com/maps/search/?api=1&query=Parque+Novo+Mato+Grosso+Cuiaba',
+  map: 'https://www.google.com/maps/dir/?api=1&destination=-15.4578,-56.0767',
   kit: 'downloads/kit-pnmt.zip',
 };

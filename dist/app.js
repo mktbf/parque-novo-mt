@@ -211,7 +211,7 @@
     const areaTotal = g.areaTotal || '500';
     const areaUnit = g.areaUnit || 'HECTARES';
     const areaText = g.areaText || 'ENTRE LAGOS,<br>CONSTRUÇÃO<br>E ACESSOS';
-    const address = g.address || 'RODOVIA EMANUEL PINHEIRO<br>(MT-251), KM 11, CUIABÁ-MT';
+    const address = g.address || 'ESTRADA PARQUE NOVO MATO GROSSO, S/N, CUIABÁ-MT';
     const statement = g.statement || 'O LUGAR ONDE MATO GROSSO<br>SE APRESENTA PARA O MUNDO';
     const signoff = g.signoff || 'AINDA EM OBRAS. JÁ EM MOVIMENTO.';
     const sunsetPhoto = g.sunsetPhoto || 'assets/aerial-sunset.jpg';
@@ -1266,7 +1266,7 @@ async function updateAgenda() {
           </a>
           <a href="${config.map}" target="_blank" rel="noopener" class="event-map-geo-link" title="Abrir localização no Google Maps">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>MT-251, km 11 · Como chegar</span>
+            <span>Estrada Parque Novo Mato Grosso, s/n, Cuiabá-MT · Como chegar</span>
           </a>
         </div>
       </div>
