@@ -5,8 +5,8 @@
 window.PNMT_CONFIG = {
   formsEndpoint: '__supabase__',
   newsletterEndpoint: '__supabase__',
-  videoId: 'ncTJbHQNq6M',
-  youtubeId: 'ncTJbHQNq6M',
+  videoId: 'ZAVSkNOk-bY',
+  youtubeId: 'ZAVSkNOk-bY',
   instagram: 'https://www.instagram.com/parquenovomt/',
   facebook: 'https://www.facebook.com/profile.php?id=61591199398539',
   youtube: 'https://www.youtube.com/@ParqueNovoMatoGrosso',
