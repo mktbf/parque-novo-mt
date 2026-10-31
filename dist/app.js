@@ -170,27 +170,106 @@
 
   function referenceCards() {
     const fixed = [
-      { id: 'autodromo', image: 'track', label: 'AUTÓDROMO', copy: 'INTERNACIONAL<br>DE MATO GROSSO' },
-      { id: 'arena-show', image: 'arena', label: 'ARENA SHOW', copy: '45 MIL M² DE<br>ÁREA PARA<br>SHOWS' },
-      { id: 'skate-park', image: 'skate', label: 'COMPLEXO DE SKATE', copy: 'MAIOR PISTA<br>DA AMÉRICA<br>LATINA' },
-      { id: 'circo-do-futuro', image: 'circus', label: 'CIRCO DO FUTURO', copy: 'TEATRO ARENA' },
-      { id: 'roda-gigante', image: 'wheel', label: 'RODA-GIGANTE', copy: 'MAIOR DA<br>AMÉRICA LATINA' },
-      { id: 'centro-de-eventos', image: 'events', label: 'CENTRO DE EVENTOS', copy: 'A EXPERIÊNCIA<br>DE RECEBER<br>O MUNDO' },
+      { id: 'autodromo', image: 'track', label: 'Autódromo' },
+      { id: 'arena-show', image: 'arena', label: 'Arena Show' },
+      { id: 'skate-park', image: 'skate', label: 'Complexo de Skate' },
+      { id: 'circo-do-futuro', image: 'circus', label: 'Circo do Futuro' },
+      { id: 'roda-gigante', image: 'wheel', label: 'Roda-gigante' },
+      { id: 'centro-de-eventos', image: 'events', label: 'Centro de Eventos' },
     ];
 
     const list = [
-      ...fixed,
+      ...fixed.map((f) => {
+        const sp = byId(f.id) || {};
+        return {
+          id: f.id,
+          image: f.image || sp.image,
+          category: sp.category || '',
+          label: f.label || sp.name,
+          copy: sp.tagline || '',
+        };
+      }),
       ...data.spaces
         .filter((s) => !fixed.some((x) => x.id === s.id))
-        .map((s) => ({ id: s.id, image: s.image, label: s.name, copy: s.tagline })),
+        .map((s) => ({
+          id: s.id,
+          image: s.image,
+          category: s.category || '',
+          label: s.short || s.name,
+          copy: s.tagline || '',
+        })),
     ];
 
     return list
       .map(
         (s, i) =>
-          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(byId(s.id).name)}">${s.image ? `<img src="${asset(s.image)}" alt="" loading="lazy">` : ''}<div class="reference-space-card-copy"><h3>— ${s.label}</h3><p>${s.copy}</p></div></a>`
+          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(s.label)}">${s.image ? `<div class="reference-space-card-media"><img src="${asset(s.image)}" alt="" loading="lazy"></div>` : ''}<div class="reference-space-card-copy"><span class="reference-space-card-cat">${esc(s.category)}</span><h3>${esc(s.label)}</h3><p>${esc(s.copy)}</p></div></a>`
       )
       .join('');
+  }
+
+  function getTodayCuiabaISO() {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Cuiaba',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date());
+    const map = {};
+    for (const p of parts) map[p.type] = p.value;
+    return `${map.year}-${map.month}-${map.day}`;
+  }
+
+  function eventSpacePhoto(espaco) {
+    const n = normal(espaco || "");
+    if (n.includes('autodromo')) return 'assets/autodromo-real.jpg';
+    if (n.includes('kartodromo')) return 'assets/gallery/kartodromo-01.jpg';
+    if (n.includes('arena show')) return 'assets/gallery/arena-show-01.jpg';
+    if (n.includes('complexo de skate')) return 'assets/gallery/skate-park-01.jpg';
+    return 'assets/aerial-sunset.jpg';
+  }
+
+  function formatEventDateParts(isoDate) {
+    const [y, m, d] = String(isoDate || '').split('-').map(Number);
+    const utc = new Date(Date.UTC(y, (m || 1) - 1, d || 1, 12, 0, 0));
+    const weekdayLong = utc.toLocaleDateString('pt-BR', { weekday: 'long', timeZone: 'UTC' });
+    const weekdayShortRaw = utc.toLocaleDateString('pt-BR', { weekday: 'short', timeZone: 'UTC' }).replace('.', '');
+    const weekdayShort = weekdayShortRaw.charAt(0).toUpperCase() + weekdayShortRaw.slice(1);
+    const monthLong = utc.toLocaleDateString('pt-BR', { month: 'long', timeZone: 'UTC' });
+    const monthShort = utc.toLocaleDateString('pt-BR', { month: 'short', timeZone: 'UTC' }).replace('.', '').toUpperCase();
+    const day2 = String(d || 1).padStart(2, "0");
+    const fullLabel = `${weekdayLong.charAt(0).toUpperCase() + weekdayLong.slice(1)}, ${d} de ${monthLong}`;
+    return { day2, monthShort, weekdayShort, fullLabel };
+  }
+
+  function homeUpcomingEvents() {
+    const todayStr = getTodayCuiabaISO();
+    const upcoming = (window.agendaData || [])
+      .filter((e) => e && e.status === 'confirmado' && String(e.dataInicio || '') >= todayStr)
+      .slice()
+      .sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio)));
+
+    if (!upcoming.length) return '';
+
+    const feat = upcoming[0];
+    const featParts = formatEventDateParts(feat.dataInicio);
+    const isToday = feat.dataInicio === todayStr;
+    const featPhoto = eventSpacePhoto(feat.espaco);
+    const nextFour = upcoming.slice(1, 5);
+    const pinSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+
+    const rowsHtml = nextFour
+      .map((ev) => {
+        const p = formatEventDateParts(ev.dataInicio);
+        return `<a class="reference-event-row" href="#agenda"><div class="reference-event-date"><span class="reference-event-day">${esc(p.day2)}</span><span class="reference-event-month">${esc(p.monthShort)}</span></div><div class="reference-event-info"><span class="reference-event-cat">${esc(ev.categoria)}</span><h4>${esc(ev.nome)}</h4><p class="reference-event-meta">${pinSvg}<span>${esc(ev.espaco)} · ${esc(p.weekdayShort)}</span></p></div><span class="reference-event-arrow" aria-hidden="true">→</span></a>`;
+      })
+      .join('');
+
+    return `<section class="reference-home-events" aria-label="Próximos eventos"><div class="reference-home-events-inner"><div class="reference-home-events-head"><div class="reference-home-events-titles"><div class="reference-home-events-kicker"><span class="reference-home-events-bar" aria-hidden="true"></span><span>AGENDA DO PARQUE</span></div><h2><strong>Próximos</strong> eventos</h2></div><a class="reference-home-events-all" href="#agenda">Ver agenda completa <span aria-hidden="true">→</span></a></div><div class="reference-home-events-grid"><article class="reference-event-featured"><img src="${asset(featPhoto)}" alt="${esc(feat.espaco)}" loading="lazy">${isToday ? '<span class="reference-event-featured-today">HOJE</span>' : ''}<div class="reference-event-featured-body"><p class="reference-event-featured-date">${esc(featParts.fullLabel)} · ${esc(feat.espaco)}</p><h3>${esc(feat.nome)}</h3><p class="reference-event-featured-loc">${pinSvg}<span>${esc(feat.espaco)}</span></p><a class="reference-event-featured-cta" href="#agenda">Saiba mais e como chegar <span aria-hidden="true">→</span></a></div></article><div class="reference-events-list">${rowsHtml}</div></div></div></section>`;
+  }
+
+  function brandWheelBlock() {
+    return `<div class="reference-brand-wheel"><svg viewBox="0 0 775 469" aria-hidden="true"><defs><linearGradient id="pnmt-roda-g" gradientUnits="userSpaceOnUse" x1="235" y1="0" x2="555" y2="0"><stop offset="0" stop-color="#58B947"/><stop offset=".35" stop-color="#1B8F3A"/><stop offset=".7" stop-color="#1261A0"/><stop offset="1" stop-color="#0D2B4D"/></linearGradient><mask id="pnmt-roda-m" maskUnits="userSpaceOnUse" x="0" y="0" width="775" height="469"><rect x="0" y="0" width="775" height="191" fill="black"/><g stroke="white" fill="none" stroke-linecap="round"><g id="pnmt-roda-aro"><circle cx="393" cy="163" r="150" stroke-width="6"/><g stroke-width="4.2"><line x1="417.0" y1="163.0" x2="529.0" y2="163.0"/><line x1="413.8" y1="151.0" x2="510.8" y2="95.0"/><line x1="405.0" y1="142.2" x2="461.0" y2="45.2"/><line x1="393.0" y1="139.0" x2="393.0" y2="27.0"/><line x1="381.0" y1="142.2" x2="325.0" y2="45.2"/><line x1="372.2" y1="151.0" x2="275.2" y2="95.0"/><line x1="369.0" y1="163.0" x2="257.0" y2="163.0"/><line x1="372.2" y1="175.0" x2="275.2" y2="231.0"/><line x1="381.0" y1="183.8" x2="325.0" y2="280.8"/><line x1="393.0" y1="187.0" x2="393.0" y2="299.0"/><line x1="405.0" y1="183.8" x2="461.0" y2="280.8"/><line x1="413.8" y1="175.0" x2="510.8" y2="231.0"/></g></g><g id="pnmt-roda-cabines" fill="black" stroke-width="5.5"></g></g></mask></defs><rect x="0" y="0" width="775" height="191" fill="url(#pnmt-roda-g)" mask="url(#pnmt-roda-m)"/></svg><img src="assets/logo-sem-roda.png" alt="Parque Novo Mato Grosso" loading="lazy"></div>`;
   }
 
   // === PAGES & VIEWS ===
@@ -242,6 +321,8 @@
   </section>
   <section class="reference-facts" aria-label="Área e localização"><div class="reference-area"><span>ÁREA TOTAL:</span><strong>${esc(areaTotal)}</strong><small>${esc(areaUnit)}</small></div><p class="reference-area-text">${areaText}</p><div class="reference-address"><svg viewBox="0 0 30 38" width="34" height="43" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 35S3 21 3 13a12 12 0 0 1 24 0c0 8-12 22-12 22Z"/><circle cx="15" cy="13" r="4"/></svg><p>${address}</p></div></section>
   <section class="reference-spaces" aria-label="Espaços do parque"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel" role="region" aria-roledescription="carousel" aria-label="Carrossel de espaços do complexo"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window" tabindex="0" aria-label="Navegue pelos espaços com as setas do teclado ou deslizando"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
+  ${homeUpcomingEvents()}
+  ${brandWheelBlock()}
   <div class="reference-statement"><p>${statement}</p></div>
   <div class="reference-closing">
     <p class="reference-signoff">${signoff}</p>
@@ -359,10 +440,6 @@ window.downloadICS = function(eventId) {
   function agenda() {
   return `<div id="agenda-root" class="agenda-root"></div>`;
 }
-
-async function updateAgenda() {
-  const root = document.getElementById('agenda-root');
-  if (!root) return;
 
   if (!window.agendaData) {
     window.agendaData = [
@@ -610,6 +687,10 @@ async function updateAgenda() {
   }
 ];
   }
+
+async function updateAgenda() {
+  const root = document.getElementById('agenda-root');
+  if (!root) return;
 
   const now = new Date();
   const parseDate = (dstr) => new Date(dstr + 'T00:00:00-04:00');
