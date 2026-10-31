@@ -181,7 +181,7 @@
 
     const videoIdInput = document.getElementById('gen-video-id');
     if (videoIdInput) videoIdInput.value = g.videoId || 'ncTJbHQNq6M';
-    updateVideoPreview(g.videoId || 'ncTJbHQNq6M');
+    updateVideoPreview(g.videoId || 'ZAVSkNOk-bY');
 
     // Hero Titles
     const titles = g.heroTitles || ['MAIOR COMPLEXO', 'MULTIEVENTOS', 'DA AMÉRICA LATINA.'];
