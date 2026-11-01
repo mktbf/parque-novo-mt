@@ -1,32 +1,32 @@
 /* Mapa com fotos e videos reais de drone. Substitui o 3D na pagina #espacos.
-   Midias em ./real/ (fotos/, videos/, base.jpg). Nao usa location.hash: o roteador do site e quem manda no hash. */
+   Midias em ./real/ (fotos/, videos/, base-aerea.jpg). Nao usa location.hash: o roteador do site e quem manda no hash. */
 const R = new URL('./real/', import.meta.url).href;
 
-// x/y em % da foto base.jpg (1600x540). Para corrigir um ponto, mude so x/y aqui.
+// x/y em % da foto base-aerea.jpg (1600x540). Para corrigir um ponto, mude so x/y aqui.
 const SPACES = [
-  { id: 'portico', nome: 'Pórtico de Entrada', cat: 'Chegada', x: 97, y: 38, left: true, page: 'portico-de-entrada',
-    txt: 'Os arcos que marcam a chegada ao parque, na avenida de acesso.', v: ['portico'], f: 3, meta: 'Drone a 16–31 m de altura' },
-  { id: 'pavilhoes', nome: 'Pavilhões', cat: 'Estrutura', x: 92, y: 25, left: true,
-    txt: 'Galpões e estruturas de apoio junto à avenida, com o autódromo ao fundo.', v: ['pavilhoes', 'pavilhoes2'], f: 3, meta: 'Drone a 61–73 m de altura' },
-  { id: 'autodromo', nome: 'Autódromo', cat: 'Esportes', x: 55, y: 12, page: 'autodromo',
-    txt: 'A pista vista do alto, com o parque inteiro desenhado ao redor.', v: ['autodromo', 'autodromo2'], f: 4, meta: 'Drone a 500 m de altura' },
-  { id: 'circular', nome: 'Edifício Circular', cat: 'Arquitetura', x: 70, y: 21, left: true,
-    txt: 'Um dos marcos arquitetônicos do parque, entre o canal e o autódromo.', v: [], f: 2, meta: 'Drone a 79–85 m de altura' },
-  { id: 'eventos', nome: 'Centro de Eventos', cat: 'Eventos', x: 22, y: 40, obra: true, page: 'centro-de-eventos',
-    txt: 'Os pavilhões que vão receber feiras e grandes encontros, em construção na ilha oeste.', v: ['eventos', 'eventos2'], f: 4, meta: 'Drone a 116–429 m de altura' },
-  { id: 'familia', nome: 'Parque da Família', cat: 'Família', x: 52.5, y: 42, page: 'parque-da-familia',
-    txt: 'Brinquedos, sombra e espaço aberto para todas as idades, de frente para o lago.', v: ['familia', 'familia2'], f: 7, meta: 'Drone a 6–39 m de altura' },
-  { id: 'peninsula', nome: 'Península Central', cat: 'Paisagem', x: 57, y: 53, left: true, fp: 'roda',
-    txt: 'O domo, o mirante e o desenho colorido do parque vistos de cima.', v: ['roda', 'roda2'], f: 4, meta: 'Drone a 55–107 m de altura' },
-  { id: 'vila', nome: 'Vila das Nações', cat: 'Cultura', x: 66, y: 52, page: 'vila-das-nacoes',
-    txt: 'Fachadas inspiradas em vários países ao longo do canal, acesas ao cair da noite.', v: ['vila', 'vila2'], f: 6, meta: 'Câmera em solo e drone' },
-  { id: 'casa', nome: 'Casa Cuiabana', cat: 'Cultura', x: 63.5, y: 62, page: 'casa-cuiabana',
-    txt: 'Arquitetura que homenageia Cuiabá, com arquibancada voltada para a água.', v: ['casa', 'casa2'], f: 3, meta: 'Drone a 6–49 m de altura' },
-  { id: 'orla', nome: 'Orla e Lago', cat: 'Paisagem', x: 40, y: 76,
-    txt: 'O pôr do sol sobre o lago que abraça o parque.', v: ['orla', 'orla2'], f: 4, meta: 'Drone ao entardecer' }
+  {"id": "portico", "nome": "Pórtico de Entrada", "cat": "Estrutura", "x": 38.5, "y": 36, "page": "portico-de-entrada", "txt": "Inspirado no voo do tuiuiú, ave símbolo do Pantanal. A chegada ao parque.", "v": ["portico"], "f": ["portico-1", "portico-2", "portico-3"], "meta": "Drone", "side": "up"},
+  {"id": "regimento", "nome": "Regimento de Policiamento Montado", "cat": "Estrutura", "x": 31, "y": 35.5, "txt": "A cavalaria da Polícia Militar reforça a segurança do parque, com presença e tradição.", "v": ["pavilhoes", "pavilhoes2"], "f": ["v-regimento", "pavilhoes-1", "pavilhoes-2", "pavilhoes-3"], "meta": "Drone e vídeo oficial do parque", "left": true},
+  {"id": "autodromo", "nome": "Autódromo Internacional de Mato Grosso", "cat": "Esportes", "x": 33, "y": 45, "page": "autodromo", "txt": "Circuito misto, pista de arrancada e circuito externo, com infraestrutura para competições regionais, nacionais e internacionais.", "v": ["autodromo", "autodromo2"], "f": ["v-autodromo", "autodromo-1", "autodromo-2"], "meta": "Drone e vídeo oficial do parque", "side": "down"},
+  {"id": "estacionamento", "nome": "Estacionamento", "cat": "Estrutura", "x": 50, "y": 39, "page": "estrutura-e-acesso", "txt": "Vagas distribuídas em pontos estratégicos para receber grandes públicos em eventos simultâneos.", "v": [], "f": ["v-estacionamento"], "meta": "Vídeo oficial do parque", "side": "up"},
+  {"id": "arena", "nome": "Arena Show", "cat": "Eventos", "x": 53.5, "y": 60, "page": "arena-show", "txt": "Criada para grandes eventos nacionais e internacionais, com ampla cobertura, cenotécnica, bilheterias, bares e backstage completo.", "v": [], "f": ["v-arena-2", "v-arena-1"], "meta": "Vídeo oficial do parque", "side": "down"},
+  {"id": "motocross", "nome": "Motocross", "cat": "Esportes", "x": 65, "y": 43.5, "page": "motocross", "txt": "Pista que já recebeu competições estaduais e internacionais, inclusive corrida noturna.", "v": [], "f": ["v-motocross-1"], "meta": "Vídeo oficial do parque", "side": "up"},
+  {"id": "kartodromo", "nome": "Kartódromo", "cat": "Esportes", "x": 70.5, "y": 42.5, "page": "kartodromo", "txt": "Projetado para receber competições regionais, nacionais e internacionais.", "v": [], "f": ["v-kartodromo-1", "v-kartodromo-2"], "meta": "Vídeo oficial do parque", "side": "up"},
+  {"id": "bmx", "nome": "Pista de BMX", "cat": "Esportes", "x": 74.5, "y": 45, "page": "bmx", "txt": "Pista moderna para o esporte, o lazer e a formação de novos atletas. Já recebeu o Campeonato Brasileiro de BMX Racing.", "v": [], "f": ["v-bmx"], "meta": "Vídeo oficial do parque", "side": "up"},
+  {"id": "skate", "nome": "Skate Park", "cat": "Esportes", "x": 78, "y": 46, "page": "skate-park", "txt": "Já recebeu grandes competições nacionais, como o Campeonato Brasileiro e uma etapa do STU National.", "v": [], "f": ["v-skate"], "meta": "Vídeo oficial do parque"},
+  {"id": "roda", "nome": "Roda-Gigante", "cat": "Lazer", "x": 60, "y": 45.5, "obra": true, "page": "roda-gigante", "txt": "Em construção, com cabines panorâmicas.", "v": [], "f": ["v-roda"], "meta": "Vídeo oficial do parque", "left": true},
+  {"id": "agroplace", "nome": "AgroPlace", "cat": "Cultura", "x": 67.3, "y": 49.5, "obra": true, "page": "agroplace", "txt": "Exposições interativas sobre a história e a transformação do cerrado mato-grossense.", "v": [], "f": ["v-agroplace", "circular-1", "circular-2"], "meta": "Drone e vídeo oficial do parque"},
+  {"id": "casa", "nome": "Casa Cuiabana", "cat": "Cultura", "x": 61.5, "y": 50.5, "page": "casa-cuiabana", "txt": "Por fora, homenagem à arquitetura colonial de Cuiabá. Por dentro, conforto, tecnologia e inovação.", "v": ["casa", "casa2"], "f": ["v-casa", "casa-1", "casa-2", "casa-3"], "meta": "Drone e vídeo oficial do parque", "left": true},
+  {"id": "vila", "nome": "Vila das Nações", "cat": "Cultura", "x": 59, "y": 55, "page": "vila-das-nacoes", "txt": "Fachadas temáticas inspiradas nos países que influenciaram a formação da nossa cultura, às margens do lago.", "v": ["vila", "vila2", "orla2"], "f": ["v-vila-1", "v-vila-2", "vila-1", "vila-2", "vila-3", "vila-4", "vila-5", "vila-6"], "meta": "Drone, câmera em solo e vídeo oficial do parque", "left": true},
+  {"id": "praca", "nome": "Praça de Alimentação", "cat": "Lazer", "x": 71.5, "y": 57.5, "page": "praca-de-alimentacao", "txt": "Gastronomia e áreas de bem-estar em um ambiente amplo, coberto e acolhedor.", "v": ["roda2"], "f": ["v-praca", "roda-1", "roda-2"], "meta": "Drone e vídeo oficial do parque", "side": "down"},
+  {"id": "arvore", "nome": "Árvore da Vida", "cat": "Lazer", "x": 77, "y": 54.5, "obra": true, "page": "arvore-da-vida", "txt": "Torre que será revestida em LED, com mirante de vista panorâmica do parque.", "v": ["orla"], "f": ["v-arvore", "orla-2", "familia-1", "familia-7"], "meta": "Drone e vídeo oficial do parque", "side": "up"},
+  {"id": "museus", "nome": "Museus", "cat": "Cultura", "x": 79.5, "y": 56.8, "obra": true, "page": "museus", "txt": "Museu Mato Grosso e Museu Natural: memória e futuro lado a lado.", "v": [], "f": ["v-museus"], "meta": "Vídeo oficial do parque"},
+  {"id": "familia", "nome": "Parque da Família", "cat": "Lazer", "x": 75.5, "y": 59.5, "page": "parque-da-familia", "txt": "Brinquedos temáticos e áreas cobertas para diversão em qualquer horário do dia.", "v": ["familia", "familia2"], "f": ["v-familia", "familia-2", "familia-3", "familia-4", "familia-6", "roda-4", "familia-5"], "meta": "Drone e vídeo oficial do parque", "side": "down"},
+  {"id": "circo", "nome": "Circo do Futuro", "cat": "Cultura", "x": 84, "y": 59.5, "obra": true, "txt": "Domo preparado para projeções mapeadas, com Teatro de Arena e mirante para o lago.", "v": ["roda"], "f": ["v-circo", "roda-3", "orla-1"], "meta": "Drone e vídeo oficial do parque", "side": "down"},
+  {"id": "splash", "nome": "Splash Parque", "cat": "Lazer", "x": 81.5, "y": 51.5, "obra": true, "page": "splash-parque", "txt": "Playground aquático em construção, às margens do lago.", "v": [], "f": ["v-splash"], "meta": "Vídeo oficial do parque", "side": "up"},
+  {"id": "wake", "nome": "Wake Park", "cat": "Esportes", "x": 90, "y": 56, "page": "wake-park", "txt": "Cabos suspensos em duas pistas sobre o lago: uma para iniciantes e outra com rampas e obstáculos.", "v": [], "f": ["v-wake"], "meta": "Vídeo oficial do parque", "side": "up"},
+  {"id": "eventos", "nome": "Centro de Eventos", "cat": "Eventos", "x": 66, "y": 77, "obra": true, "page": "centro-de-eventos", "txt": "Pavilhões interligados, projetados para usos simultâneos ou independentes.", "v": ["eventos", "eventos2"], "f": ["v-eventos", "eventos-1", "eventos-2", "eventos-3", "eventos-4"], "meta": "Drone e vídeo oficial do parque"}
 ];
-const VOO = { id: 'voo', nome: 'Voo sobre o parque', cat: 'Visão geral',
-  txt: 'Um sobrevoo a 340 metros: canais, península e autódromo num só plano.', v: ['voo'], f: 0, meta: 'Drone a 340 m de altura' };
+const VOO = {"id": "voo", "nome": "Voo sobre o parque", "cat": "Visão geral", "txt": "O parque inteiro de cima: lagos, península, Centro de Eventos e autódromo.", "v": ["voo"], "f": ["v-geral", "v-geral-2", "autodromo-3", "orla-4", "autodromo-4"], "meta": "Drone e vídeo oficial do parque"};
 
 const CSS = `
 :host{display:block;--navy:#0D2B4D;--ink:#071a2f;--green:#58B947;--amber:#F2B33D;--muted:rgba(255,255,255,.7);--line:rgba(255,255,255,.14);font-family:'Barlow',Arial,sans-serif;color:#fff}
@@ -44,17 +44,17 @@ h2{margin:4px 0 0;font-family:'Barlow Condensed',Arial,sans-serif;font-weight:70
 .pill svg{width:13px;height:13px}
 .stage{position:relative;border-radius:12px;overflow:hidden;background:#000;min-width:0}
 .scroller{overflow:hidden}
-.map{position:relative;aspect-ratio:1600/540;max-width:100%;transition:transform .9s cubic-bezier(.6,0,.2,1),filter .9s}
+.map{position:relative;aspect-ratio:2400/1242;max-width:100%;transition:transform .9s cubic-bezier(.6,0,.2,1),filter .9s}
 .map img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;user-select:none}
 .map.zoom{filter:brightness(.55)}
 .pin{position:absolute;width:0;height:0;z-index:2}
-.dot{position:absolute;left:-11px;top:-11px;width:22px;height:22px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform .2s}
+.dot{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform .2s}
 .dot::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid var(--green);animation:pulse 2.4s infinite;opacity:0}
 .pin.obra .dot{background:var(--amber)}.pin.obra .dot::after{border-color:var(--amber)}
 @keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
 .hit{position:absolute;left:-20px;top:-20px;width:40px;height:40px;border-radius:50%}
 .lb{position:absolute;left:16px;top:-15px;white-space:nowrap;background:rgba(13,43,77,.94);border:1px solid var(--line);padding:5px 10px;border-radius:6px;font-family:'Barlow Condensed',Arial,sans-serif;font-weight:600;font-size:15px;pointer-events:none;opacity:0;transition:opacity .2s}
-.pin.left .lb{left:auto;right:16px}
+.pin.left .lb{left:auto;right:16px}.pin.up .lb{left:0;top:-46px;transform:translateX(-50%)}.pin.down .lb{left:0;top:16px;transform:translateX(-50%)}
 .pin:hover .lb,.pin:focus-visible .lb,.pin.hl .lb,.labels .lb{opacity:1}
 .pin:hover .dot,.pin.hl .dot{transform:scale(1.25)}
 .legend{position:absolute;left:12px;bottom:12px;display:flex;gap:14px;font-size:12.5px;background:rgba(7,26,47,.8);padding:7px 12px;border-radius:8px}
@@ -64,6 +64,11 @@ h2{margin:4px 0 0;font-family:'Barlow Condensed',Arial,sans-serif;font-weight:70
 .tbtn.on{background:var(--green);color:var(--navy);border-color:var(--green)}
 @keyframes hintout{to{opacity:0;visibility:hidden}}
 .hint{display:none;pointer-events:none;animation:hintout .6s 4s forwards;position:absolute;left:12px;top:12px;font-size:12.5px;background:rgba(7,26,47,.8);padding:6px 12px;border-radius:14px}
+.chips{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}.chip{height:32px;padding:0 14px;border-radius:16px;border:1px solid var(--line);font-size:14px;color:#fff;background:transparent;cursor:pointer}.chip.on{background:var(--green);color:var(--navy);border-color:var(--green)}.off{display:none!important}
+.labels .lb{font-size:13px;padding:3px 7px}
+.dot{display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#0D2B4D;font-family:'Barlow',Arial,sans-serif}
+.n{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--green);color:#0D2B4D;font-style:normal;font-size:11px;font-weight:700;margin-right:7px;vertical-align:2px}.n.o{background:#F2B33D}
+@media (min-width:981px){.list{max-height:720px;overflow-y:auto;padding-right:6px;scrollbar-width:thin}}
 .col{min-width:0;display:flex;flex-direction:column;gap:18px}
 .feat{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);border-radius:12px;overflow:hidden;background:var(--navy)}
 .feat video{width:100%;height:100%;min-height:200px;object-fit:cover;display:block}
@@ -105,7 +110,7 @@ h2{margin:4px 0 0;font-family:'Barlow Condensed',Arial,sans-serif;font-weight:70
 .nav.p{left:16px}.nav.n{right:16px}
 .nav svg{width:22px;height:22px}
 .mini{position:absolute;right:20px;bottom:24px;width:260px;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,.85);cursor:pointer;padding:0}
-.mini .m{position:relative;aspect-ratio:1600/540}
+.mini .m{position:relative;aspect-ratio:2400/1242}
 .mini img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .mini .d{position:absolute;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#fff;opacity:.7}
 .mini .d.cur{width:14px;height:14px;margin:-7px 0 0 -7px;background:var(--green);border:2px solid #fff;opacity:1}
@@ -144,12 +149,12 @@ class MapaReal extends HTMLElement {
     const root = this.attachShadow({ mode: 'open' });
     root.innerHTML = `<style>${CSS}</style>
 <div class="box"><div class="card">
-  <div class="head"><div><div class="k">Imagens reais de drone</div><h2>Explore o parque</h2><p>Toque num ponto do mapa e entre no espaço.</p></div>
+  <div class="head"><div><div class="k">Imagens reais de drone</div><h2>Explore o parque</h2><p>Toque num ponto do mapa e entre no espaço. Nomes e imagens do vídeo oficial do parque e de drone.</p></div>
     <button class="pill" data-voo>${PLAY}Voo sobre o parque</button></div>
+  <div class="chips"><button class="chip on" data-g="Todos">Todos</button><button class="chip" data-g="Esportes">Esportes</button><button class="chip" data-g="Eventos">Eventos</button><button class="chip" data-g="Cultura">Cultura</button><button class="chip" data-g="Lazer">Lazer</button><button class="chip" data-g="Estrutura">Estrutura</button></div>
   <div class="col"><div class="stage">
-    <div class="scroller"><div class="map"><img src="${R}base.jpg" alt="Vista aérea do Parque Novo Mato Grosso"></div></div>
+    <div class="scroller"><div class="map"><img src="${R}base-aerea.jpg" alt="Vista aérea do Parque Novo Mato Grosso"></div></div>
     <div class="legend"><span><i></i>Espaço</span><span><i class="o"></i>Em obras</span></div>
-    <button class="tbtn" data-labels>Nomes</button>
     <div class="hint">Arraste o mapa para o lado</div>
   </div>
   <div class="feat"><video src="${R}videos/voo.mp4" poster="${R}videos/voo.jpg" autoplay muted loop playsinline></video>
@@ -163,7 +168,7 @@ class MapaReal extends HTMLElement {
     <div class="media"></div><div class="shade"></div><div class="info"></div>
     <button class="nav p" data-step="-1" aria-label="Espaço anterior"><svg viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8" stroke="currentColor" stroke-width="2.4" fill="none"/></svg></button>
     <button class="nav n" data-step="1" aria-label="Próximo espaço"><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" stroke="currentColor" stroke-width="2.4" fill="none"/></svg></button>
-    <button class="mini" data-back aria-label="Voltar ao mapa"><div class="m"><img src="${R}base.jpg" alt=""></div><div class="cap"></div></button>
+    <button class="mini" data-back aria-label="Voltar ao mapa"><div class="m"><img src="${R}base-aerea.jpg" alt=""></div><div class="cap"></div></button>
   </div>
   <div class="strip"></div>
 </div>`;
@@ -174,14 +179,14 @@ class MapaReal extends HTMLElement {
     const list = $('.list'), mm = $('.mini .m');
     SPACES.forEach(s => {
       const p = document.createElement('button');
-      p.className = 'pin' + (s.obra ? ' obra' : '') + (s.left ? ' left' : '');
+      p.className = 'pin' + (s.obra ? ' obra' : '') + (s.left ? ' left' : '') + (s.side ? ' ' + s.side : '');
       p.style.left = s.x + '%'; p.style.top = s.y + '%';
       p.setAttribute('aria-label', s.nome);
-      p.innerHTML = `<span class="hit"></span><span class="dot"></span><span class="lb">${s.nome}</span>`;
+      p.innerHTML = `<span class="hit"></span><span class="dot">${SPACES.indexOf(s) + 1}</span><span class="lb">${s.nome}</span>`;
       this.map.appendChild(p);
       const it = document.createElement('button');
       it.className = 'item';
-      it.innerHTML = `<img src="${R}${this.thumb(s)}" alt="" loading="lazy"><span><b>${s.nome}${s.obra ? '<span class="tag">Em obras</span>' : ''}</b><small>${s.cat}</small></span>`;
+      it.innerHTML = `<img src="${R}${this.thumb(s)}" alt="" loading="lazy"><span><b><i class="n${s.obra ? ' o' : ''}">${SPACES.indexOf(s) + 1}</i>${s.nome}${s.obra ? '<span class="tag">Em obras</span>' : ''}</b><small>${s.cat}</small></span>`;
       list.appendChild(it);
       const d = document.createElement('span'); d.className = 'd'; d.style.left = s.x + '%'; d.style.top = s.y + '%'; mm.appendChild(d);
       s.el = { p, it, d };
@@ -192,7 +197,11 @@ class MapaReal extends HTMLElement {
       });
     });
     root.querySelectorAll('[data-voo],[data-voo2]').forEach(b => b.addEventListener('click', () => this.open(VOO)));
-    $('[data-labels]').addEventListener('click', e => { this.map.classList.toggle('labels'); e.currentTarget.classList.toggle('on'); });
+    root.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+      root.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+      const g = c.dataset.g;
+      SPACES.forEach(x => { const off = g !== 'Todos' && x.cat !== g; x.el.p.classList.toggle('off', off); x.el.it.classList.toggle('off', off); });
+    }));
     root.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => this.close()));
     root.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => this.step(+b.dataset.step)));
     let sx = null;
@@ -220,10 +229,10 @@ class MapaReal extends HTMLElement {
     clearTimeout(this.timer);
     document.documentElement.style.overflow = '';
   }
-  thumb(s) { return s.v.length ? `videos/${s.v[0]}.jpg` : `fotos/${s.fp || s.id}-1.jpg`; }
+  thumb(s) { return s.f.length ? `fotos/${s.f[0]}.jpg` : `videos/${s.v[0]}.jpg`; }
   mediaOf(s) {
     const out = s.v.map(n => ({ t: 'v', src: `${R}videos/${n}.mp4`, poster: `${R}videos/${n}.jpg` }));
-    for (let i = 1; i <= s.f; i++) out.push({ t: 'i', src: `${R}fotos/${s.fp || s.id}-${i}.jpg` });
+    s.f.forEach(n => out.push({ t: 'i', src: `${R}fotos/${n}.jpg` }));
     return out;
   }
   open(s) {
