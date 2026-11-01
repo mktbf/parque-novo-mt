@@ -1,4 +1,5 @@
 import './explore-parque.js?v=showcase-emons-20260918-1';
+import './mapa-real.js?v=mapa-real-20261101-1';
 
 /* Reutiliza as páginas do roteador do portal e apenas acrescenta o visualizador. */
 // O arquivo de rotas explicita os IDs que o mapa sabe localizar.
@@ -16,7 +17,7 @@ const mapPages = fetch(new URL('./rotas.json?v=portal-ux-20260914-2', import.met
 
 async function insertMap() {
   const main = document.getElementById('main');
-  if (!main || main.querySelector('pnmt-explore')) return;
+  if (!main || main.querySelector('pnmt-explore, pnmt-mapa-real')) return;
   const route = (location.hash.slice(1) || 'inicio').split('?')[0];
   let anchor, space;
   if (route === 'espacos') {
@@ -34,7 +35,7 @@ async function insertMap() {
     anchor = details.previousElementSibling;
     if (!anchor) return;
   }
-  const block = document.createElement('pnmt-explore');
+  const block = document.createElement(space ? 'pnmt-explore' : 'pnmt-mapa-real');
   block.id = space ? 'espaco-em-3d' : 'explore-o-parque';
   if (space) {
     block.setAttribute('space-id', (await mapPages).get(space.id) || space.id);
