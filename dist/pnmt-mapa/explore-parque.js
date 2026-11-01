@@ -27,7 +27,6 @@ class ParqueExplorer extends HTMLElement {
           display: block;
           color: #0d2b4d;
           font-family: 'Barlow', Arial, sans-serif;
-          scroll-margin-top: 32px;
         }
         * { box-sizing: border-box; }
         [hidden] { display: none !important; }

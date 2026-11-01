@@ -1,6 +1,10 @@
 /* Topo fixo: claro no topo da pagina e azul ao rolar (.is-scrolled) */
 :root { --topo-dur: .45s; --topo-ease: cubic-bezier(.4, 0, .2, 1); }
 
+html {
+  scroll-padding-top: 152px;
+}
+
 body {
   padding-top: 136px;
 }
@@ -180,14 +184,8 @@ body {
 
 .site-header.reference-header.is-scrolled #primary-nav > a[aria-current],
 .site-header.reference-header.is-scrolled #primary-nav > a[aria-current="page"] {
-  background-color: #1261A0;
+  background-color: transparent;
   color: #FFFFFF;
-}
-
-.site-header.reference-header.is-scrolled #primary-nav > a[aria-current]::after,
-.site-header.reference-header.is-scrolled #primary-nav > a[aria-current="page"]::after {
-  content: none !important;
-  display: none !important;
 }
 
 .site-header.reference-header .header-social-channels {
@@ -291,6 +289,10 @@ body {
 }
 
 @media (max-width: 900px) {
+  html {
+    scroll-padding-top: 108px;
+  }
+
   body {
     padding-top: 92px;
   }
