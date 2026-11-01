@@ -2552,7 +2552,7 @@ function credits() {
       if (dlg) dlg.close();
       if (link.getAttribute('href') === location.hash) {
         closeMenu();
-        main.scrollIntoView({ behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   });
