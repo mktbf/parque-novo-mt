@@ -130,7 +130,7 @@ a{color:inherit}
 .pg-strip div:last-child{border-right:0}
 .pg-strip dt{font:600 11px/1 var(--d);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
 .pg-strip dd{margin:0;font-family:var(--d);font-weight:700;font-size:17px;line-height:1.15;text-transform:uppercase;color:var(--ink)}
-.pg-gal{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:10px;margin-top:36px}
+.pg-gal{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));max-width:calc(var(--n,3) * 420px);gap:10px;margin:36px 0 32px}
 .pg-gal figure{margin:0;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#dde3e9}
 .pg-gal img{width:100%;height:100%;object-fit:cover;display:block}
 .pg-gal.big figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
@@ -201,7 +201,7 @@ function abrir(s){
   $('#dnav').innerHTML=`<button id="pa">‹ <span>Anterior em ${g.nome}:</span> <b>${ant.nome}</b></button><button id="pp"><span>Próximo:</span> <b>${prox.nome}</b> ›</button>`;
   const pal=s.lead.replace(/\.$/,'').split(' '), cut=Math.ceil(pal.length/2);
   const sitTxt=s.sit==='ok'?'Em funcionamento':s.sit==='obra'?'Em obras':'';
-  const strip=[['Trilha',g.nome],...(sitTxt?[['Situação',sitTxt]]:[]),...s.d];
+  const strip=[...(sitTxt?[['Situação',sitTxt]]:[]),...s.d];
   $('#pg').innerHTML=`
    <div class="pg-band" style="--c:${g.cor}">
      <h3>${pal.slice(0,cut).join(' ')} <em>${pal.slice(cut).join(' ')}.</em></h3>
