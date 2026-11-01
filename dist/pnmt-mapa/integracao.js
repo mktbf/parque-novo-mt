@@ -1,5 +1,6 @@
 import './explore-parque.js?v=showcase-emons-20260918-1';
 import './mapa-real.js?v=mapa-real-20261101-3';
+import '../espacos/espacos.js?v=espacos-20261101-2';
 
 /* Reutiliza as páginas do roteador do portal e apenas acrescenta o visualizador. */
 // O arquivo de rotas explicita os IDs que o mapa sabe localizar.
@@ -17,7 +18,7 @@ const mapPages = fetch(new URL('./rotas.json?v=portal-ux-20260914-2', import.met
 
 async function insertMap() {
   const main = document.getElementById('main');
-  if (!main || main.querySelector('pnmt-explore, pnmt-mapa-real')) return;
+  if (!main || main.querySelector('pnmt-explore, pnmt-mapa-real, pnmt-espacos')) return;
   const route = (location.hash.slice(1) || 'inicio').split('?')[0];
   let anchor, space;
   if (route === 'espacos') {
