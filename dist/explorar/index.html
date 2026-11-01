@@ -65,7 +65,7 @@ a{color:inherit}
 .bar{height:8px;background:linear-gradient(90deg,var(--ink),var(--blue) 45%,var(--green))}
 /* gaveta de informacoes */
 .drawer{background:var(--soft);overflow:hidden;max-height:0;transition:max-height .8s cubic-bezier(.65,0,.2,1)}
-.drawer.open{max-height:1400px}
+.drawer.open{max-height:12000px}
 .dr{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;padding-block:44px 52px;align-items:start}
 .gal{position:relative}
 .gal .main{position:relative;aspect-ratio:16/10;border-radius:8px;overflow:hidden;background:#dfe3e8}
@@ -105,7 +105,7 @@ a{color:inherit}
   .hero .img{aspect-ratio:auto;height:72svh}
   .hero .layer{width:auto;aspect-ratio:1673/940;height:100%;left:auto;right:auto;top:0;margin-top:0}
   .scroll{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch;height:100%}
-  .dr{grid-template-columns:1fr;gap:22px;padding-block:26px 34px}
+  .dr{grid-template-columns:minmax(0,1fr);gap:22px;padding-block:26px 34px}
   .chips{display:none}
   .names .pin .lb{display:none}
 }
@@ -120,6 +120,22 @@ a{color:inherit}
 #extra{display:flex;flex-wrap:wrap;gap:8px}
 .xb{display:inline-flex;align-items:center;gap:7px;border:1px solid #D3D9E0;background:#fff;border-radius:999px;padding:6px 12px;font:500 13px/1 inherit;color:#0D2B4D;cursor:pointer}
 .xb:hover{border-color:#0D2B4D}.xb i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.pg{border-top:1px solid #D6DBE1;margin-top:28px;padding-top:44px;scroll-margin-top:16px}
+.pg-band{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start}
+.pg-band h3{margin:0;font-family:var(--d);font-weight:700;font-size:clamp(34px,4.4vw,60px);line-height:.95;text-transform:uppercase;color:var(--ink);text-wrap:balance}
+.pg-band h3 em{font-style:normal;color:var(--c)}
+.pg-txt p{margin:0 0 14px;font-size:16px;line-height:1.65;color:var(--ink2)}
+.pg-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin:40px 0 0;border-top:1px solid #D6DBE1}
+.pg-strip div{padding:16px 18px 18px 0;border-right:1px solid #D6DBE1;margin-right:18px}
+.pg-strip div:last-child{border-right:0}
+.pg-strip dt{font:600 11px/1 var(--d);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.pg-strip dd{margin:0;font-family:var(--d);font-weight:700;font-size:17px;line-height:1.15;text-transform:uppercase;color:var(--ink)}
+.pg-gal{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:10px;margin-top:36px}
+.pg-gal figure{margin:0;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#dde3e9}
+.pg-gal img{width:100%;height:100%;object-fit:cover;display:block}
+.pg-gal.big figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
+.info .cue{display:inline-flex;align-items:center;gap:6px;margin:4px 0 18px;font-size:13.5px!important;color:var(--mut)!important}
+@media (max-width:760px){.pg-band{grid-template-columns:1fr;gap:20px}.pg-gal{grid-template-columns:1fr 1fr}.pg-strip div{border-right:0;margin-right:0;border-bottom:1px solid #D6DBE1}}
 </style>
 <div class="nota"><div class="wrap"><b>TESTE</b><span>Explorador com foto aérea: passe o mouse nos pontos e clique para ver o espaço completo.</span></div></div>
 <header class="site"><div class="wrap"><div class="logo">PARQUE NOVO<small>MATO GROSSO</small></div><nav><span>Quem Somos</span><span class="on">Conheça os Espaços</span><span>Agenda</span><span>Imprensa</span><span>Contato</span><span>Trabalhe Conosco</span></nav><span class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span></div></header>
@@ -133,7 +149,7 @@ a{color:inherit}
 </section>
 <div class="bar"></div>
 <section class="extra"><div class="wrap"><span>Também no parque, fora do enquadramento desta foto:</span><div id="extra"></div></div></section>
-<section class="drawer" id="drawer" aria-live="polite"><div class="wrap"><div class="dr" id="dr"></div><div class="dnav" id="dnav"></div></div></section>
+<section class="drawer" id="drawer" aria-live="polite"><div class="wrap"><div class="dr" id="dr"></div><div class="pg" id="pg"></div><div class="dnav" id="dnav"></div></div></section>
 <section class="wrap slogan"><h3>Mato Grosso se apresenta ao mundo aqui.</h3></section>
 <script>
 const G={esporte:{nome:'Esporte',cor:'var(--esporte)'},lazer:{nome:'Lazer',cor:'var(--lazer)'},cultura:{nome:'Cultura e Eventos',cor:'var(--cultura)'},chegada:{nome:'Chegada e estrutura',cor:'#6B6B6B'}};
@@ -177,13 +193,23 @@ function abrir(s){
      ${fotos.length>1?`<div class="th">${fotos.map((f,k)=>`<button class="${k?'':'on'}" data-k="${k}"><img src="${f}" alt=""></button>`).join('')}</div>`:''}</div>
    <div class="info" style="--c:${g.cor}">
      <div class="cat"><i></i>${g.nome} ${st}<span style="flex:1"></span><button class="close" id="fechar" aria-label="Fechar"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2"/></svg></button></div>
-     <h2>${s.nome}</h2><p class="lead">${s.lead}</p>${s.txt.map(p=>`<p>${p}</p>`).join('')}${s.x==null?'<p class="nofoto">Este espaço não aparece nesta foto aérea.</p>':''}
-     <h4 class="ft-t">Ficha técnica</h4><dl class="facts">${s.d.map(([a,b])=>`<div><dt>${a}</dt><dd>${b.replace(/ \\(Projeto R84\\)/,'')}</dd></div>`).join('')}</dl>
+     <h2>${s.nome}</h2><p class="lead">${s.lead}</p><p class="cue">Role para conhecer o espaço <svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/></svg></p>${s.x==null?'<p class="nofoto">Este espaço não aparece nesta foto aérea.</p>':''}
+     
      <div class="acts">
-       <a class="btn pri" href="../#espaco/${s.id==='circo'?'circo-do-futuro':MAP3D[s.id]}">Ver página do espaço <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none"/></svg></a>
        <a class="btn sec" href="https://parque-novo-mt.vercel.app/pnmt-mapa/index.html?espaco=${MAP3D[s.id]}" target="_blank" rel="noopener">Navegar no mapa 3D <svg viewBox="0 0 16 16"><path d="M8 1l6 3.5v7L8 15l-6-3.5v-7z M8 8l6-3.5 M8 8v7 M8 8L2 4.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></a>
      </div></div>`;
   $('#dnav').innerHTML=`<button id="pa">‹ <span>Anterior em ${g.nome}:</span> <b>${ant.nome}</b></button><button id="pp"><span>Próximo:</span> <b>${prox.nome}</b> ›</button>`;
+  const pal=s.lead.replace(/\.$/,'').split(' '), cut=Math.ceil(pal.length/2);
+  const sitTxt=s.sit==='ok'?'Em funcionamento':s.sit==='obra'?'Em obras':'';
+  const strip=[['Trilha',g.nome],...(sitTxt?[['Situação',sitTxt]]:[]),...s.d];
+  $('#pg').innerHTML=`
+   <div class="pg-band" style="--c:${g.cor}">
+     <h3>${pal.slice(0,cut).join(' ')} <em>${pal.slice(cut).join(' ')}.</em></h3>
+     <div class="pg-txt">${s.txt.map(p=>`<p>${p}</p>`).join('')}</div>
+   </div>
+   <dl class="pg-strip">${strip.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('')}</dl>
+   ${fotos.length>1?`<div class="pg-gal" style="--n:${(n=>n===4?2:Math.min(n,3))(fotos.length-1)}">${fotos.slice(1).map(f=>`<figure><img src="${f}" alt="${s.nome}" loading="lazy"></figure>`).join('')}</div>`:''}`;
+  
   $('#pa').onclick=()=>abrir(ant); $('#pp').onclick=()=>abrir(prox); $('#fechar').onclick=solta;
   document.querySelectorAll('.gal .th button').forEach(b=>b.onclick=()=>{$('#gm').src=fotos[+b.dataset.k]; document.querySelectorAll('.gal .th button').forEach(x=>x.classList.toggle('on',x===b));});
   const d=$('#drawer'); const was=d.classList.contains('open'); d.classList.add('open');
