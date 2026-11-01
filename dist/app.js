@@ -453,21 +453,21 @@ window.downloadICS = function(eventId) {
     "status": "confirmado"
   },
   {
-    "id": "estadual-ciclismo",
-    "nome": "Campeonato Estadual de Ciclismo de Estrada",
-    "dataInicio": "2026-11-08",
-    "espaco": "Pista de Ciclismo e Caminhada",
-    "slugEspaco": "",
-    "categoria": "Esporte",
-    "status": "confirmado"
-  },
-  {
-    "id": "corrida-mpmt-2026",
-    "nome": "Corrida do MPMT 2026",
-    "dataInicio": "2026-11-15",
+    "id": "corrida-educacao-seduc-2026",
+    "nome": "4ª Corrida da Educação, SEDUC/MT",
+    "dataInicio": "2026-11-07",
     "espaco": "Pista de Ciclismo e Caminhada",
     "slugEspaco": "",
     "categoria": "Corridas de rua",
+    "status": "confirmado"
+  },
+  {
+    "id": "estadual-ciclismo",
+    "nome": "Campeonato Estadual de Ciclismo de Estrada",
+    "dataInicio": "2026-11-08",
+    "espaco": "Autódromo",
+    "slugEspaco": "autodromo",
+    "categoria": "Esporte",
     "status": "confirmado"
   },
   {
