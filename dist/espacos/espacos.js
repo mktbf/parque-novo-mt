@@ -194,7 +194,6 @@ function pagina(s, inline){
   </section>
   <section class="ag pg" id="s-agenda"><div class="wrap rv"><div>${ey('agenda','Agenda')}<h2>O que acontece por aqui.</h2><p>Confira a agenda do parque para eventos neste espaço e no entorno.</p></div><button class="cta" data-ag>Ver agenda ${ARROW}</button></div></section>
   ${s.n ? `<section class="wrap nsec pg" id="s-midia"><div class="rv">${ey('midia','Na mídia')}<h2>O que saiu na imprensa.</h2></div><div class="news rv">${s.n.map(n=>`<article><div class="src">${n[0]} · ${n[1]}</div><h3>${n[2]}</h3><p>${n[3]}</p></article>`).join('')}</div></section>` : ''}
-  <section class="com"><div class="wrap rv"><div><h2>Quer realizar seu evento aqui?</h2><p>A equipe comercial do parque ajuda a planejar do formato à estrutura.</p></div><button class="cta2" data-com>Fale com a equipe comercial ${ARROW}</button></div></section>
   <nav class="nx">
     <button data-go="${ant.id}"><img src="${ft(ant.f[0])}" alt=""><span><small>Anterior em ${g.nome}</small><b>${ant.nome}</b></span></button>
     <button data-go="${prox.id}"><img src="${ft(prox.f[0])}" alt=""><span><small>Próximo em ${g.nome}</small><b>${prox.nome}</b></span></button>
@@ -203,7 +202,6 @@ function pagina(s, inline){
   if($('#bk')) $('#bk').onclick = () => { location.hash = 'espacos'; };
   $$('[data-go]').forEach(b => b.onclick = () => inline ? abrirX(S.find(o => o.id===b.dataset.go)) : (location.hash = 'espaco/' + SITE[b.dataset.go]));
   $$('[data-ag]').forEach(b => b.onclick = () => location.hash = 'agenda');
-  $$('[data-com]').forEach(b => b.onclick = () => location.hash = 'contato?tipo=evento');
   const hd = document.querySelector('.site-header'); if(hd) root.host.style.setProperty('--hdr', hd.offsetHeight + 'px');
   const nav = $$('.pnav button');
   nav.forEach(b => b.onclick = () => $('#s-' + b.dataset.sec).scrollIntoView({behavior:'smooth', block:'start'}));
