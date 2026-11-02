@@ -1,6 +1,6 @@
 import './explore-parque.js?v=showcase-emons-20260918-1';
 import './mapa-real.js?v=mapa-real-20261101-3';
-import '../espacos/espacos.js?v=explorador-20261101-4';
+import '../espacos/espacos.js?v=capas-ia-20261101-1';
 
 /* Reutiliza as páginas do roteador do portal e apenas acrescenta o visualizador. */
 // O arquivo de rotas explicita os IDs que o mapa sabe localizar.
