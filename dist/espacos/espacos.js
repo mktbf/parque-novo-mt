@@ -33,7 +33,7 @@ class PnmtEspacos extends HTMLElement {
     const $ = s => root.querySelector(s), $$ = s => root.querySelectorAll(s);
     const app = $('#app');
     const X = { // extras por espaco (fotos em alta, legendas, momentos)
- autodromo:{ap:['ft/autodromo-noite.jpg','O circuito iluminado à noite'], capa:'autodromo-capa', capaIa:true},
+ autodromo:{ap:['ft/autodromo-noite.jpg','O circuito iluminado à noite'], trans:['ft/autodromo-noite2.jpg',''], capa:'autodromo-capa', capaIa:true},
  vila:{cover:'vila/vila-818.jpg', ed:['vila/vila-809.jpg','Detalhes de arquitetura clássica, iluminados à noite.'],
   fotos:[['vila/vila-818.jpg','As fachadas acesas no começo da noite'],['ft/v-vila-2.jpg','Arquitetura clássica e enxaimel, lado a lado'],['vila/vila-803.jpg','A praça ao entardecer'],['ft/v-vila-1.jpg','A Vila vista do alto, de frente para o canal'],['vila/vila-812.jpg','Iluminação que destaca cada detalhe'],['vila/vila-800.jpg','Caminhos entre as fachadas'],['vila/vila-795.jpg','A praça aberta, pronta para o passeio'],['vila/vila-819.jpg','O fim do dia na Vila']],
   mom:{t:'Três momentos<br>para aproveitar.',p:'Do passeio à tarde às fotos de noite, a Vila muda de cara conforme a luz.',i:[['ft/v-vila-1.jpg','O passeio','Atravesse a praça e percorra as fachadas, uma a uma, de frente para o canal.'],['vila/vila-813.jpg','O entardecer','Quando o sol baixa, a iluminação acende e a vila ganha outro clima.'],['vila/vila-806.jpg','A foto','Cada fachada é um cenário. Um bom lugar para guardar a visita.']]},
