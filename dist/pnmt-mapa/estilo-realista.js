@@ -238,8 +238,13 @@ function aplicarRefinoFoto(scene, renderer, THREE, waterUniforms) {
     chao.onBeforeRender = function (...a) {
       if (antes) antes.apply(this, a);
       const p = new URLSearchParams(location.search).get('periodo') || 'tarde';
-      if (NEB[p]) { chao.material.color.set('#a3ad8c'); if (scene.fog) { scene.fog.color.set(NEB[p]); scene.fog.near = 700; scene.fog.far = 3800; } }
+      // Neblina proporcional a distancia da camera: de perto e de longe o parque continua nitido e so o horizonte some
+      const cam = a[2], dist = cam && cam.position ? Math.hypot(cam.position.x + 200, cam.position.y, cam.position.z - 40) : 1500;
+      const perto = Math.max(700, dist * 0.9), longe = Math.max(3800, dist * 2.8);
+      if (NEB[p]) { chao.material.color.set('#8f9a7a'); if (scene.fog) { scene.fog.color.set(NEB[p]); scene.fog.near = perto; scene.fog.far = longe; } }
       if (SOL[p]) { sois.forEach(l => l.color.set(SOL[p])); ceus.forEach(l => { l.color.set('#dfe3e8'); l.groundColor.set('#6a5f3c'); }); }
+      // Noite: luar suave para o parque continuar legivel, sem apagar a iluminacao dos postes
+      if (p === 'noite') { chao.material.color.set('#8a97b8'); ceus.forEach(l => { l.intensity = 1.5; l.color.set('#8fa6cf'); l.groundColor.set('#3a4458'); }); if (scene.fog) { scene.fog.color.set('#1f2c42'); scene.fog.near = Math.max(1200, dist * 1.1); scene.fog.far = Math.max(5200, dist * 3.4); } }
     };
   }
   scene.userData.refinoFoto = res;
