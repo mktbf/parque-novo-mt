@@ -33,7 +33,7 @@ class PnmtEspacos extends HTMLElement {
     const $ = s => root.querySelector(s), $$ = s => root.querySelectorAll(s);
     const app = $('#app');
     const X = { // extras por espaco (fotos em alta, legendas, momentos)
- autodromo:{ap:['ft/autodromo-noite.jpg','O circuito iluminado à noite'], trans:['ft/autodromo-dia.jpg','Imagem ilustrativa do projeto'], capa:'autodromo-capa', capaIa:true},
+ autodromo:{ap:['ft/autodromo-entardecer.jpg','Imagem ilustrativa do projeto'], trans:['ft/autodromo-noite2.jpg',''], capa:'autodromo-capa', capaIa:true},
  vila:{cover:'vila/vila-818.jpg', ed:['vila/vila-809.jpg','Detalhes de arquitetura clássica, iluminados à noite.'],
   fotos:[['vila/vila-818.jpg','As fachadas acesas no começo da noite'],['ft/v-vila-2.jpg','Arquitetura clássica e enxaimel, lado a lado'],['vila/vila-803.jpg','A praça ao entardecer'],['ft/v-vila-1.jpg','A Vila vista do alto, de frente para o canal'],['vila/vila-812.jpg','Iluminação que destaca cada detalhe'],['vila/vila-800.jpg','Caminhos entre as fachadas'],['vila/vila-795.jpg','A praça aberta, pronta para o passeio'],['vila/vila-819.jpg','O fim do dia na Vila']],
   mom:{t:'Três momentos<br>para aproveitar.',p:'Do passeio à tarde às fotos de noite, a Vila muda de cara conforme a luz.',i:[['ft/v-vila-1.jpg','O passeio','Atravesse a praça e percorra as fachadas, uma a uma, de frente para o canal.'],['vila/vila-813.jpg','O entardecer','Quando o sol baixa, a iluminação acende e a vila ganha outro clima.'],['vila/vila-806.jpg','A foto','Cada fachada é um cenário. Um bom lugar para guardar a visita.']]},
@@ -166,7 +166,10 @@ function pagina(s, inline){
   // Foto da apresentacao: uma foto real que ainda nao apareceu na capa nem na transicao.
   const apf = x.ap ? [u(x.ap[0]), x.ap[1]||''] : (fotos.find(f => f[0] !== cover && (!trans || f[0] !== trans[0])) || null);
   const stats = facts.slice(0, 4);
-  const fotosG = fotos.slice();
+  // Fotos e videos: as fotos vem do album do espaco na galeria da Imprensa (mesma fonte, mesma ordem).
+  const ALB = {autodromo:'Autódromo Internacional',motocross:'Motocross',kartodromo:'Kartódromo',bmx:'Pista BMX',skate:'Complexo de Skate',wake:'Wake Park',familia:'Parque da Família',vila:'Vila das Nações',roda:'Roda-Gigante',arvore:'Árvore da Vida',splash:'Splash Parque',praca:'Praça de Alimentação',arena:'Arena Show',eventos:'Centro de Eventos',casa:'Casa Cuiabana',agroplace:'AgroPlace',museus:'Museus',circo:'Circo do Futuro'};
+  const alb = ((window.PNMT_CONTENT && window.PNMT_CONTENT.gallery) || []).filter(g => g && g.image && g.title === ALB[s.id]).map(g => [new URL(g.image, document.baseURI).href, '']);
+  const fotosG = alb.length ? alb : fotos.slice();
   const secoes = [['apresentacao','Apresentação'], ['dados','Dados técnicos'], (vids.length||fotosG.length)&&['galeria','Fotos e vídeos'], ['onde','Onde fica'], evs.length&&['agenda','Agenda'], s.n&&['midia','Na mídia']].filter(Boolean);
   const num = id => String(secoes.findIndex(q => q[0]===id) + 1).padStart(2,'0');
   const ey = (id, nome) => `<div class="eyebrow pe" style="--c:${g.cor}">${nome}</div>`;
