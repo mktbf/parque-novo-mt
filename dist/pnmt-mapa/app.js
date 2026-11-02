@@ -305,8 +305,9 @@ async function init(){
   showcaseController.setMode('list');
   selectPlace(requested);
  }else{
-  showcaseController.setMode('showcase');
+  showcaseController.setMode('list');
  }
+ { const st=document.createElement('style'); st.textContent='.showcase-top-bar,.showcase-card,.showcase-reopen-btn{display:none!important}'; document.head.appendChild(st); }
  if(validDetail(requested,detail))focusDetail(detail);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();solarControls?.dispose();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
