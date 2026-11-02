@@ -158,7 +158,7 @@ function pagina(s, inline){
     <div class="vbox"><video id="vp" src="${V(vids[0])}" poster="${u('vt/'+vids[0]+'.jpg')}" controls muted playsinline loop preload="metadata"></video></div>
     ${vids.length>1?`<div class="vtabs">${vids.map((v,k)=>`<button class="${k?'':'on'}" data-v="${v}">${(x.vt&&x.vt[k])||VN[v]||'Vídeo '+(k+1)}</button>`).join('')}</div>`:''}</div></section>` : ''}
   ${gal.length ? `<section class="wrap gal"><div class="rv"><div class="eyebrow">Galeria</div><h2>Em fotos.</h2></div>
-    <div class="gg rv ${gal.length<5?'c'+gal.length:''}" id="gg">${gal.map((f,k)=>`<button data-k="${k}"><img src="${f[0]}" alt="${f[1]||s.nome}">${f[1]?`<figcaption>${f[1]}</figcaption>`:''}</button>`).join('')}</div></section>` : ''}
+    <div class="gg rv ${gal.length<5?'c'+gal.length:''}" id="gg">${gal.map((f,k)=>`<button data-k="${k}"><img src="${f[0]}" alt="${f[1]||s.nome}">${f[1]===ILU?`<span class="ilu">${ILU}</span>`:f[1]?`<figcaption>${f[1]}</figcaption>`:''}</button>`).join('')}</div></section>` : ''}
   ${s.n ? `<section class="wrap nsec rv"><div class="eyebrow">Imprensa</div><h2>Notícias.</h2><div class="news">${s.n.map(n=>`<article><div class="src">${n[0]} · ${n[1]}</div><h3>${n[2]}</h3><p>${n[3]}</p></article>`).join('')}</div></section>` : ''}
   <section class="wrap loc rv" style="--c:${g.cor}">
     <div class="map" id="map"><img src="${u('base-out.jpg')}" alt="Localização no parque"><span class="me" id="me"></span></div>
