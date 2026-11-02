@@ -187,10 +187,7 @@ function pagina(s, inline){
     </div></section>` : ''}
   <section class="wrap onde pg" id="s-onde" style="--c:${g.cor}">
     <div class="m3h rv"><div>${ey('onde','Onde fica')}<h2>Veja no mapa 3D.</h2></div><a class="fs3" href="${u3d}" target="_blank" rel="noopener">Abrir em tela cheia ↗</a></div>
-    <div class="og">
-      <div class="m3f rv"><iframe src="${u3d}" title="Mapa 3D: ${s.nome}" loading="lazy" allow="fullscreen"></iframe></div>
-      <div class="rv"><h3 class="ph">Perto daqui</h3><ul class="near-l">${near.map(o=>`<li data-go="${o.id}"><img src="${IA.has(o.id)?ia(o.id):ft(o.f[0])}" alt=""><span><b>${o.nome}</b><small>${G[o.g].nome}</small></span></li>`).join('')}</ul></div>
-    </div>
+    <div class="m3f rv"><iframe src="${u3d}&vista=simples" title="Mapa 3D: ${s.nome}" loading="lazy" allow="fullscreen"></iframe></div>
   </section>
   <section class="ag pg" id="s-agenda"><div class="wrap rv"><div>${ey('agenda','Agenda')}<h2>O que acontece por aqui.</h2><p>Confira a agenda do parque para eventos neste espaço e no entorno.</p></div><button class="cta" data-ag>Ver agenda ${ARROW}</button></div></section>
   ${s.n ? `<section class="wrap nsec pg" id="s-midia"><div class="rv">${ey('midia','Na mídia')}<h2>O que saiu na imprensa.</h2></div><div class="news rv">${s.n.map(n=>`<article><div class="src">${n[0]} · ${n[1]}</div><h3>${n[2]}</h3><p>${n[3]}</p></article>`).join('')}</div></section>` : ''}
