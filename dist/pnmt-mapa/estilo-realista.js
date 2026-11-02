@@ -145,6 +145,104 @@ export function aplicarRealismo(scene, renderer, THREE) {
   scene.traverse(l => { if (l.isHemisphereLight) l.groundColor.set('#6b7646'); });
   renderer.shadowMap.needsUpdate = true;
   scene.userData.estiloRealista = res;
+  try { res.refino = aplicarRefinoFoto(scene, renderer, THREE, waterUniforms); } catch (e) { console.warn('[refino-foto]', e); }
   console.log('[estilo-realista]', JSON.stringify(res));
+  return res;
+}
+
+// ---- Refino fotografico (v2) ----
+// Refino fotografico: aproxima a maquete das fotos aereas de fim de tarde.
+// So troca cores, texturas e luz. Nao cria nem move construcao.
+function rndR(s) { s >>>= 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+function texturaCerradoFoto(THREE, seed, tam) {
+  const c = document.createElement('canvas'); c.width = c.height = tam;
+  const g = c.getContext('2d'); const r = rndR(seed); const k = tam / 1024;
+  g.fillStyle = '#6f7a41'; g.fillRect(0, 0, tam, tam);
+  const blob = (col, a, n, r0, r1) => {
+    for (let i = 0; i < n; i++) {
+      const x = r() * tam, y = r() * tam, R = (r0 + r() * (r1 - r0)) * k;
+      for (const dx of [-tam, 0, tam]) for (const dy of [-tam, 0, tam]) {
+        const gr = g.createRadialGradient(x + dx, y + dy, 0, x + dx, y + dy, R);
+        gr.addColorStop(0, col.replace('A', a)); gr.addColorStop(1, col.replace('A', 0));
+        g.fillStyle = gr; g.fillRect(x + dx - R, y + dy - R, 2 * R, 2 * R);
+      }
+    }
+  };
+  blob('rgba(168,154,96,A)', 0.38, 60, 70, 240);   // capim seco dourado
+  blob('rgba(84,104,52,A)', 0.42, 80, 40, 170);    // gramado mais verde
+  blob('rgba(140,132,82,A)', 0.30, 90, 25, 110);   // palha
+  blob('rgba(146,90,56,A)', 0.26, 26, 10, 46);     // solo vermelho exposto
+  blob('rgba(110,122,66,A)', 0.28, 220, 6, 24);    // variacao fina
+  for (let i = 0; i < 9000 * k * k; i++) {         // arbustos e moitas
+    const x = r() * tam, y = r() * tam, R = (1.5 + r() * 4) * k;
+    g.fillStyle = `rgba(${38 + r() * 24 | 0},${54 + r() * 26 | 0},${26 + r() * 12 | 0},${0.3 + r() * 0.45})`;
+    g.beginPath(); g.arc(x, y, R, 0, 7); g.fill();
+  }
+  const im = g.getImageData(0, 0, tam, tam), D = im.data;
+  for (let i = 0; i < D.length; i += 4) { const v = (r() - 0.5) * 26; D[i] += v; D[i + 1] += v; D[i + 2] += v * 0.6; }
+  g.putImageData(im, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8;
+  if ('colorSpace' in t) t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+const FOLHAS = {
+  '49702e': '#45602e', '3a5f25': '#3a5426', '2c4f21': '#2e4520', '3b6639': '#3c5630', '50703a': '#4f6436',
+  '406442': '#3f5a33', '66723c': '#5f6838', '34672b': '#3a5a2c', '315d20': '#33501f', '4b7e32': '#4a6a30'
+};
+
+function aplicarRefinoFoto(scene, renderer, THREE, waterUniforms) {
+  if (scene.userData.refinoFoto) return scene.userData.refinoFoto;
+  const res = { grama: 0, vias: 0, folhas: 0, copas: 0, piso: 0, agua: 0, nuvens: 0 };
+  const gt = texturaCerradoFoto(THREE, 17, 2048); gt.repeat.set(0.25, 0.25);
+  const ft = texturaCerradoFoto(THREE, 29, 512); ft.repeat.set(220, 220);
+  const vistos = new Set();
+  scene.traverse(o => {
+    if (!(o.isMesh || o.isInstancedMesh)) return;
+    (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => {
+      if (!m || vistos.has(m)) return; vistos.add(m);
+      if (m.map && m.map.isCanvasTexture) {
+        const rx = m.map.repeat.x;
+        if (rx === 220) { m.map = ft; m.needsUpdate = true; res.grama++; return; }           // chao em volta
+        if (rx === 1 && (o.name === 'Autódromo · grass' || !o.name)) { m.map = gt; m.needsUpdate = true; res.grama++; return; }
+      }
+      if (!m.color || m.map) return;
+      const h = m.color.getHexString();
+      if (h === '454b50') { m.color.set('#5e5f5b'); m.roughness = 0.95; res.vias++; }
+      else if (FOLHAS[h]) { m.color.set(FOLHAS[h]); res.folhas++; }
+      else if (h === 'f1f3f2') { m.color.set('#d9d3c6'); res.piso++; }
+      else if (h === 'd2cdbf') { m.color.set('#c7bfae'); res.piso++; }
+      else if (h === '328899' || h === '2d6f8c') { m.color.set('#1e3b46'); m.metalness = 0; m.roughness = 0.35; m.envMapIntensity = 0.25; m.needsUpdate = true; res.agua++; }
+    });
+  });
+  scene.traverse(o => {
+    if (o.name !== 'Cenário · copas' || !o.isInstancedMesh) return;
+    const tons = ['#3c5626', '#48632c', '#2f4a20', '#566b30', '#40592a', '#5f6f35', '#35502a'].map(x => new THREE.Color(x));
+    const r = rndR(9); for (let i = 0; i < o.count; i++) o.setColorAt(i, tons[Math.floor(r() * tons.length)]);
+    if (o.instanceColor) o.instanceColor.needsUpdate = true; res.copas += o.count;
+  });
+  if (waterUniforms) { waterUniforms.uDeepColor.value.set('#173540'); waterUniforms.uShallowColor.value.set('#2a5560'); }
+  const sois = [], ceus = []; scene.traverse(l => { if (l.isDirectionalLight) sois.push(l); if (l.isHemisphereLight) ceus.push(l); });
+  const SOL = { manha: '#fff0d8', tarde: '#ffdcae' };
+  // Nuvens de maquete (blocos brancos baixos) saem de cena
+  scene.traverse(o => {
+    if (o.name && /Vida no mapa/.test(o.name)) o.children.forEach(c => { if (c.isGroup && c.position.y >= 90) { c.visible = false; res.nuvens++; } });
+  });
+  // Neblina de fim de tarde e chao em volta mais escuro, reaplicados a cada quadro (o ciclo solar reescreve a neblina)
+  const NEB = { manha: '#d6dbd2', tarde: '#cfd3c6', 'por-do-sol': '#d9b48e' };
+  let chao = null; scene.traverse(o => { if (o.isMesh && o.scale.x === 5 && o.material && o.material.map === ft) chao = o; });
+  if (chao) {
+    const antes = chao.onBeforeRender;
+    chao.onBeforeRender = function (...a) {
+      if (antes) antes.apply(this, a);
+      const p = new URLSearchParams(location.search).get('periodo') || 'tarde';
+      if (NEB[p]) { chao.material.color.set('#a3ad8c'); if (scene.fog) { scene.fog.color.set(NEB[p]); scene.fog.near = 700; scene.fog.far = 3800; } }
+      if (SOL[p]) { sois.forEach(l => l.color.set(SOL[p])); ceus.forEach(l => { l.color.set('#dfe3e8'); l.groundColor.set('#6a5f3c'); }); }
+    };
+  }
+  scene.userData.refinoFoto = res;
+  console.log('[refino-foto]', JSON.stringify(res));
   return res;
 }
