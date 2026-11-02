@@ -3,14 +3,14 @@ import {mountSolarControls} from './solar-controls.js?v=cenario-integral-2026091
 import {sunDirection} from './solar-model.js?v=cenario-integral-20260914-2';
 import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
 import {openPortalPlace,portalSelection,portalSpaceId,reportPortalFallback} from './portal-flow.js?v=portal-espacos-20260914-1';
-import {places,colors} from './park-data.js?v=cenario-integral-20260914-2';
+import {places,colors} from './park-data.js?v=texto-validado-20261102-1';
 import {PNMTShowcaseController,SHOWCASE_WAYPOINTS} from './showcase.js?v=showcase-emons-20260918-2';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
 import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-acabamento-20260914-3';
 import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=estilo-minimundo-20261025-10';
-import {aplicarRealismo} from './estilo-realista.js?v=realista-20261101-3';
+import {aplicarRealismo} from './estilo-realista.js?v=texto-validado-20261102-1';
 let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';
@@ -80,7 +80,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=parque-familia-20261011-3'),import('./rendering.js?v=gta-realismo-20260916-1'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=gta-realismo-20260916-1')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=texto-validado-20261102-1'),import('./rendering.js?v=gta-realismo-20260916-1'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=gta-realismo-20260916-1')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;

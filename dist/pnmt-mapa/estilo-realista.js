@@ -4,7 +4,7 @@
 // só troca materiais (chão de cerrado, água, copas, base), devolve o céu e suaviza as cores de maquete.
 // Onde não existe foto aérea, o chão vira textura de cerrado genérica, sem desenhar prédios.
 
-import { waterUniforms } from './miniatures.js?v=parque-familia-20261011-3';
+import { waterUniforms } from './miniatures.js?v=texto-validado-20261102-1';
 
 const TINTA_POR_PERIODO = { manha: '#e4ead6', tarde: '#e8eedb', 'por-do-sol': '#dcbf9e', noite: '#2c3652' };
 
