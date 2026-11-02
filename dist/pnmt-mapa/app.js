@@ -10,6 +10,7 @@ const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
 import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-acabamento-20260914-3';
 import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=estilo-minimundo-20261025-10';
+import {aplicarRealismo} from './estilo-realista.js?v=realista-20261101-1';
 let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';
@@ -279,6 +280,7 @@ async function init(){
  // A vista 3D abre com o terreno verde; a ortofoto só carrega ao abrir Satélite.
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
  aplicarEstiloMinimundo(scene,renderer,T);
+ try{aplicarRealismo(scene,renderer,T);}catch(e){console.warn('[estilo-realista]',e);}
  if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
  const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');
  const showcaseController=new PNMTShowcaseController({
@@ -303,8 +305,9 @@ async function init(){
   showcaseController.setMode('list');
   selectPlace(requested);
  }else{
-  showcaseController.setMode('showcase');
+  showcaseController.setMode('list');
  }
+ { const st=document.createElement('style'); st.textContent='.showcase-top-bar,.showcase-card,.showcase-reopen-btn{display:none!important}'; document.head.appendChild(st); }
  if(validDetail(requested,detail))focusDetail(detail);
  document.addEventListener('visibilitychange',()=>{if(document.hidden){activeTween++;cancelAnimationFrame(frame);frame=0;}else render();});
  window.addEventListener('pagehide',()=>{disposed=true;activeTween++;cancelAnimationFrame(frame);cancelAnimationFrame(animation);resize.disconnect();solarControls?.dispose();controls.dispose();textures.forEach(t=>t.dispose());for(const layer of [scene,overlay])layer.traverse(o=>{o.geometry?.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material?.dispose();});engine.dispose();});
