@@ -9,7 +9,7 @@ import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 import {configureArchitectureMaterials} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
-import {terrain,places} from './park-data.js?v=cenario-integral-20260914-2';
+import {terrain,places} from './park-data.js?v=texto-validado-20261102-1';
 import {buildArenaShow,configureArenaMaterials} from './arena-show.js?v=arena-arquitetura-20260913-1';
 import {applyPhotoRefinements, materialCache} from './refinamentos.js?v=lago-satelite-20260917-11';
 import {buildParqueFamilia} from './parque-familia.js?v=parque-familia-20261011-3';

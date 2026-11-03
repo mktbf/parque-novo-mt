@@ -189,7 +189,38 @@ body {
 }
 
 .site-header.reference-header .header-social-channels {
-  display: none !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.site-header.reference-header .header-social-channels .social-icon-btn {
+  width: 30px;
+  height: 30px;
+}
+
+/* Com o topo azul (ao rolar), os icones viram contorno branco */
+.site-header.reference-header.is-scrolled .social-handle-text {
+  color: #FFFFFF;
+}
+
+.site-header.reference-header.is-scrolled .header-social-channels .social-icon-btn {
+  color: #FFFFFF;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.35);
+}
+
+@media (max-width: 1320px) {
+  .site-header.reference-header .header-social-channels .social-handle-text {
+    display: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .site-header.reference-header .header-social-channels {
+    display: none !important;
+  }
 }
 
 .site-header.reference-header .header-actions {

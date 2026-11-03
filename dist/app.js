@@ -935,6 +935,7 @@ async function updateAgenda() {
         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
           <button class="filter" onclick="document.getElementById('noticias').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Not&iacute;cias e cobertura</button>
           <button class="filter" onclick="document.getElementById('galeria-secao').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Galeria de fotos</button>
+          <button class="filter" onclick="document.getElementById('videos-secao').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">V&iacute;deos</button>
           <button class="filter" onclick="document.getElementById('kit').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Kit de imprensa</button>
           <button class="filter" onclick="document.getElementById('assessoria').scrollIntoView({behavior:'smooth'})" style="text-decoration:none">Fale com a assessoria</button>
         </div>
@@ -1012,7 +1013,31 @@ async function updateAgenda() {
       </style>
     `;
 
-    return introHtml + newsHtml + galleryHtml + footerHtml;
+    // Videos: lista do canal do YouTube (config.videos). O video so carrega quando a pessoa clica.
+    const vids = (config.videos || []).filter(v => v && /^[\w-]{11}$/.test(v.id));
+    const videosHtml = vids.length ? `
+      <section id="videos-secao" class="wrap" style="padding-top: 20px; padding-bottom: 60px; margin-bottom: 60px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+          <div style="flex: 1 1 400px;">
+            ${heading('IMPRENSA', 'V&iacute;deos', 'V&iacute;deos oficiais do parque, publicados no canal do YouTube.')}
+          </div>
+          ${config.youtube ? `<a class="inline-link" href="${esc(config.youtube)}" target="_blank" rel="noopener" style="color: #1B8F3A; font-weight: bold; font-size: 14px;">Ver canal no YouTube &nearr;</a>` : ''}
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">
+          ${vids.map(v => `
+            <article>
+              <button type="button" class="yt-card" data-yt="${esc(v.id)}" aria-label="Assistir: ${esc(v.titulo || '')}" style="display:block; position:relative; width:100%; aspect-ratio:16/9; padding:0; border:0; border-radius:8px; overflow:hidden; background:#0d2b4d; cursor:pointer; margin-bottom:15px;">
+                <img src="https://i.ytimg.com/vi/${esc(v.id)}/hqdefault.jpg" alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+                <span aria-hidden="true" style="position:absolute; left:50%; top:50%; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#0d2b4d"/></svg></span>
+                ${v.duracao ? `<span style="position:absolute; right:10px; bottom:10px; background:rgba(13,43,77,.85); color:#fff; font-size:12px; font-weight:bold; padding:3px 7px; border-radius:4px;">${esc(v.duracao)}</span>` : ''}
+              </button>
+              <h4 style="font-size: 18px; color: var(--navy); margin-bottom: 5px;">${esc(v.titulo || '')}</h4>
+              <p style="color: #666; font-size: 13px; margin: 0;">YouTube &middot; Parque Novo Mato Grosso</p>
+            </article>`).join('')}
+        </div>
+      </section>` : '';
+
+    return introHtml + newsHtml + galleryHtml + videosHtml + footerHtml;
   }
   
   function newsArticle(id) {
@@ -1252,7 +1277,7 @@ async function updateAgenda() {
         'O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul.',
         'Quero visitar'
       ) +
-      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O parque está em obras em vários setores. O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
+      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
     );
   }
 
@@ -2003,7 +2028,16 @@ function credits() {
 
     if (route === 'espacos') updateSpaces();
     if (route === 'agenda') updateAgenda();
-    if (route === 'imprensa') { updateNews(); updateImprensaGallery(); }
+    if (route === 'imprensa') { updateNews(); updateImprensaGallery();
+      document.querySelectorAll('.yt-card').forEach(b => b.onclick = () => {
+        const id = b.dataset.yt; if (!/^[\w-]{11}$/.test(id)) return;
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        f.title = b.getAttribute('aria-label') || 'Vídeo'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+        f.style.cssText = 'display:block; width:100%; aspect-ratio:16/9; border:0; border-radius:8px; margin-bottom:15px;';
+        b.replaceWith(f);
+      });
+    }
     if (route === 'galeria') updateGallery();
 
   function disableCaptionsOnIframe(iframe) {

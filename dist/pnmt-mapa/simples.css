@@ -1,0 +1,8 @@
+/* Vista simples: o mapa 3D dentro da pagina de um espaco. So o mapa, o espaco em destaque e os controles basicos. */
+html.simples .places,html.simples .sidebar-toggle,html.simples .map-caption,html.simples .mode-switch,html.simples .scene-settings,html.simples #north,html.simples .solar-controls,html.simples .mobile-list-open,html.simples #rotate,html.simples .showcase-top-bar{display:none!important}
+html.simples body .explorer,html.simples body .explorer.has-selection,html.simples body .explorer.sidebar-collapsed{grid-template-columns:minmax(0,1fr)!important}
+html.simples #markers .marker:not(.selected){pointer-events:none}
+html.simples #markers .marker:not(.selected) .pin-name{display:none!important}
+html.simples #markers .marker:not(.selected) .pin-stem{opacity:.35}
+html.simples #markers .parking-marker{display:none!important}
+@media (hover:hover){html.simples .map-hint span:last-child{font-size:0}html.simples .map-hint span:last-child::after{content:'Arraste para girar · Use + e − para aproximar';font-size:13px}}
