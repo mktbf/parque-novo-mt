@@ -119,7 +119,7 @@ function abrirX(s){
   const dw = $('#dw'), was = !dw.hidden; dw.hidden = false; if(root.host._pfx) root.host._pfx();
   // Com video: a tela fica no topo, no video do espaco. Sem video: desce para a pagina do espaco.
   const comVideo = s.px != null && innerWidth > 980 && ((X[s.id] && X[s.id].capa) || (s.v && s.v[0])) && !matchMedia('(prefers-reduced-motion: reduce)').matches && !(navigator.connection && navigator.connection.saveData);
-  $('#xcap').innerHTML = comVideo ? `<small>${g.nome}</small><b>${s.nome}</b><button class="xgo" id="xgo">Conhecer o espaço ${ARROW}</button>` : '';
+  $('#xcap').innerHTML = comVideo ? `<small>${g.nome}</small><b>${s.nome.replace(/ de Mato Grosso$/, ' de\u00a0Mato\u00a0Grosso')}</b><button class="xgo" id="xgo">Conhecer o espaço ${ARROW}</button>` : '';
   if($('#xgo')) $('#xgo').onclick = e => { e.stopPropagation(); const hd = document.querySelector('.site-header'), c = $('#dwc'); scrollTo({top: c.getBoundingClientRect().top + scrollY - (hd ? hd.offsetHeight : 0), behavior:'smooth'}); };
   // Com video, o video do topo ja faz o papel de capa: o cartao com foto e titulo abaixo sai.
   $('#dwh').hidden = !!comVideo;
