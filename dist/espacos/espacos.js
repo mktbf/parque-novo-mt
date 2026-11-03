@@ -34,6 +34,7 @@ class PnmtEspacos extends HTMLElement {
     const app = $('#app');
     const X = { // extras por espaco (fotos em alta, legendas, momentos)
  // Foto da apresentacao (ap) e foto de transicao (trans) escolhidas do album da Imprensa de cada espaco.
+ familia:{capa:'familia-capa'},
  motocross:{ap:['../assets/gallery/motocross-04.jpg',''], trans:['../assets/gallery/motocross-07.jpg','']},
  kartodromo:{ap:['../assets/gallery/kartodromo-04.jpg','']},
  bmx:{ap:['../assets/gallery/bmx-02.jpg',''], trans:['../assets/gallery/bmx-04.jpg','']},
