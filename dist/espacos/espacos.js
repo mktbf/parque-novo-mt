@@ -33,6 +33,16 @@ class PnmtEspacos extends HTMLElement {
     const $ = s => root.querySelector(s), $$ = s => root.querySelectorAll(s);
     const app = $('#app');
     const X = { // extras por espaco (fotos em alta, legendas, momentos)
+ // Foto da apresentacao (ap) e foto de transicao (trans) escolhidas do album da Imprensa de cada espaco.
+ motocross:{ap:['../assets/gallery/motocross-04.jpg',''], trans:['../assets/gallery/motocross-07.jpg','']},
+ kartodromo:{ap:['../assets/gallery/kartodromo-04.jpg','']},
+ bmx:{ap:['../assets/gallery/bmx-02.jpg',''], trans:['../assets/gallery/bmx-04.jpg','']},
+ skate:{ap:['../assets/gallery/skate-park-02.jpg',''], trans:['../assets/gallery/skate-park-03.jpg','']},
+ wake:{ap:['../assets/gallery/wake-park-03.jpg',''], trans:['../assets/gallery/wake-park-02.jpg','']},
+ arena:{ap:['../assets/gallery/arena-show-08.jpg','']},
+ roda:{ap:['../assets/gallery/roda-gigante-03.jpg','Imagem ilustrativa do projeto']},
+ splash:{ap:['../assets/gallery/splash-parque-03.jpg','Imagem ilustrativa do projeto']},
+ museus:{ap:['../assets/gallery/museus-03.jpg','Imagem ilustrativa do projeto']},
  autodromo:{ap:['ft/autodromo-entardecer.jpg',''], trans:['ft/autodromo-noite2.jpg',''], capa:'autodromo-capa'},
  vila:{cover:'vila/vila-818.jpg', ed:['vila/vila-809.jpg','Detalhes de arquitetura clássica, iluminados à noite.'],
   fotos:[['vila/vila-818.jpg','As fachadas acesas no começo da noite'],['ft/v-vila-2.jpg','Arquitetura clássica e enxaimel, lado a lado'],['vila/vila-803.jpg','A praça ao entardecer'],['ft/v-vila-1.jpg','A Vila vista do alto, de frente para o canal'],['vila/vila-812.jpg','Iluminação que destaca cada detalhe'],['vila/vila-800.jpg','Caminhos entre as fachadas'],['vila/vila-795.jpg','A praça aberta, pronta para o passeio'],['vila/vila-819.jpg','O fim do dia na Vila']],
