@@ -34,6 +34,7 @@ class PnmtEspacos extends HTMLElement {
     const app = $('#app');
     const X = { // extras por espaco (fotos em alta, legendas, momentos)
  // Foto da apresentacao (ap) e foto de transicao (trans) escolhidas do album da Imprensa de cada espaco.
+ casa:{capa:'casa-capa', ap:['ft/casa-fachada.jpg',''], trans:['ft/casa-arquibancada.jpg','']},
  familia:{capa:'familia-capa', ap:['ft/familia-brinquedos.jpg',''], trans:['ft/familia-vista.jpg','']},
  motocross:{ap:['../assets/gallery/motocross-04.jpg',''], trans:['../assets/gallery/motocross-07.jpg','']},
  kartodromo:{ap:['../assets/gallery/kartodromo-04.jpg','']},
@@ -45,7 +46,7 @@ class PnmtEspacos extends HTMLElement {
  splash:{ap:['../assets/gallery/splash-parque-03.jpg','Imagem ilustrativa do projeto']},
  museus:{ap:['../assets/gallery/museus-03.jpg','Imagem ilustrativa do projeto']},
  autodromo:{ap:['ft/autodromo-entardecer.jpg',''], trans:['ft/autodromo-noite2.jpg',''], capa:'autodromo-capa'},
- vila:{cover:'vila/vila-818.jpg', ed:['vila/vila-809.jpg','Detalhes de arquitetura clássica, iluminados à noite.'],
+ vila:{capa:'vila-capa', ap:['ft/vila-fachadas.jpg',''], trans:['ft/vila-noite.jpg',''], cover:'vila/vila-818.jpg', ed:['vila/vila-809.jpg','Detalhes de arquitetura clássica, iluminados à noite.'],
   fotos:[['vila/vila-818.jpg','As fachadas acesas no começo da noite'],['ft/v-vila-2.jpg','Arquitetura clássica e enxaimel, lado a lado'],['vila/vila-803.jpg','A praça ao entardecer'],['ft/v-vila-1.jpg','A Vila vista do alto, de frente para o canal'],['vila/vila-812.jpg','Iluminação que destaca cada detalhe'],['vila/vila-800.jpg','Caminhos entre as fachadas'],['vila/vila-795.jpg','A praça aberta, pronta para o passeio'],['vila/vila-819.jpg','O fim do dia na Vila']],
   mom:{t:'Três momentos<br>para aproveitar.',p:'Do passeio à tarde às fotos de noite, a Vila muda de cara conforme a luz.',i:[['ft/v-vila-1.jpg','O passeio','Atravesse a praça e percorra as fachadas, uma a uma, de frente para o canal.'],['vila/vila-813.jpg','O entardecer','Quando o sol baixa, a iluminação acende e a vila ganha outro clima.'],['vila/vila-806.jpg','A foto','Cada fachada é um cenário. Um bom lugar para guardar a visita.']]},
   vt:['As fachadas à noite','A orla e o canal'], hora:['Fim de tarde','Quando as fachadas acendem']}
