@@ -1919,9 +1919,9 @@ function credits() {
         <article><h3>Para que usamos</h3><p>Usamos esses dados para responder ao seu contato, organizar visitas e eventos, atender a imprensa, avaliar candidaturas e, se você pedir, enviar novidades do parque. Não vendemos nem cedemos seus dados para fins de propaganda.</p></article>
         <article><h3>Com quem compartilhamos</h3><p>Os dados são acessados apenas pela equipe do parque e pelos fornecedores que mantêm o site funcionando, como hospedagem e armazenamento. Também podemos compartilhar quando a lei exigir.</p></article>
         <article><h3>Por quanto tempo guardamos</h3><p>Guardamos os dados apenas pelo tempo necessário para atender ao seu pedido ou cumprir obrigações legais. Depois disso, eles são excluídos.</p></article>
-        <article><h3>Seus direitos</h3><p>Você pode, a qualquer momento, pedir acesso, correção ou exclusão dos seus dados, ou deixar de receber nossas novidades. Basta escrever para <a href="mailto:novomatogrossoparque@gmail.com">novomatogrossoparque@gmail.com</a>.</p></article>
+        <article><h3>Seus direitos</h3><p>Você pode, a qualquer momento, pedir acesso, correção ou exclusão dos seus dados, ou deixar de receber nossas novidades. Basta escrever para <a href="mailto:comunicacao@parquenovomt.com">comunicacao@parquenovomt.com</a>.</p></article>
         <article><h3>Cookies</h3><p>O site não usa cookies de propaganda. O vídeo do YouTube e o mapa do Google podem usar cookies próprios, conforme as políticas do Google.</p></article>
-        <article><h3>Contato</h3><p>Associação Parque Novo Mato Grosso, CNPJ 66.040.667/0001-26, Rodovia Emanuel Pinheiro (MT-251), km 11, Jardim Vitória, Cuiabá/MT, CEP 78.055-733. E-mail: <a href="mailto:novomatogrossoparque@gmail.com">novomatogrossoparque@gmail.com</a>.</p><p>Esta política pode ser atualizada. Última atualização: novembro de 2026.</p></article>
+        <article><h3>Contato</h3><p>Associação Parque Novo Mato Grosso, CNPJ 66.040.667/0001-26, Rodovia Emanuel Pinheiro (MT-251), km 11, Jardim Vitória, Cuiabá/MT, CEP 78.055-733. E-mail: <a href="mailto:comunicacao@parquenovomt.com">comunicacao@parquenovomt.com</a>.</p><p>Esta política pode ser atualizada. Última atualização: novembro de 2026.</p></article>
       </section>`
     );
   }
