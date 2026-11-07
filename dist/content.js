@@ -374,7 +374,7 @@ window.PNMT_CONTENT = {
     },
     {
       "id": "circo-do-futuro",
-      "name": "Pérola do Cerrado & Circo do Futuro",
+      "name": "Circo do Futuro",
       "category": "Cultura",
       "image": "assets/gallery/circo-do-futuro-01.jpg",
       "kind": "Imagem de referência da proposta",
@@ -386,7 +386,7 @@ window.PNMT_CONTENT = {
         ]
       ],
       "text": [
-        "Onde a tecnologia, a arte e a cultura viram espetáculo. A Pérola do Cerrado é um complexo cultural inovador que inclui o \"Circo do Futuro\": um imenso domo arquitetônico perfeitamente preparado para projeções mapeadas e imersões visuais.",
+        "Onde a tecnologia, a arte e a cultura viram espetáculo. O Circo do Futuro é um complexo cultural inovador: um imenso domo arquitetônico perfeitamente preparado para projeções mapeadas e imersões visuais.",
         "O espaço abriga também um Teatro de Arena para até 400 espectadores e um mirante externo que integra o edifício de forma fluida à deslumbrante paisagem do lago."
       ],
       "gallery": [
