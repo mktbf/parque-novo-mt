@@ -306,7 +306,7 @@ window.PNMT_CONTENT = {
       ],
       "text": [
         "A maior árvore artificial do mundo. Com seus incríveis 65 metros de altura e totalmente revestida em painéis imersivos de LED, ela é o coração pulsante e luminoso do complexo.",
-        "Acessada por elevadores confortáveis, a estrutura leva os visitantes até o seu deslumbrante mirante no topo, revelando uma vista 360º de toda a grandiosidade do Parque Novo Mato Grosso."
+        "Acessada por elevadores confortáveis, a estrutura leva os convidados até o seu deslumbrante mirante no topo, revelando uma vista 360º de toda a grandiosidade do Parque Novo Mato Grosso."
       ],
       "gallery": [
         "assets/gallery/arvore-da-vida-01.jpg",
@@ -323,7 +323,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/splash-parque-01.jpg",
       "tagline": "Alegria e frescor em escala monumental.",
       "text": [
-        "Um verdadeiro oásis de diversão em escala gigante. Equivalente a mais de oito piscinas olímpicas (12.000 m²), este monumental playground aquático refresca e surpreende os visitantes.",
+        "Um verdadeiro oásis de diversão em escala gigante. Equivalente a mais de oito piscinas olímpicas (12.000 m²), este monumental playground aquático refresca e surpreende os convidados.",
         "Seu grande destaque é abrigar o maior toboágua do mundo, garantindo experiências emocionantes e memoráveis para toda a família sob o sol vibrante de Mato Grosso."
       ],
       "gallery": [
@@ -518,7 +518,7 @@ window.PNMT_CONTENT = {
       "tagline": "Preparado para receber grandes públicos.",
       "text": [
         "Preparado para operar em dimensões superlativas. O parque orgulha-se de possuir o maior sistema de estacionamentos da região: 21 mil vagas distribuídas de maneira inteligente, garantindo fluidez e organização máxima mesmo durante múltiplos eventos.",
-        "Complementando essa experiência impecável, a presença do imponente Complexo da Cavalaria da Polícia Militar de Mato Grosso (14.651 m²) assegura tradição e monitoramento ostensivo, provendo tranquilidade irrestrita para todos os nossos visitantes."
+        "Complementando essa experiência impecável, a presença do imponente Complexo da Cavalaria da Polícia Militar de Mato Grosso (14.651 m²) assegura tradição e monitoramento ostensivo, provendo tranquilidade irrestrita para todos os nossos convidados."
       ]
     }
   ],
@@ -1865,7 +1865,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367255_lotes_dji_20261010080647_0001_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1874,7 +1874,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367266_lotes_dji_20261010080701_0002_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1883,7 +1883,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367280_lotes_dji_20261010081216_0007_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1892,7 +1892,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367291_lotes_dji_20261010081223_0008_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1901,7 +1901,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367304_lotes_dji_20261010081321_0010_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1910,7 +1910,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367314_lotes_dji_20261010081326_0011_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1919,7 +1919,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367322_lotes_dji_20261010082530_0019_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1928,7 +1928,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367332_lotes_dji_20261010082608_0020_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1937,7 +1937,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367343_lotes_dji_20261010082620_0021_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1946,7 +1946,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367355_lotes_dji_20261010082629_0022_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1955,7 +1955,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367368_lotes_dji_20261010082646_0023_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1964,7 +1964,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367374_lotes_dji_20261010082653_0024_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1973,7 +1973,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367386_lotes_dji_20261010082923_0026_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1982,7 +1982,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367395_lotes_dji_20261010082938_0027_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -1991,7 +1991,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367406_lotes_dji_20261010083003_0028_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2000,7 +2000,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367418_lotes_dji_20261010085601_0035_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2009,7 +2009,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367431_lotes_dji_20261010085607_0036_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2018,7 +2018,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367439_lotes_dji_20261010085634_0037_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2027,7 +2027,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367445_lotes_dji_20261010085646_0038_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2036,7 +2036,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367451_lotes_dji_20261010090548_0045_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2045,7 +2045,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367458_lotes_dji_20261010090828_0049_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2054,7 +2054,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367470_lotes_dji_20261010090925_0051_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2063,7 +2063,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367480_lotes_dji_20261010090934_0052_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2072,7 +2072,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367491_lotes_dji_20261010091059_0055_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2081,7 +2081,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367503_lotes_dji_20261010091108_0056_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2090,7 +2090,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367512_lotes_dji_20261010092243_0063_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2099,7 +2099,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367522_lotes_dji_20261010092315_0064_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2108,7 +2108,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367530_lotes_dji_20261010092327_0065_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2117,7 +2117,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367540_lotes_dji_20261010092509_0067_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2126,7 +2126,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367553_lotes_dji_20261010092517_0068_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2135,7 +2135,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367565_lotes_dji_20261010093247_0070_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2144,7 +2144,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367575_lotes_dji_20261010093439_0073_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2153,7 +2153,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367588_lotes_dji_20261010093447_0074_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2162,7 +2162,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367597_lotes_dji_20261010093625_0076_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2171,7 +2171,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367607_lotes_dji_20261010093633_0077_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2180,7 +2180,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367619_lotes_dji_20261010093657_0078_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
@@ -2189,7 +2189,7 @@ window.PNMT_CONTENT = {
       "image": "assets/gallery/imported_1791753367627_lotes_dji_20261010093711_0079_d_tratada.jpg",
       "category": "Vista aérea",
       "title": "Vistas Gerais",
-      "description": "Vista aérea do parque registrada por drone em outubro de 2026.",
+      "description": "Vista aérea do parque registrada em outubro de 2026.",
       "type": "Foto",
       "credit": "Parque Novo Mato Grosso"
     },
