@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 // Recebe os formularios do site (contato, evento, visita, imprensa, newsletter)
 // e envia cada um por e-mail para a caixa do parque, pela mesma conta Gmail usada no Trabalhe Conosco.
-const DESTINO = process.env.FORM_DESTINO || 'novomatogrossoparque@gmail.com';
+const DESTINO = process.env.FORM_DESTINO || 'comunicacao@parquenovomt.com';
 const TITULOS = {
   contato: 'Contato pelo site',
   evento: 'Pedido de evento pelo site',
