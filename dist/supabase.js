@@ -27,10 +27,7 @@
 
     // Expose endpoints for app.js form handler
     const config = window.PNMT_CONFIG;
-    if (config) {
-      config.formsEndpoint = '__supabase__';
-      config.newsletterEndpoint = '__supabase__';
-    }
+    // Os formularios agora vao por e-mail (/api/formulario, definido em config.js); o Supabase nao recebe mais os envios.
 
     window.PNMT_SUPABASE_CLIENT = client;
 

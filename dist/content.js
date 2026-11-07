@@ -1665,7 +1665,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-123",
       "image": "assets/gallery/imported_1791753366959_playground_0809fff2_6188_47d1_8524_c1d49faf3494.png",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1674,7 +1674,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-124",
       "image": "assets/gallery/imported_1791753366969_playground_5e38d08d_c08b_43b5_9c76_de74d5a006c0.png",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1683,7 +1683,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-125",
       "image": "assets/gallery/imported_1791753366978_playground_castelo_do_parquinho_em_contra_plong_e.png",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1692,7 +1692,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-126",
       "image": "assets/gallery/imported_1791753366991_playground_castelo_pirata_visto_de_baixo.png",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1701,7 +1701,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-127",
       "image": "assets/gallery/imported_1791753367002_playground_e899239b_3c75_4986_9061_8b21644c7a0e.png",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1710,7 +1710,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-129",
       "image": "assets/gallery/imported_1791753367023_playground_img_2329_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1719,7 +1719,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-132",
       "image": "assets/gallery/imported_1791753367057_playground_img_2347_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1728,7 +1728,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-134",
       "image": "assets/gallery/imported_1791753367075_playground_img_2356_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1737,7 +1737,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-136",
       "image": "assets/gallery/imported_1791753367095_playground_img_e2311_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1746,7 +1746,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-137",
       "image": "assets/gallery/imported_1791753367102_playground_img_e2312_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1755,7 +1755,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-138",
       "image": "assets/gallery/imported_1791753367114_playground_img_e2313_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1764,7 +1764,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-139",
       "image": "assets/gallery/imported_1791753367123_playground_img_e2317_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1773,7 +1773,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-140",
       "image": "assets/gallery/imported_1791753367132_playground_img_e2327_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1782,7 +1782,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-141",
       "image": "assets/gallery/imported_1791753367144_playground_img_e2333_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1791,7 +1791,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-142",
       "image": "assets/gallery/imported_1791753367154_playground_img_e2334_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1800,7 +1800,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-143",
       "image": "assets/gallery/imported_1791753367160_playground_img_e2337_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1809,7 +1809,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-144",
       "image": "assets/gallery/imported_1791753367170_playground_img_e2338_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1818,7 +1818,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-145",
       "image": "assets/gallery/imported_1791753367177_playground_img_e2339_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1827,7 +1827,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-146",
       "image": "assets/gallery/imported_1791753367193_playground_img_e2340_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1836,7 +1836,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-147",
       "image": "assets/gallery/imported_1791753367208_playground_img_e2349_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1845,7 +1845,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-148",
       "image": "assets/gallery/imported_1791753367225_playground_img_e2350_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -1854,7 +1854,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-149",
       "image": "assets/gallery/imported_1791753367239_playground_img_e2358_tratada.jpg",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
@@ -2196,7 +2196,7 @@ window.PNMT_CONTENT = {
     {
       "id": "gallery-imported-187",
       "image": "assets/gallery/imported_1791754134496_selecao_parque_infantil_com_castelo_e_lago.png",
-      "category": "Andamento da Obra",
+      "category": "Fotos do parque",
       "title": "Parque da Família",
       "description": "Registro fotográfico do Parque da Família.",
       "type": "Foto",
