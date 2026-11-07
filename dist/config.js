@@ -3,8 +3,9 @@
    response: HTTP 2xx JSON {ok:true, reference?:string}.
    The local prototype never claims a submission occurred without that response. */
 window.PNMT_CONFIG = {
-  formsEndpoint: '__supabase__',
-  newsletterEndpoint: '__supabase__',
+  // Formularios enviados por e-mail para a caixa do parque (api/formulario.js).
+  formsEndpoint: '/api/formulario',
+  newsletterEndpoint: '/api/formulario',
   videoId: 'ZAVSkNOk-bY',
   youtubeId: 'ZAVSkNOk-bY',
   instagram: 'https://www.instagram.com/parquenovomt/',
