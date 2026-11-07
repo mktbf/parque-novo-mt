@@ -189,7 +189,7 @@ window.PNMT_MAP_POINTS = [
     status: 'conferido',
     highlight: false,
     badge: 'Acesso Principal MT-251',
-    summary: 'Inspirado no voo do tuiuiú, ave símbolo do Pantanal, dando as boas-vindas ao visitante.'
+    summary: 'Inspirado no voo do tuiuiú, ave símbolo do Pantanal, dando as boas-vindas a quem chega.'
   },
   {
     id: 'praca-de-alimentacao',
