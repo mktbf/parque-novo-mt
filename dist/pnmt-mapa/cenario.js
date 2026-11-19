@@ -87,7 +87,8 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
   }
  }
  const baseEntries=integral.trees.filter(([x,z],i)=>(!smallScreen||i%2===0)&&!(x>=420&&x<=488&&z>=624&&z<=675));
- const entries=[...baseEntries,...extraTrees];
+ // Matas extras sorteadas (extraTrees) retiradas: nao estao no projeto. Ficam so as arvores do paisagismo.
+ const entries=[...baseEntries];
  for(let idx=0;idx<entries.length;idx++){
   const [x,z,h,r,c]=entries[idx];
   const sVarX=0.88+((idx*17)%11)*0.026;

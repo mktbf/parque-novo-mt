@@ -778,8 +778,7 @@ export function aplicarEspacosReais(scene, THREE) {
   n += construirSplash(scene, THREE);
   n += construirArenas(scene, THREE);
   n += construirAgro(scene, THREE);
-  n += adicionarVida(scene, THREE);
-  window.__carrosParados = estacionarCarros(scene, THREE);
+  // Carros, wakeboard e nuvens decorativos retirados: o mapa mostra so o projeto.
   n += construirRoda(scene, THREE) ? 1 : 0;
   n += pisoDosBowls(scene, THREE);
   n += aguaDoWake(scene, THREE);
