@@ -53,15 +53,6 @@ export function createAutodromeFinish(circuits,model){
  for(const[key,record]of Object.entries(D.surfaces)){
   if(!record.indices.length)continue;const m=new T.Mesh(planarGeo(record,key),mat(key));m.name='Autódromo · '+key;m.receiveShadow=true;m.castShadow=false;m.userData.placeId='autodromo';m.userData.finishSurface=key;surfaces.add(m);
  }
- for(const ring of [
-  [[799,451],[817,430],[838,431],[848,449],[853,464],[831,456]],
-  [[986,784],[1006,792],[1019,814],[1013,832],[996,825],[988,805]],
-  [[882,812],[925,828],[936,842],[914,846],[876,831]]
- ]){
-  const sh=new T.Shape();ring.forEach(([x,z],i)=>i?sh.lineTo(x,-z):sh.moveTo(x,-z));sh.closePath();
-  const rg=new T.ShapeGeometry(sh);rg.rotateX(-Math.PI/2);rg.translate(0,.044,0);
-  const rm=new T.Mesh(rg,mat('runoff'));rm.name='Autódromo · runoff azul FIA';rm.receiveShadow=true;rm.userData.placeId='autodromo';surfaces.add(rm);
- }
  // Troca somente o material do circuito. Vértices e índices CAD permanecem intactos.
  circuits.traverse(o=>{if(!o.isMesh)return;o.material=mat('asphalt');const p=o.geometry.attributes.position,a=[];for(let i=0;i<p.count;i++)a.push(...illuminationUV(p.getX(i),p.getZ(i)));o.geometry.setAttribute('uv1',new T.Float32BufferAttribute(a,2));});
  const b=new Builder();

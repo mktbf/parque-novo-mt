@@ -3,7 +3,7 @@
 // 1. Texturas procedurais PBR (grama com variação orgânica, asfalto com rugosidade, concreto paginado nos estacionamentos)
 // 2. ShaderMaterial próprio para o Lago Oeste e enseadas (ondas suaves em duas direções, Fresnel refletindo o céu de cada período e margens rasas mais claras)
 
-import { waterUniforms } from './miniatures.js?v=realismo-3d-20261118-1';
+import { waterUniforms } from './miniatures.js?v=realismo-3d-20261119-2';
 import { implantationData as IMPLANT_D } from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
 
 function rnd(seed) {
@@ -386,16 +386,21 @@ function criarMaterialAguaShader(THREE) {
         float phaseB2 = dot(p, dirB) * 1.05 + uTime * 1.70;
 
         // Ondas ficam ainda mais suaves perto das margens rasas
-        float waveAmp = mix(0.028, 0.072, depthFactor);
-        vec2 grad = dirA * (cos(phaseA1) * 0.68 + cos(phaseA2) * 0.32 * detailFade)
-                  + dirB * (sin(phaseB1) * 0.64 + sin(phaseB2) * 0.36 * detailFade);
+        float waveAmp = mix(0.012, 0.034, depthFactor);
+        vec2 dirC = vec2(0.13, -0.99);
+        vec2 dirD = vec2(-0.93, -0.37);
+        float phaseC = dot(p, dirC) * 0.57 + uTime * 1.23 + sin(dot(p, dirA) * 0.071) * 2.3;
+        float phaseD = dot(p, dirD) * 0.43 - uTime * 0.97 + cos(dot(p, dirB) * 0.053) * 2.9;
+        vec2 grad = dirA * (cos(phaseA1) * 0.38 + cos(phaseA2) * 0.22 * detailFade)
+                  + dirB * (sin(phaseB1) * 0.36 + sin(phaseB2) * 0.24 * detailFade)
+                  + dirC * cos(phaseC) * 0.30 + dirD * sin(phaseD) * 0.30;
         vec3 N = normalize(vec3(-grad.x * waveAmp, 1.0, -grad.y * waveAmp));
 
         vec3 V = normalize(cameraPosition - vWorldPos);
         vec3 R = reflect(-V, N);
 
         // Tom mais claro esmeralda/turquesa nas margens rasas e azul profundo no centro
-        float caustic = (sin(phaseA2 + phaseB2) * 0.5 + 0.5) * (1.0 - depthFactor) * 0.14;
+        float caustic = (sin(phaseA2 + phaseC) * 0.5 + 0.5) * (1.0 - depthFactor) * 0.05;
         vec3 waterBase = mix(uShallowColor + vec3(caustic * 0.45, caustic * 0.7, caustic * 0.65), uDeepColor, depthFactor);
         // Borda imediata da margem levemente mais luminosa
         float shoreEdge = smoothstep(0.18, 0.0, depthFactor) * 0.16;

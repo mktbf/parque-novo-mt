@@ -1,6 +1,6 @@
 import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
 import * as T from 'three';
-import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=realismo-3d-20261118-1';
+import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=realismo-3d-20261119-2';
 import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
 import {primitives as P} from './refinamentos.js?v=pista-caminhada-20260916-1';
 

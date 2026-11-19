@@ -6,8 +6,8 @@ import {OutputPass} from './vendor/addons/postprocessing/OutputPass.js';
 import {ShaderPass} from './vendor/addons/postprocessing/ShaderPass.js';
 import {Sky} from './vendor/addons/objects/Sky.js';
 import {HDRLoader} from './vendor/addons/loaders/HDRLoader.js';
-import {simulation,localInstant,solarPosition,sunDirection} from './solar-model.js?v=realismo-3d-20261118-1';
-import {lakeShaderUniforms} from './estilo-realista.js?v=realismo-3d-20261118-1';
+import {simulation,localInstant,solarPosition,sunDirection} from './solar-model.js?v=realismo-3d-20261119-2';
+import {lakeShaderUniforms} from './estilo-realista.js?v=realismo-3d-20261119-2';
 
 const CinematicShader={
  name:'CinematicShader',
@@ -204,7 +204,7 @@ export function createRendering(scene,camera,smallScreen){
   alpha:false,
   powerPreference:'high-performance'
  });
- renderer.setPixelRatio(Math.min(devicePixelRatio||1,smallScreen?1.2:2));
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,smallScreen?1.1:1.5));
  renderer.outputColorSpace=T.SRGBColorSpace;
  renderer.toneMapping=T.ACESFilmicToneMapping;
  renderer.toneMappingExposure=0.98;
@@ -265,7 +265,7 @@ export function createRendering(scene,camera,smallScreen){
    distanceExponent:1.35,
    distanceFallOff:0.55,
    scale:1,
-   samples:14,
+   samples:8,
    screenSpaceRadius:false
   });
   ao.updatePdMaterial({radius:5,samples:8,rings:3});
@@ -284,7 +284,7 @@ export function createRendering(scene,camera,smallScreen){
  sun.castShadow=true;
  // No celular reduz resolução e raio do filtro de sombra para fluidez constante
  sun.shadow.radius=smallScreen?1.0:1.85;
- const shadowRes=smallScreen?1024:4096;
+ const shadowRes=smallScreen?1024:2048;
  sun.shadow.mapSize.set(shadowRes,shadowRes);
  Object.assign(sun.shadow.camera,{
   left:-870,
@@ -418,12 +418,12 @@ export function createRendering(scene,camera,smallScreen){
     sunOffset.fromArray(dir).normalize().multiplyScalar(1600);
     sun.position.copy(sun.target.position).add(sunOffset);
     sun.color.set('#ff9b3d');
-    sun.intensity=2.65;
+    sun.intensity=3.1;
     sun.castShadow=true;
 
-    hemisphere.color.set('#ffc894');
-    hemisphere.groundColor.set('#684e34');
-    hemisphere.intensity=0.76;
+    hemisphere.color.set('#ffb27a');
+    hemisphere.groundColor.set('#5a3f2a');
+    hemisphere.intensity=0.62;
 
     tmpSunNorm.copy(sunOffset).normalize();
     sky.material.uniforms.sunPosition.value.copy(tmpSunNorm);
@@ -434,8 +434,8 @@ export function createRendering(scene,camera,smallScreen){
 
     const sunsetEnv=getOrBuildPeriodEnv('por-do-sol',tmpSunNorm);
     if(sunsetEnv)scene.environment=sunsetEnv;
-    scene.environmentIntensity=0.78;
-    renderer.toneMappingExposure=1.01;
+    scene.environmentIntensity=0.6;
+    renderer.toneMappingExposure=1.06;
    }else if(afternoon){
     // TARDE (15h Cuiabá, SEM golden hour): sol alto inclinado a oeste, luz branca-quente natural e céu azul vivo
     const aft=resolveAfternoon15h(solar.date,solar.direction);
@@ -447,7 +447,7 @@ export function createRendering(scene,camera,smallScreen){
 
     hemisphere.color.set('#aed6f5');
     hemisphere.groundColor.set('#556d3d');
-    hemisphere.intensity=0.88;
+    hemisphere.intensity=0.68;
 
     tmpSunNorm.copy(sunOffset).normalize();
     sky.material.uniforms.sunPosition.value.copy(tmpSunNorm);
@@ -458,8 +458,8 @@ export function createRendering(scene,camera,smallScreen){
 
     const aftEnv=hdrDayEnv?hdrDayEnv.texture:getOrBuildPeriodEnv('tarde',tmpSunNorm);
     if(aftEnv)scene.environment=aftEnv;
-    scene.environmentIntensity=0.92;
-    renderer.toneMappingExposure=0.96;
+    scene.environmentIntensity=0.72;
+    renderer.toneMappingExposure=0.9;
    }else{
     // MANHÃ (e modo satélite): luz solar matinal limpa e fresca vinda do leste, céu cristalino
     sunOffset.fromArray(is3d?solar.direction:[-0.48,0.80,0.34]).normalize().multiplyScalar(1600);
@@ -470,7 +470,7 @@ export function createRendering(scene,camera,smallScreen){
 
     hemisphere.color.set('#bce0fa');
     hemisphere.groundColor.set('#506c3f');
-    hemisphere.intensity=0.92;
+    hemisphere.intensity=0.66;
 
     tmpSunNorm.copy(sunOffset).normalize();
     sky.material.uniforms.sunPosition.value.copy(tmpSunNorm);
@@ -481,8 +481,8 @@ export function createRendering(scene,camera,smallScreen){
 
     const morningEnv=getOrBuildPeriodEnv('manha',tmpSunNorm);
     if(morningEnv)scene.environment=morningEnv;
-    scene.environmentIntensity=0.95;
-    renderer.toneMappingExposure=0.97;
+    scene.environmentIntensity=0.7;
+    renderer.toneMappingExposure=0.88;
    }
 
    updateExtraNightLamps(night);
@@ -538,7 +538,7 @@ export function createRendering(scene,camera,smallScreen){
   }
 
   // Visibilidade correta dos domos celestes
-  sky.visible=is3d&&!night;
+  sky.visible=false;
   nightDome.visible=is3d&&night;
   if(nightDome.visible){
    nightDome.position.copy(beauty.camera.position);
