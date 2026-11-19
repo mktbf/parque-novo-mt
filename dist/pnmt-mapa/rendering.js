@@ -248,7 +248,7 @@ export function createRendering(scene,camera,smallScreen){
  }
 
  const canFloat=renderer.extensions.has('EXT_color_buffer_float');
- const canAO=!smallScreen&&canFloat;
+ const canAO=false;
  const target=canFloat
   ?new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,samples:smallScreen?0:4})
   :null;
@@ -318,7 +318,7 @@ export function createRendering(scene,camera,smallScreen){
 
  let disposed=false,interacting=false,lastAO=false,activeNight=false,activeSunset=false,activeAfternoon=false,lightingKey='';
  const sources=[],spots=[];
- for(let i=0;i<(smallScreen?3:8);i++){
+ for(let i=0;i<0;i++){
   const light=new T.SpotLight('#ffe5b8',0,74,0.95,0.65,1.8);
   light.castShadow=false;
   scene.add(light,light.target);
@@ -645,7 +645,7 @@ export function createRendering(scene,camera,smallScreen){
   },
   resize(w,h){
    renderer.setSize(w,h,false);
-   composer?.setSize(w,h);
+   // pos-processamento desligado: render direto, mais leve
    const pr=renderer.getPixelRatio();
    if(cinematicPass)cinematicPass.uniforms.uResolution.value.set(w*pr,h*pr);
   },
@@ -675,7 +675,7 @@ export function createRendering(scene,camera,smallScreen){
     if(cinematicPass){
      cinematicPass.uniforms.uSharpen.value=smallScreen?0.0:(interacting?0.08:0.16);
     }
-    composer.render();
+    renderer.render(scene,beauty.camera);
    }else{
     renderer.render(scene,beauty.camera);
    }
