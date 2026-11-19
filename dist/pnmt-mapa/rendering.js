@@ -404,26 +404,26 @@ export function createRendering(scene,camera,smallScreen){
 
     hemisphere.color.set('#5880b5');
     hemisphere.groundColor.set('#182638');
-    hemisphere.intensity=0.74;
+    hemisphere.intensity=1.0;
 
     tmpSunNorm.copy(sunOffset).normalize();
     const nightEnv=getOrBuildPeriodEnv('noite',tmpSunNorm);
     if(nightEnv)scene.environment=nightEnv;
-    scene.environmentIntensity=0.38;
-    renderer.toneMappingExposure=1.12;
+    scene.environmentIntensity=0.45;
+    renderer.toneMappingExposure=1.3;
    }else if(sunset){
     // PÔR DO SOL (Golden Hour): sol rasante a oeste, luz âmbar-dourada, sombras longas e reflexo quente
     const dir=solar.direction.slice();
-    dir[1]=T.MathUtils.clamp(dir[1],0.11,0.22);
+    dir[1]=T.MathUtils.clamp(dir[1],0.24,0.34);
     sunOffset.fromArray(dir).normalize().multiplyScalar(1600);
     sun.position.copy(sun.target.position).add(sunOffset);
     sun.color.set('#ff9b3d');
-    sun.intensity=3.1;
+    sun.intensity=3.6;
     sun.castShadow=true;
 
-    hemisphere.color.set('#ffb27a');
-    hemisphere.groundColor.set('#5a3f2a');
-    hemisphere.intensity=0.62;
+    hemisphere.color.set('#ffc28c');
+    hemisphere.groundColor.set('#6b4a2e');
+    hemisphere.intensity=0.9;
 
     tmpSunNorm.copy(sunOffset).normalize();
     sky.material.uniforms.sunPosition.value.copy(tmpSunNorm);
@@ -434,8 +434,8 @@ export function createRendering(scene,camera,smallScreen){
 
     const sunsetEnv=getOrBuildPeriodEnv('por-do-sol',tmpSunNorm);
     if(sunsetEnv)scene.environment=sunsetEnv;
-    scene.environmentIntensity=0.6;
-    renderer.toneMappingExposure=1.06;
+    scene.environmentIntensity=0.7;
+    renderer.toneMappingExposure=1.14;
    }else if(afternoon){
     // TARDE (15h Cuiabá, SEM golden hour): sol alto inclinado a oeste, luz branca-quente natural e céu azul vivo
     const aft=resolveAfternoon15h(solar.date,solar.direction);
