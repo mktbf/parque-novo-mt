@@ -4,7 +4,7 @@ import {sunDirection} from './solar-model.js?v=realismo-3d-20261119-2';
 import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
 import {openPortalPlace,portalSelection,portalSpaceId,reportPortalFallback} from './portal-flow.js?v=portal-espacos-20260914-1';
 import {places,colors} from './park-data.js?v=texto-validado-20261102-1';
-import {PNMTShowcaseController,SHOWCASE_WAYPOINTS} from './showcase.js?v=showcase-emons-20260918-2';
+import {PNMTShowcaseController,SHOWCASE_WAYPOINTS} from './showcase.js?v=moderno-20261119-1';
 const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
@@ -281,6 +281,8 @@ async function init(){
  await Promise.allSettled([engine.loadEnvironment(),loadMaterials(renderer).then(ts=>textures.push(...ts))]);
  aplicarEstiloMinimundo(scene,renderer,T);
  try{aplicarRealismo(scene,renderer,T);}catch(e){console.warn('[estilo-realista]',e);}
+ // Visual moderno: gramado liso, sem textura de foto.
+ scene.traverse(o=>{if(!o.isMesh)return;for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m&&/grass|terreno|grama|flowerBeds|gramado/i.test(m.name||'')){m.map=null;m.normalMap=null;m.roughnessMap=null;m.aoMap=null;m.vertexColors=false;if(m.color)m.color.set('#6f9a5c');m.roughness=.95;m.metalness=0;m.needsUpdate=true;}}});
  if(disposed)return;updateLayers();clearTimeout(timer);$('#loading').classList.add('fade-out');setTimeout(()=>{$('#loading').hidden=true;},350);renderer.shadowMap.needsUpdate=true;render();reportMapReady();
  const incoming=new URLSearchParams(location.search),requested=incoming.get('espaco'),detail=incoming.get('detalhe');
  const showcaseController=new PNMTShowcaseController({
