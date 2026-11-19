@@ -30,7 +30,11 @@ export function createIntegralLandscape({smallScreen=false}){
  const root=new T.Group(),surfaces=new T.Group(),furniture=new T.Group();root.name='Praças, passeios e orlas';root.add(surfaces,furniture);
  const palette={paving:'#cfcabf',service:'#646d69',curbs:'#d3cdb8',paverJoints:'#a49f8e',flowerBeds:'#3f7828'},heights={paving:.135,service:.13,curbs:.175,paverJoints:.139,flowerBeds:.105};
  for(const [key,data]of Object.entries(D.surfaces)){if(!data.indices.length)continue;const m=material(key,palette[key]);if(key==='service')m.userData.surfaceKind='asphalt';if(key==='flowerBeds')m.userData.surfaceKind='grass';if(key==='paverJoints'){m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;}surfaces.add(surface(data,heights[key],m));}
- for(const bridge of D.bridges||[])addBridge(surfaces,bridge);
+ const extraBridges=[
+  {id:'ponte-enseada-sul',start:[355.5,526.0],end:[398.5,514.0],width:7.4,deckHeight:1.35,rampLength:10},
+  {id:'travessia-enseada-wake',start:[126.0,581.5],end:[204.0,577.5],width:6.2,deckHeight:0.95,rampLength:9}
+ ];
+ for(const bridge of [...(D.bridges||[]),...extraBridges])addBridge(surfaces,bridge);
  const seats=[],steel=[],bins=[];
  for(const[x,z,a]of D.benches){const point=(xx,y,zz)=>({p:[x+Math.cos(a)*xx+Math.sin(a)*zz,y,z-Math.sin(a)*xx+Math.cos(a)*zz],a});
   for(const zz of [-.22,-.07,.08,.23])seats.push({...point(0,.69,zz),s:[2.25,.065,.12]});

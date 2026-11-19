@@ -1,6 +1,6 @@
 import {createParkIllumination} from './luz-ambiente.js?v=cenario-integral-20260914-2';
-import {mountSolarControls} from './solar-controls.js?v=cenario-integral-20260914-2';
-import {sunDirection} from './solar-model.js?v=cenario-integral-20260914-2';
+import {mountSolarControls} from './solar-controls.js?v=realismo-3d-20261118-1';
+import {sunDirection} from './solar-model.js?v=realismo-3d-20261118-1';
 import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
 import {openPortalPlace,portalSelection,portalSpaceId,reportPortalFallback} from './portal-flow.js?v=portal-espacos-20260914-1';
 import {places,colors} from './park-data.js?v=texto-validado-20261102-1';
@@ -9,8 +9,8 @@ const $=s=>document.querySelector(s),mobile=()=>matchMedia('(max-width:760px)').
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
 import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-acabamento-20260914-3';
-import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=estilo-minimundo-20261025-10';
-import {aplicarRealismo} from './estilo-realista.js?v=texto-validado-20261102-1';
+import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=realismo-3d-20261118-1';
+import {aplicarRealismo} from './estilo-realista.js?v=realismo-3d-20261118-1';
 let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';
@@ -80,7 +80,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=texto-validado-20261102-1'),import('./rendering.js?v=gta-realismo-20260916-1'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=gta-realismo-20260916-1')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=realismo-3d-20261118-1'),import('./rendering.js?v=realismo-3d-20261118-1'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=gta-realismo-20260916-1')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;
@@ -91,7 +91,7 @@ async function init(){
  controls.touches.ONE=T.TOUCH.ROTATE;controls.touches.TWO=T.TOUCH.DOLLY_PAN;
  const built=createMiniatures({smallScreen:mobile()});scene.add(built.root);engine.setLightSources([...built.autodromeFinish.lamps,...built.scenario.lamps]);const parkIllumination=createParkIllumination(built.root,[...built.autodromeFinish.lamps,...built.scenario.lamps]);let solarControls=null;
  window._mapDebug={get camera(){return camera;},controls,render:()=>render(),scene,world,get state(){return {version:'cenario-integral-20260914-2',solar:solarControls?.state(),selectedId,detail:autoDetail,view,tilted,buildings,nightAuto};},get diagnostics(){return {...engine.diagnostics(),scenario:built.scenario.diagnostics(),parkIllumination:parkIllumination.diagnostics()};}};
- const floor=new T.Mesh(createBackdropGeometry(),built.groundMaterial);floor.position.y=-.3;floor.receiveShadow=true;scene.add(floor);
+ const floor=new T.Mesh(createBackdropGeometry(),built.groundMaterial);floor.name='chao';floor.position.y=-.3;floor.receiveShadow=false;floor.visible=false;scene.add(floor);
  const imageShadows=new T.Mesh(new T.PlaneGeometry(1174,1115),new T.ShadowMaterial({color:'#14251e',opacity:.3,depthWrite:false}));imageShadows.rotation.x=-Math.PI/2;imageShadows.position.copy(world([624,566],.22));imageShadows.receiveShadow=true;imageShadows.renderOrder=20;imageShadows.visible=false;scene.add(imageShadows);
  const textures=[parkIllumination.texture],textureLoader=new T.TextureLoader(),layerPromises=new Map();let satellite=null;const texturePromises=new Map();
  async function loadTexture(url){if(texturePromises.has(url))return texturePromises.get(url);const promise=textureLoader.loadAsync(url).then(tex=>{tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),16);textures.push(tex);return tex;});texturePromises.set(url,promise);return promise;}
@@ -241,7 +241,7 @@ async function init(){
   function updateLayers(){
    built.autodromeFinish.setVisible(view,buildings);built.autodromeFinish.setNight(nightAuto&&view==='3d');
    built.scenario.setVisible(view,buildings);built.scenario.setNight(nightAuto&&view==='3d');parkIllumination.setNight(nightAuto&&view==='3d');solarControls?.setView(view);
-   built.landscape.visible=view==='3d';built.vegetation.visible=view==='3d';built.infrastructure.visible=buildings;built.water.visible=view==='3d';built.modelLayer.visible=buildings;built.circuits.visible=view==='3d'||buildings;floor.visible=view==='3d';imageShadows.visible=view!=='3d'&&buildings;
+   built.landscape.visible=view==='3d';built.vegetation.visible=view==='3d';built.infrastructure.visible=buildings;built.water.visible=view==='3d';built.modelLayer.visible=buildings;built.circuits.visible=view==='3d'||buildings;floor.visible=false;const baseMaq=scene.getObjectByName('Base maquete');if(baseMaq)baseMaq.visible=view==='3d';imageShadows.visible=view!=='3d'&&buildings;
    if(satellite)satellite.visible=view==='satellite';
    $('#map-credit').textContent=view==='satellite'?'Imagem aérea de referência · Projeto PNMT':'Maquete do parque · Paisagismo e iluminação ilustrativos';
    $('.map-caption div>span').textContent=view==='satellite'?'O território e os espaços do projeto':'Explore a arquitetura e os espaços';

@@ -49,7 +49,7 @@ export function configureArchitectureMaterials(renderer){
 export function frameFromFootprint(item){
   const ring=item.geometry.coordinates[0];let longest=0,u=[1,0];
   for(let i=1;i<ring.length;i++){const dx=ring[i][0]-ring[i-1][0],dz=ring[i][1]-ring[i-1][1],d=Math.hypot(dx,dz);if(d>longest){longest=d;u=[dx/d,dz/d];}}
-  if(u[0]<0)u=u.map(v=>-v);const v=[-u[1],u[0]];
+  if(u[0]<0)u=u.map(v=>-v);if(item.invertFront)u=u.map(v=>-v);const v=[-u[1],u[0]];
   const xs=ring.map(p=>p[0]*u[0]+p[1]*u[1]),zs=ring.map(p=>p[0]*v[0]+p[1]*v[1]);
   const loX=Math.min(...xs),hiX=Math.max(...xs),loZ=Math.min(...zs),hiZ=Math.max(...zs),cx=(loX+hiX)/2,cz=(loZ+hiZ)/2;
   const center=[u[0]*cx+v[0]*cz,u[1]*cx+v[1]*cz];
@@ -259,10 +259,20 @@ function buildPitBuilding(target,item){
   return {frame:f,maxHeight:top+.43,parts:b.finish(target,'Boxes R03')};
 }
 
+const southStandRecord={
+  geometry:{type:'Polygon',coordinates:[[
+    [668.0,756.0],[718.0,790.0],[711.2,800.0],[661.2,766.0],[668.0,756.0]
+  ]]},
+  height:5,
+  invertFront:true,
+  role:'Arquibancada Sul · setor sul'
+};
+
 export function buildAutodromeArchitecture(target,records){
   const stand=records.find(x=>x.role.startsWith('Arquibancada')),boxes=records.find(x=>x.role.startsWith('Boxes'));
   if(!stand||!boxes)throw Error('Autódromo: projeções CAD de boxes e arquibancada ausentes.');
-  const result={stand:buildGrandstand(target,stand),boxes:buildPitBuilding(target,boxes)};
+  const southStand=records.find(x=>x.role.includes('Sul'))||southStandRecord;
+  const result={stand:buildGrandstand(target,stand),standSouth:buildGrandstand(target,southStand),boxes:buildPitBuilding(target,boxes)};
   target.name='Autódromo · boxes e arquibancada R03';
   target.userData.architectureVersion=AUTODROME_VERSION;
   target.userData.architectureProvenance={implantation:'R84 / carimbo R83; projeções CAD existentes',architecture:'AZM R03; fotos fornecidas por Jean',verticalDimensions:'Proporções visuais, unidades gráficas; não são cotas de obra',parameters:architectureParameters};

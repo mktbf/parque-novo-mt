@@ -108,22 +108,116 @@ function food(g,small){
  g.userData.integralRevision={part:'Praça de alimentação',reference:'Enscape_2025-11-17 VISTA 01.png',interpretation:'Fachada e mobiliário, com implantação da base mantida.'};
 }
 function pearlFinish(g){
- const p=local(g);const remove=[];p.traverse(o=>{if(o.isMesh&&o.geometry.type==='TubeGeometry')remove.push(o);});for(const o of remove){o.removeFromParent();o.geometry.dispose();}
- const under=mat('perola-substrato','#9e5f45',.82),petalWhite=mat('perola-petala','#e3dfd7',.50,.13),petalGold=mat('perola-dourado','#dab755',.61,.08),petalRed=mat('perola-terracota','#af6247',.75);
- const shell=p.children.find(o=>o.geometry?.type==='SphereGeometry');if(shell)shell.material=under;
- const point=(theta,phi,offset=.32)=>[(16.4+offset)*Math.cos(phi)*Math.cos(theta),6.2+(7+offset)*Math.sin(phi),(25.5+offset)*Math.cos(phi)*Math.sin(theta)];
- for(let row=0;row<7;row++){
-  const phi=.10+row*.205,tiles=Math.max(12,Math.round(68*Math.cos(phi))),step=Math.PI*2/tiles;
-  for(let i=0;i<tiles;i++){
-   const a=(i+(row%2)*.5)*step,verts=[],indices=[];
-   // Superfície subdividida segue a curvatura: pétalas não atravessam a casca.
-   for(let j=0;j<=8;j++){const t=j/8,w=Math.max(.018,Math.sin(Math.PI*t)**.65)*step*.48,ph=Math.min(1.568,Math.max(0,phi-.09+t*.29));for(let k=0;k<=4;k++)verts.push(...point(a+(k/2-1)*w,ph,.14));}
-   for(let j=0;j<8;j++)for(let k=0;k<4;k++){const n=j*5+k;indices.push(n,n+5,n+1,n+1,n+5,n+6);}
-   const m=(i+row*3)%8===0?petalGold:(i+row*5)%13===0?petalRed:petalWhite,leaf=surface(p,verts,indices,m,'Pétala de cobertura');leaf.material.side=T.DoubleSide;
+ const p=local(g);clear(p);p.name='Mirante Oval na ponta da península · anel estrutural e cúpula treliçada';
+ const ringWhite=mat('mirante-anel','#ecefe9',.42,.14);
+ const latticeMat=mat('mirante-trelica','#d4dcd9',.35,.58);
+ const domeGlass=new T.MeshStandardMaterial({color:'#6a98a6',roughness:.16,metalness:.28,transparent:true,opacity:.52,envMapIntensity:1.5});
+ domeGlass.name='Integral · mirante-vidro';integralMaterials.set('mirante-vidro',domeGlass);
+
+ // 1. Esplanada e deck curvo de orla na ponta da península
+ const deckShape=new T.Shape();
+ const nDeck=72;
+ for(let i=0;i<=nDeck;i++){
+  const a=i/nDeck*Math.PI*2;
+  const rx=24.5+2.5*Math.cos(a),rz=33.0+3.0*Math.sin(a);
+  const x=Math.cos(a)*rx,z=Math.sin(a)*rz;
+  if(i===0)deckShape.moveTo(x,-z);else deckShape.lineTo(x,-z);
+ }
+ deckShape.closePath();
+ const deckGeo=new T.ExtrudeGeometry(deckShape,{depth:.28,bevelEnabled:false});
+ deckGeo.rotateX(-Math.PI/2);
+ const deck=mesh(p,deckGeo,M.paving,'Mirante · esplanada da península');deck.position.y=.12;
+
+ // Piso interno rebaixado da arena oval
+ const arenaShape=new T.Shape();
+ for(let i=0;i<=64;i++){
+  const a=i/64*Math.PI*2,x=Math.cos(a)*13.8,z=Math.sin(a)*20.6;
+  if(i===0)arenaShape.moveTo(x,-z);else arenaShape.lineTo(x,-z);
+ }
+ arenaShape.closePath();
+ const arenaGeo=new T.ExtrudeGeometry(arenaShape,{depth:.18,bevelEnabled:false});
+ arenaGeo.rotateX(-Math.PI/2);
+ const arenaMesh=mesh(p,arenaGeo,M.concrete,'Mirante · arena oval central');arenaMesh.position.y=.38;
+
+ // 2. Anel estrutural oval branco elevado (laje anelar + cauda de rampa a nordeste conforme foto aérea)
+ const ringOuterRx=19.2,ringOuterRz=27.6,ringInnerRx=12.6,ringInnerRz=19.2,ringY=5.25;
+ const ringShape=new T.Shape();
+ for(let i=0;i<=80;i++){
+  const a=i/80*Math.PI*2;
+  // Afilamento suave na extremidade de acesso (+Z/nordeste)
+  const tail=Math.max(0,Math.sin(a))**3*5.5;
+  const x=Math.cos(a)*(ringOuterRx-tail*.22),z=Math.sin(a)*ringOuterRz+tail;
+  if(i===0)ringShape.moveTo(x,-z);else ringShape.lineTo(x,-z);
+ }
+ ringShape.closePath();
+ const holePath=new T.Path();
+ for(let i=0;i<=64;i++){
+  const a=i/64*Math.PI*2,x=Math.cos(a)*ringInnerRx,z=Math.sin(a)*ringInnerRz;
+  if(i===0)holePath.moveTo(x,-z);else holePath.lineTo(x,-z);
+ }
+ holePath.closePath();
+ ringShape.holes.push(holePath);
+ const ringGeo=new T.ExtrudeGeometry(ringShape,{depth:.58,bevelEnabled:true,bevelThickness:.12,bevelSize:.12,bevelSegments:2});
+ ringGeo.rotateX(-Math.PI/2);
+ const ringMesh=mesh(p,ringGeo,ringWhite,'Mirante · laje anelar oval');ringMesh.position.y=ringY;
+
+ // Rampa de acesso ascendente ao anel do mirante
+ const rampRows=[];
+ for(let i=0;i<=18;i++){
+  const t=i/18,z=25.5+t*15.5,y=.35+(ringY-.15)*(1-t),w=4.4-t*1.1;
+  rampRows.push([[-w,y,z],[w,y,z]]);
+ }
+ const ramp=ribbon(p,rampRows,ringWhite,'Mirante · rampa de acesso');ramp.material.side=T.DoubleSide;
+
+ // 3. Colunata periférica sob o anel oval (24 pilares esbeltos)
+ for(let i=0;i<24;i++){
+  const a=i/24*Math.PI*2;
+  const tail=Math.max(0,Math.sin(a))**3*4.2;
+  const cx=Math.cos(a)*(16.4-tail*.18),cz=Math.sin(a)*23.8+tail*.8;
+  cylinder(p,cx,.36,cz,.28,ringY-.36,M.ivory,.28,14);
+ }
+
+ // 4. Cúpula geodésica/diagrid oval central (conforme perola-do-cerrado.webp)
+ const domeRows=10,domeCols=36,domeH=5.4;
+ const domePt=(u,v)=>{
+  const a=u*Math.PI*2,phi=v*Math.PI*0.5;
+  const rScale=Math.cos(phi);
+  return [Math.cos(a)*ringInnerRx*rScale,ringY+.48+Math.sin(phi)*domeH,Math.sin(a)*ringInnerRz*rScale];
+ };
+ // Pele translúcida interna da cúpula
+ const dVerts=[],dIdx=[];
+ for(let r=0;r<=domeRows;r++){
+  for(let c=0;c<=domeCols;c++){
+   dVerts.push(...domePt(c/domeCols,r/domeRows));
+   if(r<domeRows&&c<domeCols){
+    const k=r*(domeCols+1)+c;
+    dIdx.push(k,k+domeCols+1,k+1,k+1,k+domeCols+1,k+domeCols+2);
+   }
   }
  }
- for(let i=0;i<96;i++){const a=i/96*Math.PI*2,b=(i+1)/96*Math.PI*2;glowLine(p,[Math.cos(a)*16.6,6.10,Math.sin(a)*25.7],[Math.cos(b)*16.6,6.10,Math.sin(b)*25.7],.034);}
- g.userData.integralRevision={part:'Pérola do Cerrado',reference:'Enscape_2026-02-13-11-09-52.png',interpretation:'Pétalas e faixa de iluminação interpretadas; corpo e implantação preservados.'};
+ const skin=surface(p,dVerts,dIdx,domeGlass,'Mirante · pele translúcida da cúpula');
+ skin.castShadow=false;
+
+ // Grelha diagrid metálica aparente sobre a cúpula oval
+ for(let r=0;r<domeRows;r++){
+  const v0=r/domeRows,v1=(r+1)/domeRows;
+  for(let c=0;c<domeCols;c++){
+   const u0=c/domeCols,u1=(c+1)/domeCols,uMid=(c+.5)/domeCols;
+   const p00=domePt(u0,v0),p10=domePt(u1,v0),pMid1=domePt(uMid,v1);
+   beam(p,p00,p10,.065,latticeMat);
+   beam(p,p00,pMid1,.055,latticeMat);
+   beam(p,p10,pMid1,.055,latticeMat);
+  }
+ }
+
+ // Guarda-corpo da orla e iluminação noturna em anel
+ for(let i=0;i<64;i++){
+  const a=i/64*Math.PI*2,b=(i+1)/64*Math.PI*2;
+  glowLine(p,[Math.cos(a)*ringOuterRx,ringY+.62,Math.sin(a)*ringOuterRz],[Math.cos(b)*ringOuterRx,ringY+.62,Math.sin(b)*ringOuterRz],.038);
+  glowLine(p,[Math.cos(a)*ringInnerRx,ringY+.52,Math.sin(a)*ringInnerRz],[Math.cos(b)*ringInnerRx,ringY+.52,Math.sin(b)*ringInnerRz],.032);
+ }
+ rail(p,23.2,.40,.95,Math.PI*.65,Math.PI*2.15);
+ g.userData.integralRevision={part:'Pérola do Cerrado / Mirante Oval',reference:'perola-do-cerrado.webp',interpretation:'Anel estrutural oval branco, colunata periférica, cúpula treliçada diagrid e deck de mirante na ponta da península.'};
 }
 function enhanceExistingMaterials(models){
  const clones=new Map();

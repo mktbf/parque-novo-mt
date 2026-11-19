@@ -2,7 +2,7 @@ import * as T from 'three';
 import {autodromeFinishData as D} from './autodromo-superficies.js?v=autodromo-acabamento-20260913-2';
 export const AUTODROME_FINISH_VERSION='autodromo-acabamento-20260913-2';
 export const finishMaterials=new Map();
-const palette={asphalt:'#c8cfcc',grass:'#86abb0',shoulder:'#b6ab8d',runoff:'#383d40',kerbWhite:'#ece7d1',kerbGreen:'#568671',paddock:'#b6baba',pit:'#c0c2ba',plaza:'#c0bbab',edge:'#ececdf',marking:'#eeeadd',drain:'#353e3d',steel:'#87969b',post:'#a5aeae',concrete:'#babdaf',mesh:'#818b87',lampBody:'#253239',lampFace:'#e3e3c9'};
+const palette={asphalt:'#34393e',grass:'#527d3b',shoulder:'#7d8570',runoff:'#1d63b8',kerbWhite:'#f4f1ea',kerbGreen:'#cc3428',paddock:'#8b908e',pit:'#3f444a',plaza:'#b8b4a6',edge:'#f2f2e8',marking:'#f2efe2',drain:'#353e3d',steel:'#87969b',post:'#a5aeae',concrete:'#babdaf',mesh:'#818b87',lampBody:'#253239',lampFace:'#fff0d4'};
 let nighttime=false,glowTexture=null;
 function mat(key){
  if(!finishMaterials.has(key)){
@@ -53,6 +53,15 @@ export function createAutodromeFinish(circuits,model){
  for(const[key,record]of Object.entries(D.surfaces)){
   if(!record.indices.length)continue;const m=new T.Mesh(planarGeo(record,key),mat(key));m.name='Autódromo · '+key;m.receiveShadow=true;m.castShadow=false;m.userData.placeId='autodromo';m.userData.finishSurface=key;surfaces.add(m);
  }
+ for(const ring of [
+  [[799,451],[817,430],[838,431],[848,449],[853,464],[831,456]],
+  [[986,784],[1006,792],[1019,814],[1013,832],[996,825],[988,805]],
+  [[882,812],[925,828],[936,842],[914,846],[876,831]]
+ ]){
+  const sh=new T.Shape();ring.forEach(([x,z],i)=>i?sh.lineTo(x,-z):sh.moveTo(x,-z));sh.closePath();
+  const rg=new T.ShapeGeometry(sh);rg.rotateX(-Math.PI/2);rg.translate(0,.044,0);
+  const rm=new T.Mesh(rg,mat('runoff'));rm.name='Autódromo · runoff azul FIA';rm.receiveShadow=true;rm.userData.placeId='autodromo';surfaces.add(rm);
+ }
  // Troca somente o material do circuito. Vértices e índices CAD permanecem intactos.
  circuits.traverse(o=>{if(!o.isMesh)return;o.material=mat('asphalt');const p=o.geometry.attributes.position,a=[];for(let i=0;i<p.count;i++)a.push(...illuminationUV(p.getX(i),p.getZ(i)));o.geometry.setAttribute('uv1',new T.Float32BufferAttribute(a,2));});
  const b=new Builder();
@@ -86,7 +95,7 @@ export async function loadAutodromeFinishMaterials(renderer){
  const textures=glowTexture?[glowTexture]:[],loader=new T.TextureLoader();
  const load=async(file,srgb=false)=>{const t=await loader.loadAsync(file);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());if(srgb)t.colorSpace=T.SRGBColorSpace;textures.push(t);return t;};
  const results=await Promise.allSettled(['clean_asphalt','leafy_grass'].map(async prefix=>({prefix,maps:await Promise.all([load(`./assets/materials/${prefix}_diff_1k.jpg`,true),load(`./assets/materials/${prefix}_rough_1k.jpg`),load(`./assets/materials/${prefix}_nor_gl_1k.jpg`)])})));
- for(const r of results)if(r.status==='fulfilled'){const {prefix,maps}=r.value;for(const key of prefix==='leafy_grass'?['grass']:['asphalt','paddock','pit','runoff']){const m=mat(key);[m.map,m.roughnessMap,m.normalMap]=maps;m.normalScale.setScalar(key==='grass'?.20:.18);m.needsUpdate=true;}}
+ for(const r of results)if(r.status==='fulfilled'){const {prefix,maps}=r.value;for(const key of prefix==='leafy_grass'?['grass']:['asphalt','paddock','pit','runoff']){const m=mat(key);if(key==='runoff'){m.roughnessMap=maps[1];m.normalMap=maps[2];m.color.set('#1d63b8');}else{[m.map,m.roughnessMap,m.normalMap]=maps;if(key==='asphalt')m.color.set('#5a6066');if(key==='pit')m.color.set('#6e747a');}m.normalScale.setScalar(key==='grass'?.22:.24);m.needsUpdate=true;}}
  try{const light=await load('./assets/autodromo-acabamento/luz-piso.png');light.channel=1;light.wrapS=light.wrapT=T.ClampToEdgeWrapping;for(const key of ['asphalt',...Object.keys(D.surfaces)]){const m=mat(key);m.lightMap=light;m.lightMapIntensity=nighttime?2.4:0;m.needsUpdate=true;}}
  catch(e){console.warn('PNMT: luz de piso indisponível; iluminação local continua ativa.');}
  return textures;
