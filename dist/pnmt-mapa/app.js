@@ -1,5 +1,5 @@
 import {createParkIllumination} from './luz-ambiente.js?v=cenario-integral-20260914-2';
-import {mountSolarControls} from './solar-controls.js?v=leve-20261119-1';
+import {mountSolarControls} from './solar-controls.js?v=leve-20261119-2';
 import {sunDirection} from './solar-model.js?v=realismo-3d-20261119-2';
 import {bindHostBridge,reportMapReady} from './bridge.js?v=autodromo-arquitetura-20260913-1';
 import {openPortalPlace,portalSelection,portalSpaceId,reportPortalFallback} from './portal-flow.js?v=portal-espacos-20260914-1';
@@ -10,7 +10,7 @@ const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 import {findPlaces,categoryLabel as category,imageFor,relatedPlaces,guideHtml,escapeHtml} from './visitor-guide.js?v=cenario-integral-20260914-2';
 import {detailOptions,validDetail,detailLabel,detailView} from './detail-navigation.js?v=espacos-acabamento-20260914-3';
 import {aplicarEstiloMinimundo} from './estilo-minimundo.js?v=realismo-3d-20261119-2';
-import {aplicarRealismo} from './estilo-realista.js?v=realismo-3d-20261119-2';
+import {aplicarRealismo} from './estilo-realista.js?v=leve-20261119-2';
 let autoDetail=null,nightAuto=false;
 function autoViewButtons(p){
  const options=detailOptions[p.id];if(!options)return '';
@@ -80,7 +80,7 @@ bindHostBridge({places,onChange:()=>{drawList();if(selectedId)selectPlace(select
 const timer=setTimeout(()=>{$('#loading strong').textContent='Preparando os detalhes…';},4500);
 
 async function init(){
- const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=realismo-3d-20261119-2'),import('./rendering.js?v=leve-20261119-1'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=realismo-3d-20261119-1')]);
+ const [T,{OrbitControls},{createMiniatures,world,loadMaterials,createBackdropGeometry,getWaterTexture,waterUniforms},{createRendering},{fitDistance,fitOrtho},{foliageUniforms}]=await Promise.all([import('three'),import('three/addons/controls/OrbitControls.js'),import('./miniatures.js?v=leve-20261119-2'),import('./rendering.js?v=leve-20261119-2'),import('./camera-math.js?v=espacos-arquitetura-20260913-2'),import('./folhagem.js?v=leve-20261119-2')]);
  const host=$('#map'),stage=$('#map-stage'),scene=new T.Scene(),overlay=new T.Scene();
  const perspective=new T.PerspectiveCamera(38,1,5,10000),topCamera=new T.OrthographicCamera(-600,600,500,-500,1,8000);
  let camera=perspective,view='3d',tilted=true,buildings=true,hoveredId=null,animation=null,frame=0,disposed=false,activeTween=0,overviewDistance=2000;

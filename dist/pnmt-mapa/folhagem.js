@@ -11,6 +11,7 @@ export const foliageUniforms = {
  * e geometria indexada compacta para máximo desempenho em InstancedMesh.
  */
 export function createCanopyGeometry(small = false) {
+  small = true; // versao leve em todas as telas: ~200 triangulos por copa
   const positions = [];
   const normals = [];
   const colors = [];
