@@ -28,7 +28,10 @@
 // Teste da abertura: voo do Google (satélite) até o parque e passagem para a maquete do projeto.
 // A chave vem pela URL (?key=...), não fica gravada no site.
 const PARQUE={lat:-15.4539,lng:-56.0832};
-const key=new URLSearchParams(location.search).get('key');
+// A chave fica guardada so neste navegador (localStorage), nunca no site.
+const ARM='pnmt-abertura-chave';
+let key=new URLSearchParams(location.search).get('key');
+try{ if(key){localStorage.setItem(ARM,key);history.replaceState(null,'',location.pathname);} else {key=localStorage.getItem(ARM);} }catch(e){}
 const maquete=document.getElementById('maquete');
 const legenda=document.getElementById('legenda');
 const pular=document.getElementById('pular');
@@ -40,8 +43,9 @@ function entrarNaMaquete(){
 }
 maquete.src='./pnmt-mapa/';
 if(!key){
-  document.getElementById('globo').innerHTML='<div id="aviso"><b>Falta a chave do Google.</b><br>Abra este endereço com <code>?key=SUA_CHAVE</code> no final.<br><br>Sem a chave, segue direto para a maquete em 3 segundos.</div>';
-  setTimeout(entrarNaMaquete,3000);
+  document.getElementById('globo').innerHTML='<div id="aviso"><b>Cole aqui a chave de teste do Google</b> (só na primeira vez; este navegador guarda).<br><br><input id="campo" type="password" autocomplete="off" placeholder="Chave do Google Maps" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:0;font:inherit"><br><br><button id="salvar" style="padding:10px 18px;border-radius:20px;border:0;background:#58B947;color:#0D2B4D;font:inherit;font-weight:700;cursor:pointer">Ver a abertura</button> <button id="semchave" style="padding:10px 18px;border-radius:20px;border:1px solid rgba(255,255,255,.4);background:none;color:#fff;font:inherit;cursor:pointer">Ir direto para a maquete</button></div>';
+  document.getElementById('salvar').onclick=()=>{const v=document.getElementById('campo').value.trim();if(!v)return;try{localStorage.setItem(ARM,v);}catch(e){}location.reload();};
+  document.getElementById('semchave').onclick=entrarNaMaquete;
 }else{
   (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key,v:"beta"});
   (async()=>{
@@ -63,7 +67,7 @@ if(!key){
       mapa.addEventListener('gmp-animationend',()=>setTimeout(entrarNaMaquete,600),{once:true});
       setTimeout(entrarNaMaquete,16000); // garantia, se o evento não vier
     }catch(e){
-      console.warn('[abertura]',e);entrarNaMaquete();
+      console.warn('[abertura]',e);try{localStorage.removeItem(ARM);}catch(_){}entrarNaMaquete();
     }
   })();
 }
