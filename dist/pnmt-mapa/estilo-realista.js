@@ -3,7 +3,7 @@
 // 1. Texturas procedurais PBR (grama com variação orgânica, asfalto com rugosidade, concreto paginado nos estacionamentos)
 // 2. ShaderMaterial próprio para o Lago Oeste e enseadas (ondas suaves em duas direções, Fresnel refletindo o céu de cada período e margens rasas mais claras)
 
-import { waterUniforms } from './miniatures.js?v=vias-20261120-11';
+import { waterUniforms } from './miniatures.js?v=vias-20261120-13';
 import { implantationData as IMPLANT_D } from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
 
 function rnd(seed) {
