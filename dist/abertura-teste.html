@@ -9,7 +9,7 @@
  html,body{margin:0;height:100%;background:#0D2B4D;font-family:Barlow,system-ui,sans-serif;color:#fff;overflow:hidden}
  #globo{position:fixed;inset:0}
  gmp-map-3d{width:100%;height:100%}
- #maquete{position:fixed;inset:0;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity 1.6s ease}
+ #maquete{position:fixed;inset:0;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity 2.2s ease}
  #maquete.ativa{opacity:1;pointer-events:auto}
  #legenda{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);text-align:center;transition:opacity 1s;text-shadow:0 2px 12px rgba(0,0,0,.6)}
  #legenda small{display:block;letter-spacing:.2em;text-transform:uppercase;font-size:12px;opacity:.85}
@@ -35,7 +35,15 @@ try{ if(key){localStorage.setItem(ARM,key);history.replaceState(null,'',location
 const maquete=document.getElementById('maquete');
 const legenda=document.getElementById('legenda');
 const pular=document.getElementById('pular');
-let entrou=false;
+let entrou=false,vooAcabou=false;
+// So troca quando a maquete terminou de carregar (sem tela branca).
+function maqueteProntaJa(){
+  try{const w=maquete.contentWindow,d=maquete.contentDocument;return !!(w&&w._mapDebug&&d&&(d.querySelector('#loading')?.hidden||!d.querySelector('#loading')));}catch(e){return true;}
+}
+function trocarQuandoPronta(){
+  const t0=Date.now();
+  (function espera(){ if(maqueteProntaJa()||Date.now()-t0>20000){setTimeout(entrarNaMaquete,700);} else setTimeout(espera,250); })();
+}
 function entrarNaMaquete(){
   if(entrou)return;entrou=true;
   legenda.style.opacity=0;pular.hidden=true;
@@ -60,12 +68,12 @@ if(!key){
       pular.onclick=entrarNaMaquete;
       setTimeout(()=>{
         mapa.flyCameraTo({
-          endCamera:{center:{lat:PARQUE.lat,lng:PARQUE.lng,altitude:200},range:2600,tilt:62,heading:28},
+          endCamera:{center:{lat:PARQUE.lat,lng:PARQUE.lng,altitude:200},range:4300,tilt:52,heading:22},
           durationMillis:9000
         });
       },1200);
-      mapa.addEventListener('gmp-animationend',()=>setTimeout(entrarNaMaquete,600),{once:true});
-      setTimeout(entrarNaMaquete,16000); // garantia, se o evento não vier
+      mapa.addEventListener('gmp-animationend',()=>{vooAcabou=true;trocarQuandoPronta();},{once:true});
+      setTimeout(()=>{if(!vooAcabou)trocarQuandoPronta();},12000); // garantia, se o evento não vier
     }catch(e){
       console.warn('[abertura]',e);try{localStorage.removeItem(ARM);}catch(_){}entrarNaMaquete();
     }
