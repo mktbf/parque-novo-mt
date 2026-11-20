@@ -783,7 +783,7 @@ export function aplicarEspacosReais(scene, THREE) {
   n += pisoDosBowls(scene, THREE);
   n += aguaDoWake(scene, THREE);
   n += arquibancadaCasa(scene, THREE);
-  n += cascataArena(scene, THREE);
+  // cascata retirada: nao aparece na foto aerea (20/11/2026)
   n += construirCavalaria(scene, THREE);
   return n;
 }
