@@ -80,17 +80,19 @@ if(!key){
       const {Map3DElement}=await google.maps.importLibrary('maps3d');
       const mapa=new Map3DElement({
         center:{lat:-14.2,lng:-56.6,altitude:0},
-        range:2600000,tilt:0,heading:0,mode:'SATELLITE',defaultUIHidden:true
+        range:900000,tilt:0,heading:0,mode:'SATELLITE',defaultUIHidden:true
       });
       document.getElementById('globo').append(mapa);
       pular.hidden=false;pular.onclick=entrarNaMaquete;
+      // espera as imagens do Google carregarem antes de abrir a cortina
+      const firme=(max)=>new Promise(res=>{let ok=false;const fim=()=>{if(!ok){ok=true;res();}};mapa.addEventListener('gmp-steadychange',e=>{if(e.isSteady)fim();});setTimeout(fim,max);});
       const voo=(cam,ms)=>new Promise(res=>{let ok=false;const fim=()=>{if(!ok){ok=true;res();}};mapa.addEventListener('gmp-animationend',fim,{once:true});mapa.flyCameraTo({endCamera:cam,durationMillis:ms});setTimeout(fim,ms+800);});
-      await espera(700);
+      await firme(7000);
       document.getElementById('veu').classList.add('aberto');
       await espera(900); if(entrou)return;
       mostra('t1',true);
       // etapa 1: desce do continente para Mato Grosso, girando de leve
-      await voo({center:{lat:-15.35,lng:-56.15,altitude:0},range:160000,tilt:38,heading:-12},6500); if(entrou)return;
+      await voo({center:{lat:-15.35,lng:-56.15,altitude:0},range:160000,tilt:38,heading:-12},7500); if(entrou)return;
       mostra('t1',false); await espera(500); mostra('t2',true);
       // etapa 2: aproxima do parque em curva
       await voo({center:{lat:PARQUE.lat,lng:PARQUE.lng,altitude:180},range:5200,tilt:55,heading:16},6000); if(entrou)return;
