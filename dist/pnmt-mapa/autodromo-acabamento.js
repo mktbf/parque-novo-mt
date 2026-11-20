@@ -1,8 +1,8 @@
 import * as T from 'three';
-import {autodromeFinishData as D} from './autodromo-superficies.js?v=autodromo-acabamento-20260913-2';
+import {autodromeFinishData as D} from './autodromo-superficies.js?v=auto-20261120-2';
 export const AUTODROME_FINISH_VERSION='autodromo-acabamento-20260913-2';
 export const finishMaterials=new Map();
-const palette={asphalt:'#34393e',grass:'#527d3b',shoulder:'#7d8570',runoff:'#1d63b8',kerbWhite:'#f4f1ea',kerbGreen:'#cc3428',paddock:'#8b908e',pit:'#3f444a',plaza:'#b8b4a6',edge:'#f2f2e8',marking:'#f2efe2',drain:'#353e3d',steel:'#87969b',post:'#a5aeae',concrete:'#babdaf',mesh:'#818b87',lampBody:'#253239',lampFace:'#fff0d4'};
+const palette={asphalt:'#34393e',grass:'#527d3b',shoulder:'#7d8570',runoff:'#2e8f86',verge:'#3f9a7c',kerbWhite:'#f4f1ea',kerbGreen:'#cc3428',paddock:'#8f9492',pit:'#5d6266',plaza:'#b8b4a6',edge:'#f2f2e8',marking:'#f2efe2',drain:'#353e3d',steel:'#87969b',post:'#a5aeae',concrete:'#babdaf',mesh:'#818b87',lampBody:'#253239',lampFace:'#fff0d4'};
 let nighttime=false,glowTexture=null;
 function mat(key){
  if(!finishMaterials.has(key)){
