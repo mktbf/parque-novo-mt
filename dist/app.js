@@ -340,10 +340,9 @@
     const aboutCopy2 = g.aboutCopy2 || 'para celebrar o esporte, a cultura, os negócios e o lazer.<br>O complexo transforma o coração do continente no ponto de encontro do Brasil e do mundo,<br>oferecendo uma experiência monumental à altura da vocação do estado.';
 
     return `<section class="reference-about">
-      <section class="reference-about-title">
-        <h1>${esc(aboutTitle)}</h1>
-        <p><a href="#inicio">Página Principal</a> / Quem Somos</p>
-      </section>
+      <figure class="reference-about-aerial">
+        <img src="${asset('aerial')}" alt="Vista panorâmica do Parque Novo Mato Grosso">
+      </figure>
       <section class="qs-origem">
         <div class="qs-w">
           <div class="qs-txt">
@@ -360,9 +359,6 @@
           <p class="qs-copy">${String(aboutCopy2).replace(/<br\s*\/?>/gi, ' ')}</p>
         </div>
       </section>
-      <figure class="reference-about-aerial">
-        <img src="${asset('aerial')}" alt="Vista panorâmica do Parque Novo Mato Grosso">
-      </figure>
     </section>`;
   }
 
@@ -1969,7 +1965,7 @@ function credits() {
 
     const titles = {
       'inicio': 'Início',
-      'quem-somos': 'O parque',
+      'quem-somos': 'Onde estamos',
       'espacos': 'Espaços',
       'mapa': 'Mapa Interativo',
       'agenda': 'Agenda',
@@ -2283,7 +2279,7 @@ function credits() {
 
     const q = normal(rawVal);
     const pages = [
-      ['O parque', 'quem-somos', 'institucional história valores'],
+      ['Onde estamos', 'quem-somos', 'onde fica como chegar institucional história valores'],
       ['Conheça os espaços', 'espacos', 'catálogo todos os espaços atrações'],
       ['Agenda', 'agenda', 'programação eventos corridas shows datas'],
       ['Galeria de fotos', 'galeria', 'fotos imagens perspectivas registros'],
