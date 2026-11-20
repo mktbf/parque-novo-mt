@@ -3,6 +3,7 @@ import * as T from 'three';
 import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=realismo-3d-20261119-2';
 import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
 import {primitives as P} from './refinamentos.js?v=pista-caminhada-20260916-1';
+import {kartRealData as KR} from './kart-real-dados.js?v=kart-20261120-2';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
  * O root de miniatures aplica [-620, 0, -570]. Não repetir essa transformação.
@@ -750,51 +751,33 @@ export const PARK_MAQUETE_POLYGON=[
 ];
 
 function buildKartTrackDetails(kart){
+ // Kartódromo como na ortofoto: asfalto, zebras nas curvas fechadas, faixa branca de borda, largada na reta oeste.
  const g=new T.Group();g.name='Kart · zebras, largada e iluminação';
- const redMat=mat('#cc3428',.78),whiteMat=mat('#f2efe8',.76),steelMat=mat('#38444a',.45),lampMat=new T.MeshStandardMaterial({color:'#fff4d8',emissive:'#ffd896',emissiveIntensity:0,roughness:.3});
+ const redMat=mat('#c8322a',.7),whiteMat=mat('#f3f1ea',.7),lineMat=mat('#eceae2',.6),steelMat=mat('#38444a',.45),lampMat=new T.MeshStandardMaterial({color:'#fff4d8',emissive:'#ffd896',emissiveIntensity:0,roughness:.3});
  lampMat.name='Kart · lente refletor';lampMat.userData.nightLamp=true;
- // Zebras (kerbs) nas curvas reais do traçado CAD do Kartódromo (R.meshes.kart: X 380..497, Z 782..924)
- const kerbArcs=[
-  [[406,790],[418,786],[432,787]],
-  [[464,792],[478,800],[486,812]],
-  [[488,832],[492,848],[486,862]],
-  [[478,886],[466,904],[450,914]],
-  [[428,918],[412,914],[400,902]],
-  [[390,874],[388,854],[390,834]],
-  [[426,818],[442,820],[452,832]],
-  [[446,856],[432,866],[418,860]],
-  [[416,882],[428,894],[444,888]]
- ];
- const segGeo=new T.BoxGeometry(.95,.07,1.35);
- for(const pts of kerbArcs){
-  const curve=new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,.14,z)));
-  const steps=14;
-  for(let i=0;i<steps;i++){
-   const p=curve.getPointAt(i/steps),t=curve.getTangentAt(i/steps);
-   const m=new T.Mesh(segGeo,i%2===0?redMat:whiteMat);
-   m.position.copy(p);m.rotation.y=Math.atan2(t.x,t.z);m.receiveShadow=true;g.add(m);
-  }
- }
- // Linha e pórtico de largada na reta oeste do Kart (X ~ 393, Z ~ 848)
- const startLine=new T.Mesh(new T.BoxGeometry(8.6,.03,1.4),whiteMat);
- startLine.position.set(395.5,.138,848);startLine.rotation.y=.12;g.add(startLine);
- for(const s of [-4.6,4.6]){
+ registeredFloor(g,KR.edgeLines,lineMat,.135,'Kart · faixa branca de borda');
+ registeredFloor(g,KR.kerbRed,redMat,.16,'Kart · zebra vermelha');
+ registeredFloor(g,KR.kerbWhite,whiteMat,.16,'Kart · zebra branca');
+ const st=KR.start;
+ // linha de largada xadrez e grid
+ const sq=new T.BoxGeometry(.9,.02,.9);
+ for(let i=-3;i<=3;i++)for(let j=0;j<2;j++){const m=new T.Mesh(sq,(i+j)%2?whiteMat:steelMat);const lx=i*.9,lz=j*.9-.45;m.position.set(st.x+lx*Math.cos(st.rot)+lz*Math.sin(st.rot),.14,st.z-lx*Math.sin(st.rot)+lz*Math.cos(st.rot));m.rotation.y=st.rot;g.add(m);}
+ const slot=new T.BoxGeometry(1.6,.02,.18);
+ for(let r=1;r<=6;r++)for(const side of [-1.4,1.4]){const lz=r*3.2+(side>0?1.6:0),lx=side;const m=new T.Mesh(slot,whiteMat);m.position.set(st.x+lx*Math.cos(st.rot)+lz*Math.sin(st.rot),.14,st.z-lx*Math.sin(st.rot)+lz*Math.cos(st.rot));m.rotation.y=st.rot;g.add(m);}
+ for(const s of [-4.4,4.4]){
   const post=new T.Mesh(new T.CylinderGeometry(.14,.16,5.2,10),steelMat);
-  post.position.set(395.5+s*Math.cos(.12),2.7,848-s*Math.sin(.12));post.castShadow=true;g.add(post);
+  post.position.set(st.x+s*Math.cos(st.rot),2.7,st.z-s*Math.sin(st.rot));post.castShadow=true;g.add(post);
  }
- const gantry=new T.Mesh(new T.BoxGeometry(9.6,.48,.45),steelMat);
- gantry.position.set(395.5,5.15,848);gantry.rotation.y=.12;gantry.castShadow=true;g.add(gantry);
- // Postes de iluminação do Kartódromo
- const kartLamps=[[396,796],[458,790],[494,828],[486,886],[442,922],[394,904],[436,842],[462,860]];
+ const gantry=new T.Mesh(new T.BoxGeometry(9.2,.48,.45),steelMat);
+ gantry.position.set(st.x,5.15,st.z);gantry.rotation.y=st.rot;gantry.castShadow=true;g.add(gantry);
  const poleGeo=new T.CylinderGeometry(.09,.13,10.5,8),headGeo=new T.BoxGeometry(.95,.18,.48),lensGeo=new T.BoxGeometry(.84,.04,.38);
- for(const [lx,lz] of kartLamps){
+ for(const [lx,lz] of KR.lamps){
   const pole=new T.Mesh(poleGeo,steelMat);pole.position.set(lx,5.35,lz);pole.castShadow=true;g.add(pole);
   const head=new T.Mesh(headGeo,steelMat);head.position.set(lx,10.6,lz);g.add(head);
   const lens=new T.Mesh(lensGeo,lampMat);lens.position.set(lx,10.49,lz);g.add(lens);
  }
  kart.add(g);
 }
-
 function buildSolarParkingCanopies(parking){
  const g=new T.Group();g.name='Estacionamento Solar · Carports Fotovoltaicos (E4/E5)';
  const panelMat=new T.MeshStandardMaterial({color:'#16293d',roughness:.22,metalness:.58,envMapIntensity:1.35});
@@ -1044,7 +1027,8 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  const stand=kart.getObjectByName('Arquibancada do Kartódromo');
  for(const o of [boxes,stand])if(o)o.removeFromParent();
  clearGeometry(kart);
- registeredFloor(kart,R.meshes.kart,asphalt,.12,'Kart · bordas CAD preservadas');
+ registeredFloor(kart,R.meshes.kart,grass,.06,'Kart · gramado sob o traçado');
+ registeredFloor(kart,KR.asphalt,asphalt,.12,'Kart · bordas CAD preservadas');
  if(boxes){boxes.position.set(379,0,852);boxes.rotation.y=.12;kart.add(boxes);}
  if(stand){stand.position.set(366,0,849);stand.rotation.y=.12;kart.add(stand);}
  buildKartTrackDetails(kart);

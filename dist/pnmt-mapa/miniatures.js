@@ -1,10 +1,10 @@
 import {loadRoadMaterials} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
-import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=vias-20261120-3';
+import {configureLandscapeMaterials,landscapeMaterials} from './cenario-integral.js?v=vias-20261120-5';
 import {applyIntegralFinish,configureIntegralMaterials} from './acabamento-integral.js?v=realismo-3d-20261118-1';
-import {createScenario,scenarioMaterials} from './cenario.js?v=vias-20261120-3';
+import {createScenario,scenarioMaterials} from './cenario.js?v=vias-20261120-5';
 import {applyLeisureArchitecture,configureLeisureMaterials} from './lazer-arquitetura.js?v=lago-satelite-20260917-11';
 import {createAutodromeFinish,loadAutodromeFinishMaterials} from './autodromo-acabamento.js?v=realismo-3d-20261119-2';
-import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=realismo-3d-20261119-2';
+import {applyRegisteredLayout,registeredMaterials} from './implantacao-correcoes.js?v=kart-20261120-2';
 import * as T from 'three';
 import {applySpaceArchitecture,configureFinishMaterials} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
 export {createBackdropGeometry} from './espacos-arquitetura.js?v=espacos-arquitetura-20260913-2';
