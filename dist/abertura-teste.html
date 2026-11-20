@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Teste de abertura · Parque Novo Mato Grosso</title>
+<style>
+ html,body{margin:0;height:100%;background:#0D2B4D;font-family:Barlow,system-ui,sans-serif;color:#fff;overflow:hidden}
+ #globo{position:fixed;inset:0}
+ gmp-map-3d{width:100%;height:100%}
+ #maquete{position:fixed;inset:0;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity 1.6s ease}
+ #maquete.ativa{opacity:1;pointer-events:auto}
+ #legenda{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);text-align:center;transition:opacity 1s;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+ #legenda small{display:block;letter-spacing:.2em;text-transform:uppercase;font-size:12px;opacity:.85}
+ #legenda b{display:block;font-size:clamp(26px,5vw,52px);font-weight:700;margin-top:6px}
+ #aviso{max-width:520px;margin:12vh auto;padding:24px;line-height:1.5;background:rgba(255,255,255,.06);border-radius:14px}
+ #aviso code{background:rgba(255,255,255,.12);padding:2px 6px;border-radius:6px}
+ #pular{position:fixed;right:20px;top:20px;background:rgba(13,43,77,.7);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:8px 16px;cursor:pointer;font:inherit}
+</style>
+</head>
+<body>
+<div id="globo"></div>
+<div id="legenda" hidden><small>Cuiabá · Mato Grosso</small><b>O Novo Começa Aqui</b></div>
+<button id="pular" hidden>Pular</button>
+<iframe id="maquete" title="Mapa 3D do parque" loading="eager"></iframe>
+<script>
+// Teste da abertura: voo do Google (satélite) até o parque e passagem para a maquete do projeto.
+// A chave vem pela URL (?key=...), não fica gravada no site.
+const PARQUE={lat:-15.4539,lng:-56.0832};
+const key=new URLSearchParams(location.search).get('key');
+const maquete=document.getElementById('maquete');
+const legenda=document.getElementById('legenda');
+const pular=document.getElementById('pular');
+let entrou=false;
+function entrarNaMaquete(){
+  if(entrou)return;entrou=true;
+  legenda.style.opacity=0;pular.hidden=true;
+  maquete.classList.add('ativa');
+}
+maquete.src='./pnmt-mapa/';
+if(!key){
+  document.getElementById('globo').innerHTML='<div id="aviso"><b>Falta a chave do Google.</b><br>Abra este endereço com <code>?key=SUA_CHAVE</code> no final.<br><br>Sem a chave, segue direto para a maquete em 3 segundos.</div>';
+  setTimeout(entrarNaMaquete,3000);
+}else{
+  (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key,v:"beta"});
+  (async()=>{
+    try{
+      const {Map3DElement}=await google.maps.importLibrary('maps3d');
+      const mapa=new Map3DElement({
+        center:{lat:-15.1,lng:-56.3,altitude:0},
+        range:900000,tilt:0,heading:0,mode:'SATELLITE',defaultUIHidden:true
+      });
+      document.getElementById('globo').append(mapa);
+      legenda.hidden=false;pular.hidden=false;
+      pular.onclick=entrarNaMaquete;
+      setTimeout(()=>{
+        mapa.flyCameraTo({
+          endCamera:{center:{lat:PARQUE.lat,lng:PARQUE.lng,altitude:200},range:2600,tilt:62,heading:28},
+          durationMillis:9000
+        });
+      },1200);
+      mapa.addEventListener('gmp-animationend',()=>setTimeout(entrarNaMaquete,600),{once:true});
+      setTimeout(entrarNaMaquete,16000); // garantia, se o evento não vier
+    }catch(e){
+      console.warn('[abertura]',e);entrarNaMaquete();
+    }
+  })();
+}
+</script>
+</body>
+</html>
