@@ -785,19 +785,12 @@ function buildSolarParkingCanopies(parking){
  const frameMat=new T.MeshStandardMaterial({color:'#8fa3b3',roughness:.35,metalness:.65});
  const colMat=new T.MeshStandardMaterial({color:'#2c363e',roughness:.48,metalness:.62});
  const curbMat=mat('#cfd3cc',.85);
- // Eixo dos bolsões E4/E5 (entre AgroPlace, Splash e Skate Park: X 266..364, Z 684..794)
- const angle=-0.615;
- const cos=Math.cos(angle),sin=Math.sin(angle);
- const banks=[
-  {cx:304.5,cz:738.5,rows:6,spacing:12.6,span:24.0,width:6.2},
-  {cx:329.5,cz:721.0,rows:5,spacing:12.6,span:22.0,width:6.2}
- ];
+ // Coberturas solares do E4/E5 medidas na ortofoto: centro X,Z, comprimento, largura e giro (rad).
+ const SOLAR=[[305.64, 765.54, 26.6, 7.0, 0.62], [300.53, 758.66, 26.2, 7.0, 0.62], [294.34, 749.93, 26.1, 7.0, 0.62], [324.68, 739.06, 21.2, 7.0, 0.62], [285.14, 736.15, 26.1, 7.0, 0.62], [320.11, 731.18, 23.2, 7.0, 0.62], [282.19, 729.46, 23.0, 7.0, 0.62], [277.78, 721.58, 21.0, 7.0, 0.62], [314.94, 716.87, 17.1, 7.0, 0.62], [307.31, 711.41, 22.9, 7.0, 0.62], [271.52, 708.38, 15.9, 7.0, 0.62], [300.71, 702.75, 23.1, 7.0, 0.62], [294.6, 691.8, 26.3, 7.0, 0.62]];
  const colGeo=new T.CylinderGeometry(.16,.20,3.8,10);
  const beamGeo=new T.BoxGeometry(.22,.26,5.8);
- for(const bank of banks){
-  for(let r=0;r<bank.rows;r++){
-   const offset=(r-(bank.rows-1)/2)*bank.spacing;
-   const wx=bank.cx-sin*offset,wz=bank.cz+cos*offset;
+ for(const [wx,wz,span,width,angle] of SOLAR){
+  const bank={span,width};{
    const canopy=new T.Group();
    canopy.position.set(wx,.12,wz);
    canopy.rotation.y=angle;
@@ -829,6 +822,24 @@ function buildSolarParkingCanopies(parking){
   }
  }
  parking.add(g);
+}
+
+// Motocross como na ortofoto: o circuito de terra é a própria foto aérea aplicada no recorte real da área.
+// Sem saltos, tendas ou arquibancadas inventados.
+const MX_OUTLINE=[[318, 906], [330, 897], [346, 894], [356, 903], [372, 920], [392, 934], [412, 942], [432, 947], [448, 951], [452, 962], [442, 980], [428, 998], [414, 1016], [402, 1034], [394, 1040], [375, 1025], [363, 1006], [352, 985], [342, 962], [333, 940], [324, 922]],MX_BBOX=[314,890,456,1044];
+function buildMotocrossFoto(moto){
+ moto.name='Motocross · circuito de terra (foto aérea)';
+ const sh=linePath(MX_OUTLINE);
+ const geo=new T.ShapeGeometry(sh,6);geo.rotateX(-Math.PI/2);
+ const pos=geo.attributes.position,uv=[];
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);uv.push((x-MX_BBOX[0])/(MX_BBOX[2]-MX_BBOX[0]),1-(z-MX_BBOX[1])/(MX_BBOX[3]-MX_BBOX[1]));}
+{const u2=[];for(let i=0;i<pos.count;i++)u2.push(pos.getX(i)/5,pos.getZ(i)/5);geo.setAttribute('uv',new T.Float32BufferAttribute(u2,2));}geo.computeVertexNormals();
+ const tex=new T.TextureLoader().load('./assets/motocross-foto.webp?v=mx-20261120-1');tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=4;
+ // Outro passo do mapa reescreve o UV como (x/5, z/5); a textura se ajusta a esse padrão.
+ const W=MX_BBOX[2]-MX_BBOX[0],H=MX_BBOX[3]-MX_BBOX[1];tex.repeat.set(5/W,-5/H);tex.offset.set(-MX_BBOX[0]/W,1+MX_BBOX[1]/H);
+ const m=new T.MeshStandardMaterial({map:tex,color:'#c4b2a2',roughness:.96,metalness:0,side:T.DoubleSide});m.name='Motocross · foto do circuito';m.userData.texturaNova=true;m.userData.keepMap=true;
+ shapeMesh(moto,D.motocross.outline,[],registeredMaterial('grass','#43752e',.88),.02,.06);
+ const mesh=new T.Mesh(geo,m);mesh.position.y=.11;mesh.receiveShadow=true;mesh.name='Motocross · terra do circuito';moto.add(mesh);
 }
 
 function buildRealisticMotocross(moto,outline){
@@ -1040,7 +1051,7 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  registeredFloor(parking,R.meshes.parking,parkingMat,.10,'Estacionamentos · bolsões recortados');
  buildSolarParkingCanopies(parking);
  const moto=models.get('motocross');clearGeometry(moto);
- buildRealisticMotocross(moto,D.motocross.outline);
+ buildMotocrossFoto(moto);
  const wake=models.get('wake-park');
  const drop=[];wake.traverse(o=>{if(o.isMesh&&o.geometry.type==='ExtrudeGeometry'&&o.material?.color){const c=o.material.color.getHexString();if(['163e46','426c6c','377c80','4e8e91','426f70'].includes(c))drop.push(o);}});
  wake.traverse(o=>{if(o.isMesh&&o.geometry.type==='BoxGeometry'){const p=o.geometry.parameters;if(p.width>40&&p.depth>70&&p.height<2)drop.push(o);}});
