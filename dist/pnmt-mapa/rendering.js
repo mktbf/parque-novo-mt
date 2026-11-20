@@ -7,7 +7,7 @@ import {ShaderPass} from './vendor/addons/postprocessing/ShaderPass.js';
 import {Sky} from './vendor/addons/objects/Sky.js';
 import {HDRLoader} from './vendor/addons/loaders/HDRLoader.js';
 import {simulation,localInstant,solarPosition,sunDirection} from './solar-model.js?v=realismo-3d-20261119-2';
-import {lakeShaderUniforms} from './estilo-realista.js?v=vias-20261120-13';
+import {lakeShaderUniforms} from './estilo-realista.js?v=fix-20261120-1';
 
 const CinematicShader={
  name:'CinematicShader',

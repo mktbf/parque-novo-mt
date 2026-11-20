@@ -1,5 +1,5 @@
-import { PARK_MAQUETE_POLYGON } from './implantacao-correcoes.js?v=mx-20261120-4';
-import { implantationData as IMPLANT_D } from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
+import { PARK_MAQUETE_POLYGON } from './implantacao-correcoes.js?v=fix-20261120-1';
+import { implantationData as IMPLANT_D } from './implantacao-dados.js?v=fix-20261120-5';
 // estilo-minimundo.js
 // Acabamento de maquete estilizada para o mapa 3D do Parque Novo Mato Grosso.
 // Roda UMA vez depois que a cena está montada e as texturas carregaram.
