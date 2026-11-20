@@ -344,17 +344,21 @@
         <h1>${esc(aboutTitle)}</h1>
         <p><a href="#inicio">Página Principal</a> / Quem Somos</p>
       </section>
-      <section class="reference-origin">
-        <div class="reference-origin-heading">
-          <h2>${aboutLead}</h2>
+      <section class="qs-origem">
+        <div class="qs-w">
+          <div class="qs-txt">
+            <span class="qs-tag">Quem somos</span>
+            <h2>${aboutLead}</h2>
+            <p class="qs-lead">${aboutCopy1}</p>
+          </div>
+          <figure class="qs-mapa"><img src="${asset('map')}" alt="Mato Grosso, sua natureza e sua produção"></figure>
         </div>
-        <div class="reference-origin-copy">
-          <p>${aboutCopy1}</p>
-          <p><strong>FOI DESSA GRANDEZA QUE NASCEU O PARQUE NOVO MATO GROSSO:</strong></p>
-          <p>${aboutCopy2}</p>
+      </section>
+      <section class="qs-nasceu">
+        <div class="qs-w">
+          <p class="qs-frase">Foi dessa grandeza que nasceu o <span>Parque Novo Mato Grosso:</span></p>
+          <p class="qs-copy">${String(aboutCopy2).replace(/<br\s*\/?>/gi, ' ')}</p>
         </div>
-        <img class="reference-map" src="${asset('map')}" alt="Mato Grosso, sua natureza e sua produção">
-        <img class="reference-wheel" src="${asset('wheel-cutout')}" alt="Roda-gigante, imagem de referência da proposta">
       </section>
       <figure class="reference-about-aerial">
         <img src="${asset('aerial')}" alt="Vista panorâmica do Parque Novo Mato Grosso">
