@@ -1,6 +1,6 @@
 import * as T from 'three';
-import {integralData as D} from './cenario-integral-dados.js?v=vias-20261120-2';
-import {createPalmCrown,foliageUniforms} from './folhagem.js?v=vias-20261120-2';
+import {integralData as D} from './cenario-integral-dados.js?v=vias-20261120-3';
+import {createPalmCrown,foliageUniforms} from './folhagem.js?v=vias-20261120-3';
 export {D as integralData};
 export const landscapeMaterials=new Map();
 function material(key,color,roughness=.86,metalness=0){const m=new T.MeshStandardMaterial({color,roughness,metalness,envMapIntensity:.7});m.name='Parque · '+key;landscapeMaterials.set(key,m);return m;}

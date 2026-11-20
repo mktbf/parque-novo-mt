@@ -1,8 +1,8 @@
 import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
-import {createCanopyGeometry,foliageUniforms} from './folhagem.js?v=vias-20261120-2';
-import {createIntegralLandscape} from './cenario-integral.js?v=vias-20261120-2';
+import {createCanopyGeometry,foliageUniforms} from './folhagem.js?v=vias-20261120-3';
+import {createIntegralLandscape} from './cenario-integral.js?v=vias-20261120-3';
 import * as T from 'three';
-import {scenarioData as D} from './cenario-dados.js?v=vias-20261120-2';
+import {scenarioData as D} from './cenario-dados.js?v=vias-20261120-3';
 export const scenarioMaterials=new Map();
 function material(key,color,roughness=.86,metalness=0){
  if(!scenarioMaterials.has(key)){const m=new T.MeshStandardMaterial({color,roughness,metalness});m.name='Cenário · '+key;scenarioMaterials.set(key,m);}
