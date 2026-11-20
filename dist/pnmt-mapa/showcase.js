@@ -483,7 +483,7 @@ export class PNMTShowcaseController {
       }
 
       // 2. Gentle Orbit (Suave rotação lenta para efeito diorama vivo)
-      if (this.isOrbiting && !this.isFlying && !this.isUserInteracting) {
+      if (false && this.isOrbiting && !this.isFlying && !this.isUserInteracting) { // giro automatico desligado
         const dTheta = 0.00045; // rotação ultra-suave
         const offset = this.camera.position.clone().sub(this.controls.target);
         offset.applyAxisAngle(new this.T.Vector3(0, 1, 0), dTheta);

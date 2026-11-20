@@ -1,3 +1,5 @@
+import { PARK_MAQUETE_POLYGON } from './implantacao-correcoes.js?v=fix-20261120-1';
+import { implantationData as IMPLANT_D } from './implantacao-dados.js?v=fix-20261120-5';
 // estilo-minimundo.js
 // Acabamento de maquete estilizada para o mapa 3D do Parque Novo Mato Grosso.
 // Roda UMA vez depois que a cena está montada e as texturas carregaram.
@@ -27,10 +29,10 @@ const RECOLORIR = [
   [/Casa Cuiabana/, 'Lazer · clay-tile', '#cfcbc1'],
   [/Casa Cuiabana/, 'Lazer · stone', '#bdb4a3'],
   [/Casa Cuiabana/, 'Lazer · stone-dark', '#8a7f6e'],
-  [/Autódromo · pista/, 'Autódromo · runoff', '#2b7fc4'],
+  [/Autódromo · pista/, 'Autódromo · runoff', '#2e8f86'],
   [/Autódromo · pista/, 'Autódromo · kerbGreen', '#cc3a2e'],
   [/Autódromo · pista/, 'Autódromo · kerbWhite', '#f4f1ea'],
-  [/Autódromo · pista/, 'Autódromo · shoulder', '#c9b48a'],
+  [/Autódromo · pista/, 'Autódromo · shoulder', '#8fae84'],
   [/BMX/, 'Lazer · bmx-blue', '#1f6fc2'],
   [/BMX/, 'Lazer · bmx-yellow', '#f2c230'],
   [/BMX/, 'Lazer · bmx-navy', '#15467a'],
@@ -437,7 +439,7 @@ function adicionarVida(scene, THREE) {
   const nuvGeo = new THREE.IcosahedronGeometry(1, 1);
   const nuvMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 1, flatShading: true, transparent: true, opacity: 0.92 });
   const nuvens = []; let seed = 3; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 0; i++) {
     const n = new THREE.Group(); const k = 4 + Math.floor(rnd() * 3);
     for (let j = 0; j < k; j++) { const b = new THREE.Mesh(nuvGeo, nuvMat); const r = 6 + rnd() * 6; b.scale.set(r * 1.3, r * 0.7, r); b.position.set((j - k / 2) * 8 + rnd() * 4, rnd() * 3, rnd() * 8 - 4); n.add(b); }
     n.position.set(-600 + rnd() * 1200, 95 + rnd() * 30, -500 + rnd() * 1000); n.userData.vel = 3 + rnd() * 3; nuvens.push(n); g.add(n);
@@ -761,16 +763,7 @@ export function aplicarEspacosReais(scene, THREE) {
       o.material = nm; n++; break;
     }
   }
-  // Pérola do Cerrado: casca de escamas conforme o render do projeto
-  let petalas = null;
-  for (const o of alvos) {
-    const m = o.material; if (!m.map || (m.userData.corOriginal || '') !== 'ffffff') continue;
-    box.setFromObject(o); box.getCenter(c);
-    if (Math.hypot(c.x + 402, c.z + 12) > 30 || c.y < 8) continue;
-    petalas = petalas || texturaPetalas(THREE);
-    const nm = m.clone(); nm.userData = { corOriginal: 'ffffff' }; nm.map = petalas; nm.color.set('#ffffff'); nm.roughness = 0.7; nm.needsUpdate = true;
-    o.material = nm; n++;
-  }
+
   // Vila das Nações: piso da orla em faixas
   let faixas = null;
   for (const o of alvos) {
@@ -785,23 +778,122 @@ export function aplicarEspacosReais(scene, THREE) {
   n += construirSplash(scene, THREE);
   n += construirArenas(scene, THREE);
   n += construirAgro(scene, THREE);
-  n += adicionarVida(scene, THREE);
-  window.__carrosParados = estacionarCarros(scene, THREE);
+  // Carros, wakeboard e nuvens decorativos retirados: o mapa mostra so o projeto.
   n += construirRoda(scene, THREE) ? 1 : 0;
   n += pisoDosBowls(scene, THREE);
   n += aguaDoWake(scene, THREE);
   n += arquibancadaCasa(scene, THREE);
-  n += cascataArena(scene, THREE);
+  // cascata retirada: nao aparece na foto aerea (20/11/2026)
   n += construirCavalaria(scene, THREE);
   return n;
+}
+
+function construirBaseMaqueteChanfrada(scene, THREE, grassMat) {
+  const antigo = scene.getObjectByName('Base maquete');
+  if (antigo) antigo.removeFromParent();
+  const grupoBase = new THREE.Group();
+  grupoBase.name = 'Base maquete';
+
+  // Polígono real do parque em coordenadas de mundo (x - 620, z - 570)
+  const polyWorld = PARK_MAQUETE_POLYGON.map(([x, z]) => new THREE.Vector2(x - 620, z - 570));
+  const outerShape = new THREE.Shape(polyWorld);
+
+  // 1. Laje contínua de vedação do terreno dentro do polígono do parque (com furos para os bowls do Skate e bacia do Lago)
+  const capShape = new THREE.Shape(polyWorld);
+  for (const sector of (IMPLANT_D.skate?.sectors || [])) {
+    if (!sector.rim) continue;
+    const pts = sector.rim.map(([x, z]) => new THREE.Vector2(x - 620, z - 570));
+    const hole = new THREE.Path(pts);
+    capShape.holes.push(hole);
+  }
+  const capGeo = new THREE.ExtrudeGeometry(capShape, { depth: 0.22, bevelEnabled: false });
+  capGeo.rotateX(Math.PI / 2);
+  // Projeta UVs no espaço da prancha para casar com a textura procedural de grama
+  const capPos = capGeo.attributes.position;
+  const capUV = [];
+  for (let i = 0; i < capPos.count; i++) {
+    capUV.push((capPos.getX(i) + 620) / 5, (capPos.getZ(i) + 570) / 5);
+  }
+  capGeo.setAttribute('uv', new THREE.Float32BufferAttribute(capUV, 2));
+  const capMat = grassMat ? grassMat.clone() : new THREE.MeshStandardMaterial({ color: '#457230', roughness: 0.88 });
+  capMat.vertexColors = false;
+  capMat.name = 'Cenário · terreno base maquete';
+  capMat.userData.surfaceKind = 'grass';
+  const capMesh = new THREE.Mesh(capGeo, capMat);
+  capMesh.name = 'Terreno base contínua';
+  capMesh.position.y = -0.26;
+  capMesh.receiveShadow = true;
+  grupoBase.add(capMesh);
+
+  // 2. Moldura superior chanfrada escura (chanfro de maquete arquitetônica)
+  const rimGeo = new THREE.ExtrudeGeometry(outerShape, {
+    depth: 3.4,
+    bevelEnabled: true,
+    bevelThickness: 2.0,
+    bevelSize: 2.0,
+    bevelSegments: 3
+  });
+  rimGeo.rotateX(Math.PI / 2);
+  const rimMat = new THREE.MeshStandardMaterial({
+    color: '#1b232a',
+    roughness: 0.48,
+    metalness: 0.20,
+    envMapIntensity: 0.85
+  });
+  rimMat.name = 'Maquete · chanfro escuro';
+  const rimMesh = new THREE.Mesh(rimGeo, rimMat);
+  rimMesh.name = 'Base maquete · chanfro';
+  rimMesh.position.y = -2.25;
+  rimMesh.castShadow = true;
+  rimMesh.receiveShadow = true;
+  grupoBase.add(rimMesh);
+
+  // 3. Plinto arquitetônico escuro profundo
+  const plinthGeo = new THREE.ExtrudeGeometry(outerShape, {
+    depth: 18.0,
+    bevelEnabled: false
+  });
+  plinthGeo.rotateX(Math.PI / 2);
+  const plinthMat = new THREE.MeshStandardMaterial({
+    color: '#11171c',
+    roughness: 0.68,
+    metalness: 0.12,
+    envMapIntensity: 0.55
+  });
+  plinthMat.name = 'Maquete · plinto escuro';
+  const plinthMesh = new THREE.Mesh(plinthGeo, plinthMat);
+  plinthMesh.name = 'Base maquete · corpo';
+  plinthMesh.position.y = -5.6;
+  plinthMesh.receiveShadow = true;
+  grupoBase.add(plinthMesh);
+
+  // 4. Soco inferior recuado
+  const footGeo = new THREE.ExtrudeGeometry(outerShape, {
+    depth: 4.5,
+    bevelEnabled: false
+  });
+  footGeo.rotateX(Math.PI / 2);
+  const footMat = new THREE.MeshStandardMaterial({
+    color: '#0a0e12',
+    roughness: 0.80,
+    metalness: 0.08
+  });
+  const footMesh = new THREE.Mesh(footGeo, footMat);
+  footMesh.name = 'Base maquete · soco';
+  footMesh.position.y = -23.5;
+   footMesh.scale.set(0.985, 1, 0.985);
+  grupoBase.add(footMesh);
+
+  scene.add(grupoBase);
+  return 'chanfrada-escura';
 }
 
 export function aplicarEstiloMinimundo(scene, renderer, THREE) {
   if (scene.userData.estiloMinimundo) return scene.userData.estiloMinimundo;
   const resultado = { materiais: 0, copas: 0, triangulos: 0, base: 'nenhuma' };
 
-  let ilha = null, chao = null, copas = null, troncos = null, assentos = null, torre = null;
-  const asfaltos = [], aguas = [], ceus = [], todosMateriais = new Set();
+  let chao = null, copas = null, torre = null, grassMat = null;
+  const todosMateriais = new Set();
 
   scene.traverse(o => {
     if (!(o.isMesh || o.isInstancedMesh)) return;
@@ -809,107 +901,25 @@ export function aplicarEstiloMinimundo(scene, renderer, THREE) {
     const m = ms[0]; const t = tamanho(o.geometry);
     const grupo = grupoDe(o, scene);
     ms.forEach(x => { todosMateriais.add(x); if (x.color && !x.userData.corOriginal) x.userData.corOriginal = x.color.getHexString(); });
-    if (!o.name && t.x > 6000) chao = o;
-    else if (!o.name && t.x > 1200 && t.x < 1300 && m.vertexColors) ilha = o;
+    if (o.name === 'chao' || (!o.name && t.x > 6000)) chao = o;
+    if (o.name === 'Terreno recortado' && !grassMat) grassMat = m;
     if (o.name === 'Cenário · copas') copas = o;
-    if (o.name === 'Cenário · troncos') troncos = o;
-    if (o.name === 'Arquibancada R03 · assentos instanciados') assentos = o;
     if (!grupo && o.isMesh && t.y > 35 && t.x < 6) torre = o;
-    const src = (m.map && m.map.image && m.map.image.src) || '';
-    if (src.includes('clean_asphalt')) asfaltos.push(o);
-    if (m.isMeshPhysicalMaterial && m.color && m.color.getHexString() === '345868') aguas.push(o);
-    if (m.isShaderMaterial && !/postes/.test(o.name)) ceus.push(o);
   });
 
-  // 1 e 2. Terreno e autódromo em verde chapado
-  const grama = [ilha];
-  scene.traverse(o => { if (o.name === 'Autódromo · grass') grama.push(o); });
-  grama.filter(Boolean).forEach(o => materiaisDe(o).forEach(m => {
-    limparMapas(m); m.vertexColors = false; m.color.set(PALETA.grama); m.roughness = 1;
-  }));
-
-  // 3. Asfalto chapado
-  asfaltos.forEach(o => materiaisDe(o).forEach(m => { limparMapas(m); m.color.set(PALETA.asfalto); m.roughness = 0.95; }));
-
-  // 4. Água
-  aguas.forEach(o => materiaisDe(o).forEach(m => { m.color.set(PALETA.agua); m.roughness = 0.3; m.metalness = 0; m.needsUpdate = true; }));
-
-  // 5. Todos os materiais: menos reflexo, mais fosco, cores mais vivas
-  const hsl = { h: 0, s: 0, l: 0 };
-  for (const m of todosMateriais) {
-    if (!m.isMeshStandardMaterial) continue;
-    m.envMapIntensity = 0.25;
-    if (!m.isMeshPhysicalMaterial && m.roughness < 0.75 && !/glass|vidro/i.test(m.name || '')) m.roughness = 0.8;
-    if (m.color && !m.map) {
-      m.color.getHSL(hsl);
-      if (hsl.s > 0.08) m.color.setHSL(hsl.h, Math.min(1, hsl.s * 1.3), hsl.l);
-    }
-    m.needsUpdate = true;
-    resultado.materiais++;
+  // Remove o plano infinito chapado ao redor da maquete
+  if (chao) {
+    chao.visible = false;
   }
-  scene.environment = null;
 
-  // 6. Copas leves (80 triângulos cada) e troncos
   if (copas) {
-    copas.geometry = new THREE.IcosahedronGeometry(1, 1);
-    const m = copas.material; m.vertexColors = false; m.flatShading = true; m.color.set(PALETA.copa); limparMapas(m);
     resultado.copas = copas.count;
   }
-  if (troncos) troncos.material.color.set(PALETA.tronco);
 
-  // 7. Assentos da arquibancada em caixinha (12 triângulos cada)
-  if (assentos) assentos.geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+  // Constrói a base escura chanfrada estilo maquete de arquitetura sob o polígono real do parque
+  resultado.base = construirBaseMaqueteChanfrada(scene, THREE, grassMat);
 
-  // 8. Fundo verde chapado da marca, sem céu
-  if (chao) {
-    chao.material = new THREE.MeshBasicMaterial({ color: PALETA.fundo, fog: false });
-    chao.receiveShadow = false; chao.scale.set(5, 1, 5); fundoPorPeriodo(chao);
-  }
-  ceus.forEach(o => {
-    o.visible = false;
-    Object.defineProperty(o, 'visible', { get: () => false, set: () => {}, configurable: true });
-  });
-
-  // 9. Base de maquete: extrusão do contorno da ilha, 30 unidades para baixo, em terra vermelha
-  if (ilha) {
-    const material = new THREE.MeshStandardMaterial({ color: PALETA.terra, roughness: 1, fog: false });
-    const pts = contornoDaIlha(ilha.geometry);
-    let base = null;
-    if (pts) {
-      const shape = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, z)));
-      const geo = new THREE.ExtrudeGeometry(shape, { depth: 30, bevelEnabled: false });
-      geo.rotateX(Math.PI / 2); // extrusão em z vira y negativo; y da forma vira z do mundo
-      base = new THREE.Mesh(geo, material);
-      base.applyMatrix4(ilha.matrixWorld);
-      base.position.y -= 0.2;
-      resultado.base = 'extrusao';
-    } else {
-      const n = 6; base = new THREE.InstancedMesh(ilha.geometry, material, n);
-      const m4 = new THREE.Matrix4();
-      for (let i = 0; i < n; i++) { m4.makeTranslation(0, -5 * (i + 1), 0); m4.multiply(ilha.matrixWorld); base.setMatrixAt(i, m4); }
-      base.instanceMatrix.needsUpdate = true;
-      resultado.base = 'copias';
-    }
-    base.name = 'Base maquete'; base.receiveShadow = true;
-    scene.add(base);
-  }
-
-  // 10. Luzes: sol mais forte e quente, preenchimento com céu claro e chão verde.
-  // Os períodos (manhã/tarde/pôr do sol/noite) continuam mandando: aqui só multiplicamos a intensidade que eles definem.
-  scene.traverse(l => {
-    if (l.isDirectionalLight && !l.userData.estiloMinimundo) {
-      let v = l.intensity; l.userData.estiloMinimundo = true;
-      Object.defineProperty(l, 'intensity', { get: () => v * 1.28, set: x => { v = x; }, configurable: true });
-    }
-    if (l.isHemisphereLight && !l.userData.estiloMinimundo) {
-      let v = l.intensity; l.userData.estiloMinimundo = true;
-      Object.defineProperty(l, 'intensity', { get: () => v * 1.4, set: x => { v = x; }, configurable: true });
-      l.groundColor.set('#5a8a37');
-    }
-  });
-  renderer.toneMappingExposure = Math.max(renderer.toneMappingExposure, 1.08);
-
-  // 11. Cores por espaço (clonando o material quando ele é compartilhado com outro grupo)
+  // Ajustes cromáticos pontuais por espaço preservando mapas PBR e reflexos PMREM
   scene.traverse(o => {
     if (!(o.isMesh || o.isInstancedMesh)) return;
     const grupo = grupoDe(o, scene); const m = materiaisDe(o)[0]; if (!m || !m.color) return;
@@ -918,18 +928,22 @@ export function aplicarEstiloMinimundo(scene, renderer, THREE) {
       const original = m.userData.corOriginal || m.color.getHexString();
       const bate = alvo.startsWith('#') ? original === alvo.slice(1) : o.name === alvo;
       if (!bate) continue;
-      const nm = m.clone(); nm.userData = { corOriginal: original };
-      limparMapas(nm); nm.vertexColors = false; nm.color.set(cor); nm.roughness = 0.85; nm.metalness = 0; nm.envMapIntensity = 0.25;
-      o.material = nm; break;
+      const nm = m.clone();
+      nm.userData = { ...m.userData, corOriginal: original };
+      nm.color.set(cor);
+      o.material = nm;
+      resultado.materiais++;
+      break;
     }
   });
+
   aplicarEspacosReais(scene, THREE);
   if (torre) {
-    const nm = torre.material.clone(); nm.color.set('#eeece6'); nm.roughness = 0.85; // Árvore da Vida: hoje em concreto branco (drone out/2026)
+    const nm = torre.material.clone(); nm.color.set('#eeece6'); nm.roughness = 0.65;
     torre.material = nm;
   }
 
-  // 12. Contagem de triângulos visíveis
+  // Contagem de triângulos visíveis
   scene.traverse(o => {
     if (!(o.isMesh || o.isInstancedMesh) || !o.visible) return;
     const g = o.geometry; const n = g.index ? g.index.count / 3 : g.attributes.position.count / 3;
@@ -938,6 +952,5 @@ export function aplicarEstiloMinimundo(scene, renderer, THREE) {
   resultado.triangulos = Math.round(resultado.triangulos);
   renderer.shadowMap.needsUpdate = true;
   scene.userData.estiloMinimundo = resultado;
-  console.log('[estilo-minimundo] materiais:', resultado.materiais, 'copas:', resultado.copas, 'base:', resultado.base, 'triangulos:', resultado.triangulos);
   return resultado;
 }

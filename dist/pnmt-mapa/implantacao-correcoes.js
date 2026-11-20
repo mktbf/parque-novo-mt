@@ -1,8 +1,9 @@
-import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
+import {roadFinishData as ROAD03,roadAsphaltMaterial} from './vias-acabamento.js?v=fix-20261120-5';
 import * as T from 'three';
-import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=autodromo-arquitetura-20260913-1';
-import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
+import {buildAutodromeArchitecture} from './autodromo-arquitetura.js?v=realismo-3d-20261119-2';
+import {implantationData as D} from './implantacao-dados.js?v=fix-20261120-5';
 import {primitives as P} from './refinamentos.js?v=pista-caminhada-20260916-1';
+import {kartRealData as KR} from './kart-real-dados.js?v=kart-20261120-2';
 
 /** Todas as coordenadas deste módulo são da prancha de 1600 px.
  * O root de miniatures aplica [-620, 0, -570]. Não repetir essa transformação.
@@ -741,26 +742,283 @@ function geoSurface(group,geometry,material,y=.06,depth=.04,extraHoles=[]){
  return shapeMesh(group,outer,[...holes,...extraHoles],material,y,depth);
 }
 function inside([x,z],ring){let ok=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [a,b]=ring[i],[c,d]=ring[j];if((b>z)!==(d>z)&&x<(c-a)*(z-b)/(d-b)+a)ok=!ok;}return ok;}
+export const PARK_MAQUETE_POLYGON=[
+ [58,545],[58,300],[58,155],[58,10],[820,10],
+ [925,128],[1055,330],[1115,535],[1185,860],
+ [1285,1112],[1265,1125],[455,1124],[388,1042],[348,995],
+ [300,915],[268,882],[212,812],[190,745],[152,725],
+ [110,625],[66,578]
+];
+
+function buildKartTrackDetails(kart){
+ // Kartódromo como na ortofoto: asfalto, zebras nas curvas fechadas, faixa branca de borda, largada na reta oeste.
+ const g=new T.Group();g.name='Kart · zebras, largada e iluminação';
+ const redMat=mat('#c8322a',.7),whiteMat=mat('#f3f1ea',.7),lineMat=mat('#eceae2',.6),steelMat=mat('#38444a',.45),lampMat=new T.MeshStandardMaterial({color:'#fff4d8',emissive:'#ffd896',emissiveIntensity:0,roughness:.3});
+ lampMat.name='Kart · lente refletor';lampMat.userData.nightLamp=true;
+ registeredFloor(g,KR.edgeLines,lineMat,.135,'Kart · faixa branca de borda');
+ registeredFloor(g,KR.kerbRed,redMat,.16,'Kart · zebra vermelha');
+ registeredFloor(g,KR.kerbWhite,whiteMat,.16,'Kart · zebra branca');
+ const st=KR.start;
+ // linha de largada xadrez e grid
+ const sq=new T.BoxGeometry(.9,.02,.9);
+ for(let i=-3;i<=3;i++)for(let j=0;j<2;j++){const m=new T.Mesh(sq,(i+j)%2?whiteMat:steelMat);const lx=i*.9,lz=j*.9-.45;m.position.set(st.x+lx*Math.cos(st.rot)+lz*Math.sin(st.rot),.14,st.z-lx*Math.sin(st.rot)+lz*Math.cos(st.rot));m.rotation.y=st.rot;g.add(m);}
+ const slot=new T.BoxGeometry(1.6,.02,.18);
+ for(let r=1;r<=6;r++)for(const side of [-1.4,1.4]){const lz=r*3.2+(side>0?1.6:0),lx=side;const m=new T.Mesh(slot,whiteMat);m.position.set(st.x+lx*Math.cos(st.rot)+lz*Math.sin(st.rot),.14,st.z-lx*Math.sin(st.rot)+lz*Math.cos(st.rot));m.rotation.y=st.rot;g.add(m);}
+ for(const s of [-4.4,4.4]){
+  const post=new T.Mesh(new T.CylinderGeometry(.14,.16,5.2,10),steelMat);
+  post.position.set(st.x+s*Math.cos(st.rot),2.7,st.z-s*Math.sin(st.rot));post.castShadow=true;g.add(post);
+ }
+ const gantry=new T.Mesh(new T.BoxGeometry(9.2,.48,.45),steelMat);
+ gantry.position.set(st.x,5.15,st.z);gantry.rotation.y=st.rot;gantry.castShadow=true;g.add(gantry);
+ const poleGeo=new T.CylinderGeometry(.09,.13,10.5,8),headGeo=new T.BoxGeometry(.95,.18,.48),lensGeo=new T.BoxGeometry(.84,.04,.38);
+ for(const [lx,lz] of KR.lamps){
+  const pole=new T.Mesh(poleGeo,steelMat);pole.position.set(lx,5.35,lz);pole.castShadow=true;g.add(pole);
+  const head=new T.Mesh(headGeo,steelMat);head.position.set(lx,10.6,lz);g.add(head);
+  const lens=new T.Mesh(lensGeo,lampMat);lens.position.set(lx,10.49,lz);g.add(lens);
+ }
+ kart.add(g);
+}
+function buildSolarParkingCanopies(parking){
+ const g=new T.Group();g.name='Estacionamento Solar · Carports Fotovoltaicos (E4/E5)';
+ const panelMat=new T.MeshStandardMaterial({color:'#16293d',roughness:.22,metalness:.58,envMapIntensity:1.35});
+ panelMat.name='Painel Solar Monocristalino';
+ const frameMat=new T.MeshStandardMaterial({color:'#8fa3b3',roughness:.35,metalness:.65});
+ const colMat=new T.MeshStandardMaterial({color:'#2c363e',roughness:.48,metalness:.62});
+ const curbMat=mat('#cfd3cc',.85);
+ // Coberturas solares do E4/E5 medidas na ortofoto: centro X,Z, comprimento, largura e giro (rad).
+ const SOLAR=[[305.64, 765.54, 26.6, 7.0, 0.62], [300.53, 758.66, 26.2, 7.0, 0.62], [294.34, 749.93, 26.1, 7.0, 0.62], [324.68, 739.06, 21.2, 7.0, 0.62], [285.14, 736.15, 26.1, 7.0, 0.62], [320.11, 731.18, 23.2, 7.0, 0.62], [282.19, 729.46, 23.0, 7.0, 0.62], [277.78, 721.58, 21.0, 7.0, 0.62], [314.94, 716.87, 17.1, 7.0, 0.62], [307.31, 711.41, 22.9, 7.0, 0.62], [271.52, 708.38, 15.9, 7.0, 0.62], [300.71, 702.75, 23.1, 7.0, 0.62], [294.6, 691.8, 26.3, 7.0, 0.62]];
+ const colGeo=new T.CylinderGeometry(.16,.20,3.8,10);
+ const beamGeo=new T.BoxGeometry(.22,.26,5.8);
+ for(const [wx,wz,span,width,angle] of SOLAR){
+  const bank={span,width};{
+   const canopy=new T.Group();
+   canopy.position.set(wx,.12,wz);
+   canopy.rotation.y=angle;
+   // Canteiro / base dos pilares centrais
+   const island=new T.Mesh(new T.BoxGeometry(bank.span+.6,.16,.9),curbMat);
+   island.position.y=.08;island.receiveShadow=true;canopy.add(island);
+   // Colunas em Y/T ao longo do vão
+   const nCols=4;
+   for(let c=0;c<nCols;c++){
+    const lx=-bank.span/2+2.2+c*((bank.span-4.4)/(nCols-1));
+    const col=new T.Mesh(colGeo,colMat);col.position.set(lx,1.95,0);col.castShadow=true;canopy.add(col);
+    const arm=new T.Mesh(beamGeo,colMat);arm.position.set(lx,3.88,0);arm.rotation.x=.14;arm.castShadow=true;canopy.add(arm);
+   }
+   // Laje de módulos solares inclinada
+   const roof=new T.Mesh(new T.BoxGeometry(bank.span,.11,bank.width),panelMat);
+   roof.position.set(0,4.02,0);roof.rotation.x=.14;roof.castShadow=true;roof.receiveShadow=true;canopy.add(roof);
+   // Moldura metálica e divisórias das células fotovoltaicas
+   const border=new T.Mesh(new T.BoxGeometry(bank.span+.16,.09,bank.width+.16),frameMat);
+   border.position.set(0,4.0,0);border.rotation.x=.14;canopy.add(border);
+   for(let gx=-bank.span/2+2.0;gx<bank.span/2-.5;gx+=2.0){
+    const rib=new T.Mesh(new T.BoxGeometry(.05,.125,bank.width+.04),frameMat);
+    rib.position.set(gx,4.03,0);rib.rotation.x=.14;canopy.add(rib);
+   }
+   for(const gz of [-bank.width*.24,0,bank.width*.24]){
+    const purlin=new T.Mesh(new T.BoxGeometry(bank.span+.04,.125,.05),frameMat);
+    purlin.position.set(0,4.03-gz*Math.sin(.14),gz*Math.cos(.14));purlin.rotation.x=.14;canopy.add(purlin);
+   }
+   g.add(canopy);
+  }
+ }
+ parking.add(g);
+}
+
+// Motocross como na ortofoto: o circuito de terra é a própria foto aérea aplicada no recorte real da área.
+// Sem saltos, tendas ou arquibancadas inventados.
+const MX_OUTLINE=[[318, 906], [330, 897], [346, 894], [356, 903], [372, 920], [392, 934], [412, 942], [432, 947], [448, 951], [452, 962], [442, 980], [428, 998], [414, 1016], [402, 1034], [394, 1040], [375, 1025], [363, 1006], [352, 985], [342, 962], [333, 940], [324, 922]],MX_BBOX=[314,890,456,1044];
+function buildMotocrossFoto(moto){
+ moto.name='Motocross · circuito de terra (foto aérea)';
+ const sh=linePath(MX_OUTLINE);
+ const geo=new T.ShapeGeometry(sh,6);geo.rotateX(-Math.PI/2);
+ const pos=geo.attributes.position,uv=[];
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);uv.push((x-MX_BBOX[0])/(MX_BBOX[2]-MX_BBOX[0]),1-(z-MX_BBOX[1])/(MX_BBOX[3]-MX_BBOX[1]));}
+{const u2=[];for(let i=0;i<pos.count;i++)u2.push(pos.getX(i)/5,pos.getZ(i)/5);geo.setAttribute('uv',new T.Float32BufferAttribute(u2,2));}geo.computeVertexNormals();
+ const tex=new T.TextureLoader().load('./assets/motocross-foto.webp?v=mx-20261120-1');tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=4;
+ // Outro passo do mapa reescreve o UV como (x/5, z/5); a textura se ajusta a esse padrão.
+ const W=MX_BBOX[2]-MX_BBOX[0],H=MX_BBOX[3]-MX_BBOX[1];tex.repeat.set(5/W,-5/H);tex.offset.set(-MX_BBOX[0]/W,1+MX_BBOX[1]/H);
+ const m=new T.MeshStandardMaterial({map:tex,color:'#c4b2a2',roughness:.96,metalness:0,side:T.DoubleSide});m.name='Motocross · foto do circuito';m.userData.texturaNova=true;m.userData.keepMap=true;
+ shapeMesh(moto,D.motocross.outline,[],registeredMaterial('grass','#43752e',.88),.02,.06);
+ const mesh=new T.Mesh(geo,m);mesh.position.y=.11;mesh.receiveShadow=true;mesh.name='Motocross · terra do circuito';moto.add(mesh);
+}
+
+function buildRealisticMotocross(moto,outline){
+ moto.name='Motocross · circuito de terra, obstáculos, saltos e arquibancadas';
+ const turfMat=registeredMaterial('grass','#43752e',.88);
+ const dirtBaseMat=mat('#8c4f2d',.94);
+ const dirtTrackMat=mat('#b86437',.89);
+ const dirtRutMat=mat('#9b4e26',.92);
+ const whiteMat=mat('#f4f3ee',.78);
+ const yellowMat=mat('#eab308',.82);
+ const blueMat=mat('#1d63b8',.82);
+ const steelMat=mat('#3b464c',.46);
+ const tentMat=mat('#f7f8f5',.62);
+ const lampMat=new T.MeshStandardMaterial({color:'#fff5dc',emissive:'#ffd896',emissiveIntensity:0,roughness:.3});
+ lampMat.name='Motocross · lente refletor';lampMat.userData.nightLamp=true;
+
+ // 1. Base gramada recortada no polígono oficial D.motocross.outline
+ shapeMesh(moto,outline,[],turfMat,.02,.08);
+
+ // 2. Platô interno de terra compactada (recuado das bordas verdes)
+ const cx=384,cz=968;
+ const insetOutline=outline.map(([x,z])=>[cx+(x-cx)*.86,cz+(z-cz)*.86]);
+ shapeMesh(moto,insetOutline,[],dirtBaseMat,.09,.08);
+
+ // 3. Traçado serpentino real de Motocross (6 pernas paralelas ao eixo NW-SE do setor)
+ const u=[0.695,0.719],v=[-0.719,0.695];
+ const toWorld=(lx,lz)=>[cx+u[0]*lx+v[0]*lz,cz+u[1]*lx+v[1]*lz];
+ const trackLocal=[
+  [-56,-15],[-20,-15],[22,-15],[48,-15],
+  [54,-11],[50,-6],
+  [20,-6],[-22,-6],[-48,-6],
+  [-55,-1],[-49,4],
+  [-18,4],[20,4],[44,4],
+  [51,9],[44,14],
+  [16,14],[-18,14],[-42,14],
+  [-48,19],[-40,23],
+  [-10,23],[22,23],[36,22],
+  [40,16],[34,11],[12,10],[-18,10],[-46,10],[-58,-6],[-56,-15]
+ ];
+ const trackPts=trackLocal.map(([lx,lz])=>new T.Vector3(...toWorld(lx,lz)).setY(0));
+ // Correção para usar X e Z no plano horizontal
+ const curvePts=trackLocal.map(([lx,lz])=>{const [wx,wz]=toWorld(lx,lz);return new T.Vector3(wx,0,wz);});
+ const curve=new T.CatmullRomCurve3(curvePts,true,'centripetal');
+
+ // Perfil altimétrico com tabletops, saltos duplos, costelas (whoops) e curvas com talude (berms)
+ const elevAt=(t)=>{
+  const jump1=Math.exp(-Math.pow((t-0.07)/0.018,2))*1.65;
+  const jump2=Math.exp(-Math.pow((t-0.13)/0.014,2))*1.35;
+  const jump3=Math.exp(-Math.pow((t-0.27)/0.020,2))*1.85;
+  const whoops=(t>0.33&&t<0.42)?Math.pow(Math.sin((t-0.33)/0.09*Math.PI*6),2)*0.75:0;
+  const jump4=Math.exp(-Math.pow((t-0.54)/0.018,2))*1.75;
+  const jump5=Math.exp(-Math.pow((t-0.71)/0.016,2))*1.45;
+  const jump6=Math.exp(-Math.pow((t-0.86)/0.019,2))*1.55;
+  return 0.22+jump1+jump2+jump3+whoops+jump4+jump5+jump6;
+ };
+
+ const N=520,halfW=3.15;
+ const tVerts=[],tIdx=[],bVerts=[],bIdx=[],rVerts=[],rIdx=[];
+ for(let i=0;i<=N;i++){
+  const t=i/N,p=curve.getPointAt(t),tan=curve.getTangentAt(t);
+  const nx=-tan.z,nz=tan.x,y=elevAt(t);
+  // Verifica curvatura para elevar o talude externo nas curvas (berms)
+  const tPrev=curve.getTangentAt((t+0.99)%1),tNext=curve.getTangentAt((t+0.01)%1);
+  const cross=(tNext.x-tPrev.x)*tan.z-(tNext.z-tPrev.z)*tan.x;
+  const bankL=cross>0.08?Math.min(1.15,cross*3.2):0;
+  const bankR=cross<-0.08?Math.min(1.15,-cross*3.2):0;
+
+  // Superfície principal da pista de barro
+  tVerts.push(p.x-nx*halfW,y+bankL,p.z-nz*halfW,p.x+nx*halfW,y+bankR,p.z+nz*halfW);
+  // Saia / talude lateral até o solo
+  bVerts.push(p.x-nx*(halfW+1.35),0.14,p.z-nz*(halfW+1.35),p.x-nx*halfW,y+bankL,p.z-nz*halfW);
+  bVerts.push(p.x+nx*halfW,y+bankR,p.z+nz*halfW,p.x+nx*(halfW+1.35),0.14,p.z+nz*(halfW+1.35));
+  // Faixa central de tração (rut)
+  rVerts.push(p.x-nx*1.15,y+0.025+(bankL+bankR)*0.25,p.z-nz*1.15,p.x+nx*1.15,y+0.025+(bankL+bankR)*0.25,p.z+nz*1.15);
+
+  if(i<N){
+   const k=i*2;
+   tIdx.push(k,k+2,k+1,k+1,k+2,k+3);
+   rIdx.push(k,k+2,k+1,k+1,k+2,k+3);
+   const bk=i*4;
+   bIdx.push(bk,bk+4,bk+1,bk+1,bk+4,bk+5,bk+2,bk+6,bk+3,bk+3,bk+6,bk+7);
+  }
+ }
+ const addSurf=(verts,indices,material,name)=>{
+  const geo=new T.BufferGeometry();
+  geo.setAttribute('position',new T.Float32BufferAttribute(verts,3));
+  const uvs=[];for(let i=0;i<verts.length;i+=3)uvs.push(verts[i]/4,verts[i+2]/4);
+  geo.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));
+  geo.setIndex(indices);geo.computeVertexNormals();
+  const m=new T.Mesh(geo,material);m.name=name;m.castShadow=true;m.receiveShadow=true;moto.add(m);
+ };
+ addSurf(bVerts,bIdx,dirtBaseMat,'Motocross · taludes dos saltos');
+ addSurf(tVerts,tIdx,dirtTrackMat,'Motocross · leito da pista');
+ addSurf(rVerts,rIdx,dirtRutMat,'Motocross · trilho central');
+
+ // 4. Placas brancas laterais (A-frames) e barreiras amarelas/azuis conforme fotos reais
+ const boardGeo=new T.BoxGeometry(.25,.55,1.85),cushionGeo=new T.BoxGeometry(.42,.48,1.5);
+ for(let i=4;i<N;i+=9){
+  const t=i/N,p=curve.getPointAt(t),tan=curve.getTangentAt(t),y=elevAt(t);
+  const nx=-tan.z,nz=tan.x,ang=Math.atan2(tan.x,tan.z);
+  for(const side of [-1,1]){
+   const isTurn=(i%36<10);
+   const m=new T.Mesh(isTurn?cushionGeo:boardGeo,isTurn?(side>0?yellowMat:blueMat):whiteMat);
+   m.position.set(p.x+nx*(halfW+.55)*side,y+.26,p.z+nz*(halfW+.55)*side);
+   m.rotation.y=ang;m.castShadow=true;moto.add(m);
+  }
+ }
+
+ // 5. Tendas brancas de apoio no paddock interno (conforme v-motocross-1.jpg)
+ const coneGeo=new T.ConeGeometry(2.3,1.5,4),legGeo=new T.CylinderGeometry(.06,.06,2.4,6);
+ for(let k=-3;k<=3;k++){
+  const [tx,tz]=toWorld(k*4.5,-10.5);
+  const tent=new T.Group();tent.position.set(tx,.16,tz);tent.rotation.y=Math.atan2(u[1],u[0]);
+  const roof=new T.Mesh(coneGeo,tentMat);roof.position.y=2.85;roof.rotation.y=Math.PI/4;roof.castShadow=true;tent.add(roof);
+  for(const sx of [-1.4,1.4])for(const sz of [-1.4,1.4]){
+   const leg=new T.Mesh(legGeo,steelMat);leg.position.set(sx,1.2,sz);tent.add(leg);
+  }
+  moto.add(tent);
+ }
+
+ // 6. Arquibancadas metálicas laterais (Nordeste e Sudoeste, conforme motocross.webp)
+ for(const [lx,lz,flip] of [[4,-23,1],[-6,29,-1]]){
+  const [sx,sz]=toWorld(lx,lz);
+  const st=new T.Group();st.position.set(sx,.14,sz);
+  st.rotation.y=Math.atan2(u[0],u[1])+(flip<0?Math.PI:0);
+  for(let r=0;r<5;r++){
+   const step=new T.Mesh(new T.BoxGeometry(36,.35,.95),r%2===0?whiteMat:steelMat);
+   step.position.set(0,.22+r*.42,-r*.92);step.castShadow=true;step.receiveShadow=true;st.add(step);
+  }
+  const canopy=new T.Mesh(new T.BoxGeometry(37,.18,5.6),tentMat);
+  canopy.position.set(0,3.8,-1.8);canopy.castShadow=true;st.add(canopy);
+  for(let px=-16;px<=16;px+=8){
+   const post=new T.Mesh(new T.CylinderGeometry(.1,.12,3.7,8),steelMat);
+   post.position.set(px,1.85,-3.8);post.castShadow=true;st.add(post);
+  }
+  moto.add(st);
+ }
+
+ // 7. Torres de iluminação noturna da pista de Motocross
+ const poleGeo=new T.CylinderGeometry(.11,.16,13.5,8),headGeo=new T.BoxGeometry(1.3,.24,.55),lensGeo=new T.BoxGeometry(1.15,.05,.44);
+ const lampLocals=[[-50,-22],[-18,-22],[18,-22],[48,-22],[-46,28],[-12,28],[22,28],[44,24],[-28,-1],[14,-1],[-10,18],[24,18]];
+ for(const [lx,lz] of lampLocals){
+  const [wx,wz]=toWorld(lx,lz);
+  const pole=new T.Mesh(poleGeo,steelMat);pole.position.set(wx,6.85,wz);pole.castShadow=true;moto.add(pole);
+  const head=new T.Mesh(headGeo,steelMat);head.position.set(wx,13.65,wz);moto.add(head);
+  const lens=new T.Mesh(lensGeo,lampMat);lens.position.set(wx,13.51,wz);moto.add(lens);
+ }
+}
+
 export function applyRegisteredLayout({models,landscape,water,circuits,vegetation,infrastructure}){
  const R=D.registered;
  for(const g of [landscape,water,circuits,vegetation,infrastructure])clearGeometry(g);
- const grass=registeredMaterial('grass','#43752e',.88),asphalt=registeredMaterial('asphalt','#afb2ae',.92),parkingMat=registeredMaterial('parking','#626962',.94),lakeMat=registeredMaterial('water','#1d8e9f',.06),bankMat=registeredMaterial('bank','#92856b',.97);
+ const grass=registeredMaterial('grass','#43752e',.88),asphalt=registeredMaterial('asphalt','#2c3034',.88),parkingMat=registeredMaterial('parking','#9ba09a',.90),lakeMat=registeredMaterial('water','#1d8e9f',.06),bankMat=registeredMaterial('bank','#4d7a36',.92);
  const gOrig=ROAD03.surfaces.ground,filteredIndices=[];
  for(let i=0;i<gOrig.indices.length;i+=3){
   const a=gOrig.indices[i],b=gOrig.indices[i+1],c=gOrig.indices[i+2];
   const mx=(gOrig.points[a*2]+gOrig.points[b*2]+gOrig.points[c*2])/3;
   const mz=(gOrig.points[a*2+1]+gOrig.points[b*2+1]+gOrig.points[c*2+1])/3;
   if(mx>=350&&mx<=405&&mz>=500&&mz<=555)continue;
+  if(!inside([mx,mz],PARK_MAQUETE_POLYGON))continue;
   filteredIndices.push(a,b,c);
  }
  registeredFloor(landscape,{points:gOrig.points,indices:filteredIndices},grass,0,'Terreno recortado');
- registeredFloor(landscape,ROAD03.surfaces.roads,roadAsphaltMaterial(),.12,'Vias · superfícies sem sobreposição');
+ const rOrig=ROAD03.surfaces.roads,filteredRoads=[];
+ for(let i=0;i<rOrig.indices.length;i+=3){
+  const a=rOrig.indices[i],b=rOrig.indices[i+1],c=rOrig.indices[i+2];
+  const mx=(rOrig.points[a*2]+rOrig.points[b*2]+rOrig.points[c*2])/3;
+  const mz=(rOrig.points[a*2+1]+rOrig.points[b*2+1]+rOrig.points[c*2+1])/3;
+  if(!inside([mx,mz],PARK_MAQUETE_POLYGON))continue;
+  filteredRoads.push(a,b,c);
+ }
+ registeredFloor(landscape,{points:rOrig.points,indices:filteredRoads},roadAsphaltMaterial(),.12,'Vias · superfícies sem sobreposição');
  const bOrig=R.meshes.banks,filteredBanks=[];
  for(let i=0;i<bOrig.indices.length;i+=3){
   const a=bOrig.indices[i],b=bOrig.indices[i+1],c=bOrig.indices[i+2];
   const mx=(bOrig.points[a*2]+bOrig.points[b*2]+bOrig.points[c*2])/3;
   const mz=(bOrig.points[a*2+1]+bOrig.points[b*2+1]+bOrig.points[c*2+1])/3;
   if(mx>=350&&mx<=405&&mz>=500&&mz<=555)continue;
+  if(!inside([mx,mz],PARK_MAQUETE_POLYGON))continue;
   filteredBanks.push(a,b,c);
  }
  registeredFloor(landscape,{points:bOrig.points,indices:filteredBanks},bankMat,.01,'Margens · interpretação da prancha');
@@ -780,47 +1038,22 @@ export function applyRegisteredLayout({models,landscape,water,circuits,vegetatio
  const stand=kart.getObjectByName('Arquibancada do Kartódromo');
  for(const o of [boxes,stand])if(o)o.removeFromParent();
  clearGeometry(kart);
- registeredFloor(kart,R.meshes.kart,asphalt,.12,'Kart · bordas CAD preservadas');
+ registeredFloor(kart,R.meshes.kart,grass,.06,'Kart · gramado sob o traçado');
+ registeredFloor(kart,KR.asphalt,asphalt,.12,'Kart · bordas CAD preservadas');
  if(boxes){boxes.position.set(379,0,852);boxes.rotation.y=.12;kart.add(boxes);}
  if(stand){stand.position.set(366,0,849);stand.rotation.y=.12;kart.add(stand);}
+ buildKartTrackDetails(kart);
  kart.name='Kartódromo · contorno e ilhas CAD';
  rebuildGate(models.get('portico-de-entrada'));
  rebuildSkate(models.get('skate-park'));
  correctVillage(models.get('vila-das-nacoes'));
  const parking=models.get('estrutura-e-acesso');clearGeometry(parking);
  registeredFloor(parking,R.meshes.parking,parkingMat,.10,'Estacionamentos · bolsões recortados');
- // PNMT-G04-BEGIN
- // Piso fotográfico registrado: origem e escala iguais às da implantação.
- const parkingFloorG04=parking.getObjectByName('Estacionamentos · bolsões recortados');
- const photoG04=R.parkingSurface;
- if(parkingFloorG04&&photoG04){
-  const [x0,z0,x1,z1]=photoG04.bounds,uv=[];
-  for(let i=0;i<R.meshes.parking.points.length;i+=2){
-   uv.push((R.meshes.parking.points[i]-x0)/(x1-x0),1-(R.meshes.parking.points[i+1]-z0)/(z1-z0));
-  }
-  const photoMatG04=registeredMaterial('parking-photo-g04','#bec4ba',.96);
-  if(!photoMatG04.map){
-   const textureG04=new T.TextureLoader().load(photoG04.dataURI,undefined,undefined,()=>{
-    photoMatG04.map=null;photoMatG04.color.set('#626962');photoMatG04.needsUpdate=true;
-    console.warn('PNMT: a superfície fotográfica dos estacionamentos não carregou.');
-   });
-   textureG04.colorSpace=T.SRGBColorSpace;
-   textureG04.wrapS=T.ClampToEdgeWrapping;textureG04.wrapT=T.ClampToEdgeWrapping;
-   textureG04.minFilter=T.LinearMipmapLinearFilter;textureG04.magFilter=T.LinearFilter;
-   photoMatG04.map=textureG04;photoMatG04.needsUpdate=true;
-  }
-  parkingFloorG04.geometry.setIndex(photoG04.otherIndices);
-  const southFloorG04=registeredFloor(parking,{points:R.meshes.parking.points,indices:photoG04.southIndices},photoMatG04,.10,'Estacionamentos E1/E2/E3 · superfície registrada');
-  southFloorG04.geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
-  southFloorG04.userData.skipBatch=true;
- }
- // PNMT-G04-END
+ buildSolarParkingCanopies(parking);
  const moto=models.get('motocross');clearGeometry(moto);
- shapeMesh(moto,D.motocross.outline,[],soilMat,.015,.03);moto.name='Motocross · setor, traçado a confirmar';
+ buildMotocrossFoto(moto);
  const wake=models.get('wake-park');
- // Existing water polygon was elevated and displaced. Keep the equipment, remove only the water meshes.
  const drop=[];wake.traverse(o=>{if(o.isMesh&&o.geometry.type==='ExtrudeGeometry'&&o.material?.color){const c=o.material.color.getHexString();if(['163e46','426c6c','377c80','4e8e91','426f70'].includes(c))drop.push(o);}});
- // Water ownership is centralized; the current wake refinement contains a broad flat water slab.
  wake.traverse(o=>{if(o.isMesh&&o.geometry.type==='BoxGeometry'){const p=o.geometry.parameters;if(p.width>40&&p.depth>70&&p.height<2)drop.push(o);}});
  for(const o of new Set(drop)){o.removeFromParent();o.geometry.dispose();}
  for(const [id,g] of models)g.userData.placeId=id;

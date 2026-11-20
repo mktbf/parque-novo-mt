@@ -1,5 +1,5 @@
 import * as T from 'three';
-import {implantationData as D} from './implantacao-dados.js?v=autodromo-arquitetura-20260913-1';
+import {implantationData as D} from './implantacao-dados.js?v=fix-20261120-5';
 
 // Arquitetura sobre a implantação existente. Coordenadas da prancha, sem novo root.
 // Alturas e subdivisões interpretadas das imagens; não constituem projeto executivo.

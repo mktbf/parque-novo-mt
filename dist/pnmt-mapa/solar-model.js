@@ -66,7 +66,7 @@ export function solarEvents(day){
 }
 export function simulation(day=localDate(),period='tarde'){
  if(!validDate(day))day=localDate();if(!PERIODS.includes(period))period='tarde';const events=solarEvents(day);
- const instant=period==='manha'?localInstant(day,8):period==='tarde'?localInstant(day,15):period==='por-do-sol'?new Date(+(events.sunset||localInstant(day,18))-12*60000):new Date(+(events.dusk||localInstant(day,19))+35*60000);
+ const instant=period==='manha'?localInstant(day,8,30):period==='tarde'?localInstant(day,15):period==='por-do-sol'?new Date(+(events.sunset||localInstant(day,18))-12*60000):new Date(+(events.dusk||localInstant(day,19))+35*60000);
  const position=solarPosition(instant),local=localParts(instant);
  return {date:day,period,instant:instant.toISOString(),localTime:`${local.hour}:${local.minute}`,timeZone:SOLAR_SITE.timeZone,...position,direction:sunDirection(position.azimuth,position.apparentElevation),events:{sunrise:events.sunrise?.toISOString(),sunset:events.sunset?.toISOString(),dusk:events.dusk?.toISOString()},lightsOn:position.elevation<6};
 }

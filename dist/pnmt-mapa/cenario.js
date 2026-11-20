@@ -1,8 +1,8 @@
-import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=vias-acabamento-20260915-4';
-import {createCanopyGeometry,foliageUniforms} from './folhagem.js?v=gta-realismo-20260916-1';
-import {createIntegralLandscape} from './cenario-integral.js?v=cenario-integral-20260914-2';
+import {createRoadDetails,roadFinishData as ROAD03} from './vias-acabamento.js?v=fix-20261120-5';
+import {createCanopyGeometry,foliageUniforms} from './folhagem.js?v=vias-20261120-18';
+import {createIntegralLandscape} from './cenario-integral.js?v=vias-20261120-18';
 import * as T from 'three';
-import {scenarioData as D} from './cenario-dados.js?v=cenario-integral-20260914-2';
+import {scenarioData as D} from './cenario-dados.js?v=vias-20261120-18';
 export const scenarioMaterials=new Map();
 function material(key,color,roughness=.86,metalness=0){
  if(!scenarioMaterials.has(key)){const m=new T.MeshStandardMaterial({color,roughness,metalness});m.name='Cenário · '+key;scenarioMaterials.set(key,m);}
@@ -26,12 +26,77 @@ export function createScenario({smallScreen=false,landscape,groundMaterial,integ
  const integral=createIntegralLandscape({smallScreen});root.add(integral.root);
  const colors={curbs:'#bec1b3',roadEdges:'#eee9d6',roadDashes:'#eee9d6',parkingBays:'#e6e5ce'};
  for(const [key,data]of Object.entries(D.surfaces)){if(key!=='parkingBays'||!data.indices.length)continue;const m=material(key,colors[key]);m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;paint.add(surface(data,key==='curbs'?.18:.155,m));}
- const palette=['#3d653b','#516f3d','#5e753f','#315a3c','#687e48'],trunks=[],crowns=[];
- // Stable thinning keeps the same spatial distribution on small screens; preserva o platô da Casa Cuiabana e anfiteatro livres de árvores
- const entries=integral.trees.filter(([x,z],i)=>(!smallScreen||i%2===0) && !(x >= 420 && x <= 488 && z >= 624 && z <= 675));
- for(const [x,z,h,r,c]of entries){
-  trunks.push({p:[x,h*.32,z],s:[.18,h*.64,.18],color:c%2?'#68553f':'#594d3d'});
-  crowns.push({p:[x,h*.74,z],s:[r,h*.37,r],a:c*.73+x,color:palette[c]});
+ const palette=['#264f23','#2f5e2a','#3a6d31','#467b38','#538740','#325f34','#4b7432','#5e8c45','#2a552b'],trunks=[],crowns=[];
+ function inPoly(x,z,ring){
+  let ok=false;
+  for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+   const [a,b]=ring[i],[c,d]=ring[j];
+   if((b>z)!==(d>z)&&x<(c-a)*(z-b)/(d-b)+a)ok=!ok;
+  }
+  return ok;
+ }
+ function isClearForTree(x,z){
+  // Preserva edificações, pistas, estacionamentos e espelhos d'água livres de árvores
+  if(x>=420&&x<=488&&z>=624&&z<=675)return false; // Casa Cuiabana
+  if(x>=425&&x<=572&&z>=392&&z<=495)return false; // Arena Show e esplanada
+  if(x>=265&&x<=362&&z>=535&&z<=615)return false; // Parque da Família / Museus / Praça
+  if(x>=190&&x<=252&&z>=525&&z<=595)return false; // Mirante Oval
+  if(x>=250&&x<=372&&z>=672&&z<=805)return false; // Estacionamento Solar E4/E5
+  if(x>=362&&x<=435&&z>=668&&z<=735)return false; // AgroPlace
+  if(x>=225&&x<=282&&z>=735&&z<=825)return false; // Skate Park
+  if(x>=280&&x<=342&&z>=820&&z<=898)return false; // BMX
+  if(x>=355&&x<=502&&z>=775&&z<=928)return false; // Kartódromo
+  if(x>=300&&x<=462&&z>=896&&z<=1042)return false; // Motocross
+  if(x>=485&&x<=885&&z>=855&&z<=1078)return false; // Estacionamentos E1/E2/E3
+  if(x>=510&&x<=765&&z>=370&&z<=628)return false; // Estacionamentos E6/E7
+  if(x>=568&&x<=1072&&z>=400&&z<=878)return false; // Autódromo
+  if(x>=245&&x<=390&&z>=245&&z<=355)return false; // Centro de Eventos
+  if(x>=165&&x<=240&&z>=265&&z<=350)return false; // Arenas Beach
+  if(x>=885&&x<=970&&z>=925&&z<=1010)return false; // Pórtico de Entrada
+  if(x>=1005&&x<=1120&&z>=930&&z<=1030)return false; // Cavalaria PM
+  if(x<=230&&z<=735)return false; // Lago Oeste principal
+  if(x>=220&&x<=455&&z>=340&&z<=500)return false; // Enseada Norte
+  if(x>=350&&x<=452&&z>=500&&z<=645)return false; // Enseada Sul
+  return true;
+ }
+ const reserveZones=[
+  {poly:[[388,318],[490,326],[485,384],[392,386]],count:140},
+  {poly:[[462,506],[506,508],[504,620],[462,618]],count:110},
+  {poly:[[312,614],[380,608],[378,664],[315,662]],count:95},
+  {poly:[[228,332],[276,334],[274,390],[226,386]],count:70},
+  {poly:[[245,28],[805,24],[885,135],[790,232],[410,225],[240,180]],count:520},
+  {poly:[[908,165],[1045,335],[1108,535],[1175,845],[1115,855],[1072,620],[965,360],[875,195]],count:340},
+  {poly:[[460,1062],[920,1065],[935,1118],[462,1118]],count:180},
+  {poly:[[212,812],[268,882],[300,915],[348,995],[388,1040],[355,1042],[272,925],[195,818]],count:115}
+ ];
+ let seed=7919;
+ const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ const extraTrees=[];
+ for(const zone of reserveZones){
+  const targetCount=smallScreen?Math.round(zone.count*0.42):zone.count;
+  const xs=zone.poly.map(p=>p[0]),zs=zone.poly.map(p=>p[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
+  let placed=0,attempts=0;
+  while(placed<targetCount&&attempts<targetCount*7){
+   attempts++;
+   const x=minX+rand()*(maxX-minX),z=minZ+rand()*(maxZ-minZ);
+   if(!inPoly(x,z,zone.poly)||!isClearForTree(x,z))continue;
+   const h=5.6+rand()*6.8,r=2.1+rand()*2.4,c=Math.floor(rand()*palette.length);
+   extraTrees.push([x,z,h,r,c]);
+   placed++;
+  }
+ }
+ const baseEntries=integral.trees.filter(([x,z],i)=>(!smallScreen||i%2===0)&&!(x>=420&&x<=488&&z>=624&&z<=675));
+ // Matas extras sorteadas (extraTrees) retiradas: nao estao no projeto. Ficam so as arvores do paisagismo.
+ const entries=[...baseEntries];
+ for(let idx=0;idx<entries.length;idx++){
+  const [x,z,h,r,c]=entries[idx];
+  const sVarX=0.88+((idx*17)%11)*0.026;
+  const sVarY=0.34+((idx*13)%9)*0.016;
+  const sVarZ=0.88+((idx*23)%11)*0.026;
+  const cIdx=(c+idx)%palette.length;
+  trunks.push({p:[x,h*.32,z],s:[.18,h*.64,.18],color:cIdx%2?'#5c4936':'#4d3f2f'});
+  crowns.push({p:[x,h*.74,z],s:[r*sVarX,h*sVarY,r*sVarZ],a:cIdx*.73+x,color:palette[cIdx]});
  }
  const bark=material('troncos','#ffffff'),leaves=material('copas','#ffffff',.93);leaves.envMapIntensity=.7;leaves.vertexColors=true;
  leaves.onBeforeCompile=(shader)=>{
