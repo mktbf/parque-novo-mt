@@ -477,3 +477,34 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .site-header.reference-header, .site-header.reference-header *, .site-header.reference-header::after { transition: none !important; }
 }
+
+/* Botão "Visite o parque" no menu */
+.site-header.reference-header #primary-nav > a.nav-cta {
+  height: 42px;
+  margin-left: 10px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: #58B947;
+  color: #0D2B4D;
+  font-weight: 700;
+}
+.site-header.reference-header #primary-nav > a.nav-cta:hover,
+.site-header.reference-header #primary-nav > a.nav-cta:focus-visible { background: #4CA83C; color: #0D2B4D; }
+.site-header.reference-header #primary-nav > a.nav-cta::after { content: none !important; display: none !important; }
+@media (max-width: 1600px) {
+  .site-header.reference-header .header-social-channels { display: none !important; }
+}
+@media (max-width: 1440px) and (min-width: 901px) {
+  .site-header.reference-header #primary-nav > a { padding: 0 11px; font-size: 15px; }
+}
+@media (max-width: 1160px) and (min-width: 901px) {
+  .site-header.reference-header #primary-nav > a { padding: 0 7px; font-size: 14px; }
+  .site-header.reference-header #primary-nav > a.nav-cta { padding: 0 14px; margin-left: 4px; height: 38px; }
+  .site-header.reference-header #primary-nav > a[href="#galeria"] { display: none; }
+}
+@media (max-width: 1060px) and (min-width: 901px) {
+  .site-header.reference-header #primary-nav > a { padding: 0 5px; font-size: 13px; }
+}
+@media (max-width: 900px) {
+  .site-header.reference-header #primary-nav > a.nav-cta { justify-content: center; margin: 14px 0 4px; height: 48px; }
+}

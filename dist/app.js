@@ -240,6 +240,7 @@
     const n = normal(espaco || "");
     if (n.includes('autodromo')) return 'assets/autodromo-real.jpg';
     if (n.includes('kartodromo')) return 'assets/gallery/kartodromo-01.jpg';
+    if (n.includes('motocross')) return 'assets/fotos/motocross-aerea.jpg';
     if (n.includes('arena show')) return 'assets/gallery/arena-show-01.jpg';
     if (n.includes('complexo de skate')) return 'assets/gallery/skate-park-01.jpg';
     return 'assets/aerial-sunset.jpg';
@@ -261,7 +262,7 @@
   function homeUpcomingEvents() {
     const todayStr = getTodayCuiabaISO();
     const upcoming = (window.agendaData || [])
-      .filter((e) => e && e.status === 'confirmado' && String(e.dataInicio || '') >= todayStr)
+      .filter((e) => e && e.status === 'confirmado' && String(e.dataFim || e.dataInicio || '') >= todayStr)
       .slice()
       .sort((a, b) => String(a.dataInicio).localeCompare(String(b.dataInicio)));
 
@@ -269,7 +270,7 @@
 
     const feat = upcoming[0];
     const featParts = formatEventDateParts(feat.dataInicio);
-    const isToday = feat.dataInicio === todayStr;
+    const isToday = String(feat.dataInicio) <= todayStr;
     const featPhoto = eventSpacePhoto(feat.espaco);
     const nextFour = upcoming.slice(1, 5);
     const pinSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
@@ -281,7 +282,7 @@
       })
       .join('');
 
-    return `<section class="reference-home-events" aria-label="Próximos eventos"><div class="reference-home-events-inner"><div class="reference-home-events-head"><div class="reference-home-events-titles"><div class="reference-home-events-kicker"><span class="reference-home-events-bar" aria-hidden="true"></span><span>AGENDA DO PARQUE</span></div><h2><strong>Próximos</strong> eventos</h2></div><a class="reference-home-events-all" href="#agenda">Ver agenda completa <span aria-hidden="true">→</span></a></div><div class="reference-home-events-grid"><article class="reference-event-featured"><img src="${asset(featPhoto)}" alt="${esc(feat.espaco)}" loading="lazy">${isToday ? '<span class="reference-event-featured-today">HOJE</span>' : ''}<div class="reference-event-featured-body"><p class="reference-event-featured-date">${esc(featParts.fullLabel)} · ${esc(feat.espaco)}</p><h3>${esc(feat.nome)}</h3><p class="reference-event-featured-loc">${pinSvg}<span>${esc(feat.espaco)}</span></p><a class="reference-event-featured-cta" href="#agenda">Saiba mais e como chegar <span aria-hidden="true">→</span></a></div></article><div class="reference-events-list">${rowsHtml}</div></div></div></section>`;
+    return `<section class="reference-home-events" aria-label="Próximos eventos"><div class="reference-home-events-inner"><div class="reference-home-events-head"><div class="reference-home-events-titles"><div class="reference-home-events-kicker"><span class="reference-home-events-bar" aria-hidden="true"></span><span>AGENDA DO PARQUE</span></div><h2><strong>Próximos</strong> eventos</h2></div><a class="reference-home-events-all" href="#agenda">Ver agenda completa <span aria-hidden="true">→</span></a></div><div class="reference-home-events-grid"><article class="reference-event-featured"><img src="${asset(featPhoto)}" alt="${esc(feat.espaco)}" loading="lazy">${isToday ? '<span class="reference-event-featured-today">HOJE</span>' : ''}<div class="reference-event-featured-body"><p class="reference-event-featured-date">${esc(featParts.fullLabel)} · ${esc(feat.espaco)}</p><h3>${esc(feat.nome)}</h3><p class="reference-event-featured-loc">${pinSvg}<span>${esc(feat.espaco)}</span></p><a class="reference-event-featured-cta" href="#agenda">Saiba mais e como chegar <span aria-hidden="true">→</span></a></div></article><div class="reference-events-list">${rowsHtml}${nextFour.length < 4 ? `<div class="reference-events-promo"><span class="reference-home-events-kicker"><span class="reference-home-events-bar" aria-hidden="true"></span><span>REALIZE NO PARQUE</span></span><h4>Seu evento pode ser o próximo da agenda.</h4><p>Shows, competições, feiras e encontros corporativos.</p><div class="reference-events-promo-actions"><a class="reference-event-featured-cta" href="#contato">Quero realizar meu evento <span aria-hidden="true">→</span></a><a class="reference-events-promo-link" href="#agenda">Ver o que já aconteceu</a></div></div>` : ''}</div></div></div></section>`;
   }
 
   function brandWheelBlock() {
@@ -801,7 +802,12 @@ async function updateAgenda() {
     } else {
       const nextEvent = list[0];
       const daysLeft = Math.ceil((nextEvent.parsedStart - now) / (1000 * 60 * 60 * 24));
-      const dateExt = nextEvent.parsedStart.toLocaleString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Cuiaba' });
+      const isLive = nextEvent.parsedStart <= now && now <= nextEvent.endOfDay;
+      const tagDias = isLive ? 'Acontecendo agora' : (daysLeft <= 1 ? 'É amanhã' : `Faltam ${daysLeft} dias`);
+      let dateExt = nextEvent.parsedStart.toLocaleString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Cuiaba' });
+      if (nextEvent.dataFim && nextEvent.dataFim !== nextEvent.dataInicio) {
+        dateExt += ' a ' + nextEvent.parsedEnd.toLocaleString('pt-BR', { day: 'numeric', month: 'long', timeZone: 'America/Cuiaba' });
+      }
       
       const spaceLink = nextEvent.slugEspaco ? `<a href="#espaco/${nextEvent.slugEspaco}" class="button secondary">Conhecer o ${nextEvent.espaco} ↗</a>` : '';
 
@@ -811,8 +817,8 @@ async function updateAgenda() {
           <img src="${asset('assets/gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg')}" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.onerror=null;this.src='assets/gallery/parque-da-familia-01.jpg'">
           <div class="destaque-info">
             <div class="destaque-tags">
-              <span class="tag-proximo">Próximo evento</span>
-              <span class="tag-dias">Faltam ${daysLeft} dias</span>
+              <span class="tag-proximo">${isLive ? 'Hoje no parque' : 'Próximo evento'}</span>
+              <span class="tag-dias">${tagDias}</span>
             </div>
             <h2>${nextEvent.nome}</h2>
             <p>${dateExt.charAt(0).toUpperCase() + dateExt.slice(1)} • ${nextEvent.espaco}</p>
@@ -1264,16 +1270,31 @@ async function updateAgenda() {
         'Fotos, vistas aéreas e perspectivas oficiais do Parque Novo Mato Grosso.',
         'Galeria de fotos'
       ) +
-      `<section class="wrap">${filters(['Todas', 'Fotos do parque', 'Vista aérea', 'Projeto'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
+      `<section class="wrap">${filters(['Todas', 'Fotos do parque', 'Vista aérea', 'Projeto'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="gallery-more" id="gallery-more" hidden></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
     );
   }
 
   
 
   function updateGallery() {
-    const entries = data.gallery
+    // Fotos reais primeiro, vistas aéreas depois, perspectivas do projeto por último.
+    const ordem = (g) => (g.category === 'Projeto' ? 2 : g.category === 'Vista aérea' ? 1 : 0);
+    const all = data.gallery
       .map((g, i) => ({ ...g, index: i }))
-      .filter((g) => state.galleryFilter === 'Todas' || (g.category === 'Andamento da Obra' ? 'Fotos do parque' : g.category) === state.galleryFilter);
+      .filter((g) => state.galleryFilter === 'Todas' || (g.category === 'Andamento da Obra' ? 'Fotos do parque' : g.category) === state.galleryFilter)
+      .sort((a, b) => ordem(a) - ordem(b) || a.index - b.index);
+    const POR_VEZ = 24;
+    if (!state.galleryShown || state.galleryShownFor !== state.galleryFilter) {
+      state.galleryShown = POR_VEZ;
+      state.galleryShownFor = state.galleryFilter;
+    }
+    const entries = all.slice(0, state.galleryShown);
+    const restantes = all.length - entries.length;
+    const more = document.getElementById('gallery-more');
+    if (more) {
+      more.hidden = restantes <= 0;
+      more.innerHTML = `<button type="button" class="button secondary" data-action="gallery-more">Ver mais fotos <small>(${restantes} restantes)</small></button>`;
+    }
 
     document.getElementById('gallery-results').innerHTML = entries.length
       ? entries
@@ -1301,8 +1322,8 @@ async function updateAgenda() {
     function eventForm() {
     const eventSpaces = [
       { id: 'orientacao', name: '- Preciso de orienta\u00e7\u00e3o da equipe -' },
-      { id: 'arena-show', name: 'Arena Show (At\u00e9 120 mil pessoas)' },
-      { id: 'centro-de-eventos', name: 'Centro de Eventos (5 pavilh\u00f5es, at\u00e9 26 mil pessoas)' },
+      { id: 'arena-show', name: 'Arena Show' },
+      { id: 'centro-de-eventos', name: 'Centro de Eventos' },
       { id: 'autodromo', name: 'Aut\u00f3dromo Internacional' },
       { id: 'circo-do-futuro', name: 'Teatro de Arena / Circo do Futuro' },
       { id: 'agroplace', name: 'Agroplace' },
@@ -1311,7 +1332,7 @@ async function updateAgenda() {
       { id: 'kartodromo', name: 'Cart\u00f3dromo' },
       { id: 'outro', name: 'Outro espa\u00e7o do parque' },
     ];
-    return '<div class="service-form"><h3>Vamos construir seu evento.</h3><form data-form="evento">' + field('nome', 'Nome') + field('empresa', 'Empresa ou institui\u00e7\u00e3o', 'text', null, false) + field('telefone', 'Telefone', 'tel') + field('email', 'E-mail', 'email') + field('tipo', 'Tipo de evento', 'text', ['Show', 'Feira', 'Congresso ou conven\u00e7\u00e3o', 'Competi\u00e7\u00e3o esportiva', 'Encontro corporativo', 'Outro']) + field('espaco', 'Espa\u00e7o desejado', 'text', eventSpaces, false) + field('publico', 'P\u00fablico estimado', 'number', null, false) + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_evento_inicio', 'Data do evento (In\u00edcio)', 'date') + field('data_evento_fim', 'Data do evento (Fim)', 'date') + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_mob_inicio', 'Data de mobiliza\u00e7\u00e3o (In\u00edcio)', 'date', null, false) + field('data_mob_fim', 'Data de mobiliza\u00e7\u00e3o (Fim)', 'date', null, false) + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_desmob_inicio', 'Data de desmobiliza\u00e7\u00e3o (In\u00edcio)', 'date') + field('data_desmob_fim', 'Data de desmobiliza\u00e7\u00e3o (Fim)', 'date') + '</div><div class="full">' + field('mensagem', 'Conte sobre o evento', 'textarea', null, false) + '</div>' + formEnd('evento', 'Enviar solicita\u00e7\u00e3o') + '</form></div>';
+    return '<div class="service-form"><h3>Vamos construir seu evento.</h3><form data-form="evento">' + field('nome', 'Nome') + field('empresa', 'Empresa ou institui\u00e7\u00e3o', 'text', null, false) + field('telefone', 'Telefone', 'tel') + field('email', 'E-mail', 'email') + field('tipo', 'Tipo de evento', 'text', ['Show', 'Feira', 'Congresso ou conven\u00e7\u00e3o', 'Competi\u00e7\u00e3o esportiva', 'Encontro corporativo', 'Outro']) + field('espaco', 'Espa\u00e7o desejado', 'text', eventSpaces, false) + field('publico', 'P\u00fablico estimado', 'number', null, false) + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;" class="full">' + field('data_evento_inicio', 'Data do evento (in\u00edcio)', 'date') + field('data_evento_fim', 'Data do evento (fim)', 'date') + '</div><details class="full form-details"><summary>J\u00e1 sabe as datas de montagem e desmontagem? <small>(opcional)</small></summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">' + field('data_mob_inicio', 'Montagem (in\u00edcio)', 'date', null, false) + field('data_mob_fim', 'Montagem (fim)', 'date', null, false) + field('data_desmob_inicio', 'Desmontagem (in\u00edcio)', 'date', null, false) + field('data_desmob_fim', 'Desmontagem (fim)', 'date', null, false) + '</div></details><div class="full">' + field('mensagem', 'Conte sobre o evento', 'textarea', null, false) + '</div>' + formEnd('evento', 'Enviar solicita\u00e7\u00e3o') + '</form></div>';
   }
 
   // === MAPA INTERATIVO (PÁGINA DEDICADA) ===
@@ -1340,7 +1361,7 @@ async function updateAgenda() {
         <div class="event-map-header">
           <div class="event-map-kicker-row">
             <span class="event-map-badge">EXPLORE O PARQUE</span>
-            <span class="event-map-live-tag"><span class="event-map-live-dot"></span> 21 ESPAÇOS</span>
+            <span class="event-map-live-tag"><span class="event-map-live-dot"></span> MAPA 3D</span>
           </div>
           <h3>Mapa Geral do Complexo</h3>
           <p>Conheça a distribuição dos polos de eventos, shows, convenções e competições.</p>
@@ -1362,21 +1383,21 @@ async function updateAgenda() {
             <span class="venue-pill-icon">🏟️</span>
             <div class="venue-pill-info">
               <span class="venue-pill-name">Arena Show</span>
-              <span class="venue-pill-cap">Até 120 mil pessoas</span>
+              <span class="venue-pill-cap">Shows e grandes festivais</span>
             </div>
           </div>
           <div class="venue-pill">
             <span class="venue-pill-icon">🏛️</span>
             <div class="venue-pill-info">
               <span class="venue-pill-name">Centro de Eventos</span>
-              <span class="venue-pill-cap">5 pavilhões · 26 mil</span>
+              <span class="venue-pill-cap">Feiras, congressos e convenções</span>
             </div>
           </div>
           <div class="venue-pill">
             <span class="venue-pill-icon">🏎️</span>
             <div class="venue-pill-info">
               <span class="venue-pill-name">Autódromo</span>
-              <span class="venue-pill-cap">3.500m padrão FIA</span>
+              <span class="venue-pill-cap">4.500 m · homologado pela FIA</span>
             </div>
           </div>
         </div>
@@ -2565,6 +2586,10 @@ function credits() {
         updateSearch();
         document.getElementById('search-dialog').showModal();
         document.getElementById('search-input').focus();
+      } else if (action === 'gallery-more') {
+        state.galleryShown = (state.galleryShown || 24) + 24;
+        updateGallery();
+        return;
       } else if (action === 'video') {
         showVideo();
       } else if (action === 'toggle-sound') {
@@ -2746,7 +2771,7 @@ function credits() {
       '.reference-hero, .reference-facts, .reference-spaces, .reference-statement, ' +
       '.reference-film, .reference-signoff, .reference-about-title, .reference-origin, ' +
       '.reference-values, .reference-about-aerial, .split, .catalog-grid, ' +
-      '.space-hero, .newsletter, .contact-grid, .gallery-grid, .steps, .faq'
+      '.space-hero, .newsletter, .contact-grid, .steps, .faq'
     );
 
     const staggerContainers = main.querySelectorAll(
