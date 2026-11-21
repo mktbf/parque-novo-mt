@@ -1,12 +1,10 @@
-/* Vinheta da logo: na primeira página da visita, a logo do topo se monta animada
+/* Vinheta da logo: toda vez que o site é aberto, a logo do topo se monta animada
    no próprio lugar e depois dá lugar à imagem fixa. Discreta: nada cobre o site.
    WebM com transparência; no Safari, MP4 sobre branco (o topo é branco). */
 (function () {
   function inicia() {
     try {
-      if (sessionStorage.getItem('pnmt_vinheta')) return;
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      sessionStorage.setItem('pnmt_vinheta', '1');
     } catch (e) { return; }
 
     var header = document.querySelector('.site-header');
