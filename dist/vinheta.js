@@ -1,59 +1,52 @@
-/* Vinheta de abertura: a logo animada toca uma vez por visita, só na página inicial.
-   Fundo transparente no início (WebM com alfa); no Safari, que não mostra o alfa do WebM,
-   toca a versão MP4 sobre fundo branco. Clique ou "Pular" encerram na hora. */
+/* Vinheta da logo: na primeira página da visita, a logo do topo se monta animada
+   no próprio lugar e depois dá lugar à imagem fixa. Discreta: nada cobre o site.
+   WebM com transparência; no Safari, MP4 sobre branco (o topo é branco). */
 (function () {
-  try {
-    var rota = (location.hash || '').replace('#', '').split('?')[0];
-    if (rota && rota !== 'inicio') return;
-    if (sessionStorage.getItem('pnmt_vinheta')) return;
-    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    sessionStorage.setItem('pnmt_vinheta', '1');
-  } catch (e) { return; }
+  function inicia() {
+    try {
+      if (sessionStorage.getItem('pnmt_vinheta')) return;
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      sessionStorage.setItem('pnmt_vinheta', '1');
+    } catch (e) { return; }
 
-  var ua = navigator.userAgent;
-  var safari = /Safari\//.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg|Android/.test(ua);
-  var base = 'assets/vinheta/';
+    var header = document.querySelector('.site-header');
+    var brand = header && header.querySelector('.brand');
+    var logo = brand && brand.querySelector('.logo-claro');
+    if (!logo || header.classList.contains('is-scrolled') || window.scrollY > 40) return;
 
-  var o = document.createElement('div');
-  o.id = 'pnmt-vinheta';
-  o.setAttribute('aria-hidden', 'true');
-  o.style.cssText = 'position:fixed;inset:0;z-index:2147483000;cursor:pointer;transition:opacity .6s ease;' +
-    'background:' + (safari ? '#fff' : 'transparent');
+    var ua = navigator.userAgent;
+    var safari = /Safari\//.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg|Android/.test(ua);
 
-  var v = document.createElement('video');
-  v.muted = true; v.defaultMuted = true; v.playsInline = true; v.autoplay = true; v.preload = 'auto';
-  v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
-  v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;pointer-events:none';
-  v.src = base + (safari ? 'vinheta.mp4' : 'vinheta.webm') + '?v=20261120-1';
+    var v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.autoplay = true; v.preload = 'auto';
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+    v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;' +
+      'opacity:1;transition:opacity .6s ease';
+    v.src = 'assets/vinheta/logo.' + (safari ? 'mp4' : 'webm') + '?v=20261120-2';
 
-  var pular = document.createElement('button');
-  pular.type = 'button';
-  pular.textContent = 'Pular';
-  pular.style.cssText = 'position:absolute;right:24px;bottom:24px;padding:10px 18px;border-radius:999px;border:1px solid rgba(13,43,77,.25);' +
-    'background:rgba(255,255,255,.85);color:#0D2B4D;font:600 14px/1 Barlow,Arial,sans-serif;letter-spacing:.5px;cursor:pointer';
+    var acabou = false;
+    function fim() {
+      if (acabou) return;
+      acabou = true;
+      logo.style.removeProperty('opacity');
+      v.style.opacity = '0';
+      setTimeout(function () { if (v.parentNode) v.parentNode.removeChild(v); }, 700);
+      window.removeEventListener('scroll', rolou);
+    }
+    function rolou() { if (header.classList.contains('is-scrolled') || window.scrollY > 40) fim(); }
 
-  var html = document.documentElement, overflow = html.style.overflow;
-  var acabou = false;
-  function fim() {
-    if (acabou) return;
-    acabou = true;
-    o.style.opacity = '0';
-    html.style.overflow = overflow;
-    setTimeout(function () { if (o.parentNode) o.parentNode.removeChild(o); }, 700);
+    v.addEventListener('ended', fim);
+    v.addEventListener('error', fim);
+    window.addEventListener('scroll', rolou, { passive: true });
+    // Se o vídeo não começar logo, a logo fixa volta na hora.
+    setTimeout(function () { if (v.readyState < 2 || v.paused) fim(); }, 2000);
+    setTimeout(fim, 7000);
+
+    logo.style.setProperty('opacity', '0', 'important');
+    brand.appendChild(v);
+    var p = v.play();
+    if (p && p.catch) p.catch(fim);
   }
-
-  v.addEventListener('ended', fim);
-  v.addEventListener('error', fim);
-  o.addEventListener('click', fim);
-  pular.addEventListener('click', function (e) { e.stopPropagation(); fim(); });
-  // Se o vídeo não começar logo (rede lenta), o site aparece sem esperar.
-  setTimeout(function () { if (v.readyState < 2 || v.paused) fim(); }, 2500);
-  setTimeout(fim, 9000);
-
-  o.appendChild(v);
-  o.appendChild(pular);
-  html.style.overflow = 'hidden';
-  (document.body || html).appendChild(o);
-  var p = v.play();
-  if (p && p.catch) p.catch(fim);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicia);
+  else inicia();
 })();
