@@ -711,6 +711,15 @@ window.PNMT_CONTENT = {
       "type": "Perspectiva"
     },
     {
+      "id": "gallery-drive-arena-aerea",
+      "image": "assets/fotos/arena-aerea.jpg",
+      "category": "Vista aérea",
+      "title": "Arena Show",
+      "description": "A Arena Show às margens do lago.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
       "id": "gallery-arena-show-0",
       "image": "assets/gallery/arena-show-01.jpg",
       "category": "Projeto",
@@ -807,6 +816,15 @@ window.PNMT_CONTENT = {
       "type": "Perspectiva"
     },
     {
+      "id": "gallery-drive-motocross-aerea",
+      "image": "assets/fotos/motocross-aerea.jpg",
+      "category": "Vista aérea",
+      "title": "Motocross",
+      "description": "A pista de motocross e os boxes.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
       "id": "gallery-motocross-0",
       "image": "assets/gallery/motocross-01.jpg",
       "category": "Projeto",
@@ -861,6 +879,24 @@ window.PNMT_CONTENT = {
       "title": "Motocross",
       "description": "Perspectiva oficial do projeto.",
       "type": "Perspectiva"
+    },
+    {
+      "id": "gallery-drive-bmx-aerea-1",
+      "image": "assets/fotos/bmx-aerea-1.jpg",
+      "category": "Vista aérea",
+      "title": "Pista BMX",
+      "description": "A pista de BMX vista do alto.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-bmx-aerea-2",
+      "image": "assets/fotos/bmx-aerea-2.jpg",
+      "category": "Vista aérea",
+      "title": "Pista BMX",
+      "description": "Retas e curvas em azul e amarelo.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-bmx-0",
@@ -975,6 +1011,15 @@ window.PNMT_CONTENT = {
       "type": "Perspectiva"
     },
     {
+      "id": "gallery-drive-agroplace-aerea",
+      "image": "assets/fotos/agroplace-aerea.jpg",
+      "category": "Vista aérea",
+      "title": "AgroPlace",
+      "description": "O AgroPlace visto do alto.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
       "id": "gallery-agroplace-0",
       "image": "assets/gallery/agroplace-01.jpg",
       "category": "Projeto",
@@ -1013,6 +1058,15 @@ window.PNMT_CONTENT = {
       "title": "AgroPlace",
       "description": "Perspectiva oficial do projeto.",
       "type": "Perspectiva"
+    },
+    {
+      "id": "gallery-drive-praca-aerea",
+      "image": "assets/fotos/praca-aerea.jpg",
+      "category": "Vista aérea",
+      "title": "Praça de Alimentação",
+      "description": "A Praça de Alimentação vista do alto.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-praca-alimentacao-0",
@@ -1109,6 +1163,132 @@ window.PNMT_CONTENT = {
       "title": "Árvore da Vida",
       "description": "Perspectiva oficial do projeto.",
       "type": "Perspectiva"
+    },
+    {
+      "id": "gallery-drive-familia-aerea-1",
+      "image": "assets/fotos/familia-aerea-1.jpg",
+      "category": "Vista aérea",
+      "title": "Parque da Família",
+      "description": "O Parque da Família visto do alto.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-5",
+      "image": "assets/fotos/familia-5.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Torres, escorregadores e o farol ao fundo.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-2",
+      "image": "assets/fotos/familia-2.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Torres e escorregadores sob as tendas.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-7",
+      "image": "assets/fotos/familia-7.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "A rede de escalada vista de dentro.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-8",
+      "image": "assets/fotos/familia-8.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Brinquedo em forma de bichinho.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-3",
+      "image": "assets/fotos/familia-3.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Escorregador laranja entre as torres.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-6",
+      "image": "assets/fotos/familia-6.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Arco de escalada.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-4",
+      "image": "assets/fotos/familia-4.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Rede de escalada e escorregador.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-9",
+      "image": "assets/fotos/familia-9.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Escadas e escorregadores coloridos.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-10",
+      "image": "assets/fotos/familia-10.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Escorregador em espiral.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-11",
+      "image": "assets/fotos/familia-11.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Barco de brinquedo com boia.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-12",
+      "image": "assets/fotos/familia-12.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Ponte de rede entre as torres.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-1",
+      "image": "assets/fotos/familia-1.jpg",
+      "category": "Fotos do parque",
+      "title": "Parque da Família",
+      "description": "Balanços sob as tendas.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-familia-aerea-2",
+      "image": "assets/fotos/familia-aerea-2.jpg",
+      "category": "Vista aérea",
+      "title": "Parque da Família",
+      "description": "As tendas coloridas e o domo ao lado.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-parque-da-familia-0",
@@ -1309,6 +1489,195 @@ window.PNMT_CONTENT = {
       "title": "Centro de Eventos",
       "description": "Perspectiva oficial do projeto.",
       "type": "Perspectiva"
+    },
+    {
+      "id": "gallery-drive-vila-noite-1",
+      "image": "assets/fotos/vila-noite-1.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Fachadas iluminadas no começo da noite.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-noite-3",
+      "image": "assets/fotos/vila-noite-3.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "O Coliseu em miniatura, aceso à noite.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-8",
+      "image": "assets/fotos/vila-dia-8.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Coliseu, Torre de Pisa e a gôndola de Veneza.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-7",
+      "image": "assets/fotos/vila-dia-7.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "A Fontana di Trevi reproduzida na Vila.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-noite-2",
+      "image": "assets/fotos/vila-noite-2.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Palácio iluminado, com cúpulas ao fundo.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-6",
+      "image": "assets/fotos/vila-dia-6.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "O Portão de Brandemburgo em miniatura.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-noite-5",
+      "image": "assets/fotos/vila-noite-5.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Castelo japonês iluminado à noite.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-13",
+      "image": "assets/fotos/vila-dia-13.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Buda e templo oriental.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-noite-4",
+      "image": "assets/fotos/vila-noite-4.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Fonte e fachadas refletidas no piso à noite.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-1",
+      "image": "assets/fotos/vila-dia-1.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Arco triunfal com estátua equestre.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-12",
+      "image": "assets/fotos/vila-dia-12.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Torii e templo vermelho.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-9",
+      "image": "assets/fotos/vila-dia-9.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "O Coliseu sob o céu do dia.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-noite-6",
+      "image": "assets/fotos/vila-noite-6.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Arco e estátua equestre na praça, à noite.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-5",
+      "image": "assets/fotos/vila-dia-5.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Elefante esculpido entre as fachadas.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-10",
+      "image": "assets/fotos/vila-dia-10.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Mesquita e fachadas coloridas.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-11",
+      "image": "assets/fotos/vila-dia-11.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Castelo japonês e construção em pedra.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-14",
+      "image": "assets/fotos/vila-dia-14.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Estátua equestre diante das fachadas.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-15",
+      "image": "assets/fotos/vila-dia-15.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Igreja branca e casario clássico.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-2",
+      "image": "assets/fotos/vila-dia-2.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Pagode e templo de frente para o lago.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-3",
+      "image": "assets/fotos/vila-dia-3.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Castelo japonês e fachadas às margens do lago.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-vila-dia-4",
+      "image": "assets/fotos/vila-dia-4.jpg",
+      "category": "Fotos do parque",
+      "title": "Vila das Nações",
+      "description": "Escultura de bronze na praça.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-vila-das-nacoes-0",
@@ -1557,6 +1926,24 @@ window.PNMT_CONTENT = {
       "title": "Usina Solar",
       "description": "Perspectiva oficial do projeto.",
       "type": "Perspectiva"
+    },
+    {
+      "id": "gallery-drive-skate-aerea-2",
+      "image": "assets/fotos/skate-aerea-2.jpg",
+      "category": "Vista aérea",
+      "title": "Complexo de Skate",
+      "description": "O bowl do complexo de skate.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
+    },
+    {
+      "id": "gallery-drive-skate-aerea-1",
+      "image": "assets/fotos/skate-aerea-1.jpg",
+      "category": "Vista aérea",
+      "title": "Complexo de Skate",
+      "description": "As pistas do complexo de skate.",
+      "type": "Foto",
+      "credit": "Parque Novo Mato Grosso"
     },
     {
       "id": "gallery-skate-park-0",
