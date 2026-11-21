@@ -2208,9 +2208,7 @@ h1, h2, h3, h4 {
   background-color: #11345d;
 }
 
-body[data-route="inicio"] .reference-footer-utility, body[data-route="quem-somos"] .reference-footer-utility {
-  display: none;
-}
+
 
 /* === ROUTE OVERRIDES — RESPONSIVE (max-width: 800px) === */
 
@@ -4178,3 +4176,24 @@ form.was-validated .field select:invalid {
 .qs-mapa img{max-width:420px}
 .qs-lead,.qs-copy{font-size:17px}
 }
+
+/* Bloco que completa a lista de próximos eventos quando há poucos */
+.reference-events-promo {
+  margin: auto 16px 16px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #0D2B4D;
+  color: #fff;
+}
+.reference-events-promo .reference-home-events-kicker { color: #58B947; margin-bottom: 10px; }
+.reference-events-promo h4 { margin: 0 0 6px; font-size: 22px; line-height: 1.15; color: #fff; }
+.reference-events-promo p { margin: 0 0 16px; font-size: 14px; color: rgba(255,255,255,.75); }
+.reference-events-promo-actions { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+.reference-events-promo .reference-event-featured-cta { position: static; }
+.reference-events-promo-link { color: #fff; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.reference-events-promo .reference-event-featured-cta { background: #58B947; color: #0D2B4D; }
+.gallery-more { display: flex; justify-content: center; margin: 32px 0 8px; } .gallery-more[hidden] { display: none; } .gallery-more small { font-weight: 400; opacity: .7; margin-left: 4px; }
+.form-details { border: 1px solid rgba(13,43,77,.15); border-radius: 10px; padding: 0 16px; background: #fff; }
+.form-details summary { cursor: pointer; padding: 14px 0; font-weight: 600; color: #0D2B4D; font-size: 15px; }
+.form-details summary small { font-weight: 400; opacity: .7; }
+.form-details[open] { padding-bottom: 16px; }
