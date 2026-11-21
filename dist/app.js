@@ -49,7 +49,7 @@
 
   const asset = (name) => {
     if (!name) return '';
-    if (typeof name === 'string' && (name.startsWith('data:image/') || name.startsWith('http://') || name.startsWith('https://') || name.startsWith('assets/'))) {
+    if (typeof name === 'string' && (name.startsWith('data:image/') || name.startsWith('http://') || name.startsWith('https://') || name.startsWith('assets/') || name.startsWith('espacos/'))) {
       return name;
     }
     if (window.PNMT_ASSETS?.[name]) return window.PNMT_ASSETS[name];
@@ -170,13 +170,28 @@
 
   function referenceCards() {
     const fixed = [
-      { id: 'autodromo', image: 'track', label: 'Autódromo' },
-      { id: 'arena-show', image: 'arena', label: 'Arena Show' },
-      { id: 'skate-park', image: 'skate', label: 'Complexo de Skate' },
-      { id: 'circo-do-futuro', image: 'circus', label: 'Circo do Futuro' },
+      { id: 'autodromo', image: 'espacos/ft/autodromo-noite.jpg', label: 'Autódromo' },
+      { id: 'arena-show', image: 'espacos/ft/v-arena-2.jpg', label: 'Arena Show' },
+      { id: 'skate-park', image: 'assets/fotos/skate-aerea-2.jpg', label: 'Complexo de Skate' },
+      { id: 'circo-do-futuro', image: 'espacos/ft/v-circo.jpg', pos: '55% 88%', label: 'Circo do Futuro' },
       { id: 'roda-gigante', image: 'wheel', label: 'Roda-gigante' },
-      { id: 'centro-de-eventos', image: 'events', label: 'Centro de Eventos' },
+      { id: 'centro-de-eventos', image: 'espacos/ft/v-eventos.jpg', label: 'Centro de Eventos' },
     ];
+
+    // Fotos reais da obra no carrossel; quem ainda não tem foto segue com a perspectiva.
+    const foto = {
+      kartodromo: 'espacos/ft/v-kartodromo-2.jpg',
+      motocross: 'espacos/ft/v-motocross-1.jpg',
+      bmx: 'espacos/ft/v-bmx.jpg',
+      'wake-park': 'espacos/ft/v-wake.jpg',
+      'arvore-da-vida': 'espacos/ft/v-arvore.jpg',
+      'parque-da-familia': 'assets/fotos/familia-5.jpg',
+      agroplace: 'espacos/ft/v-agroplace.jpg',
+      museus: 'espacos/ft/v-museus.jpg',
+      'casa-cuiabana': 'espacos/ft/v-casa.jpg',
+      'vila-das-nacoes': 'assets/fotos/vila-noite-3.jpg',
+      'praca-de-alimentacao': 'espacos/ft/v-praca.jpg',
+    };
 
     const list = [
       ...fixed.map((f) => {
@@ -184,6 +199,7 @@
         return {
           id: f.id,
           image: f.image || sp.image,
+          pos: f.pos || '',
           category: sp.category || '',
           label: f.label || sp.name,
           copy: sp.tagline || '',
@@ -193,7 +209,7 @@
         .filter((s) => !fixed.some((x) => x.id === s.id))
         .map((s) => ({
           id: s.id,
-          image: s.image,
+          image: foto[s.id] || s.image,
           category: s.category || '',
           label: s.short || s.name,
           copy: s.tagline || '',
@@ -203,7 +219,7 @@
     return list
       .map(
         (s, i) =>
-          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(s.label)}">${s.image ? `<div class="reference-space-card-media"><img src="${asset(s.image)}" alt="" loading="lazy"></div>` : ''}<div class="reference-space-card-copy"><span class="reference-space-card-cat">${esc(s.category)}</span><h3>${esc(s.label)}</h3><p>${esc(s.copy)}</p></div></a>`
+          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(s.label)}">${s.image ? `<div class="reference-space-card-media"><img src="${asset(s.image)}" alt="" loading="lazy"${s.pos ? ` style="object-position:${s.pos}"` : ''}></div>` : ''}<div class="reference-space-card-copy"><span class="reference-space-card-cat">${esc(s.category)}</span><h3>${esc(s.label)}</h3><p>${esc(s.copy)}</p></div></a>`
       )
       .join('');
   }
