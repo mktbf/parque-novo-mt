@@ -102,7 +102,7 @@ function apMapa(){
     </svg>
     <span class="m" style="left:37.9%;top:42.4%;width:12.5%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(62,158,54,.28),rgba(62,158,54,0) 68%)"></span>
     <span class="m pin" style="left:37.9%;top:42.4%;width:calc(30 * var(--k));height:calc(30 * var(--k));border-radius:50%;background:#3E9E36;border:calc(5 * var(--k)) solid #fff;box-shadow:0 4px 14px rgba(13,43,77,.25)"></span>
-    <div class="l r" style="right:64%;top:26%;gap:6px"><span style="align-self:flex-end;background:#0D2B4D;color:#fff;font-family:var(--d);font-weight:800;${fs(13)};letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px">Você está aqui</span><b style="${fs(26)};line-height:.95;color:#2F7A2A">Parque Novo<br>Mato Grosso</b><span class="s" style="max-width:calc(210 * var(--k))">Acesso pela Estrada Parque Novo Mato Grosso, à esquerda da MT-251</span></div>
+    <div class="l r" style="right:64%;top:26%;gap:6px"><b style="${fs(26)};line-height:.95;color:#2F7A2A">Parque Novo<br>Mato Grosso</b><span class="s" style="max-width:calc(210 * var(--k))">Acesso pela Estrada Parque Novo Mato Grosso, à esquerda da MT-251</span></div>
     <span class="m cid" style="left:27.5%;top:84.7%;width:calc(40 * var(--k));height:calc(40 * var(--k));border-radius:10px;background:#0D2B4D;border:3px solid #fff;box-shadow:0 4px 12px rgba(13,43,77,.25);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true" style="position:static;width:60%;height:60%"><path d="M3 21V11l5-3v13M8 21V5l7-3v19M15 21V9l6 3v9M2 21h20"/><path d="M11 7h1M11 10h1M11 13h1M18 14h1M18 17h1" stroke-linecap="round"/></svg></span>
     <div class="l" style="left:30.5%;top:86%"><b style="${fs(26)}">Cuiabá</b><span class="s"><b>19 km · 24 min</b></span></div>
     <span class="m ic" style="left:9.2%;top:90.3%">${AP_AV}</span>
@@ -127,7 +127,7 @@ function apDest(){
   const lago = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#1565A3"/></svg>';
   const it = (ic, n, s, t) => `<li><i>${ic}</i><div><b>${n}</b><small>${s}</small></div><em>${t}</em></li>`;
   return `<ul class="ap-dest">${[
-    it('<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#3E9E36"/></svg>', 'Parque Novo Mato Grosso', 'Acesso à esquerda da MT-251', 'Você está aqui'),
+    it('<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#3E9E36"/></svg>', 'Parque Novo Mato Grosso', 'Acesso à esquerda da MT-251', ''),
     it(cid, 'Cuiabá', 'Pela MT-251', '19 km · 24 min'),
     it(AP_AV, 'Aeroporto Bom Futuro', 'Cuiabá', '16 km · 16 min'),
     it(AP_AV, 'Aeroporto Internacional Marechal Rondon', 'Várzea Grande', '25 km · 32 min'),
