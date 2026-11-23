@@ -2886,7 +2886,7 @@ window.PNMT_CONTENT.carrossel = [
  },
  {
   "id": "skate-park",
-  "image": "assets/fotos/skate-aerea-2.jpg",
+  "image": "espacos/ft/sel-skate-capa.jpg",
   "pos": "",
   "category": "Esportes",
   "label": "Complexo de Skate",
@@ -2895,7 +2895,7 @@ window.PNMT_CONTENT.carrossel = [
  },
  {
   "id": "circo-do-futuro",
-  "image": "espacos/ft/v-circo.jpg",
+  "image": "espacos/ft/sel-circo-capa.jpg",
   "pos": "55% 88%",
   "category": "Cultura",
   "label": "Circo do Futuro",
@@ -2949,7 +2949,7 @@ window.PNMT_CONTENT.carrossel = [
  },
  {
   "id": "bmx",
-  "image": "espacos/ft/v-bmx.jpg",
+  "image": "espacos/ft/sel-bmx-capa.jpg",
   "pos": "",
   "category": "Esportes",
   "label": "Pista de BMX",
@@ -2994,7 +2994,7 @@ window.PNMT_CONTENT.carrossel = [
  },
  {
   "id": "parque-da-familia",
-  "image": "assets/fotos/familia-5.jpg",
+  "image": "espacos/ft/sel-familia-capa.jpg",
   "pos": "",
   "category": "Família",
   "label": "Parque da Família",
