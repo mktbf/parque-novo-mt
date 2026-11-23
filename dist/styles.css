@@ -3147,3 +3147,11 @@ dialog::backdrop {
 
 .agenda-destaque .button.secondary { color: white; border-color: rgba(255,255,255,0.3); }
 .agenda-destaque .button.secondary:hover { background: rgba(255,255,255,0.1); }
+
+/* Agenda no celular: abas não cobrem os números do topo */
+@media (max-width: 900px) {
+  .agenda-hero-content { padding-bottom: 28px; }
+  .agenda-hero-stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 96px; }
+  .stat-box { min-width: 0; padding: 16px; }
+  .agenda-tab { padding: 14px 18px; font-size: 15px; }
+}

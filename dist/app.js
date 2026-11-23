@@ -751,7 +751,7 @@ async function updateAgenda() {
   };
 
   const realized2026 = events.filter(e => e.isPast && e.parsedStart.getFullYear() === 2026).length;
-  const confirmedDec = events.filter(e => e.status === 'confirmado' && e.parsedStart.getFullYear() === 2026 && e.parsedStart.getMonth() <= 11).length;
+  const confirmedDec = events.filter(e => e.status === 'confirmado' && !e.isPast).length;
 
   const headerHtml = `
     <section class="agenda-hero">
@@ -767,7 +767,7 @@ async function updateAgenda() {
         </div>
         <div class="stat-box">
           <span class="stat-num">${confirmedDec}</span>
-          <span class="stat-lbl">confirmados até dezembro</span>
+          <span class="stat-lbl">${confirmedDec === 1 ? 'próximo evento confirmado' : 'próximos eventos confirmados'}</span>
         </div>
       </div>
       <div class="agenda-tabs">
