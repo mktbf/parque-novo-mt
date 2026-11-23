@@ -80,47 +80,115 @@
   // ==========================================================================
   // AUTHENTICATION
   // ==========================================================================
+  const loginEmail = document.getElementById('login-email');
+  const recoveryForm = document.getElementById('recovery-form');
+  const recoveryError = document.getElementById('recovery-error');
+  let dashboardStarted = false;
+  let inRecovery = /type=(recovery|invite)/.test(location.hash);
+
+  function showRecovery() {
+    loginScreen.style.display = 'flex';
+    adminApp.style.display = 'none';
+    loginForm.style.display = 'none';
+    recoveryForm.style.display = 'block';
+    document.getElementById('recovery-pass').focus();
+  }
+
   function checkAuth() {
+    if (inRecovery) {
+      showRecovery();
+      return;
+    }
     if (adminStore.isAuthenticated()) {
       loginScreen.style.display = 'none';
       adminApp.style.display = 'block';
-      initDashboard();
+      if (!dashboardStarted) {
+        dashboardStarted = true;
+        initDashboard();
+      }
     } else {
       loginScreen.style.display = 'flex';
       adminApp.style.display = 'none';
-      loginPass.focus();
+      loginForm.style.display = 'block';
+      recoveryForm.style.display = 'none';
+      (loginEmail.value ? loginPass : loginEmail).focus();
     }
   }
+
+  adminStore.onAuthChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') inRecovery = true;
+    checkAuth();
+  });
 
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginError.style.display = 'none';
-    const pass = loginPass.value.trim();
+    loginError.classList.remove('login-ok');
     const submitBtn = loginForm.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
 
     try {
-      const res = await adminStore.login(pass);
+      const res = await adminStore.login(loginEmail.value, loginPass.value);
       if (res.ok) {
         loginPass.value = '';
         checkAuth();
         showToast('Bem-vindo ao Painel de Controle!', 'success');
       } else {
-        loginError.textContent = res.message || 'Senha incorreta. Tente novamente.';
+        loginError.textContent = res.message || 'E-mail ou senha incorretos.';
         loginError.style.display = 'block';
         loginPass.select();
       }
     } catch (err) {
-      loginError.textContent = 'Erro ao processar autenticação.';
+      loginError.textContent = 'Erro ao processar o login. Tente de novo.';
       loginError.style.display = 'block';
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }
   });
 
-  btnLogout.addEventListener('click', () => {
+  document.getElementById('btn-forgot')?.addEventListener('click', async () => {
+    loginError.classList.remove('login-ok');
+    const email = loginEmail.value.trim();
+    if (!email) {
+      loginError.textContent = 'Digite o seu e-mail acima e clique de novo em "Esqueci minha senha".';
+      loginError.style.display = 'block';
+      loginEmail.focus();
+      return;
+    }
+    const res = await adminStore.resetPassword(email);
+    loginError.textContent = res.ok
+      ? 'Se este e-mail tiver acesso, chega em instantes um link para criar uma nova senha.'
+      : 'Não foi possível enviar o e-mail agora: ' + res.error;
+    if (res.ok) loginError.classList.add('login-ok');
+    loginError.style.display = 'block';
+  });
+
+  recoveryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    recoveryError.style.display = 'none';
+    const p1 = document.getElementById('recovery-pass').value;
+    const p2 = document.getElementById('recovery-confirm').value;
+    if (p1 !== p2) {
+      recoveryError.textContent = 'As duas senhas não conferem.';
+      recoveryError.style.display = 'block';
+      return;
+    }
+    const res = await adminStore.setNewPassword(p1);
+    if (!res.ok) {
+      recoveryError.textContent = res.error || 'Não foi possível salvar a senha.';
+      recoveryError.style.display = 'block';
+      return;
+    }
+    inRecovery = false;
+    history.replaceState(null, '', location.pathname);
+    recoveryForm.reset();
+    checkAuth();
+    showToast('Senha criada! Você já está dentro do painel.', 'success');
+  });
+
+  btnLogout.addEventListener('click', async () => {
     if (confirm('Deseja realmente encerrar a sessão do painel?')) {
-      adminStore.logout();
+      await adminStore.logout();
       checkAuth();
       showToast('Sessão encerrada com sucesso.');
     }
@@ -162,13 +230,13 @@
 
   function updateStatusIndicator() {
     if (!syncStatus) return;
-    const client = window.PNMT_SUPABASE_CLIENT;
-    if (client) {
+    const email = adminStore.currentEmail ? adminStore.currentEmail() : '';
+    if (adminStore.isAuthenticated()) {
       syncStatus.className = 'status-indicator synced';
-      syncStatus.innerHTML = '<span class="status-dot"></span><span class="status-text">🟢 Sincronizado na Nuvem</span>';
+      syncStatus.innerHTML = '<span class="status-dot"></span><span class="status-text">🟢 Publicando no site · ' + esc(email) + '</span>';
     } else {
       syncStatus.className = 'status-indicator local';
-      syncStatus.innerHTML = '<span class="status-dot"></span><span class="status-text">🔵 Modo Local Seguro (Navegador)</span>';
+      syncStatus.innerHTML = '<span class="status-dot"></span><span class="status-text">🔴 Sem conexão com o banco</span>';
     }
   }
 
@@ -1060,6 +1128,8 @@
     });
   }
 
-  // Start on load
-  document.addEventListener('DOMContentLoaded', checkAuth);
+  // Start on load: espera o Supabase dizer se já existe sessão
+  const start = () => Promise.resolve(adminStore.ready).then(checkAuth, checkAuth);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 })();

@@ -8,31 +8,6 @@
   'use strict';
 
   const STORAGE_KEY = 'pnmt_site_content_v1';
-  const AUTH_KEY = 'pnmt_admin_session_v2';
-  const PASSWORD_KEY = 'pnmt_admin_password_hash_v2';
-  const ATTEMPTS_KEY = 'pnmt_admin_attempts_v2';
-  const SALT = 'PNMT_SEC_2026_V2$';
-  const MAX_ATTEMPTS = 5;
-  const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutos
-  const SESSION_TTL_MS = 4 * 60 * 60 * 1000; // 4 horas
-
-  async function sha256(str) {
-    if (window.crypto && window.crypto.subtle) {
-      const buffer = new TextEncoder().encode(SALT + str);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-    }
-    let h1 = 0xdeadbeef, h2 = 0x41c64e6d;
-    for (let i = 0; i < str.length; i++) {
-      const ch = str.charCodeAt(i);
-      h1 = Math.imul(h1 ^ ch, 2654435761);
-      h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    return 'fb_' + (Math.abs(h1).toString(16) + Math.abs(h2).toString(16));
-  }
-
-  // Get initial default state combining PNMT_CONTENT and PNMT_CONFIG
   function getDefaultData() {
     const c = window.PNMT_CONTENT || {};
     const cfg = window.PNMT_CONFIG || {};
@@ -149,23 +124,23 @@
       }
     }
 
-    // Sync to Supabase if available
-    let syncedCloud = false;
-    try {
-      const client = window.PNMT_SUPABASE?.client || window.PNMT_SUPABASE_CLIENT;
-      if (client) {
-        const { error } = await client
-          .from('site_content')
-          .upsert({
-            id: 'main',
-            content: activeData,
-            updated_at: activeData.updatedAt,
-          });
-        if (!error) syncedCloud = true;
-      }
-    } catch (err) {
-      console.warn('[PNMT Admin] Não foi possível sincronizar na nuvem no momento:', err);
+    // Grava no banco. Se não gravar, avisa: o que fica só no navegador ninguém vê.
+    const client = getClient();
+    if (!client) {
+      throw new Error('Sem conexão com o banco de dados. Nada foi publicado no site.');
     }
+    const { error } = await client
+      .from('site_content')
+      .upsert({
+        id: 'main',
+        content: activeData,
+        updated_at: activeData.updatedAt,
+        updated_by: currentEmail(),
+      });
+    if (error) {
+      throw new Error('Não foi possível publicar no site (' + error.message + '). Entre de novo e tente outra vez.');
+    }
+    const syncedCloud = true;
 
     window.dispatchEvent(new CustomEvent('pnmt:content-updated', { detail: activeData }));
     return { ok: true, syncedCloud, data: activeData };
@@ -254,108 +229,101 @@
     return await optimizeImage(file);
   }
 
-  // Authentication & Security with SHA-256 and brute-force lockout
-  async function getStoredHash() {
-    let saved = localStorage.getItem(PASSWORD_KEY);
-    if (!saved) {
-      saved = await sha256('pnmt2026');
-      localStorage.setItem(PASSWORD_KEY, saved);
-    }
-    return saved;
+  // ==========================================================================
+  // LOGIN DE VERDADE (Supabase Auth). Só entra quem tem usuário no Supabase E
+  // está na tabela site_admins. A senha nunca fica no código do site.
+  // ==========================================================================
+  let session = null;
+  let isAdmin = false;
+  const authListeners = [];
+
+  function getClient() {
+    return window.PNMT_SUPABASE?.client || window.PNMT_SUPABASE_CLIENT || null;
   }
 
-  function getAttemptsInfo() {
-    try {
-      const raw = localStorage.getItem(ATTEMPTS_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) {}
-    return { count: 0, lockedUntil: 0 };
+  async function checkAdmin() {
+    const client = getClient();
+    if (!client || !session) return false;
+    const { data, error } = await client.rpc('is_site_admin');
+    return !error && data === true;
   }
 
-  function recordFailedAttempt() {
-    const info = getAttemptsInfo();
-    info.count = (info.count || 0) + 1;
-    if (info.count >= MAX_ATTEMPTS) {
-      info.lockedUntil = Date.now() + LOCKOUT_MS;
-    }
-    localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(info));
-    return info;
-  }
+  const ready = (async () => {
+    const client = getClient();
+    if (!client) return;
+    const { data } = await client.auth.getSession();
+    session = data?.session || null;
+    isAdmin = session ? await checkAdmin() : false;
+    client.auth.onAuthStateChange((event, s) => {
+      // Não chamar o Supabase direto aqui dentro (trava); espera o callback terminar.
+      setTimeout(async () => {
+        session = s || null;
+        isAdmin = session ? await checkAdmin() : false;
+        authListeners.forEach((fn) => { try { fn(event); } catch (e) {} });
+      }, 0);
+    });
+  })().catch(() => {});
 
-  function resetAttempts() {
-    localStorage.removeItem(ATTEMPTS_KEY);
-  }
-
-  function isLocked() {
-    const info = getAttemptsInfo();
-    if (info.lockedUntil && info.lockedUntil > Date.now()) {
-      const remainingMin = Math.ceil((info.lockedUntil - Date.now()) / 60000);
-      return { locked: true, remainingMin };
-    }
-    if (info.lockedUntil && info.lockedUntil <= Date.now()) {
-      resetAttempts();
-    }
-    return { locked: false };
+  function onAuthChange(fn) {
+    authListeners.push(fn);
   }
 
   function isAuthenticated() {
-    try {
-      const raw = sessionStorage.getItem(AUTH_KEY);
-      if (!raw) return false;
-      const session = JSON.parse(raw);
-      if (session && session.auth && (Date.now() - session.timestamp < SESSION_TTL_MS)) {
-        session.timestamp = Date.now();
-        sessionStorage.setItem(AUTH_KEY, JSON.stringify(session));
-        return true;
-      }
-    } catch (e) {}
-    sessionStorage.removeItem(AUTH_KEY);
-    return false;
+    return !!session && isAdmin;
   }
 
-  async function login(pass) {
-    const lock = isLocked();
-    if (lock.locked) {
-      return { ok: false, locked: true, message: `Muitas tentativas incorretas. Bloqueado por mais ${lock.remainingMin} minuto(s).` };
-    }
-
-    const inputHash = await sha256(pass);
-    const expectedHash = await getStoredHash();
-
-    if (inputHash === expectedHash) {
-      resetAttempts();
-      const session = { auth: true, timestamp: Date.now() };
-      sessionStorage.setItem(AUTH_KEY, JSON.stringify(session));
-      return { ok: true };
-    }
-
-    const info = recordFailedAttempt();
-    if (info.count >= MAX_ATTEMPTS) {
-      return { ok: false, locked: true, message: 'Limite de 5 tentativas excedido. Painel bloqueado por 15 minutos.' };
-    }
-
-    const remaining = MAX_ATTEMPTS - info.count;
-    return { ok: false, remaining, message: `Senha incorreta. Você tem mais ${remaining} tentativa(s).` };
+  function currentEmail() {
+    return session?.user?.email || '';
   }
 
-  function logout() {
-    sessionStorage.removeItem(AUTH_KEY);
-  }
-
-  async function changePassword(oldPass, newPass) {
-    const expectedHash = await getStoredHash();
-    const oldHash = await sha256(oldPass);
-    if (oldHash !== expectedHash) {
-      return { ok: false, error: 'Senha atual incorreta.' };
+  async function login(email, pass) {
+    const client = getClient();
+    if (!client) return { ok: false, message: 'Sem conexão com o banco de dados. Tente de novo em instantes.' };
+    const { data, error } = await client.auth.signInWithPassword({ email: String(email || '').trim(), password: pass });
+    if (error) {
+      const msg = /invalid/i.test(error.message) ? 'E-mail ou senha incorretos.' : error.message;
+      return { ok: false, message: msg };
     }
-    if (!newPass || newPass.length < 8) {
-      return { ok: false, error: 'A nova senha deve ter no mínimo 8 caracteres.' };
+    session = data.session;
+    isAdmin = await checkAdmin();
+    if (!isAdmin) {
+      await client.auth.signOut();
+      session = null;
+      return { ok: false, message: 'Este e-mail não tem permissão para editar o site.' };
     }
-    const newHash = await sha256(newPass);
-    localStorage.setItem(PASSWORD_KEY, newHash);
     return { ok: true };
   }
 
+  async function logout() {
+    const client = getClient();
+    if (client) await client.auth.signOut();
+    session = null;
+    isAdmin = false;
+  }
+
+  async function resetPassword(email) {
+    const client = getClient();
+    if (!client) return { ok: false, error: 'Sem conexão com o banco de dados.' };
+    const { error } = await client.auth.resetPasswordForEmail(String(email || '').trim(), {
+      redirectTo: location.origin + location.pathname,
+    });
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
+  async function setNewPassword(newPass) {
+    const client = getClient();
+    if (!newPass || newPass.length < 8) return { ok: false, error: 'A nova senha deve ter no mínimo 8 caracteres.' };
+    const { error } = await client.auth.updateUser({ password: newPass });
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
+  async function changePassword(oldPass, newPass) {
+    const client = getClient();
+    if (!client || !session) return { ok: false, error: 'Sessão expirada. Entre de novo.' };
+    const { error } = await client.auth.signInWithPassword({ email: currentEmail(), password: oldPass });
+    if (error) return { ok: false, error: 'Senha atual incorreta.' };
+    return setNewPassword(newPass);
+  }
   // Backup export / import
   function exportBackup() {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(activeData, null, 2));
@@ -396,6 +364,11 @@
     login,
     logout,
     changePassword,
+    resetPassword,
+    setNewPassword,
+    onAuthChange,
+    currentEmail,
+    ready,
     exportBackup,
     importBackup,
     syncFromSupabase,

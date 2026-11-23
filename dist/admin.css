@@ -998,3 +998,8 @@ textarea {
     gap: 0;
   }
 }
+
+/* Login com e-mail */
+.login-link { display: block; margin: 14px auto 0; background: none; border: 0; color: #1261A0; font-size: 14px; text-decoration: underline; cursor: pointer; }
+.login-help { margin: 0 0 14px; font-size: 14px; color: #44556b; }
+.login-ok { color: #1B8F3A; }
