@@ -7,7 +7,7 @@
     <title>Painel Administrativo | Parque Novo Mato Grosso</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="fonts.css">
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="admin.css?v=auth-20261123-1">
   </head>
   <body>
     <!-- Login Screen -->
@@ -21,11 +21,30 @@
 
         <form id="login-form" class="login-form">
           <div class="form-group">
-            <label for="login-pass">Senha de Acesso</label>
-            <input type="password" id="login-pass" placeholder="Digite a senha..." autocomplete="current-password" required autofocus>
+            <label for="login-email">E-mail</label>
+            <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="username" required autofocus>
+          </div>
+          <div class="form-group">
+            <label for="login-pass">Senha</label>
+            <input type="password" id="login-pass" placeholder="Digite a senha..." autocomplete="current-password" required>
           </div>
           <p id="login-error" class="login-error" role="alert" style="display: none;"></p>
           <button type="submit" class="btn btn-primary btn-block">Acessar Painel <span>→</span></button>
+          <button type="button" id="btn-forgot" class="login-link">Esqueci minha senha</button>
+        </form>
+
+        <form id="recovery-form" class="login-form" style="display: none;">
+          <p class="login-help">Crie a sua nova senha (mínimo 8 caracteres).</p>
+          <div class="form-group">
+            <label for="recovery-pass">Nova senha</label>
+            <input type="password" id="recovery-pass" minlength="8" autocomplete="new-password" required>
+          </div>
+          <div class="form-group">
+            <label for="recovery-confirm">Repita a nova senha</label>
+            <input type="password" id="recovery-confirm" minlength="8" autocomplete="new-password" required>
+          </div>
+          <p id="recovery-error" class="login-error" role="alert" style="display: none;"></p>
+          <button type="submit" class="btn btn-primary btn-block">Salvar nova senha <span>→</span></button>
         </form>
       </div>
     </div>
@@ -700,10 +719,10 @@
 
     <!-- Scripts -->
     <script charset="utf-8" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>
-    <script charset="utf-8" src="config.js?v=20260909-1"></script>
-    <script charset="utf-8" src="content.js?v=1791760235753"></script>
-    <script charset="utf-8" src="supabase.js?v=20260909-1"></script>
-    <script charset="utf-8" src="admin-data.js?v=20260909-1"></script>
-    <script charset="utf-8" src="admin.js?v=20260909-1"></script>
+    <script charset="utf-8" src="config.js?v=formularios-20261107-1"></script>
+    <script charset="utf-8" src="content.js?v=fotos-drive-20261120-1"></script>
+    <script charset="utf-8" src="supabase.js?v=auth-20261123-1"></script>
+    <script charset="utf-8" src="admin-data.js?v=auth-20261123-1"></script>
+    <script charset="utf-8" src="admin.js?v=auth-20261123-1"></script>
   </body>
 </html>

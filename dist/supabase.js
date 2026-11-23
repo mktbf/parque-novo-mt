@@ -13,8 +13,8 @@
   // CONFIGURE THESE VALUES FROM YOUR SUPABASE PROJECT
   // Dashboard → Settings → API
   // =============================================
-  const SUPABASE_URL = 'https://ojntiktsusdttlkefvrv.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_tiQEioVmgeSaP5Av1NiRdQ_LChECxEG';
+  const SUPABASE_URL = 'https://ogsgkwskdrunpnjzcsqz.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_pmpX2WdRzAVOIgVUnSZ7gA_dT1R1NRP';
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.warn('[PNMT] Supabase não configurado. Formulários em modo local.');
