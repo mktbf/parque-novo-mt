@@ -29,6 +29,7 @@
   const modalNews = document.getElementById('modal-news');
   const modalPhoto = document.getElementById('modal-photo');
   const modalJob = document.getElementById('modal-job');
+  const modalPagina = document.getElementById('modal-pagina');
 
   // Helper: Toast alerts
   let toastTimer = null;
@@ -226,6 +227,7 @@
     populateNews();
     populateGallery();
     populateJobs();
+    populatePaginas();
     populateAbout();
     initEventListeners();
   }
@@ -628,10 +630,13 @@
       document.getElementById('event-space').value = e.slugEspaco || '';
       document.getElementById('event-location').value = e.espaco || '';
       document.getElementById('event-url').value = e.linkCobertura || '';
+      document.getElementById('event-foto').value = e.foto || '';
+      document.getElementById('event-video').value = e.video || '';
     } else {
       titleEl.textContent = 'Cadastrar novo evento';
       origIdEl.value = '';
     }
+    updateMediaPreview('event-foto-preview', document.getElementById('event-foto').value);
     modalEvent.showModal();
   }
 
@@ -673,6 +678,17 @@
     if (fim) eventObj.dataFim = fim;
     const link = document.getElementById('event-url').value.trim();
     if (link) eventObj.linkCobertura = link;
+    const foto = document.getElementById('event-foto').value.trim();
+    if (foto) eventObj.foto = foto;
+    const videoRaw = document.getElementById('event-video').value.trim();
+    if (videoRaw) {
+      const vid = extractYouTubeId(videoRaw);
+      if (!vid) {
+        showToast('O link do vídeo precisa ser do YouTube.', 'error');
+        return;
+      }
+      eventObj.video = vid;
+    }
 
     if (origIdx !== '') {
       const old = data.agenda[origIdx] || {};
@@ -939,6 +955,134 @@
   }
 
   // ==========================================================================
+  // PÁGINAS DOS ESPAÇOS (Conheça os Espaços)
+  // ==========================================================================
+  const SIT_LABEL = { ok: 'Em funcionamento', obra: 'Em obras' };
+  const GRUPO_LABEL = { esporte: 'Esporte', lazer: 'Lazer', cultura: 'Cultura' };
+
+  function paginaAtual(data, base) {
+    const o = (data.espacosPaginas || {})[base.id] || {};
+    const pick = (k) => (o[k] != null && (Array.isArray(o[k]) ? o[k].length : String(o[k]).trim() !== '') ? o[k] : base[k]);
+    return { id: base.id, g: base.g, nome: pick('nome'), tag: pick('tag'), lead: pick('lead'), txt: pick('txt') || [], d: pick('d') || [], sec: pick('sec') || [], sit: o.sit != null ? o.sit : (base.sit || ''), capaFoto: o.capaFoto || '', capaVideo: o.capaVideo || '', editada: !!(data.espacosPaginas || {})[base.id] };
+  }
+
+  function populatePaginas() {
+    const data = adminStore.getData();
+    const base = window.PNMT_ESPACOS_BASE || [];
+    const badge = document.getElementById('badge-paginas-count');
+    if (badge) badge.textContent = base.length;
+    const container = document.getElementById('paginas-table-container');
+    if (!container) return;
+    container.innerHTML = `
+      <table class="admin-table">
+        <thead><tr><th>Espaço</th><th>Grupo</th><th>Situação</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
+        <tbody>
+          ${base.map((b) => { const p = paginaAtual(data, b); return `
+            <tr>
+              <td><strong>${esc(p.nome)}</strong><br><small>${esc(p.lead)}</small></td>
+              <td><span class="count-badge">${esc(GRUPO_LABEL[p.g] || p.g)}</span></td>
+              <td>${esc(SIT_LABEL[p.sit] || '—')}</td>
+              <td>${p.editada ? 'Editada no painel' : 'Original'}</td>
+              <td style="text-align: right;">
+                <a class="btn btn-ghost btn-xs" href="index.html#espaco/${esc(slugEspacoSite(b.id))}" target="_blank" rel="noopener">Ver</a>
+                <button class="btn btn-secondary btn-xs" data-action="edit-pagina" data-id="${esc(b.id)}">Editar</button>
+              </td>
+            </tr>`; }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function slugEspacoSite(id) {
+    return ({ skate: 'skate-park', wake: 'wake-park', familia: 'parque-da-familia', vila: 'vila-das-nacoes', roda: 'roda-gigante', arvore: 'arvore-da-vida', splash: 'splash-parque', praca: 'praca-de-alimentacao', arena: 'arena-show', eventos: 'centro-de-eventos', casa: 'casa-cuiabana', circo: 'circo-do-futuro', quadras: 'arenas-beach' })[id] || id;
+  }
+
+  const brToLines = (t) => String(t || '').replace(/<br\s*\/?>/gi, '\n');
+  const linesToBr = (t) => String(t || '').trim().split(/\n+/).map((x) => x.trim()).filter(Boolean).join('<br>');
+
+  function openPaginaModal(id) {
+    const data = adminStore.getData();
+    const base = (window.PNMT_ESPACOS_BASE || []).find((b) => b.id === id);
+    if (!base) return;
+    const p = paginaAtual(data, base);
+    document.getElementById('pagina-id').value = id;
+    document.getElementById('modal-pagina-title').textContent = 'Editar página: ' + p.nome;
+    document.getElementById('pagina-nome').value = p.nome;
+    document.getElementById('pagina-sit').value = p.sit || '';
+    document.getElementById('pagina-lead').value = p.lead;
+    document.getElementById('pagina-tag').value = brToLines(p.tag);
+    document.getElementById('pagina-txt').value = p.txt.join('\n\n');
+    document.getElementById('pagina-d').value = p.d.map(([a, b]) => `${a}: ${b}`).join('\n');
+    document.getElementById('pagina-sec').value = p.sec.map(([a, b]) => `${a}\n${b}`).join('\n\n');
+    document.getElementById('pagina-capa-foto').value = p.capaFoto;
+    document.getElementById('pagina-capa-video').value = p.capaVideo;
+    updateMediaPreview('pagina-capa-preview', p.capaFoto);
+    document.getElementById('btn-pagina-restaurar').hidden = !p.editada;
+    modalPagina.showModal();
+  }
+
+  async function handlePaginaSubmit(ev) {
+    ev.preventDefault();
+    const id = document.getElementById('pagina-id').value;
+    const data = adminStore.getData();
+    data.espacosPaginas = data.espacosPaginas || {};
+    const d = document.getElementById('pagina-d').value.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
+      const i = l.indexOf(':');
+      return i > 0 ? [l.slice(0, i).trim(), l.slice(i + 1).trim()] : null;
+    });
+    if (d.some((x) => !x)) {
+      showToast('Nos dados técnicos, use uma linha por item no formato Rótulo: valor.', 'error');
+      return;
+    }
+    const sec = document.getElementById('pagina-sec').value.trim().split(/\n\s*\n/).filter((b) => b.trim()).map((b) => {
+      const [t, ...r] = b.trim().split('\n');
+      return [t.trim(), r.join(' ').trim()];
+    });
+    if (sec.some(([t, txt]) => !t || !txt)) {
+      showToast('Cada bloco da faixa azul precisa de título (1ª linha) e texto (2ª linha).', 'error');
+      return;
+    }
+    const capaVideo = document.getElementById('pagina-capa-video').value.trim();
+    if (capaVideo && !/^https:\/\/.+\.mp4(\?.*)?$/i.test(capaVideo)) {
+      showToast('O vídeo de capa precisa ser um link https terminando em .mp4.', 'error');
+      return;
+    }
+    data.espacosPaginas[id] = {
+      nome: document.getElementById('pagina-nome').value.trim(),
+      sit: document.getElementById('pagina-sit').value,
+      lead: document.getElementById('pagina-lead').value.trim(),
+      tag: linesToBr(document.getElementById('pagina-tag').value),
+      txt: document.getElementById('pagina-txt').value.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean),
+      d,
+      sec,
+      capaFoto: document.getElementById('pagina-capa-foto').value.trim(),
+      capaVideo,
+    };
+    try {
+      await adminStore.saveData(data);
+      modalPagina.close();
+      populatePaginas();
+      showToast('Página salva e publicada no site!');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function restaurarPagina() {
+    const id = document.getElementById('pagina-id').value;
+    if (!confirm('Voltar esta página ao texto original? As edições feitas no painel para este espaço serão apagadas.')) return;
+    const data = adminStore.getData();
+    if (data.espacosPaginas) delete data.espacosPaginas[id];
+    try {
+      await adminStore.saveData(data);
+      modalPagina.close();
+      populatePaginas();
+      showToast('Página voltou ao texto original.');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // ==========================================================================
   // VAGAS (Trabalhe Conosco)
   // ==========================================================================
   function populateJobs() {
@@ -1115,6 +1259,26 @@
     // News modal open & submit
     document.getElementById('btn-add-news')?.addEventListener('click', () => openNewsModal(null));
     document.getElementById('btn-add-job')?.addEventListener('click', () => openJobModal(null));
+    document.getElementById('form-pagina')?.addEventListener('submit', handlePaginaSubmit);
+    document.getElementById('btn-pagina-restaurar')?.addEventListener('click', restaurarPagina);
+    const ligarUpload = (fileId, inputId, previewId, msg) => {
+      document.getElementById(inputId)?.addEventListener('input', (ev) => updateMediaPreview(previewId, ev.target.value));
+      document.getElementById(fileId)?.addEventListener('change', async (ev) => {
+        const file = ev.target.files?.[0];
+        if (!file) return;
+        try {
+          showToast('Enviando a foto...');
+          const url = await adminStore.uploadMedia(file);
+          document.getElementById(inputId).value = url;
+          updateMediaPreview(previewId, url);
+          showToast(msg);
+        } catch (err) {
+          showToast('Erro ao carregar a foto: ' + err.message, 'error');
+        }
+      });
+    };
+    ligarUpload('pagina-capa-file', 'pagina-capa-foto', 'pagina-capa-preview', 'Foto de capa carregada!');
+    ligarUpload('event-foto-file', 'event-foto', 'event-foto-preview', 'Foto do evento carregada!');
     document.getElementById('form-job')?.addEventListener('submit', handleJobSubmit);
     document.getElementById('job-image')?.addEventListener('input', (ev) => updateMediaPreview('job-preview-box', ev.target.value));
     document.getElementById('job-file-input')?.addEventListener('change', async (ev) => {
@@ -1173,6 +1337,8 @@
         openPhotoModal(Number(btn.dataset.idx));
       } else if (action === 'delete-photo') {
         deletePhoto(Number(btn.dataset.idx));
+      } else if (action === 'edit-pagina') {
+        openPaginaModal(btn.dataset.id);
       } else if (action === 'edit-job') {
         openJobModal(Number(btn.dataset.idx));
       } else if (action === 'delete-job') {
