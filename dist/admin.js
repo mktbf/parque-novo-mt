@@ -1215,6 +1215,23 @@
   // ==========================================================================
   // TEXTOS DAS PÁGINAS
   // ==========================================================================
+  function ligarUploadCampo(fileId, inputId, previewId, msg) {
+    document.getElementById(inputId)?.addEventListener('input', (ev) => updateMediaPreview(previewId, ev.target.value));
+    document.getElementById(fileId)?.addEventListener('change', async (ev) => {
+      const file = ev.target.files?.[0];
+      if (!file) return;
+      try {
+        showToast('Enviando a foto...');
+        const url = await adminStore.uploadMedia(file);
+        document.getElementById(inputId).value = url;
+        updateMediaPreview(previewId, url);
+        showToast(msg);
+      } catch (err) {
+        showToast('Erro ao carregar a foto: ' + err.message, 'error');
+      }
+    });
+  }
+
   function populateTextos() {
     const reg = window.PNMT_CONTENT?.textosPadrao || {};
     const salvos = adminStore.getData().textos || {};
@@ -1227,6 +1244,11 @@
         <div class="card-header"><h3>${esc(pagina)}</h3></div>
         <div class="card-body">
           ${itens.map(([k, d]) => {
+            if (d.tipo === 'foto') {
+              const id = 'tx-' + k.replace(/\W/g, '-');
+              const v = salvos[k] != null ? salvos[k] : d.valor;
+              return `<div class="form-group"><label for="${id}">${esc(d.rotulo)}</label><div class="media-upload-widget"><div class="media-preview" id="${id}-preview"></div><div class="media-actions"><label class="btn btn-secondary btn-sm file-upload-btn"><span>📁 Selecionar Imagem</span><input type="file" accept="image/*" id="${id}-file"></label><input type="text" id="${id}" class="url-input" data-texto="${esc(k)}" data-foto="1" value="${esc(v)}" placeholder="${esc(d.valor || 'Automática')}"></div></div></div>`;
+            }
             const longo = d.valor.length > 70;
             const v = salvos[k] != null ? salvos[k] : d.valor;
             return `<div class="form-group"><label for="tx-${esc(k)}">${esc(d.rotulo)}</label>${longo
@@ -1234,7 +1256,11 @@
               : `<input type="text" id="tx-${esc(k)}" data-texto="${esc(k)}" value="${esc(v)}" placeholder="${esc(d.valor)}">`}</div>`;
           }).join('')}
         </div>
-      </div>`).join('');
+      </div>`).join('');    container.querySelectorAll('[data-foto]').forEach((el) => {
+      updateMediaPreview(el.id + '-preview', el.value);
+      ligarUploadCampo(el.id + '-file', el.id, el.id + '-preview', 'Foto carregada! Clique em "Salvar textos" para publicar.');
+      el.addEventListener('change', () => updateMediaPreview(el.id + '-preview', el.value));
+    });
   }
 
   async function saveTextos() {
@@ -1439,22 +1465,7 @@
     document.getElementById('btn-save-carrossel')?.addEventListener('click', saveCarrossel);
     document.getElementById('btn-save-textos')?.addEventListener('click', saveTextos);
     document.getElementById('btn-pagina-restaurar')?.addEventListener('click', restaurarPagina);
-    const ligarUpload = (fileId, inputId, previewId, msg) => {
-      document.getElementById(inputId)?.addEventListener('input', (ev) => updateMediaPreview(previewId, ev.target.value));
-      document.getElementById(fileId)?.addEventListener('change', async (ev) => {
-        const file = ev.target.files?.[0];
-        if (!file) return;
-        try {
-          showToast('Enviando a foto...');
-          const url = await adminStore.uploadMedia(file);
-          document.getElementById(inputId).value = url;
-          updateMediaPreview(previewId, url);
-          showToast(msg);
-        } catch (err) {
-          showToast('Erro ao carregar a foto: ' + err.message, 'error');
-        }
-      });
-    };
+    const ligarUpload = ligarUploadCampo;
     ligarUpload('pagina-capa-file', 'pagina-capa-foto', 'pagina-capa-preview', 'Foto de capa carregada!');
     ligarUpload('event-foto-file', 'event-foto', 'event-foto-preview', 'Foto do evento carregada!');
     ligarUpload('card-file', 'card-image', 'card-preview', 'Foto do card carregada!');

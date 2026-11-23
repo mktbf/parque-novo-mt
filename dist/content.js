@@ -3079,6 +3079,12 @@ window.PNMT_CONTENT.textosPadrao = {
   "rotulo": "Texto abaixo do título",
   "valor": "Shows, corridas, campeonatos, feiras e eventos culturais. Escolha o que você quer viver."
  },
+ "agenda.foto": {
+  "pagina": "Agenda",
+  "rotulo": "Foto do topo (vazio = foto do espaço do próximo evento, troca sozinha)",
+  "valor": "",
+  "tipo": "foto"
+ },
  "galeria.titulo": {
   "pagina": "Galeria",
   "rotulo": "Título",
@@ -3088,6 +3094,12 @@ window.PNMT_CONTENT.textosPadrao = {
   "pagina": "Galeria",
   "rotulo": "Texto abaixo do título",
   "valor": "Fotos, vistas aéreas e perspectivas oficiais do Parque Novo Mato Grosso."
+ },
+ "galeria.foto": {
+  "pagina": "Galeria",
+  "rotulo": "Foto do topo",
+  "valor": "assets/aerial-sunset.jpg",
+  "tipo": "foto"
  },
  "imprensa.titulo": {
   "pagina": "Imprensa",
@@ -3099,6 +3111,12 @@ window.PNMT_CONTENT.textosPadrao = {
   "rotulo": "Texto abaixo do título",
   "valor": "Jornalistas, veículos e produtores encontram aqui informações para contar essa história com precisão."
  },
+ "imprensa.foto": {
+  "pagina": "Imprensa",
+  "rotulo": "Foto do topo",
+  "valor": "assets/corrida-real.jpg",
+  "tipo": "foto"
+ },
  "visitar.titulo": {
   "pagina": "Quero visitar",
   "rotulo": "Título",
@@ -3108,6 +3126,12 @@ window.PNMT_CONTENT.textosPadrao = {
   "pagina": "Quero visitar",
   "rotulo": "Texto abaixo do título",
   "valor": "O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul."
+ },
+ "visitar.foto": {
+  "pagina": "Quero visitar",
+  "rotulo": "Foto do topo",
+  "valor": "espacos/ft/portico-1.jpg",
+  "tipo": "foto"
  },
  "visitar.faq1p": {
   "pagina": "Quero visitar",
@@ -3154,6 +3178,12 @@ window.PNMT_CONTENT.textosPadrao = {
   "rotulo": "Texto abaixo do título",
   "valor": "Cada assunto tem um caminho direto. Escolha o que você precisa."
  },
+ "contato.foto": {
+  "pagina": "Contato",
+  "rotulo": "Foto do topo",
+  "valor": "espacos/ft/v-arena-1.jpg",
+  "tipo": "foto"
+ },
  "trabalhe.titulo": {
   "pagina": "Trabalhe Conosco",
   "rotulo": "Título",
@@ -3163,6 +3193,12 @@ window.PNMT_CONTENT.textosPadrao = {
   "pagina": "Trabalhe Conosco",
   "rotulo": "Texto abaixo do título",
   "valor": "Faça parte da equipe que está construindo e operando o maior complexo multieventos da América Latina no coração de Mato Grosso."
+ },
+ "trabalhe.foto": {
+  "pagina": "Trabalhe Conosco",
+  "rotulo": "Foto do topo",
+  "valor": "espacos/ft/eventos-1.jpg",
+  "tipo": "foto"
  },
  "onde.titulo": {
   "pagina": "Onde estamos",
