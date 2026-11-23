@@ -535,9 +535,21 @@
   // ==========================================================================
   // 3. AGENDA & EVENTOS (CRUD)
   // ==========================================================================
+  const STATUS_LABEL = { confirmado: 'Confirmado', concluido: 'Já aconteceu' };
+
+  function hojeISO() {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Cuiaba' });
+  }
+
+  function agendaList(data) {
+    return (data.agenda || []).slice();
+  }
+
   function populateEvents() {
     const data = adminStore.getData();
-    const list = data.events || [];
+    const list = agendaList(data)
+      .map((e, idx) => ({ ...e, idx }))
+      .sort((a, b) => String(b.dataInicio).localeCompare(String(a.dataInicio)));
     const countBadge = document.getElementById('badge-events-count');
     if (countBadge) countBadge.textContent = list.length;
 
@@ -554,30 +566,42 @@
         <thead>
           <tr>
             <th>Data</th>
-            <th>Nome do Evento</th>
+            <th>Evento</th>
             <th>Categoria</th>
             <th>Local</th>
-            <th>Ingressos</th>
+            <th>Situação</th>
             <th style="text-align: right;">Ações</th>
           </tr>
         </thead>
         <tbody>
-          ${list.map((e, idx) => `
+          ${list.map((e) => `
             <tr>
-              <td><strong>${esc(formatDateBR(e.date))}</strong></td>
-              <td><strong>${esc(e.name)}</strong></td>
-              <td><span class="count-badge">${esc(e.category)}</span></td>
-              <td>${esc(e.location || '—')}</td>
-              <td>${esc(e.ticket || '—')}</td>
+              <td><strong>${esc(formatDateBR(e.dataInicio))}</strong>${e.dataFim && e.dataFim !== e.dataInicio ? `<br><small>até ${esc(formatDateBR(e.dataFim))}</small>` : ''}</td>
+              <td><strong>${esc(e.nome)}</strong></td>
+              <td><span class="count-badge">${esc(e.categoria || '—')}</span></td>
+              <td>${esc(e.espaco || '—')}</td>
+              <td>${esc((e.dataFim || e.dataInicio) < hojeISO() ? 'Já aconteceu' : (STATUS_LABEL[e.status] || e.status || '—'))}</td>
               <td style="text-align: right;">
-                <button class="btn btn-secondary btn-xs" data-action="edit-event" data-idx="${idx}">Editar</button>
-                <button class="btn btn-danger-outline btn-xs" data-action="delete-event" data-idx="${idx}">Excluir</button>
+                <button class="btn btn-secondary btn-xs" data-action="edit-event" data-idx="${e.idx}">Editar</button>
+                <button class="btn btn-danger-outline btn-xs" data-action="delete-event" data-idx="${e.idx}">Excluir</button>
               </td>
             </tr>
           `).join('')}
         </tbody>
       </table>
     `;
+  }
+
+  function fillEventSelects(data, current) {
+    const cats = [...new Set(agendaList(data).map((e) => e.categoria).filter(Boolean))].sort();
+    document.getElementById('event-category-list').innerHTML = cats.map((c) => `<option value="${esc(c)}">`).join('');
+    const spaces = (data.spaces || []).map((s) => [s.id, s.name]);
+    if (current && current.slugEspaco && !spaces.some(([id]) => id === current.slugEspaco)) {
+      spaces.unshift([current.slugEspaco, current.espaco || current.slugEspaco]);
+    }
+    document.getElementById('event-space').innerHTML =
+      '<option value="">Sem página de espaço</option>' +
+      spaces.map(([id, name]) => `<option value="${esc(id)}">${esc(name)}</option>`).join('');
   }
 
   function openEventModal(eventIdx = null) {
@@ -587,52 +611,81 @@
 
     const titleEl = document.getElementById('modal-event-title');
     const origIdEl = document.getElementById('event-orig-id');
+    const list = agendaList(data);
+    const e = eventIdx !== null ? list[eventIdx] : null;
+    fillEventSelects(data, e);
 
-    if (eventIdx !== null && data.events[eventIdx]) {
-      const e = data.events[eventIdx];
-      titleEl.textContent = 'Editar Evento';
+    if (e) {
+      titleEl.textContent = 'Editar evento';
       origIdEl.value = eventIdx;
-      document.getElementById('event-name').value = e.name || '';
-      document.getElementById('event-category').value = e.category || '';
-      document.getElementById('event-date').value = e.date || '';
-      document.getElementById('event-location').value = e.location || '';
-      document.getElementById('event-ticket').value = e.ticket || '';
-      document.getElementById('event-url').value = e.url || '';
+      document.getElementById('event-name').value = e.nome || '';
+      document.getElementById('event-date').value = e.dataInicio || '';
+      document.getElementById('event-date-end').value = e.dataFim || '';
+      document.getElementById('event-category').value = e.categoria || '';
+      document.getElementById('event-status').value = e.status === 'concluido' ? 'concluido' : 'confirmado';
+      document.getElementById('event-space').value = e.slugEspaco || '';
+      document.getElementById('event-location').value = e.espaco || '';
+      document.getElementById('event-url').value = e.linkCobertura || '';
     } else {
-      titleEl.textContent = 'Cadastrar Novo Evento';
+      titleEl.textContent = 'Cadastrar novo evento';
       origIdEl.value = '';
     }
     modalEvent.showModal();
   }
 
-  async function handleEventSubmit(e) {
-    e.preventDefault();
+  document.getElementById('event-space')?.addEventListener('change', (ev) => {
+    const loc = document.getElementById('event-location');
+    if (!loc.value.trim() && ev.target.value) {
+      loc.value = ev.target.selectedOptions[0].textContent;
+    }
+  });
+
+  function slugify(t) {
+    return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  async function handleEventSubmit(ev) {
+    ev.preventDefault();
     const data = adminStore.getData();
-    data.events = data.events || [];
+    data.agenda = agendaList(data);
     const origIdx = document.getElementById('event-orig-id').value;
 
+    const inicio = document.getElementById('event-date').value;
+    let fim = document.getElementById('event-date-end').value;
+    if (fim && fim < inicio) {
+      showToast('A data de término não pode ser antes do início.', 'error');
+      return;
+    }
+    if (fim === inicio) fim = '';
+
+    const nome = document.getElementById('event-name').value.trim();
     const eventObj = {
-      id: 'evt-' + Date.now(),
-      name: document.getElementById('event-name').value.trim(),
-      category: document.getElementById('event-category').value.trim(),
-      date: document.getElementById('event-date').value,
-      location: document.getElementById('event-location').value.trim(),
-      ticket: document.getElementById('event-ticket').value.trim(),
-      url: document.getElementById('event-url').value.trim() || '',
+      id: slugify(nome) + '-' + inicio,
+      nome,
+      dataInicio: inicio,
+      espaco: document.getElementById('event-location').value.trim(),
+      slugEspaco: document.getElementById('event-space').value,
+      categoria: document.getElementById('event-category').value.trim(),
+      status: document.getElementById('event-status').value,
     };
+    if (fim) eventObj.dataFim = fim;
+    const link = document.getElementById('event-url').value.trim();
+    if (link) eventObj.linkCobertura = link;
 
     if (origIdx !== '') {
-      eventObj.id = data.events[origIdx]?.id || eventObj.id;
-      data.events[origIdx] = eventObj;
+      const old = data.agenda[origIdx] || {};
+      eventObj.id = old.id || eventObj.id;
+      if (old.obs) eventObj.obs = old.obs;
+      data.agenda[origIdx] = eventObj;
     } else {
-      data.events.push(eventObj);
+      data.agenda.push(eventObj);
     }
 
     try {
       await adminStore.saveData(data);
       modalEvent.close();
       populateEvents();
-      showToast('Evento salvo com sucesso!');
+      showToast('Evento salvo e publicado na Agenda!');
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -640,13 +693,14 @@
 
   async function deleteEvent(idx) {
     const data = adminStore.getData();
-    if (!data.events || !data.events[idx]) return;
-    if (confirm(`Deseja excluir o evento "${data.events[idx].name}"?`)) {
-      data.events.splice(idx, 1);
+    data.agenda = agendaList(data);
+    if (!data.agenda[idx]) return;
+    if (confirm(`Deseja excluir o evento "${data.agenda[idx].nome}"?`)) {
+      data.agenda.splice(idx, 1);
       try {
         await adminStore.saveData(data);
         populateEvents();
-        showToast('Evento excluído com sucesso.');
+        showToast('Evento excluído da Agenda.');
       } catch (err) {
         showToast(err.message, 'error');
       }
