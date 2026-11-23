@@ -28,6 +28,7 @@
   const modalEvent = document.getElementById('modal-event');
   const modalNews = document.getElementById('modal-news');
   const modalPhoto = document.getElementById('modal-photo');
+  const modalJob = document.getElementById('modal-job');
 
   // Helper: Toast alerts
   let toastTimer = null;
@@ -224,6 +225,7 @@
     populateEvents();
     populateNews();
     populateGallery();
+    populateJobs();
     populateAbout();
     initEventListeners();
   }
@@ -873,7 +875,10 @@
       document.getElementById('photo-image').value = g.image || '';
       document.getElementById('photo-title').value = g.title || '';
       document.getElementById('photo-category').value = g.category || 'Espaços';
-      document.getElementById('photo-type').value = g.type || 'Fotografia';
+      document.getElementById('photo-type').value = g.type || 'Foto';
+      const cat = g.category === 'Andamento da Obra' ? 'Fotos do parque' : g.category;
+      const catSel = document.getElementById('photo-category');
+      if (cat && ![...catSel.options].some((o) => o.value === cat)) catSel.add(new Option(cat, cat));
       document.getElementById('photo-credit').value = g.credit || '';
       document.getElementById('photo-source').value = g.source || '';
       updateMediaPreview('photo-preview-box', g.image);
@@ -901,9 +906,11 @@
     };
 
     if (origIdx !== '') {
-      data.gallery[origIdx] = photoObj;
+      data.gallery[origIdx] = { ...data.gallery[origIdx], ...photoObj };
     } else {
-      data.gallery.push(photoObj);
+      // Foto nova entra no começo, para aparecer primeiro na galeria do site.
+      photoObj.id = 'gallery-painel-' + Date.now();
+      data.gallery.unshift(photoObj);
     }
 
     try {
@@ -925,6 +932,97 @@
         await adminStore.saveData(data);
         populateGallery();
         showToast('Foto excluída da galeria.');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  }
+
+  // ==========================================================================
+  // VAGAS (Trabalhe Conosco)
+  // ==========================================================================
+  function populateJobs() {
+    const data = adminStore.getData();
+    const list = data.jobs || [];
+    const countBadge = document.getElementById('badge-jobs-count');
+    if (countBadge) countBadge.textContent = list.filter((j) => j.status !== 'encerrada').length;
+    const container = document.getElementById('jobs-table-container');
+    if (!container) return;
+    if (!list.length) {
+      container.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--admin-text-muted);">Nenhuma vaga cadastrada.</div>';
+      return;
+    }
+    container.innerHTML = `
+      <table class="admin-table">
+        <thead><tr><th>Vaga</th><th>Jornada</th><th>Situação</th><th style="text-align: right;">Ações</th></tr></thead>
+        <tbody>
+          ${list.map((j, idx) => `
+            <tr>
+              <td><strong>${esc(j.title)}</strong></td>
+              <td>${esc(j.type || '—')}</td>
+              <td>${j.status === 'encerrada' ? 'Encerrada' : '<span class="count-badge">Aberta</span>'}</td>
+              <td style="text-align: right;">
+                <button class="btn btn-secondary btn-xs" data-action="edit-job" data-idx="${idx}">Editar</button>
+                <button class="btn btn-danger-outline btn-xs" data-action="delete-job" data-idx="${idx}">Excluir</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function openJobModal(idx = null) {
+    const data = adminStore.getData();
+    const form = document.getElementById('form-job');
+    form.reset();
+    const j = idx !== null ? (data.jobs || [])[idx] : null;
+    document.getElementById('job-index').value = j ? idx : '';
+    document.getElementById('modal-job-title').textContent = j ? 'Editar vaga' : 'Cadastrar nova vaga';
+    if (j) {
+      document.getElementById('job-title').value = j.title || '';
+      document.getElementById('job-type').value = j.type || 'Tempo Integral';
+      document.getElementById('job-status').value = j.status === 'encerrada' ? 'encerrada' : 'aberta';
+      document.getElementById('job-description').value = j.description || '';
+      document.getElementById('job-image').value = j.image || '';
+      document.getElementById('job-link').value = j.link || '';
+    }
+    updateMediaPreview('job-preview-box', document.getElementById('job-image').value);
+    modalJob.showModal();
+  }
+
+  async function handleJobSubmit(e) {
+    e.preventDefault();
+    const data = adminStore.getData();
+    data.jobs = data.jobs || [];
+    const idx = document.getElementById('job-index').value;
+    const job = {
+      title: document.getElementById('job-title').value.trim(),
+      type: document.getElementById('job-type').value.trim(),
+      description: document.getElementById('job-description').value.trim(),
+      link: document.getElementById('job-link').value.trim(),
+      image: document.getElementById('job-image').value.trim(),
+      status: document.getElementById('job-status').value,
+    };
+    if (idx !== '') data.jobs[idx] = { ...data.jobs[idx], ...job };
+    else data.jobs.unshift(job);
+    try {
+      await adminStore.saveData(data);
+      modalJob.close();
+      populateJobs();
+      showToast(job.status === 'aberta' ? 'Vaga salva e publicada no site!' : 'Vaga salva como encerrada.');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function deleteJob(idx) {
+    const data = adminStore.getData();
+    if (!data.jobs || !data.jobs[idx]) return;
+    if (confirm(`Deseja excluir a vaga "${data.jobs[idx].title}"? Se ela só fechou, prefira marcar como Encerrada.`)) {
+      data.jobs.splice(idx, 1);
+      try {
+        await adminStore.saveData(data);
+        populateJobs();
+        showToast('Vaga excluída.');
       } catch (err) {
         showToast(err.message, 'error');
       }
@@ -1016,6 +1114,22 @@
 
     // News modal open & submit
     document.getElementById('btn-add-news')?.addEventListener('click', () => openNewsModal(null));
+    document.getElementById('btn-add-job')?.addEventListener('click', () => openJobModal(null));
+    document.getElementById('form-job')?.addEventListener('submit', handleJobSubmit);
+    document.getElementById('job-image')?.addEventListener('input', (ev) => updateMediaPreview('job-preview-box', ev.target.value));
+    document.getElementById('job-file-input')?.addEventListener('change', async (ev) => {
+      const file = ev.target.files?.[0];
+      if (!file) return;
+      try {
+        showToast('Enviando a arte da vaga...');
+        const url = await adminStore.uploadMedia(file);
+        document.getElementById('job-image').value = url;
+        updateMediaPreview('job-preview-box', url);
+        showToast('Arte carregada!');
+      } catch (err) {
+        showToast('Erro ao carregar a arte: ' + err.message, 'error');
+      }
+    });
     document.getElementById('form-news')?.addEventListener('submit', handleNewsSubmit);
 
     // Gallery modal open & submit
@@ -1059,6 +1173,10 @@
         openPhotoModal(Number(btn.dataset.idx));
       } else if (action === 'delete-photo') {
         deletePhoto(Number(btn.dataset.idx));
+      } else if (action === 'edit-job') {
+        openJobModal(Number(btn.dataset.idx));
+      } else if (action === 'delete-job') {
+        deleteJob(Number(btn.dataset.idx));
       }
     });
 
@@ -1183,7 +1301,7 @@
   }
 
   // Start on load: espera o Supabase dizer se já existe sessão
-  const start = () => Promise.resolve(adminStore.ready).then(checkAuth, checkAuth);
+  const start = () => Promise.all([adminStore.ready, adminStore.loaded]).then(checkAuth, checkAuth);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 })();
