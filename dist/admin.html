@@ -7,7 +7,7 @@
     <title>Painel Administrativo | Parque Novo Mato Grosso</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="fonts.css">
-    <link rel="stylesheet" href="admin.css?v=auth-20261123-1">
+    <link rel="stylesheet" href="admin.css?v=painel-20261123-3">
   </head>
   <body>
     <!-- Login Screen -->
@@ -85,9 +85,9 @@
           <button class="nav-tab active" data-tab="tab-general">
             <span class="nav-icon">🏠</span> Geral & Home
           </button>
-          <button class="nav-tab" data-tab="tab-spaces">
-            <span class="nav-icon">🏛️</span> Espaços do Parque
-            <span class="count-badge" id="badge-spaces-count">21</span>
+          <button class="nav-tab" data-tab="tab-paginas">
+            <span class="nav-icon">🏛️</span> Páginas dos Espaços
+            <span class="count-badge" id="badge-paginas-count">0</span>
           </button>
           <button class="nav-tab" data-tab="tab-events">
             <span class="nav-icon">📅</span> Agenda & Eventos
@@ -277,7 +277,19 @@
           </section>
 
           <!-- TAB 2: ESPAÇOS -->
-          <section id="tab-spaces" class="tab-pane">
+          <section id="tab-paginas" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Páginas dos Espaços</h2>
+                <p>Textos, dados técnicos e capa de cada página em Conheça os Espaços. As fotos de cada página vêm do álbum do espaço na Galeria.</p>
+              </div>
+            </div>
+            <div class="table-card">
+              <div id="paginas-table-container"></div>
+            </div>
+          </section>
+
+          <section id="tab-spaces" class="tab-pane" hidden>
             <div class="pane-header">
               <div>
                 <h2>Gerenciador de Espaços</h2>
@@ -624,6 +636,26 @@
               <input type="text" id="event-location" required placeholder="Ex: Kartódromo">
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Foto do evento <small>(opcional; sem foto, usa a do espaço)</small></label>
+              <div class="media-upload-widget">
+                <div class="media-preview" id="event-foto-preview"></div>
+                <div class="media-actions">
+                  <label class="btn btn-secondary btn-sm file-upload-btn">
+                    <span>📁 Selecionar Imagem</span>
+                    <input type="file" accept="image/*" id="event-foto-file">
+                  </label>
+                  <input type="text" id="event-foto" class="url-input" placeholder="URL da foto">
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-6">
+              <label for="event-video">Vídeo do evento <small>(opcional, link do YouTube)</small></label>
+              <input type="text" id="event-video" placeholder="https://www.youtube.com/watch?v=...">
+              <p class="form-help">Aparece no destaque da Agenda quando o evento é o próximo.</p>
+            </div>
+          </div>
           <div class="form-group">
             <label for="event-url">Link da cobertura ou dos ingressos <small>(opcional)</small></label>
             <input type="text" id="event-url" placeholder="https://... ou #imprensa">
@@ -685,6 +717,77 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
             <button type="submit" class="btn btn-primary">Salvar vaga</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog id="modal-pagina" class="admin-modal admin-modal-wide">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3 id="modal-pagina-title">Editar página</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-pagina" class="modal-body">
+          <input type="hidden" id="pagina-id">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="pagina-nome">Nome do espaço *</label>
+              <input type="text" id="pagina-nome" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="pagina-sit">Situação</label>
+              <select id="pagina-sit">
+                <option value="ok">Em funcionamento</option>
+                <option value="obra">Em obras</option>
+                <option value="">Não mostrar</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="pagina-lead">Frase da capa *</label>
+            <input type="text" id="pagina-lead" required>
+          </div>
+          <div class="form-group">
+            <label for="pagina-tag">Título da apresentação * <small>(a 2ª linha sai em destaque colorido)</small></label>
+            <textarea id="pagina-tag" rows="2" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="pagina-txt">Texto da apresentação * <small>(deixe uma linha em branco entre os parágrafos)</small></label>
+            <textarea id="pagina-txt" rows="8" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="pagina-d">Dados técnicos <small>(um por linha, no formato Rótulo: valor)</small></label>
+            <textarea id="pagina-d" rows="5" placeholder="Circuito misto: 4.500 m"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="pagina-sec">Blocos da faixa azul <small>(título na 1ª linha, texto na 2ª; linha em branco entre blocos)</small></label>
+            <textarea id="pagina-sec" rows="8"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Foto de capa <small>(opcional, troca a capa atual)</small></label>
+              <div class="media-upload-widget">
+                <div class="media-preview" id="pagina-capa-preview"></div>
+                <div class="media-actions">
+                  <label class="btn btn-secondary btn-sm file-upload-btn">
+                    <span>📁 Selecionar Imagem</span>
+                    <input type="file" accept="image/*" id="pagina-capa-file">
+                  </label>
+                  <input type="text" id="pagina-capa-foto" class="url-input" placeholder="Deixe vazio para manter a atual">
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-6">
+              <label for="pagina-capa-video">Vídeo de capa <small>(opcional, link de arquivo .mp4)</small></label>
+              <input type="url" id="pagina-capa-video" placeholder="https://.../video.mp4">
+              <p class="form-help">Vídeo curto, sem som, de até 15 MB. Deixe vazio para manter o atual.</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger-outline" id="btn-pagina-restaurar">Voltar ao texto original</button>
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar página</button>
           </div>
         </form>
       </div>
@@ -806,7 +909,8 @@
     <script charset="utf-8" src="config.js?v=formularios-20261107-1"></script>
     <script charset="utf-8" src="content.js?v=agenda-20261123-1"></script>
     <script charset="utf-8" src="supabase.js?v=auth-20261123-1"></script>
-    <script charset="utf-8" src="admin-data.js?v=painel-20261123-2"></script>
-    <script charset="utf-8" src="admin.js?v=painel-20261123-2"></script>
+    <script charset="utf-8" src="espacos/dados.js?v=painel-20261123-3"></script>
+    <script charset="utf-8" src="admin-data.js?v=painel-20261123-3"></script>
+    <script charset="utf-8" src="admin.js?v=painel-20261123-3"></script>
   </body>
 </html>

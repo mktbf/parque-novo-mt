@@ -273,7 +273,7 @@
     const feat = upcoming[0];
     const featParts = formatEventDateParts(feat.dataInicio);
     const isToday = String(feat.dataInicio) <= todayStr;
-    const featPhoto = eventSpacePhoto(feat.espaco);
+    const featPhoto = feat.foto || eventSpacePhoto(feat.espaco);
     const nextFour = upcoming.slice(1, 5);
     const pinSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
 
@@ -570,7 +570,9 @@ async function updateAgenda() {
       const firstMonth = formatMonth(nextEvent.parsedStart);
       const destaqueHtml = `
         <div class="agenda-destaque wrap">
-          <img src="${asset('assets/gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg')}" alt="${nextEvent.espaco}" class="destaque-img" onerror="this.onerror=null;this.src='assets/gallery/parque-da-familia-01.jpg'">
+          ${/^[\w-]{11}$/.test(nextEvent.video || '')
+            ? `<div class="destaque-img destaque-video"><iframe src="https://www.youtube-nocookie.com/embed/${nextEvent.video}?rel=0" title="Vídeo: ${esc(nextEvent.nome)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`
+            : `<img src="${esc(nextEvent.foto || asset('assets/gallery/' + (nextEvent.slugEspaco || 'parque-da-familia') + '-01.jpg'))}" alt="${esc(nextEvent.espaco)}" class="destaque-img" onerror="this.onerror=null;this.src='assets/gallery/parque-da-familia-01.jpg'">`}
           <div class="destaque-info">
             <div class="destaque-tags">
               <span class="tag-proximo">${isLive ? 'Hoje no parque' : 'Próximo evento'}</span>
