@@ -37,6 +37,14 @@ function aplicarPainel(){
 }
 aplicarPainel();
 window.addEventListener('pnmt:content-updated', aplicarPainel);
+// Textos editáveis do Onde estamos (padrão em content.js -> textosPadrao).
+const escT = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function TX(k){
+  let v = null;
+  try { const t = window.PNMT_ADMIN_DATA && window.PNMT_ADMIN_DATA.getData().textos; v = t && t[k]; } catch(e) {}
+  if (v == null || String(v).trim() === '') { const d = window.PNMT_CONTENT && window.PNMT_CONTENT.textosPadrao && window.PNMT_CONTENT.textosPadrao[k]; v = d ? d.valor : ''; }
+  return escT(v);
+}
 const CHEG = [
  ['Pórtico de Entrada','Inspirado no voo do tuiuiú, ave símbolo do Pantanal.','portico-1'],
  ['Estacionamento','Vagas em pontos estratégicos para grandes públicos.','v-estacionamento'],
@@ -126,15 +134,15 @@ function apMapa(){
     <span class="m pin" style="left:37.9%;top:42.4%;width:calc(30 * var(--k));height:calc(30 * var(--k));border-radius:50%;background:#3E9E36;border:calc(5 * var(--k)) solid #fff;box-shadow:0 4px 14px rgba(13,43,77,.25)"></span>
     <div class="l r" style="right:64%;top:26%;gap:6px"><b style="${fs(26)};line-height:.95;color:#2F7A2A">Parque Novo<br>Mato Grosso</b><span class="s" style="max-width:calc(210 * var(--k))">Acesso pela Estrada Parque Novo Mato Grosso, à esquerda da MT-251</span></div>
     <span class="m cid" style="left:27.5%;top:84.7%;width:calc(40 * var(--k));height:calc(40 * var(--k));border-radius:10px;background:#0D2B4D;border:3px solid #fff;box-shadow:0 4px 12px rgba(13,43,77,.25);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true" style="position:static;width:60%;height:60%"><path d="M3 21V11l5-3v13M8 21V5l7-3v19M15 21V9l6 3v9M2 21h20"/><path d="M11 7h1M11 10h1M11 13h1M18 14h1M18 17h1" stroke-linecap="round"/></svg></span>
-    <div class="l" style="left:30.5%;top:86%"><b style="${fs(26)}">Cuiabá</b><span class="s"><b>19 km · 24 min</b></span></div>
+    <div class="l" style="left:30.5%;top:86%"><b style="${fs(26)}">Cuiabá</b><span class="s"><b>${TX('onde.distCuiaba')}</b></span></div>
     <span class="m ic" style="left:9.2%;top:90.3%">${AP_AV}</span>
-    <div class="l" style="left:2.5%;top:72.5%"><b style="${fs(18)};line-height:1.05">Aeroporto Internacional<br>Marechal Rondon</b><span class="s">Várzea Grande · <b>25 km · 32 min</b></span></div>
+    <div class="l" style="left:2.5%;top:72.5%"><b style="${fs(18)};line-height:1.05">Aeroporto Internacional<br>Marechal Rondon</b><span class="s">Várzea Grande · <b>${TX('onde.distMR')}</b></span></div>
     <span class="m ic" style="left:25%;top:60%">${AP_AV}</span>
-    <div class="l r" style="right:77.5%;top:56.5%"><b style="${fs(18)}">Aeroporto Bom Futuro</b><span class="s"><b>16 km · 16 min</b></span></div>
+    <div class="l r" style="right:77.5%;top:56.5%"><b style="${fs(18)}">Aeroporto Bom Futuro</b><span class="s"><b>${TX('onde.distBF')}</b></span></div>
     <span class="m ic" style="left:90%;top:41.7%;border-radius:50%;border-width:3px;width:calc(34 * var(--k));height:calc(34 * var(--k))"><svg viewBox="0 0 24 24" fill="none" stroke="#0D2B4D" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M2 20 9 7l4 6 3-4 6 11Z"/></svg></span>
-    <div class="l r" style="right:3%;top:48%"><b style="${fs(22)}">Chapada dos Guimarães</b><span class="s">Siga em frente pela MT-251 · <b>58 km · 49 min</b></span></div>
+    <div class="l r" style="right:3%;top:48%"><b style="${fs(22)}">Chapada dos Guimarães</b><span class="s">Siga em frente pela MT-251 · <b>${TX('onde.distChapada')}</b></span></div>
     <span class="m" style="left:76.3%;top:9.7%;width:calc(18 * var(--k));height:calc(18 * var(--k));border-radius:50%;background:#1565A3;border:calc(4 * var(--k)) solid #fff"></span>
-    <div class="l" style="left:79%;top:3%"><b style="${fs(22)}">Lago de Manso</b><span class="s">Pela MT-351 · <b>96 km · 1h05</b></span></div>
+    <div class="l" style="left:79%;top:3%"><b style="${fs(22)}">Lago de Manso</b><span class="s">Pela MT-351 · <b>${TX('onde.distManso')}</b></span></div>
     <span class="sh" style="left:34%;top:66%;transform:rotate(-42deg)">MT-251</span>
     <span class="sh" style="left:70%;top:31%;transform:rotate(14deg)">MT-251</span>
     <span class="sh" style="left:60%;top:18%;transform:rotate(-50deg);border-color:#1565A3;color:#1565A3">MT-351</span>
@@ -150,11 +158,11 @@ function apDest(){
   const it = (ic, n, s, t) => `<li><i>${ic}</i><div><b>${n}</b><small>${s}</small></div><em>${t}</em></li>`;
   return `<ul class="ap-dest">${[
     it('<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#3E9E36"/></svg>', 'Parque Novo Mato Grosso', 'Acesso à esquerda da MT-251', ''),
-    it(cid, 'Cuiabá', 'Pela MT-251', '19 km · 24 min'),
-    it(AP_AV, 'Aeroporto Bom Futuro', 'Cuiabá', '16 km · 16 min'),
-    it(AP_AV, 'Aeroporto Internacional Marechal Rondon', 'Várzea Grande', '25 km · 32 min'),
-    it(mon, 'Chapada dos Guimarães', 'Siga em frente pela MT-251', '58 km · 49 min'),
-    it(lago, 'Lago de Manso', 'Pela MT-351', '96 km · 1h05')].join('')}</ul>`;
+    it(cid, 'Cuiabá', 'Pela MT-251', TX('onde.distCuiaba')),
+    it(AP_AV, 'Aeroporto Bom Futuro', 'Cuiabá', TX('onde.distBF')),
+    it(AP_AV, 'Aeroporto Internacional Marechal Rondon', 'Várzea Grande', TX('onde.distMR')),
+    it(mon, 'Chapada dos Guimarães', 'Siga em frente pela MT-251', TX('onde.distChapada')),
+    it(lago, 'Lago de Manso', 'Pela MT-351', TX('onde.distManso'))].join('')}</ul>`;
 }
 // Onde estamos: o caminho em uma linha, de Cuiaba a Chapada (no celular vira a lista apDest).
 function apLinha(){
@@ -162,12 +170,12 @@ function apLinha(){
   const mon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20 9 7l4 6 3-4 6 11Z" fill="none" stroke="#0D2B4D" stroke-width="2.4" stroke-linejoin="round"/></svg>';
   return `<figure class="ap-ln" role="img" aria-label="Caminho de Cuiabá ao parque pela MT-251, seguindo para a Chapada dos Guimarães, com saída pela MT-351 para o Lago de Manso">
     <span class="trk"></span><span class="br"></span><span class="sh">MT-251</span>
-    ${st(7,'','','Aeroporto Marechal Rondon','Várzea Grande · 25 km · 32 min')}
-    ${st(27,'cid','','Cuiabá','19 km · 24 min')}
-    ${st(42,'','','Aeroporto Bom Futuro','16 km · 16 min')}
+    ${st(7,'','','Aeroporto Marechal Rondon','Várzea Grande · ' + TX('onde.distMR'))}
+    ${st(27,'cid','','Cuiabá',TX('onde.distCuiaba'))}
+    ${st(42,'','','Aeroporto Bom Futuro',TX('onde.distBF'))}
     <div class="ap-st pk" style="--x:61%"><i></i><div class="t"><em>Você está aqui</em><b>Parque Novo<br>Mato Grosso</b></div></div>
-    ${st(92,'lg','','Lago de Manso','Pela MT-351 · 96 km · 1h05')}
-    ${st(94,'ch',mon,'Chapada dos Guimarães','Siga em frente · 58 km · 49 min')}
+    ${st(92,'lg','','Lago de Manso','Pela MT-351 · ' + TX('onde.distManso'))}
+    ${st(94,'ch',mon,'Chapada dos Guimarães','Siga em frente · ' + TX('onde.distChapada'))}
     <figcaption>Esquema fora de escala. Tempos de carro a partir do parque.</figcaption>
   </figure>`;
 }
@@ -175,11 +183,11 @@ function apLinha(){
 function apSobre(){
   return `<div class="ap ap-sobre" id="apsobre">
   <section class="ap-hero" aria-labelledby="ap-t1"><img src="${ft('hero-parque')}" alt="Vista aérea do Parque Novo Mato Grosso" loading="lazy">
-    <div class="w ap-hin"><div><span class="ap-tag">Onde estamos</span><h2 id="ap-t1">Quinhentos hectares no centro da América do Sul.</h2><p>No Centro Geodésico da América do Sul, na estrada que leva à Chapada dos Guimarães, o Parque Novo Mato Grosso reúne lagos, arenas e acessos pensados para receber grandes públicos e eventos ao mesmo tempo.</p><div class="ap-hb"><a class="ap-btn g" href="${apRota()}" target="_blank" rel="noopener">Como chegar ↗</a><button type="button" class="ap-btn o" id="apcam">Ver o caminho ↓</button></div></div>
-    <dl class="ap-num"><div><dt>Área total</dt><dd>500 ha</dd></div><div><dt>Lâmina d'água</dt><dd style="color:#6CBBF0">130 ha</dd></div><div><dt>Construção e acessos</dt><dd style="color:#F2AE66">330 ha</dd></div></dl></div>
+    <div class="w ap-hin"><div><span class="ap-tag">Onde estamos</span><h2 id="ap-t1">${TX('onde.titulo')}</h2><p>${TX('onde.texto')}</p><div class="ap-hb"><a class="ap-btn g" href="${apRota()}" target="_blank" rel="noopener">Como chegar ↗</a><button type="button" class="ap-btn o" id="apcam">Ver o caminho ↓</button></div></div>
+    <dl class="ap-num"><div><dt>Área total</dt><dd>${TX('onde.area')}</dd></div><div><dt>Lâmina d'água</dt><dd style="color:#6CBBF0">${TX('onde.agua')}</dd></div><div><dt>Construção e acessos</dt><dd style="color:#F2AE66">${TX('onde.construcao')}</dd></div></dl></div>
   </section>
   <section class="ap-rota" id="aprota" aria-labelledby="ap-t2"><div class="w">
-    <div class="ap-top"><div><span class="ap-ey">Onde fica</span><h3 id="ap-t2">A 25 minutos de Cuiabá.<br><span style="color:#2F7A2A">A caminho da Chapada.</span></h3></div><p>Saindo de Cuiabá pela MT-251, a estrada da Chapada, o acesso ao parque fica à esquerda. Seguindo em frente, a Chapada dos Guimarães, o cartão-postal de Mato Grosso. Pela MT-351, o Lago de Manso.</p></div>
+    <div class="ap-top"><div><span class="ap-ey">Onde fica</span><h3 id="ap-t2">${TX('onde.rotaTitulo1')}<br><span style="color:#2F7A2A">${TX('onde.rotaTitulo2')}</span></h3></div><p>${TX('onde.rotaTexto')}</p></div>
     ${apMapa()}
     ${apDest()}
     <div class="ap-cta"><a class="ap-btn" href="${apRota()}" target="_blank" rel="noopener">Como chegar ↗</a><span>Abre o Apple Maps no iPhone e o Google Maps nos outros celulares.</span></div>

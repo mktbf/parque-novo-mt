@@ -19,6 +19,7 @@
       if (adminData.values) data.values = adminData.values;
       if (adminData.agenda && adminData.agenda.length) data.agenda = adminData.agenda;
       if (Array.isArray(adminData.jobs)) data.jobs = adminData.jobs;
+      if (Array.isArray(adminData.carrossel) && adminData.carrossel.length) data.carrossel = adminData.carrossel;
       if (adminData.general) {
         const g = adminData.general;
         if (g.videoId) {
@@ -29,6 +30,7 @@
         if (g.facebook) config.facebook = g.facebook;
         if (g.youtube) config.youtube = g.youtube;
         if (g.mapUrl) config.map = g.mapUrl;
+        if (Array.isArray(g.videos)) config.videos = g.videos;
       }
     }
   }
@@ -58,6 +60,14 @@
     if (['autodromo-real', 'corrida-real', 'aerial-real'].includes(name)) return `assets/${name}.jpg`;
     if (supportsWebP && webpAvailable.has(name)) return `assets/${name}.webp`;
     return `assets/${name}.png`;
+  };
+
+  // Textos editáveis pelo painel (com o padrão em content.js).
+  const T = (k) => {
+    const v = adminData && adminData.textos && adminData.textos[k];
+    if (v != null && String(v).trim() !== '') return v;
+    const d = data.textosPadrao && data.textosPadrao[k];
+    return d ? d.valor : '';
   };
 
   const esc = (s) =>
@@ -168,60 +178,15 @@
     `<div class="video-section"><img src="${asset('entrance')}" alt="Pórtico de entrada do parque" loading="lazy"><button data-action="video"><span class="play" aria-hidden="true">▶</span> Assista ao vídeo de apresentação</button></div><div class="video-caption"><p>Um novo olhar sobre Mato Grosso.</p>${external('https://www.youtube.com/watch?v=' + config.videoId, 'Assistir no YouTube', '')}</div>`;
 
   const visitStrip = () =>
-    `<section class="visit-strip"><div><h2>Venha conhecer de perto.</h2><p>Escolas, grupos de turismo, empresas e delegações técnicas. Sua próxima descoberta começa aqui.</p></div><a class="button light" href="#visitar">Planeje sua visita <span>↗</span></a></section>`;
+    `<section class="visit-strip"><div><h2>${esc(T('inicio.faixaTitulo'))}</h2><p>${esc(T('inicio.faixaTexto'))}</p></div><a class="button light" href="#visitar">Planeje sua visita <span>↗</span></a></section>`;
 
   function referenceCards() {
-    const fixed = [
-      { id: 'autodromo', image: 'espacos/ft/autodromo-noite.jpg', label: 'Autódromo' },
-      { id: 'arena-show', image: 'espacos/ft/v-arena-2.jpg', label: 'Arena Show' },
-      { id: 'skate-park', image: 'assets/fotos/skate-aerea-2.jpg', label: 'Complexo de Skate' },
-      { id: 'circo-do-futuro', image: 'espacos/ft/v-circo.jpg', pos: '55% 88%', label: 'Circo do Futuro' },
-      { id: 'roda-gigante', image: 'wheel', label: 'Roda-gigante' },
-      { id: 'centro-de-eventos', image: 'espacos/ft/v-eventos.jpg', label: 'Centro de Eventos' },
-    ];
-
-    // Fotos reais da obra no carrossel; quem ainda não tem foto segue com a perspectiva.
-    const foto = {
-      kartodromo: 'espacos/ft/v-kartodromo-2.jpg',
-      motocross: 'espacos/ft/v-motocross-1.jpg',
-      bmx: 'espacos/ft/v-bmx.jpg',
-      'wake-park': 'espacos/ft/v-wake.jpg',
-      'arvore-da-vida': 'espacos/ft/v-arvore.jpg',
-      'parque-da-familia': 'assets/fotos/familia-5.jpg',
-      agroplace: 'espacos/ft/v-agroplace.jpg',
-      museus: 'espacos/ft/v-museus.jpg',
-      'casa-cuiabana': 'espacos/ft/v-casa.jpg',
-      'vila-das-nacoes': 'assets/fotos/vila-noite-3.jpg',
-      'praca-de-alimentacao': 'espacos/ft/v-praca.jpg',
-    };
-
-    const list = [
-      ...fixed.map((f) => {
-        const sp = byId(f.id) || {};
-        return {
-          id: f.id,
-          image: f.image || sp.image,
-          pos: f.pos || '',
-          category: sp.category || '',
-          label: f.label || sp.name,
-          copy: sp.tagline || '',
-        };
-      }),
-      ...data.spaces
-        .filter((s) => !fixed.some((x) => x.id === s.id))
-        .map((s) => ({
-          id: s.id,
-          image: foto[s.id] || s.image,
-          category: s.category || '',
-          label: s.short || s.name,
-          copy: s.tagline || '',
-        })),
-    ];
-
+    // Cards do carrossel: padrão em content.js (carrossel), editável no painel.
+    const list = (data.carrossel || []).filter((c) => c && c.visivel !== false && c.id);
     return list
       .map(
         (s, i) =>
-          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${s.id}" aria-label="Conhecer ${esc(s.label)}">${s.image ? `<div class="reference-space-card-media"><img src="${asset(s.image)}" alt="" loading="lazy"${s.pos ? ` style="object-position:${s.pos}"` : ''}></div>` : ''}<div class="reference-space-card-copy"><span class="reference-space-card-cat">${esc(s.category)}</span><h3>${esc(s.label)}</h3><p>${esc(s.copy)}</p></div></a>`
+          `<a class="reference-space-card reference-card-${i % 6} ${s.image ? '' : 'reference-card-type'}" href="#espaco/${esc(s.id)}" aria-label="Conhecer ${esc(s.label)}">${s.image ? `<div class="reference-space-card-media"><img src="${esc(asset(s.image))}" alt="" loading="lazy"${s.pos ? ` style="object-position:${esc(s.pos)}"` : ''}></div>` : ''}<div class="reference-space-card-copy"><span class="reference-space-card-cat">${esc(s.category)}</span><h3>${esc(s.label)}</h3><p>${esc(s.copy)}</p></div></a>`
       )
       .join('');
   }
@@ -513,8 +478,8 @@ async function updateAgenda() {
     <section class="agenda-hero">
       <div class="agenda-hero-content">
         ${crumb('<a href="#agenda">Agenda</a>')}
-        <h1>O que está por vir.</h1>
-        <p>Shows, corridas, campeonatos, feiras e eventos culturais. Escolha o que você quer viver.</p>
+        <h1>${esc(T('agenda.titulo'))}</h1>
+        <p>${esc(T('agenda.subtitulo'))}</p>
       </div>
       <div class="agenda-hero-stats">
         <div class="stat-box">
@@ -705,8 +670,8 @@ async function updateAgenda() {
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px;">
           <div style="flex: 1 1 500px;">
             ${crumb('Imprensa')}
-            <h1>O parque em movimento.</h1>
-            <p style="color: #dce5ec; max-width: 620px; margin-top: 20px; font-size: 16px;">Jornalistas, ve&iacute;culos e produtores encontram aqui informa&ccedil;&otilde;es para contar essa hist&oacute;ria com precis&atilde;o.</p>
+            <h1>${esc(T('imprensa.titulo'))}</h1>
+            <p style="color: #dce5ec; max-width: 620px; margin-top: 20px; font-size: 16px;">${esc(T('imprensa.subtitulo'))}</p>
           </div>
           <div style="margin-bottom: 20px;">
             <button type="button" class="button" onclick="document.getElementById('assessoria').scrollIntoView({behavior:'smooth'})" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;">Pauta, entrevista e credenciamento &nearr;</button>
@@ -1023,11 +988,7 @@ async function updateAgenda() {
 
   function gallery() {
     return (
-      intro(
-        'O parque em imagens.',
-        'Fotos, vistas aéreas e perspectivas oficiais do Parque Novo Mato Grosso.',
-        'Galeria de fotos'
-      ) +
+      intro(esc(T('galeria.titulo')), esc(T('galeria.subtitulo')), 'Galeria de fotos') +
       `<section class="wrap">${filters(['Todas', 'Fotos do parque', 'Vista aérea', 'Projeto'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="gallery-more" id="gallery-more" hidden></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
     );
   }
@@ -1067,12 +1028,8 @@ async function updateAgenda() {
   // === VISITAS ===
   function visits() {
     return (
-      intro(
-        'Venha conhecer de perto.',
-        'O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul.',
-        'Quero visitar'
-      ) +
-      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq"><details open><summary>O que levar?</summary><p>Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre.</p></details><details><summary>Quais áreas fazem parte da visita?</summary><p>O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe.</p></details><details><summary>Como chegam ônibus e vans?</summary><p>Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia.</p></details></div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
+      intro(esc(T('visitar.titulo')), esc(T('visitar.subtitulo')), 'Quero visitar') +
+      `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq">${[1, 2, 3].filter((n) => T('visitar.faq' + n + 'p')).map((n) => `<details${n === 1 ? ' open' : ''}><summary>${esc(T('visitar.faq' + n + 'p'))}</summary><p>${esc(T('visitar.faq' + n + 'r'))}</p></details>`).join('')}</div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
     );
   }
 
@@ -1177,8 +1134,8 @@ async function updateAgenda() {
   function contact(event = false) {
     return (
       intro(
-        event ? 'Seu próximo grande evento.' : 'Fale com o parque.',
-        'Cada assunto tem um caminho direto. Escolha o que você precisa.',
+        esc(event ? T('contato.tituloEvento') : T('contato.titulo')),
+        esc(T('contato.subtitulo')),
         'Contato'
       ) +
       `<section class="wrap service-layout"><div class="service-copy"><span class="kicker">QUERO REALIZAR MEU EVENTO</span><h2>Shows, feiras,<br>competições e<br>grandes encontros.</h2><p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para o seu formato, do espaço à operação.</p><p>Retorno previsto em até dois dias úteis após o recebimento.</p>${eventMapCard()}</div>${eventForm()}</section><section class="wrap" style="padding-top:0"><h2>Outros caminhos.</h2><div class="contact-paths"><a href="#visitar"><h3>Quero visitar o parque.</h3><p>Visitas guiadas para grupos escolares, de turismo e corporativos.</p><span>Ir para visitas ↗</span></a><a href="#imprensa"><h3>Pauta e entrevista.</h3><p>Solicitações da imprensa e acesso ao material oficial.</p><span>Ir para imprensa ↗</span></a><a href="#outros-assuntos"><h3>Vamos conversar.</h3><p>Fornecedores, propostas comerciais, parcerias e assuntos institucionais.</p><span>Outros assuntos ↗</span></a></div></section>`
@@ -1577,7 +1534,7 @@ async function updateAgenda() {
     `;
 
     return css + 
-      intro('Construa o futuro com a gente.', 'Faça parte da equipe que está construindo e operando o maior complexo multieventos da América Latina no coração de Mato Grosso.', 'Trabalhe Conosco').replace('</section>', 
+      intro(esc(T('trabalhe.titulo')), esc(T('trabalhe.subtitulo')), 'Trabalhe Conosco').replace('</section>', 
       `<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
           <button class="button" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;" onclick="document.querySelector('.jobs-board').scrollIntoView({behavior:'smooth'})">Ver vagas abertas (${jobsCount})</button>
           <button class="button light" style="white-space: nowrap; border: 1px solid white;" onclick="window.scrollToForm('Banco de talentos (candidatura espontânea)', null)">Cadastrar no Banco de Talentos &nearr;</button>
