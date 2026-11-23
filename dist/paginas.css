@@ -123,15 +123,16 @@
 
 /* ---------- Contato: formulário antes do mapa no celular ---------- */
 .service-layout:has(> .service-map) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
   grid-template-areas: "copy form" "map form";
   grid-template-rows: auto 1fr;
   row-gap: 32px;
 }
-.service-layout > .service-copy { grid-area: copy; }
+.service-layout:has(> .service-map) > .service-copy { grid-area: copy; }
 .service-layout:has(> .service-map) > .service-form { grid-area: form; align-self: start; }
-.service-layout > .service-map { grid-area: map; }
+.service-layout:has(> .service-map) > .service-map { grid-area: map; }
 @media (max-width: 900px) {
-  .service-layout:has(> .service-map) { grid-template-areas: "copy" "form" "map"; grid-template-rows: auto; }
+  .service-layout:has(> .service-map) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "form" "map"; grid-template-rows: auto; }
 }
 
 /* ---------- Início: próximos eventos com poucos eventos ---------- */
