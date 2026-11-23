@@ -1,0 +1,157 @@
+/* Páginas internas com a mesma linguagem das páginas dos espaços.
+   Foto de topo: definida no painel (Textos das Páginas > Foto do topo). */
+:root {
+  --pg-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --pg-ink: #0D2B4D;
+  --pg-cream: #F5F3EE;
+  --pg-green: #58B947;
+}
+
+/* ---------- Topo com foto ---------- */
+.page-intro.has-photo,
+.agenda-hero.has-photo {
+  position: relative;
+  overflow: hidden;
+  background: var(--pg-ink) var(--hero-img, none) center 45% / cover no-repeat !important;
+  color: #fff;
+}
+.page-intro.has-photo::before,
+.agenda-hero.has-photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(13, 43, 77, .30) 0%, rgba(13, 43, 77, .55) 45%, rgba(13, 43, 77, .92) 100%);
+  pointer-events: none;
+}
+.page-intro.has-photo > *,
+.agenda-hero.has-photo > * { position: relative; z-index: 1; }
+.agenda-hero.has-photo .agenda-tabs { position: absolute; z-index: 2; }
+
+.page-intro.has-photo:not(.press-intro) {
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 64px !important;
+}
+.press-intro.has-photo { padding-top: 150px !important; padding-bottom: 56px !important; }
+.agenda-hero.has-photo { padding-top: 150px !important; align-items: flex-end; }
+
+/* ---------- Títulos ---------- */
+.page-intro h1,
+.agenda-hero h1 {
+  font-family: var(--pg-display) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  font-size: clamp(52px, 6.4vw, 104px) !important;
+  line-height: .9 !important;
+  letter-spacing: 0 !important;
+  max-width: 14ch;
+  margin: 14px 0 18px !important;
+}
+.page-intro.has-photo p,
+.agenda-hero.has-photo p {
+  font-size: 17px !important;
+  max-width: 580px;
+  color: rgba(255, 255, 255, .88) !important;
+}
+.page-intro.has-photo .crumb,
+.agenda-hero.has-photo .crumb {
+  font-family: var(--pg-display);
+  font-weight: 600;
+  font-size: 13px !important;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: var(--pg-green);
+  color: #fff !important;
+  display: inline-block;
+  width: max-content;
+  max-width: 100%;
+  padding: 3px 10px;
+}
+.page-intro.has-photo .crumb a,
+.agenda-hero.has-photo .crumb a { color: #fff !important; }
+
+.service-copy h2,
+.service-form h3,
+.agenda-month-title,
+.destaque-info h2,
+#main .wrap > h2,
+.section-head h2 {
+  font-family: var(--pg-display) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0 !important;
+  line-height: .95 !important;
+}
+.service-copy h2,
+#main .wrap > h2,
+.section-head h2 { font-size: clamp(40px, 4.6vw, 64px) !important; }
+.destaque-info h2 { font-size: clamp(36px, 3.6vw, 52px) !important; }
+.kicker {
+  font-family: var(--pg-display) !important;
+  font-weight: 600 !important;
+  letter-spacing: 2.8px !important;
+  font-size: 13.5px !important;
+}
+
+/* Números da Agenda */
+.agenda-hero.has-photo .stat-box {
+  background: rgba(13, 43, 77, .55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, .14);
+}
+.agenda-hero .stat-num { font-family: var(--pg-display); font-size: 44px !important; line-height: 1; }
+
+/* ---------- Agenda: alinhamento e vazio ---------- */
+.agenda-tabs { left: 5% !important; }
+.agenda-month-title.wrap { padding-top: 0 !important; padding-bottom: 8px !important; margin-top: 8px !important; }
+.agenda-list-card.wrap {
+  width: auto;
+  max-width: calc(1400px - 10%);
+  margin-left: 5% !important;
+  margin-right: 5% !important;
+}
+@media (min-width: 1556px) {
+  .agenda-list-card.wrap { margin-left: auto !important; margin-right: auto !important; max-width: 1260px; }
+}
+@media (max-width: 900px) {
+  .agenda-list-card.wrap { margin-left: 6% !important; margin-right: 6% !important; }
+}
+
+/* ---------- Contato: formulário antes do mapa no celular ---------- */
+.service-layout:has(> .service-map) {
+  grid-template-areas: "copy form" "map form";
+  grid-template-rows: auto 1fr;
+  row-gap: 32px;
+}
+.service-layout > .service-copy { grid-area: copy; }
+.service-layout:has(> .service-map) > .service-form { grid-area: form; align-self: start; }
+.service-layout > .service-map { grid-area: map; }
+@media (max-width: 900px) {
+  .service-layout:has(> .service-map) { grid-template-areas: "copy" "form" "map"; grid-template-rows: auto; }
+}
+
+/* ---------- Início: próximos eventos com poucos eventos ---------- */
+.reference-events-list:has(.reference-events-promo) .reference-event-row { flex: 0 0 auto; }
+.reference-events-list .reference-events-promo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 220px;
+  margin: 16px;
+  background:
+    linear-gradient(180deg, rgba(13, 43, 77, .35) 0%, rgba(13, 43, 77, .94) 70%),
+    url('espacos/ft/v-arena-1.jpg') center / cover no-repeat;
+}
+
+/* ---------- Imprensa: botão depois dos 6 álbuns ---------- */
+.press-albums-more { display: flex; justify-content: center; margin-top: 36px; }
+
+@media (max-width: 700px) {
+  .page-intro.has-photo:not(.press-intro) { min-height: 380px; padding-bottom: 44px !important; }
+  .agenda-hero.has-photo, .press-intro.has-photo { padding-top: 110px !important; }
+}

@@ -149,8 +149,8 @@
   // === UI TEMPLATES & COMPONENTS ===
   const crumb = (label) => `<p class="crumb"><a href="#inicio">Página inicial</a> / ${label}</p>`;
 
-  const intro = (title, subtitle = '', label = title) =>
-    `<section class="page-intro">${crumb(label)}<h1>${title}</h1>${subtitle ? `<p>${subtitle}</p>` : ''}</section>`;
+  const intro = (title, subtitle = '', label = title, foto = '') =>
+    `<section class="page-intro${foto ? ' has-photo' : ''}"${foto ? ` style="--hero-img:url('${esc(asset(foto))}')"` : ''}>${crumb(label)}<h1>${title}</h1>${subtitle ? `<p>${subtitle}</p>` : ''}</section>`;
 
   const heading = (label, title, text = '') =>
     `<div class="section-head"><div><span class="kicker">${label}</span><h2>${title}</h2></div>${text ? `<p>${text}</p>` : ''}</div>`;
@@ -307,7 +307,7 @@
   <section class="reference-spaces" aria-label="Espaços do parque"><h2><strong>Cada espaço</strong> nasce com <strong>um propósito.</strong></h2><p>Conheça o que está sendo construído</p><div class="reference-carousel" role="region" aria-roledescription="carousel" aria-label="Carrossel de espaços do complexo"><button class="reference-carousel-arrow" data-action="spaces-previous" aria-label="Espaços anteriores">‹</button><div class="reference-carousel-window" id="reference-space-window" tabindex="0" aria-label="Navegue pelos espaços com as setas do teclado ou deslizando"><div class="reference-space-track">${referenceCards()}</div></div><button class="reference-carousel-arrow" data-action="spaces-next" aria-label="Próximos espaços">›</button></div></section>
   ${homeUpcomingEvents()}
   ${brandWheelBlock()}
-  <div class="reference-statement"><p>${statement}</p></div>
+  <div class="reference-statement"><p>${String(statement).replace(/\s*<br\s*\/?>\s*/gi, ' <br>')}</p></div>
   <div class="reference-closing">
     <p class="reference-signoff">${signoff}</p>
     <figure class="reference-aerial-panoramic"><img src="${asset(sunsetPhoto)}" alt="Vista aérea do Parque Novo Mato Grosso ao pôr do sol" loading="lazy"></figure>
@@ -474,8 +474,11 @@ async function updateAgenda() {
   const realized2026 = events.filter(e => e.isPast && e.parsedStart.getFullYear() === 2026).length;
   const confirmedDec = events.filter(e => e.status === 'confirmado' && !e.isPast).length;
 
+  const proximoTopo = events.filter((e) => !e.isPast).sort((a, b) => a.parsedStart - b.parsedStart)[0];
+  const FOTO_TOPO_ESPACO = { autodromo: 'espacos/ft/autodromo-noite.jpg', kartodromo: 'espacos/ft/v-kartodromo-1.jpg', motocross: 'espacos/ft/v-motocross-1.jpg', 'arena-show': 'espacos/ft/v-arena-1.jpg', 'complexo-de-skate': 'espacos/ft/v-skate.jpg', 'pista-de-bmx': 'espacos/ft/v-bmx.jpg', 'centro-de-eventos': 'espacos/ft/v-eventos.jpg' };
+  const fotoTopo = T('agenda.foto') || (proximoTopo && FOTO_TOPO_ESPACO[proximoTopo.slugEspaco]) || 'espacos/ft/autodromo-noite.jpg';
   const headerHtml = `
-    <section class="agenda-hero">
+    <section class="agenda-hero has-photo" style="--hero-img:url('${esc(asset(fotoTopo))}')">
       <div class="agenda-hero-content">
         ${crumb('<a href="#agenda">Agenda</a>')}
         <h1>${esc(T('agenda.titulo'))}</h1>
@@ -666,7 +669,7 @@ async function updateAgenda() {
   // === IMPRENSA / NEWS ===
   function press() {
     const introHtml = `
-      <section class="page-intro" style="padding: 55px 5% 45px; background: var(--navy); color: white;">
+      <section class="page-intro has-photo press-intro" style="padding: 55px 5% 45px; background: var(--navy); color: white;${T('imprensa.foto') ? ` --hero-img:url('${esc(asset(T('imprensa.foto')))}');` : ''}">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px;">
           <div style="flex: 1 1 500px;">
             ${crumb('Imprensa')}
@@ -944,7 +947,8 @@ async function updateAgenda() {
     });
 
     let html = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">`;
-    Object.keys(albums).forEach(space => {
+    const nomesAlbuns = Object.keys(albums);
+    nomesAlbuns.slice(0, 6).forEach(space => {
       const imgs = albums[space];
       const mainImg = imgs[0];
       const smallImgs = imgs.slice(1, 3);
@@ -983,12 +987,13 @@ async function updateAgenda() {
       `;
     });
     html += `</div>`;
+    if (nomesAlbuns.length > 6) html += `<div class="press-albums-more"><a class="button secondary" href="#galeria">Ver todos os ${nomesAlbuns.length} álbuns na Galeria ↗</a></div>`;
     resultsContainer.innerHTML = html;
   }
 
   function gallery() {
     return (
-      intro(esc(T('galeria.titulo')), esc(T('galeria.subtitulo')), 'Galeria de fotos') +
+      intro(esc(T('galeria.titulo')), esc(T('galeria.subtitulo')), 'Galeria de fotos', T('galeria.foto')) +
       `<section class="wrap">${filters(['Todas', 'Fotos do parque', 'Vista aérea', 'Projeto'], state.galleryFilter, 'galeria')}<div class="gallery-grid" id="gallery-results" aria-live="polite"></div><div class="gallery-more" id="gallery-more" hidden></div><div class="section-bottom"><p>Fotografias e perspectivas identificadas. Créditos e fontes acompanham cada imagem.</p><a class="text-link" href="#imprensa">Acesse o kit de imprensa ↗</a></div>${newsletter('galeria')}</section>`
     );
   }
@@ -1028,7 +1033,7 @@ async function updateAgenda() {
   // === VISITAS ===
   function visits() {
     return (
-      intro(esc(T('visitar.titulo')), esc(T('visitar.subtitulo')), 'Quero visitar') +
+      intro(esc(T('visitar.titulo')), esc(T('visitar.subtitulo')), 'Quero visitar', T('visitar.foto')) +
       `<section class="wrap">${heading('VISITAS GUIADAS', 'Um roteiro.<br>Muitas descobertas.', 'Acompanhamento da nossa equipe do começo ao fim, pelas principais estruturas e áreas liberadas.')}<div class="service-cards"><article class="service-card"><span class="kicker">GRUPOS ESCOLARES</span><h3>Uma aula a céu aberto.</h3><p>Estudantes do ensino fundamental, médio e técnico percorrem o parque com foco em arquitetura, sustentabilidade, agro, esporte e cultura.</p><p>AgroPlace, museus e grandes estruturas compõem a proposta de roteiro, conforme liberação das áreas e faixa etária.</p></article><article class="service-card"><span class="kicker">GRUPOS DE TURISMO</span><h3>Mato Grosso em um só lugar.</h3><p>Operadoras, agências e caravanas encontram um roteiro que reúne atrações do estado dentro do mesmo complexo.</p><p>Mirantes, Vila das Nações, Casa Cuiabana e arenas, com paradas para foto e alimentação, conforme disponibilidade.</p></article><article class="service-card"><span class="kicker">GRUPOS CORPORATIVOS E TÉCNICOS</span><h3>Por dentro da operação.</h3><p>Empresas, entidades e delegações técnicas conhecem arenas, backstage, acessos, estacionamento e capacidade operacional.</p><p>A visita indicada para quem avalia realizar um evento no parque.</p></article></div></section><section class="related"><div class="wrap service-layout"><div class="service-copy"><span class="kicker">COMO FUNCIONA</span><h2>Simples de organizar.</h2><div class="service-steps"><p>Conte sobre o grupo e indique a data pretendida.</p><p>A equipe verifica disponibilidade, roteiro e grupo mínimo.</p><p>Com a confirmação, você recebe as orientações de acesso.</p></div><div class="faq">${[1, 2, 3].filter((n) => T('visitar.faq' + n + 'p')).map((n) => `<details${n === 1 ? ' open' : ''}><summary>${esc(T('visitar.faq' + n + 'p'))}</summary><p>${esc(T('visitar.faq' + n + 'r'))}</p></details>`).join('')}</div></div><div class="service-form"><h3>Planeje sua visita.</h3><p>A solicitação está sujeita à confirmação de data e roteiro pela equipe.</p><form data-form="visita">${field('nome', 'Nome do responsável')}${field('instituicao', 'Instituição ou empresa', 'text', null, false)}${field('grupo', 'Tipo de grupo', 'text', ['Escolar', 'Turismo', 'Corporativo ou técnico'])}${field('quantidade', 'Quantidade de pessoas', 'number')}${field('faixaEtaria', 'Faixa etária', 'text', null, false)}${field('data', 'Data pretendida', 'date')}${field('telefone', 'Telefone', 'tel')}${field('email', 'E-mail', 'email')}<div class="full">${field('observacoes', 'Observações', 'textarea', null, false)}</div>${formEnd('visita', 'Agendar minha visita')}</form></div></div></section>`
     );
   }
@@ -1136,9 +1141,10 @@ async function updateAgenda() {
       intro(
         esc(event ? T('contato.tituloEvento') : T('contato.titulo')),
         esc(T('contato.subtitulo')),
-        'Contato'
+        'Contato',
+        T('contato.foto')
       ) +
-      `<section class="wrap service-layout"><div class="service-copy"><span class="kicker">QUERO REALIZAR MEU EVENTO</span><h2>Shows, feiras,<br>competições e<br>grandes encontros.</h2><p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para o seu formato, do espaço à operação.</p><p>Retorno previsto em até dois dias úteis após o recebimento.</p>${eventMapCard()}</div>${eventForm()}</section><section class="wrap" style="padding-top:0"><h2>Outros caminhos.</h2><div class="contact-paths"><a href="#visitar"><h3>Quero visitar o parque.</h3><p>Visitas guiadas para grupos escolares, de turismo e corporativos.</p><span>Ir para visitas ↗</span></a><a href="#imprensa"><h3>Pauta e entrevista.</h3><p>Solicitações da imprensa e acesso ao material oficial.</p><span>Ir para imprensa ↗</span></a><a href="#outros-assuntos"><h3>Vamos conversar.</h3><p>Fornecedores, propostas comerciais, parcerias e assuntos institucionais.</p><span>Outros assuntos ↗</span></a></div></section>`
+      `<section class="wrap service-layout"><div class="service-copy"><span class="kicker">QUERO REALIZAR MEU EVENTO</span><h2>Shows, feiras,<br>competições e<br>grandes encontros.</h2><p>Conte o que você quer fazer. A nossa equipe retorna com a melhor estrutura para o seu formato, do espaço à operação.</p><p>Retorno previsto em até dois dias úteis após o recebimento.</p></div>${eventForm()}<div class="service-map">${eventMapCard()}</div></section><section class="wrap" style="padding-top:0"><h2>Outros caminhos.</h2><div class="contact-paths"><a href="#visitar"><h3>Quero visitar o parque.</h3><p>Visitas guiadas para grupos escolares, de turismo e corporativos.</p><span>Ir para visitas ↗</span></a><a href="#imprensa"><h3>Pauta e entrevista.</h3><p>Solicitações da imprensa e acesso ao material oficial.</p><span>Ir para imprensa ↗</span></a><a href="#outros-assuntos"><h3>Vamos conversar.</h3><p>Fornecedores, propostas comerciais, parcerias e assuntos institucionais.</p><span>Outros assuntos ↗</span></a></div></section>`
     );
   }
 
@@ -1534,7 +1540,7 @@ async function updateAgenda() {
     `;
 
     return css + 
-      intro(esc(T('trabalhe.titulo')), esc(T('trabalhe.subtitulo')), 'Trabalhe Conosco').replace('</section>', 
+      intro(esc(T('trabalhe.titulo')), esc(T('trabalhe.subtitulo')), 'Trabalhe Conosco', T('trabalhe.foto')).replace('</section>', 
       `<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
           <button class="button" style="background-color: #1B8F3A; color: white; border: none; white-space: nowrap;" onclick="document.querySelector('.jobs-board').scrollIntoView({behavior:'smooth'})">Ver vagas abertas (${jobsCount})</button>
           <button class="button light" style="white-space: nowrap; border: 1px solid white;" onclick="window.scrollToForm('Banco de talentos (candidatura espontânea)', null)">Cadastrar no Banco de Talentos &nearr;</button>
