@@ -45,6 +45,7 @@
       spaces: JSON.parse(JSON.stringify(c.spaces || [])),
       events: JSON.parse(JSON.stringify(c.events || [])),
       agenda: JSON.parse(JSON.stringify(c.agenda || [])),
+      jobs: JSON.parse(JSON.stringify(c.jobs || [])),
       news: JSON.parse(JSON.stringify(c.news || [])),
       gallery: JSON.parse(JSON.stringify(c.gallery || [])),
       values: JSON.parse(JSON.stringify(c.values || [])),
@@ -69,6 +70,7 @@
             spaces: parsed.spaces && parsed.spaces.length ? parsed.spaces : def.spaces,
             events: parsed.events || def.events,
             agenda: parsed.agenda && parsed.agenda.length ? parsed.agenda : def.agenda,
+            jobs: parsed.jobs || def.jobs,
             news: parsed.news || def.news,
             gallery: parsed.gallery || def.gallery,
             values: parsed.values || def.values,
@@ -84,6 +86,8 @@
   activeData = loadLocalData();
 
   // Try to sync with Supabase if configured and available
+  let remoteUpdatedAt = null;
+
   async function syncFromSupabase() {
     try {
       if (!window.supabase) return null;
@@ -97,6 +101,7 @@
         .single();
 
       if (!error && data && data.content) {
+        remoteUpdatedAt = data.updated_at;
         activeData = {
           ...getDefaultData(),
           ...data.content,
@@ -131,17 +136,27 @@
     if (!client) {
       throw new Error('Sem conexão com o banco de dados. Nada foi publicado no site.');
     }
-    const { error } = await client
+    // Se outra pessoa salvou depois que este painel abriu, não sobrescreve sem avisar.
+    if (remoteUpdatedAt) {
+      const cur = await client.from('site_content').select('updated_at').eq('id', 'main').single();
+      if (cur.data && cur.data.updated_at && new Date(cur.data.updated_at) > new Date(remoteUpdatedAt)) {
+        throw new Error('Outra pessoa salvou o site depois que você abriu o painel. Recarregue a página (F5) para ver a versão nova e refaça a sua alteração.');
+      }
+    }
+    const { data: saved, error } = await client
       .from('site_content')
       .upsert({
         id: 'main',
         content: activeData,
         updated_at: activeData.updatedAt,
         updated_by: currentEmail(),
-      });
+      })
+      .select('updated_at')
+      .single();
     if (error) {
       throw new Error('Não foi possível publicar no site (' + error.message + '). Entre de novo e tente outra vez.');
     }
+    remoteUpdatedAt = saved?.updated_at || activeData.updatedAt;
     const syncedCloud = true;
 
     window.dispatchEvent(new CustomEvent('pnmt:content-updated', { detail: activeData }));
@@ -194,41 +209,50 @@
   const ALLOWED_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif']);
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+  // Reduz a foto no navegador (máx. 2400 px, JPEG 85%) antes de enviar:
+  // foto de celular de 8 MB vira ~600 KB e o site carrega rápido.
+  function shrinkToBlob(file, maxSide = 2400, quality = 0.85) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Não foi possível ler a imagem.')); };
+      img.onload = () => {
+        let { width, height } = img;
+        const ratio = Math.min(1, maxSide / Math.max(width, height));
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Falha ao otimizar a imagem.'))), 'image/jpeg', quality);
+      };
+      img.src = url;
+    });
+  }
+
   async function uploadMedia(file) {
     if (!file) throw new Error('Nenhum arquivo informado.');
-
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error('O arquivo excede o limite máximo de 10 MB.');
+    if (file.size > 25 * 1024 * 1024) {
+      throw new Error('O arquivo passa de 25 MB. Exporte a foto em tamanho menor.');
     }
-
     const ext = (file.name.split('.').pop() || '').toLowerCase();
-    if (!ALLOWED_EXTENSIONS.has(ext)) {
-      throw new Error(`Extensão de arquivo não permitida (.${ext}). Envie apenas imagens JPG, PNG, WEBP ou GIF.`);
+    if (!ALLOWED_EXTENSIONS.has(ext) || (file.type && !ALLOWED_MIME_TYPES.has(file.type))) {
+      throw new Error('Envie apenas imagens JPG, PNG, WEBP ou GIF.');
     }
+    const client = getClient();
+    if (!client || !client.storage) throw new Error('Sem conexão com o banco. A foto não foi enviada.');
 
-    if (file.type && !ALLOWED_MIME_TYPES.has(file.type)) {
-      throw new Error(`Tipo de mídia não permitido (${file.type}). Envie apenas imagens.`);
-    }
-
-    try {
-      const client = window.PNMT_SUPABASE?.client || window.PNMT_SUPABASE_CLIENT;
-      if (client && client.storage) {
-        const cleanName = `media_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
-        const { error } = await client.storage
-          .from('pnmt-media')
-          .upload(cleanName, file, { cacheControl: '3600', contentType: file.type || 'image/jpeg', upsert: true });
-
-        if (!error) {
-          const { data } = client.storage.from('pnmt-media').getPublicUrl(cleanName);
-          if (data?.publicUrl) return data.publicUrl;
-        }
-      }
-    } catch (e) {
-      console.warn('[PNMT Admin] Storage remoto indisponível, usando armazenamento local otimizado.');
-    }
-
-    // Fallback to local optimized base64
-    return await optimizeImage(file);
+    const isGif = ext === 'gif';
+    const body = isGif ? file : await shrinkToBlob(file);
+    const name = `media_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${isGif ? 'gif' : 'jpg'}`;
+    const { error } = await client.storage
+      .from('pnmt-media')
+      .upload(name, body, { cacheControl: '31536000', contentType: isGif ? 'image/gif' : 'image/jpeg', upsert: false });
+    if (error) throw new Error('A foto não foi enviada (' + error.message + '). Entre de novo e tente outra vez.');
+    const { data } = client.storage.from('pnmt-media').getPublicUrl(name);
+    return data.publicUrl;
   }
 
   // ==========================================================================
@@ -376,9 +400,7 @@
     syncFromSupabase,
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', syncFromSupabase);
-  } else {
-    syncFromSupabase();
-  }
+  // Conteúdo salvo no banco (o painel só abre depois que isto termina).
+  const loaded = syncFromSupabase().catch(() => null);
+  window.PNMT_ADMIN_DATA.loaded = loaded;
 })();

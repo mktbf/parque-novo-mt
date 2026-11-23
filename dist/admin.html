@@ -101,6 +101,10 @@
             <span class="nav-icon">🖼️</span> Galeria de Fotos
             <span class="count-badge" id="badge-gallery-count">0</span>
           </button>
+          <button class="nav-tab" data-tab="tab-jobs">
+            <span class="nav-icon">💼</span> Vagas
+            <span class="count-badge" id="badge-jobs-count">0</span>
+          </button>
           <button class="nav-tab" data-tab="tab-about">
             <span class="nav-icon">🏢</span> Quem Somos
           </button>
@@ -318,6 +322,20 @@
 
             <div class="table-card">
               <div id="news-table-container"></div>
+            </div>
+          </section>
+
+          <!-- TAB: VAGAS -->
+          <section id="tab-jobs" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Vagas (Trabalhe Conosco)</h2>
+                <p>Vagas abertas aparecem na página Trabalhe Conosco. Vagas encerradas ficam em cinza com o selo "Vaga encerrada".</p>
+              </div>
+              <button class="btn btn-primary" id="btn-add-job">+ Nova Vaga</button>
+            </div>
+            <div class="table-card">
+              <div id="jobs-table-container"></div>
             </div>
           </section>
 
@@ -618,6 +636,60 @@
       </div>
     </dialog>
 
+    <dialog id="modal-job" class="admin-modal">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3 id="modal-job-title">Cadastrar Vaga</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-job" class="modal-body">
+          <input type="hidden" id="job-index">
+          <div class="form-group">
+            <label for="job-title">Nome da vaga *</label>
+            <input type="text" id="job-title" required placeholder="Ex: Analista de Compras">
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="job-type">Jornada *</label>
+              <input type="text" id="job-type" required value="Tempo Integral" placeholder="Ex: Tempo Integral">
+            </div>
+            <div class="form-group col-6">
+              <label for="job-status">Situação *</label>
+              <select id="job-status" required>
+                <option value="aberta">Aberta</option>
+                <option value="encerrada">Encerrada (fica no site em cinza, sem candidatura)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="job-description">Descrição *</label>
+            <textarea id="job-description" rows="7" required placeholder="Requisitos, local, regime e como se candidatar."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Arte da vaga</label>
+            <div class="media-upload-widget">
+              <div class="media-preview" id="job-preview-box"></div>
+              <div class="media-actions">
+                <label class="btn btn-secondary btn-sm file-upload-btn">
+                  <span>📁 Selecionar Imagem</span>
+                  <input type="file" accept="image/*" id="job-file-input">
+                </label>
+                <input type="text" id="job-image" class="url-input" placeholder="URL ou caminho da imagem">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="job-link">Link da vaga no LinkedIn <small>(opcional)</small></label>
+            <input type="url" id="job-link" placeholder="https://...">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar vaga</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
     <!-- MODAL: EDITAR / NOVA NOTÍCIA -->
     <dialog id="modal-news" class="admin-modal">
       <div class="modal-dialog-content">
@@ -696,23 +768,21 @@
             <div class="form-group col-6">
               <label for="photo-category">Categoria *</label>
               <select id="photo-category" required>
+                <option value="Fotos do parque">Fotos do parque</option>
                 <option value="Vista aérea">Vista aérea</option>
-                <option value="Espaços">Espaços</option>
-                <option value="Obras e estrutura">Obras e estrutura</option>
-                <option value="Eventos">Eventos</option>
-                <option value="Outros">Outros</option>
+                <option value="Projeto">Projeto (perspectiva / imagem ilustrativa)</option>
               </select>
             </div>
             <div class="form-group col-6">
               <label for="photo-type">Tipo de Imagem *</label>
-              <input type="text" id="photo-type" required placeholder="Ex: Fotografia, Perspectiva do projeto">
+              <input type="text" id="photo-type" required value="Foto" placeholder="Ex: Foto, Perspectiva do projeto">
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group col-6">
               <label for="photo-credit">Crédito da Imagem *</label>
-              <input type="text" id="photo-credit" required placeholder="Ex: Secom-MT · 2025">
+              <input type="text" id="photo-credit" required value="Parque Novo Mato Grosso" placeholder="Ex: Secom-MT · 2025">
             </div>
             <div class="form-group col-6">
               <label for="photo-source">Link da Fonte (Opcional)</label>
@@ -736,7 +806,7 @@
     <script charset="utf-8" src="config.js?v=formularios-20261107-1"></script>
     <script charset="utf-8" src="content.js?v=agenda-20261123-1"></script>
     <script charset="utf-8" src="supabase.js?v=auth-20261123-1"></script>
-    <script charset="utf-8" src="admin-data.js?v=agenda-20261123-1"></script>
-    <script charset="utf-8" src="admin.js?v=agenda-20261123-1"></script>
+    <script charset="utf-8" src="admin-data.js?v=painel-20261123-2"></script>
+    <script charset="utf-8" src="admin.js?v=painel-20261123-2"></script>
   </body>
 </html>

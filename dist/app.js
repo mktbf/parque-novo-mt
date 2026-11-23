@@ -18,6 +18,7 @@
       if (adminData.gallery) data.gallery = adminData.gallery;
       if (adminData.values) data.values = adminData.values;
       if (adminData.agenda && adminData.agenda.length) data.agenda = adminData.agenda;
+      if (Array.isArray(adminData.jobs)) data.jobs = adminData.jobs;
       if (adminData.general) {
         const g = adminData.general;
         if (g.videoId) {
@@ -1360,13 +1361,13 @@ async function updateAgenda() {
       return `
         <article class="job-card ${isClosed ? 'closed' : ''}" id="vaga-${slug}">
           <div class="job-art-wrapper">
-             ${job.image ? `<img src="${job.image}" alt="Vaga para ${job.title}" class="job-image" ${isClosed ? 'style="filter: grayscale(100%); opacity: 0.8;"' : ''}>` : ''}
+             ${job.image ? `<img src="${esc(job.image)}" alt="Vaga para ${esc(job.title)}" class="job-image" ${isClosed ? 'style="filter: grayscale(100%); opacity: 0.8;"' : ''}>` : `<div class="job-art-fallback"><span>Oportunidade de emprego</span><strong>${esc(job.title)}</strong></div>`}
              ${isClosed ? '<span class="closed-badge">Vaga encerrada</span>' : ''}
           </div>
           <div class="job-content">
             <h3 class="visually-hidden">${job.title}</h3>
             <div class="job-tags">
-              <span class="job-badge" style="background: #e8f5e9; color: #1b8f3a;">Tempo integral</span>
+              <span class="job-badge" style="background: #e8f5e9; color: #1b8f3a;">${esc(job.type || 'Tempo integral')}</span>
               <span class="job-badge" style="background: #f0f4f8; color: #5a6c7d;">CLT (44h semanais)</span>
               <span class="job-badge" style="background: #f0f4f8; color: #5a6c7d;">Parque Novo Mato Grosso</span>
             </div>
