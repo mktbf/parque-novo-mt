@@ -237,6 +237,7 @@ window.PNMT_ESPACOS_BASE = [
   ],
   "v": [],
   "f": [
+   "sel-bmx-capa",
    "v-bmx"
   ],
   "n": [
@@ -263,7 +264,8 @@ window.PNMT_ESPACOS_BASE = [
     "Já recebeu",
     "Campeonato Brasileiro de BMX Racing, principal evento nacional da modalidade."
    ]
-  ]
+  ],
+  "hero": "sel-bmx-capa"
  },
  {
   "g": "esporte",
@@ -299,6 +301,7 @@ window.PNMT_ESPACOS_BASE = [
   ],
   "v": [],
   "f": [
+   "sel-skate-capa",
    "v-skate"
   ],
   "n": [
@@ -325,7 +328,8 @@ window.PNMT_ESPACOS_BASE = [
     "Já recebeu",
     "Campeonato Brasileiro de Skate e uma etapa do STU National, com atletas olímpicos e campeões mundiais na pista."
    ]
-  ]
+  ],
+  "hero": "sel-skate-capa"
  },
  {
   "g": "esporte",
@@ -478,7 +482,8 @@ window.PNMT_ESPACOS_BASE = [
    "familia-3",
    "familia-4",
    "familia-6",
-   "roda-4"
+   "roda-4",
+   "sel-familia-capa"
   ],
   "px": 73.96,
   "py": 43.66,
@@ -1079,7 +1084,7 @@ window.PNMT_ESPACOS_BASE = [
   "g": "cultura",
   "tag": "Um domo para<br>projeções mapeadas.",
   "id": "circo",
-  "hero": "roda-3",
+  "hero": "sel-circo-capa",
   "nome": "Circo do Futuro",
   "x": 90,
   "y": 32,
@@ -1112,6 +1117,7 @@ window.PNMT_ESPACOS_BASE = [
    "roda"
   ],
   "f": [
+   "sel-circo-capa",
    "v-circo",
    "roda-3",
    "orla-1"

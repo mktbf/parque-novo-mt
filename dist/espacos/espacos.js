@@ -67,11 +67,11 @@ class PnmtEspacos extends HTMLElement {
     const X = { // extras por espaco (fotos em alta, legendas, momentos)
  // Foto da apresentacao (ap) e foto de transicao (trans) escolhidas do album da Imprensa de cada espaco.
  casa:{capa:'casa-capa', ap:['ft/casa-fachada.jpg',''], trans:['ft/casa-arquibancada.jpg','']},
- familia:{capa:'familia-capa', ap:['ft/familia-brinquedos.jpg',''], trans:['ft/familia-vista.jpg','']},
+ familia:{capa:'familia-capa', ap:['ft/familia-brinquedos.jpg',''], trans:['ft/sel-familia-capa.jpg','O Parque da Família visto do alto']},
  motocross:{ap:['../assets/gallery/motocross-04.jpg',''], trans:['../assets/gallery/motocross-07.jpg','']},
  kartodromo:{ap:['../assets/gallery/kartodromo-04.jpg','']},
- bmx:{ap:['../assets/gallery/bmx-02.jpg',''], trans:['../assets/gallery/bmx-04.jpg','']},
- skate:{ap:['../assets/gallery/skate-park-02.jpg',''], trans:['../assets/gallery/skate-park-03.jpg','']},
+ bmx:{ap:['ft/sel-bmx.jpg','A pista em azul e amarelo, vista do alto'], trans:['../assets/gallery/bmx-04.jpg','']},
+ skate:{ap:['ft/sel-skate.jpg','Street e bowl lado a lado'], trans:['../assets/gallery/skate-park-03.jpg','']},
  wake:{ap:['../assets/gallery/wake-park-03.jpg',''], trans:['../assets/gallery/wake-park-02.jpg','']},
  arena:{ap:['../assets/gallery/arena-show-08.jpg','']},
  roda:{ap:['../assets/gallery/roda-gigante-03.jpg','Imagem ilustrativa do projeto']},
@@ -82,14 +82,14 @@ class PnmtEspacos extends HTMLElement {
  praca:{capa:'praca-capa', ap:['ft/praca-fachada.jpg',''], trans:['ft/praca-lateral.jpg','']},
  autodromo:{ap:['ft/autodromo-entardecer.jpg',''], trans:['ft/autodromo-noite2.jpg',''], capa:'autodromo-capa'},
  vila:{capa:'vila-capa', ap:['ft/vila-fachadas.jpg',''], trans:['ft/vila-noite.jpg',''], cover:'vila/vila-818.jpg', ed:['vila/vila-809.jpg','Detalhes de arquitetura clássica, iluminados à noite.'],
-  fotos:[['vila/vila-818.jpg','As fachadas acesas no começo da noite'],['ft/v-vila-2.jpg','Arquitetura clássica e enxaimel, lado a lado'],['vila/vila-803.jpg','A praça ao entardecer'],['ft/v-vila-1.jpg','A Vila vista do alto, de frente para o canal'],['vila/vila-812.jpg','Iluminação que destaca cada detalhe'],['vila/vila-800.jpg','Caminhos entre as fachadas'],['vila/vila-795.jpg','A praça aberta, pronta para o passeio'],['vila/vila-819.jpg','O fim do dia na Vila']],
+  fotos:[['ft/sel-quadriga.jpg','A quadriga no alto do portal'],['ft/sel-arco-capa.jpg','O arco e a estátua equestre'],['ft/sel-vila-lago-1-capa.jpg','A Vila vista do lago, de dia'],['ft/sel-buda.jpg','Oriente e Europa no mesmo passeio'],['ft/sel-touros.jpg','Detalhes em bronze pela praça'],['vila/vila-818.jpg','As fachadas acesas no começo da noite'],['ft/v-vila-2.jpg','Arquitetura clássica e enxaimel, lado a lado'],['vila/vila-803.jpg','A praça ao entardecer'],['ft/v-vila-1.jpg','A Vila vista do alto, de frente para o canal'],['vila/vila-812.jpg','Iluminação que destaca cada detalhe'],['vila/vila-800.jpg','Caminhos entre as fachadas'],['vila/vila-795.jpg','A praça aberta, pronta para o passeio'],['vila/vila-819.jpg','O fim do dia na Vila']],
   mom:{t:'Três momentos<br>para aproveitar.',p:'Do passeio à tarde às fotos de noite, a Vila muda de cara conforme a luz.',i:[['ft/v-vila-1.jpg','O passeio','Atravesse a praça e percorra as fachadas, uma a uma, de frente para o canal.'],['vila/vila-813.jpg','O entardecer','Quando o sol baixa, a iluminação acende e a vila ganha outro clima.'],['vila/vila-806.jpg','A foto','Cada fachada é um cenário. Um bom lugar para guardar a visita.']]},
   vt:['As fachadas à noite','A orla e o canal'], hora:['Fim de tarde','Quando as fachadas acendem']}
 };
 const VN = {autodromo:'Vista aérea',autodromo2:'O circuito',familia:'O parque',familia2:'De perto',vila:'As fachadas à noite',vila2:'A orla e o canal',casa:'A casa',casa2:'A arquibancada',eventos:'Os pavilhões',eventos2:'Vista aérea',orla:'O entorno',roda:'A península',roda2:'Vista aérea'};
 const ft = n => u(n.includes('/') ? n : `ft/${n}.jpg`);
 // Imagem ilustrativa so nos espacos que ainda nao estao prontos. Os prontos usam sempre foto real.
-const IA = new Set(['eventos','circo','roda','arvore','splash','agroplace','museus']);
+const IA = new Set(['eventos','roda','arvore','splash','agroplace','museus']);
 const ia = id => u(`ia/${id}.jpg`);
 const ILU = 'Imagem ilustrativa do projeto';
 
