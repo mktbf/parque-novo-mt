@@ -7,7 +7,7 @@
     <title>Painel Administrativo | Parque Novo Mato Grosso</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="fonts.css">
-    <link rel="stylesheet" href="admin.css?v=painel-20261123-3">
+    <link rel="stylesheet" href="admin.css?v=painel-20261123-4">
   </head>
   <body>
     <!-- Login Screen -->
@@ -85,6 +85,12 @@
           <button class="nav-tab active" data-tab="tab-general">
             <span class="nav-icon">🏠</span> Geral & Home
           </button>
+          <button class="nav-tab" data-tab="tab-carrossel">
+            <span class="nav-icon">🎠</span> Carrossel do Início
+          </button>
+          <button class="nav-tab" data-tab="tab-textos">
+            <span class="nav-icon">✏️</span> Textos das Páginas
+          </button>
           <button class="nav-tab" data-tab="tab-paginas">
             <span class="nav-icon">🏛️</span> Páginas dos Espaços
             <span class="count-badge" id="badge-paginas-count">0</span>
@@ -143,6 +149,18 @@
                     <small class="hint">Cole o código do vídeo ou a URL completa (ex: <code>https://www.youtube.com/watch?v=ZAVSkNOk-bY</code>).</small>
                   </div>
                   <div id="video-preview-box" class="video-preview-container"></div>
+                </div>
+              </div>
+
+              <!-- Card: Vídeos do YouTube -->
+              <div class="admin-card">
+                <div class="card-header">
+                  <h3>▶️ Vídeos do YouTube (Imprensa e páginas dos espaços)</h3>
+                </div>
+                <div class="card-body">
+                  <small class="hint">Aparecem na seção Vídeos da Imprensa. Se o título tiver o nome de um espaço (ex.: Autódromo), o vídeo também aparece na página desse espaço.</small>
+                  <div id="gen-videos-list" class="videos-list"></div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-add-video">+ Adicionar vídeo</button>
                 </div>
               </div>
 
@@ -277,6 +295,30 @@
           </section>
 
           <!-- TAB 2: ESPAÇOS -->
+          <section id="tab-carrossel" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Carrossel do Início</h2>
+                <p>Os cards de espaços que passam na página inicial. Use as setas para mudar a ordem e o olho para esconder um card.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-save-carrossel">Salvar carrossel</button>
+            </div>
+            <div class="table-card">
+              <div id="carrossel-table-container"></div>
+            </div>
+          </section>
+
+          <section id="tab-textos" class="tab-pane">
+            <div class="pane-header">
+              <div>
+                <h2>Textos das Páginas</h2>
+                <p>Títulos e textos das páginas Agenda, Galeria, Imprensa, Quero visitar, Contato, Trabalhe Conosco e Onde estamos. Campo vazio volta ao texto original.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-save-textos">Salvar textos</button>
+            </div>
+            <div id="textos-container" class="textos-grid"></div>
+          </section>
+
           <section id="tab-paginas" class="tab-pane">
             <div class="pane-header">
               <div>
@@ -793,6 +835,65 @@
       </div>
     </dialog>
 
+    <dialog id="modal-card" class="admin-modal">
+      <div class="modal-dialog-content">
+        <div class="modal-header">
+          <h3>Editar card do carrossel</h3>
+          <button class="icon-close" data-close>✕</button>
+        </div>
+        <form id="form-card" class="modal-body">
+          <input type="hidden" id="card-index">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="card-label">Nome no card *</label>
+              <input type="text" id="card-label" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="card-category">Categoria</label>
+              <input type="text" id="card-category">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="card-copy">Frase</label>
+            <input type="text" id="card-copy">
+          </div>
+          <div class="form-group">
+            <label>Foto *</label>
+            <div class="media-upload-widget">
+              <div class="media-preview" id="card-preview"></div>
+              <div class="media-actions">
+                <label class="btn btn-secondary btn-sm file-upload-btn">
+                  <span>📁 Selecionar Imagem</span>
+                  <input type="file" accept="image/*" id="card-file">
+                </label>
+                <input type="text" id="card-image" class="url-input" required>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="card-link">Abre a página do espaço</label>
+              <select id="card-link"></select>
+            </div>
+            <div class="form-group col-6">
+              <label for="card-pos">Enquadramento da foto <small>(opcional)</small></label>
+              <select id="card-pos">
+                <option value="">Centro</option>
+                <option value="50% 20%">Mais para cima</option>
+                <option value="50% 80%">Mais para baixo</option>
+                <option value="20% 50%">Mais para a esquerda</option>
+                <option value="80% 50%">Mais para a direita</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Aplicar</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
     <!-- MODAL: EDITAR / NOVA NOTÍCIA -->
     <dialog id="modal-news" class="admin-modal">
       <div class="modal-dialog-content">
@@ -907,10 +1008,10 @@
     <!-- Scripts -->
     <script charset="utf-8" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js"></script>
     <script charset="utf-8" src="config.js?v=formularios-20261107-1"></script>
-    <script charset="utf-8" src="content.js?v=agenda-20261123-1"></script>
+    <script charset="utf-8" src="content.js?v=painel-20261123-4"></script>
     <script charset="utf-8" src="supabase.js?v=auth-20261123-1"></script>
-    <script charset="utf-8" src="espacos/dados.js?v=painel-20261123-3"></script>
-    <script charset="utf-8" src="admin-data.js?v=painel-20261123-3"></script>
-    <script charset="utf-8" src="admin.js?v=painel-20261123-3"></script>
+    <script charset="utf-8" src="espacos/dados.js?v=painel-20261123-4"></script>
+    <script charset="utf-8" src="admin-data.js?v=painel-20261123-4"></script>
+    <script charset="utf-8" src="admin.js?v=painel-20261123-4"></script>
   </body>
 </html>

@@ -30,6 +30,7 @@
   const modalPhoto = document.getElementById('modal-photo');
   const modalJob = document.getElementById('modal-job');
   const modalPagina = document.getElementById('modal-pagina');
+  const modalCard = document.getElementById('modal-card');
 
   // Helper: Toast alerts
   let toastTimer = null;
@@ -59,16 +60,17 @@
     if (/^[\w-]{11}$/.test(clean)) {
       return clean;
     }
-    const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|shorts\/|live\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
     return match ? match[1] : '';
   }
 
   // Helper: Resolve asset/image preview URL
   function resolveImgUrl(val) {
     if (!val) return '';
-    if (val.startsWith('data:image/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('assets/')) {
+    if (val.startsWith('data:image/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('assets/') || val.startsWith('espacos/') || val.includes('/')) {
       return val;
     }
+    if (['wheel', 'aerial', 'arena', 'circus', 'entrance', 'events', 'skate', 'track', 'map'].includes(val)) return `assets/${val}.png`;
     return `assets/${val}.jpg`;
   }
 
@@ -228,6 +230,8 @@
     populateGallery();
     populateJobs();
     populatePaginas();
+    populateCarrossel();
+    populateTextos();
     populateAbout();
     initEventListeners();
   }
@@ -286,10 +290,28 @@
       updateMediaPreview('preview-sunset-photo', g.sunsetPhoto || 'assets/aerial-sunset.jpg');
     }
 
+    // Vídeos do YouTube
+    const vids = Array.isArray(g.videos) ? g.videos : (window.PNMT_CONFIG?.videos || []);
+    const vl = document.getElementById('gen-videos-list');
+    if (vl) { vl.innerHTML = ''; vids.forEach((v) => addVideoRow(v)); }
+
     // Social
     document.getElementById('gen-instagram').value = g.instagram || '';
     document.getElementById('gen-facebook').value = g.facebook || '';
     document.getElementById('gen-youtube').value = g.youtube || '';
+  }
+
+  function addVideoRow(v = {}) {
+    const vl = document.getElementById('gen-videos-list');
+    if (!vl) return;
+    const row = document.createElement('div');
+    row.className = 'video-row';
+    row.innerHTML = `<input type="text" class="vid-link" placeholder="Link do YouTube" value="${esc(v.id ? 'https://www.youtube.com/watch?v=' + v.id : '')}">
+      <input type="text" class="vid-titulo" placeholder="Título do vídeo" value="${esc(v.titulo || '')}">
+      <input type="text" class="vid-dur" placeholder="Duração (ex: 6:39)" value="${esc(v.duracao || '')}">
+      <button type="button" class="btn btn-danger-outline btn-xs" aria-label="Remover vídeo">✕</button>`;
+    row.querySelector('button').addEventListener('click', () => row.remove());
+    vl.appendChild(row);
   }
 
   function updateVideoPreview(vid) {
@@ -347,6 +369,24 @@
     g.instagram = document.getElementById('gen-instagram').value.trim();
     g.facebook = document.getElementById('gen-facebook').value.trim();
     g.youtube = document.getElementById('gen-youtube').value.trim();
+
+    const videos = [];
+    let videoInvalido = false;
+    document.querySelectorAll('#gen-videos-list .video-row').forEach((row) => {
+      const link = row.querySelector('.vid-link').value.trim();
+      const titulo = row.querySelector('.vid-titulo').value.trim();
+      const duracao = row.querySelector('.vid-dur').value.trim();
+      if (!link && !titulo) return;
+      const id = extractYouTubeId(link);
+      if (!/^[\w-]{11}$/.test(id || '')) { videoInvalido = true; row.classList.add('row-error'); return; }
+      row.classList.remove('row-error');
+      videos.push({ id, titulo: titulo || 'Vídeo do Parque Novo Mato Grosso', duracao });
+    });
+    if (videoInvalido) {
+      showToast('Um dos links de vídeo não é do YouTube. Confira a linha marcada em vermelho.', 'error');
+      return;
+    }
+    g.videos = videos;
 
     data.general = g;
 
@@ -1083,6 +1123,140 @@
   }
 
   // ==========================================================================
+  // CARROSSEL DO INÍCIO
+  // ==========================================================================
+  let carrosselRascunho = null;
+
+  function carrosselBase() {
+    const data = adminStore.getData();
+    const salvo = Array.isArray(data.carrossel) && data.carrossel.length ? data.carrossel : (window.PNMT_CONTENT?.carrossel || []);
+    return JSON.parse(JSON.stringify(salvo));
+  }
+
+  function populateCarrossel() {
+    if (!carrosselRascunho) carrosselRascunho = carrosselBase();
+    const list = carrosselRascunho;
+    const container = document.getElementById('carrossel-table-container');
+    if (!container) return;
+    const assetUrl = (v) => (/^(https?:|data:|assets\/|espacos\/)/.test(v || '') ? v : v ? `assets/${v}.png` : '');
+    container.innerHTML = `
+      <table class="admin-table">
+        <thead><tr><th>Ordem</th><th>Foto</th><th>Card</th><th>Visível</th><th style="text-align: right;">Ações</th></tr></thead>
+        <tbody>
+          ${list.map((c, i) => `
+            <tr class="${c.visivel === false ? 'car-off' : ''}">
+              <td>
+                <button type="button" class="btn btn-secondary btn-xs btn-icon" data-action="car-up" data-idx="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Subir">↑</button>
+                <button type="button" class="btn btn-secondary btn-xs btn-icon" data-action="car-down" data-idx="${i}" ${i === list.length - 1 ? 'disabled' : ''} aria-label="Descer">↓</button>
+              </td>
+              <td><img class="car-thumb" src="${esc(assetUrl(c.image))}" alt="" onerror="this.style.visibility='hidden'"></td>
+              <td><strong>${esc(c.label)}</strong><br><small>${esc(c.category || '')}${c.copy ? ' · ' + esc(c.copy) : ''}</small></td>
+              <td><button type="button" class="btn btn-secondary btn-xs" data-action="car-toggle" data-idx="${i}">${c.visivel === false ? '🚫 Escondido' : '👁 Aparece'}</button></td>
+              <td style="text-align: right;"><button type="button" class="btn btn-secondary btn-xs" data-action="car-edit" data-idx="${i}">Editar</button></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function carrosselAcao(action, i) {
+    const l = carrosselRascunho;
+    if (action === 'car-up' && i > 0) [l[i - 1], l[i]] = [l[i], l[i - 1]];
+    if (action === 'car-down' && i < l.length - 1) [l[i + 1], l[i]] = [l[i], l[i + 1]];
+    if (action === 'car-toggle') l[i].visivel = l[i].visivel === false;
+    populateCarrossel();
+    document.getElementById('btn-save-carrossel').classList.add('btn-pulse');
+  }
+
+  function openCardModal(i) {
+    const c = carrosselRascunho[i];
+    document.getElementById('card-index').value = i;
+    document.getElementById('card-label').value = c.label || '';
+    document.getElementById('card-category').value = c.category || '';
+    document.getElementById('card-copy').value = c.copy || '';
+    document.getElementById('card-image').value = c.image || '';
+    const sel = document.getElementById('card-link');
+    const spaces = (adminStore.getData().spaces || []).map((sp) => [sp.id, sp.name]);
+    if (!spaces.some(([id]) => id === c.id)) spaces.unshift([c.id, c.label]);
+    sel.innerHTML = spaces.map(([id, name]) => `<option value="${esc(id)}">${esc(name)}</option>`).join('');
+    sel.value = c.id;
+    document.getElementById('card-pos').value = c.pos || '';
+    updateMediaPreview('card-preview', c.image);
+    modalCard.showModal();
+  }
+
+  function handleCardSubmit(ev) {
+    ev.preventDefault();
+    const i = Number(document.getElementById('card-index').value);
+    const c = carrosselRascunho[i];
+    c.label = document.getElementById('card-label').value.trim();
+    c.category = document.getElementById('card-category').value.trim();
+    c.copy = document.getElementById('card-copy').value.trim();
+    c.image = document.getElementById('card-image').value.trim();
+    c.id = document.getElementById('card-link').value;
+    c.pos = document.getElementById('card-pos').value;
+    modalCard.close();
+    populateCarrossel();
+    document.getElementById('btn-save-carrossel').classList.add('btn-pulse');
+    showToast('Card alterado. Clique em "Salvar carrossel" para publicar.');
+  }
+
+  async function saveCarrossel() {
+    const data = adminStore.getData();
+    data.carrossel = carrosselRascunho;
+    try {
+      await adminStore.saveData(data);
+      document.getElementById('btn-save-carrossel').classList.remove('btn-pulse');
+      showToast('Carrossel salvo e publicado no site!');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // ==========================================================================
+  // TEXTOS DAS PÁGINAS
+  // ==========================================================================
+  function populateTextos() {
+    const reg = window.PNMT_CONTENT?.textosPadrao || {};
+    const salvos = adminStore.getData().textos || {};
+    const grupos = {};
+    Object.entries(reg).forEach(([k, d]) => { (grupos[d.pagina] = grupos[d.pagina] || []).push([k, d]); });
+    const container = document.getElementById('textos-container');
+    if (!container) return;
+    container.innerHTML = Object.entries(grupos).map(([pagina, itens]) => `
+      <div class="admin-card">
+        <div class="card-header"><h3>${esc(pagina)}</h3></div>
+        <div class="card-body">
+          ${itens.map(([k, d]) => {
+            const longo = d.valor.length > 70;
+            const v = salvos[k] != null ? salvos[k] : d.valor;
+            return `<div class="form-group"><label for="tx-${esc(k)}">${esc(d.rotulo)}</label>${longo
+              ? `<textarea id="tx-${esc(k)}" data-texto="${esc(k)}" rows="3" placeholder="${esc(d.valor)}">${esc(v)}</textarea>`
+              : `<input type="text" id="tx-${esc(k)}" data-texto="${esc(k)}" value="${esc(v)}" placeholder="${esc(d.valor)}">`}</div>`;
+          }).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  async function saveTextos() {
+    const reg = window.PNMT_CONTENT?.textosPadrao || {};
+    const data = adminStore.getData();
+    const textos = {};
+    document.querySelectorAll('[data-texto]').forEach((el) => {
+      const k = el.dataset.texto;
+      const v = el.value.trim();
+      if (v && reg[k] && v !== reg[k].valor) textos[k] = v;
+    });
+    data.textos = textos;
+    try {
+      await adminStore.saveData(data);
+      populateTextos();
+      showToast('Textos salvos e publicados no site!');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // ==========================================================================
   // VAGAS (Trabalhe Conosco)
   // ==========================================================================
   function populateJobs() {
@@ -1239,6 +1413,7 @@
 
     // General save button
     document.querySelector('[data-action="save-general"]')?.addEventListener('click', saveGeneral);
+    document.getElementById('btn-add-video')?.addEventListener('click', () => addVideoRow());
     document.querySelector('[data-action="save-about"]')?.addEventListener('click', saveAbout);
 
     // Video preview button
@@ -1260,6 +1435,9 @@
     document.getElementById('btn-add-news')?.addEventListener('click', () => openNewsModal(null));
     document.getElementById('btn-add-job')?.addEventListener('click', () => openJobModal(null));
     document.getElementById('form-pagina')?.addEventListener('submit', handlePaginaSubmit);
+    document.getElementById('form-card')?.addEventListener('submit', handleCardSubmit);
+    document.getElementById('btn-save-carrossel')?.addEventListener('click', saveCarrossel);
+    document.getElementById('btn-save-textos')?.addEventListener('click', saveTextos);
     document.getElementById('btn-pagina-restaurar')?.addEventListener('click', restaurarPagina);
     const ligarUpload = (fileId, inputId, previewId, msg) => {
       document.getElementById(inputId)?.addEventListener('input', (ev) => updateMediaPreview(previewId, ev.target.value));
@@ -1279,6 +1457,7 @@
     };
     ligarUpload('pagina-capa-file', 'pagina-capa-foto', 'pagina-capa-preview', 'Foto de capa carregada!');
     ligarUpload('event-foto-file', 'event-foto', 'event-foto-preview', 'Foto do evento carregada!');
+    ligarUpload('card-file', 'card-image', 'card-preview', 'Foto do card carregada!');
     document.getElementById('form-job')?.addEventListener('submit', handleJobSubmit);
     document.getElementById('job-image')?.addEventListener('input', (ev) => updateMediaPreview('job-preview-box', ev.target.value));
     document.getElementById('job-file-input')?.addEventListener('change', async (ev) => {
@@ -1337,6 +1516,10 @@
         openPhotoModal(Number(btn.dataset.idx));
       } else if (action === 'delete-photo') {
         deletePhoto(Number(btn.dataset.idx));
+      } else if (['car-up', 'car-down', 'car-toggle'].includes(action)) {
+        carrosselAcao(action, Number(btn.dataset.idx));
+      } else if (action === 'car-edit') {
+        openCardModal(Number(btn.dataset.idx));
       } else if (action === 'edit-pagina') {
         openPaginaModal(btn.dataset.id);
       } else if (action === 'edit-job') {

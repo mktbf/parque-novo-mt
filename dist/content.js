@@ -2863,3 +2863,370 @@ window.PNMT_CONTENT.agenda = [
     "status": "concluido"
   }
 ];
+
+// Cards do carrossel do início (padrão). O painel pode reordenar, esconder e editar.
+window.PNMT_CONTENT.carrossel = [
+ {
+  "id": "autodromo",
+  "image": "espacos/ft/autodromo-noite.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Autódromo",
+  "copy": "Velocidade em escala internacional.",
+  "visivel": true
+ },
+ {
+  "id": "arena-show",
+  "image": "espacos/ft/v-arena-2.jpg",
+  "pos": "",
+  "category": "Eventos",
+  "label": "Arena Show",
+  "copy": "Onde os maiores espetáculos encontram o maior público.",
+  "visivel": true
+ },
+ {
+  "id": "skate-park",
+  "image": "assets/fotos/skate-aerea-2.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Complexo de Skate",
+  "copy": "O maior da América Latina.",
+  "visivel": true
+ },
+ {
+  "id": "circo-do-futuro",
+  "image": "espacos/ft/v-circo.jpg",
+  "pos": "55% 88%",
+  "category": "Cultura",
+  "label": "Circo do Futuro",
+  "copy": "A tecnologia transformada em espetáculo.",
+  "visivel": true
+ },
+ {
+  "id": "roda-gigante",
+  "image": "wheel",
+  "pos": "",
+  "category": "Experiências",
+  "label": "Roda-gigante",
+  "copy": "Uma nova forma de ver Mato Grosso.",
+  "visivel": true
+ },
+ {
+  "id": "centro-de-eventos",
+  "image": "espacos/ft/v-eventos.jpg",
+  "pos": "",
+  "category": "Eventos",
+  "label": "Centro de Eventos",
+  "copy": "A experiência de receber o mundo.",
+  "visivel": true
+ },
+ {
+  "id": "portico-de-entrada",
+  "image": "assets/gallery/portico-de-entrada-01.jpg",
+  "pos": "",
+  "category": "Experiências",
+  "label": "Pórtico de Entrada",
+  "copy": "O voo do tuiuiú recebe o mundo.",
+  "visivel": true
+ },
+ {
+  "id": "kartodromo",
+  "image": "espacos/ft/v-kartodromo-2.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Kartódromo",
+  "copy": "Velocidade que forma campeões.",
+  "visivel": true
+ },
+ {
+  "id": "motocross",
+  "image": "espacos/ft/v-motocross-1.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Motocross",
+  "copy": "Palco de marcos históricos do esporte.",
+  "visivel": true
+ },
+ {
+  "id": "bmx",
+  "image": "espacos/ft/v-bmx.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Pista de BMX",
+  "copy": "Onde novos atletas ganham o mundo.",
+  "visivel": true
+ },
+ {
+  "id": "wake-park",
+  "image": "espacos/ft/v-wake.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Wake Park",
+  "copy": "Adrenalina pura sobre as águas de Mato Grosso.",
+  "visivel": true
+ },
+ {
+  "id": "arenas-beach",
+  "image": "assets/gallery/arenas-beach-01.jpg",
+  "pos": "",
+  "category": "Esportes",
+  "label": "Quadras de Areia",
+  "copy": "Areia, lago e competição de alto nível.",
+  "visivel": true
+ },
+ {
+  "id": "arvore-da-vida",
+  "image": "espacos/ft/v-arvore.jpg",
+  "pos": "",
+  "category": "Experiências",
+  "label": "Árvore da Vida",
+  "copy": "A maior escultura de vida verde do mundo.",
+  "visivel": true
+ },
+ {
+  "id": "splash-parque",
+  "image": "assets/gallery/splash-parque-01.jpg",
+  "pos": "",
+  "category": "Família",
+  "label": "Splash Parque",
+  "copy": "Alegria e frescor em escala monumental.",
+  "visivel": true
+ },
+ {
+  "id": "parque-da-familia",
+  "image": "assets/fotos/familia-5.jpg",
+  "pos": "",
+  "category": "Família",
+  "label": "Parque da Família",
+  "copy": "Convivência e memória em família.",
+  "visivel": true
+ },
+ {
+  "id": "agroplace",
+  "image": "espacos/ft/v-agroplace.jpg",
+  "pos": "",
+  "category": "Cultura",
+  "label": "AgroPlace",
+  "copy": "O pulsar do agronegócio que abastece o planeta.",
+  "visivel": true
+ },
+ {
+  "id": "museus",
+  "image": "espacos/ft/v-museus.jpg",
+  "pos": "",
+  "category": "Cultura",
+  "label": "Museus",
+  "copy": "Memória e futuro, lado a lado.",
+  "visivel": true
+ },
+ {
+  "id": "casa-cuiabana",
+  "image": "espacos/ft/v-casa.jpg",
+  "pos": "",
+  "category": "Cultura",
+  "label": "Casa Cuiabana",
+  "copy": "A união entre tradição e modernidade.",
+  "visivel": true
+ },
+ {
+  "id": "vila-das-nacoes",
+  "image": "assets/fotos/vila-noite-3.jpg",
+  "pos": "",
+  "category": "Cultura",
+  "label": "Vila das Nações",
+  "copy": "O mundo às margens do lago.",
+  "visivel": true
+ },
+ {
+  "id": "praca-de-alimentacao",
+  "image": "espacos/ft/v-praca.jpg",
+  "pos": "",
+  "category": "Convivência",
+  "label": "Praça de Alimentação",
+  "copy": "Gastronomia e bem-estar no coração do parque.",
+  "visivel": true
+ },
+ {
+  "id": "estrutura-e-acesso",
+  "image": "aerial",
+  "pos": "",
+  "category": "Convivência",
+  "label": "Excelência em Infraestrutura e Acessos",
+  "copy": "Preparado para receber grandes públicos.",
+  "visivel": true
+ }
+];
+
+// Textos editáveis das páginas (padrão). O painel guarda só o que for alterado (textos).
+window.PNMT_CONTENT.textosPadrao = {
+ "inicio.faixaTitulo": {
+  "pagina": "Conheça os espaços",
+  "rotulo": "Faixa \"Venha conhecer\": título",
+  "valor": "Venha conhecer de perto."
+ },
+ "inicio.faixaTexto": {
+  "pagina": "Conheça os espaços",
+  "rotulo": "Faixa \"Venha conhecer\": texto",
+  "valor": "Escolas, grupos de turismo, empresas e delegações técnicas. Sua próxima descoberta começa aqui."
+ },
+ "agenda.titulo": {
+  "pagina": "Agenda",
+  "rotulo": "Título",
+  "valor": "O que está por vir."
+ },
+ "agenda.subtitulo": {
+  "pagina": "Agenda",
+  "rotulo": "Texto abaixo do título",
+  "valor": "Shows, corridas, campeonatos, feiras e eventos culturais. Escolha o que você quer viver."
+ },
+ "galeria.titulo": {
+  "pagina": "Galeria",
+  "rotulo": "Título",
+  "valor": "O parque em imagens."
+ },
+ "galeria.subtitulo": {
+  "pagina": "Galeria",
+  "rotulo": "Texto abaixo do título",
+  "valor": "Fotos, vistas aéreas e perspectivas oficiais do Parque Novo Mato Grosso."
+ },
+ "imprensa.titulo": {
+  "pagina": "Imprensa",
+  "rotulo": "Título",
+  "valor": "O parque em movimento."
+ },
+ "imprensa.subtitulo": {
+  "pagina": "Imprensa",
+  "rotulo": "Texto abaixo do título",
+  "valor": "Jornalistas, veículos e produtores encontram aqui informações para contar essa história com precisão."
+ },
+ "visitar.titulo": {
+  "pagina": "Quero visitar",
+  "rotulo": "Título",
+  "valor": "Venha conhecer de perto."
+ },
+ "visitar.subtitulo": {
+  "pagina": "Quero visitar",
+  "rotulo": "Texto abaixo do título",
+  "valor": "O parque abre as portas para grupos que querem ver, entender e viver o que está sendo construído no centro geodésico da América do Sul."
+ },
+ "visitar.faq1p": {
+  "pagina": "Quero visitar",
+  "rotulo": "Pergunta 1",
+  "valor": "O que levar?"
+ },
+ "visitar.faq1r": {
+  "pagina": "Quero visitar",
+  "rotulo": "Resposta 1",
+  "valor": "Calçado confortável, protetor solar e água. Boa parte do roteiro é ao ar livre."
+ },
+ "visitar.faq2p": {
+  "pagina": "Quero visitar",
+  "rotulo": "Pergunta 2",
+  "valor": "Quais áreas fazem parte da visita?"
+ },
+ "visitar.faq2r": {
+  "pagina": "Quero visitar",
+  "rotulo": "Resposta 2",
+  "valor": "O percurso segue sempre as áreas liberadas com segurança e é confirmado pela equipe."
+ },
+ "visitar.faq3p": {
+  "pagina": "Quero visitar",
+  "rotulo": "Pergunta 3",
+  "valor": "Como chegam ônibus e vans?"
+ },
+ "visitar.faq3r": {
+  "pagina": "Quero visitar",
+  "rotulo": "Resposta 3",
+  "valor": "Estacionamento sinalizado para ônibus e vans, com acesso direto pela rodovia."
+ },
+ "contato.titulo": {
+  "pagina": "Contato",
+  "rotulo": "Título",
+  "valor": "Fale com o parque."
+ },
+ "contato.tituloEvento": {
+  "pagina": "Contato",
+  "rotulo": "Título (quando a pessoa vem de \"Quero realizar meu evento\")",
+  "valor": "Seu próximo grande evento."
+ },
+ "contato.subtitulo": {
+  "pagina": "Contato",
+  "rotulo": "Texto abaixo do título",
+  "valor": "Cada assunto tem um caminho direto. Escolha o que você precisa."
+ },
+ "trabalhe.titulo": {
+  "pagina": "Trabalhe Conosco",
+  "rotulo": "Título",
+  "valor": "Construa o futuro com a gente."
+ },
+ "trabalhe.subtitulo": {
+  "pagina": "Trabalhe Conosco",
+  "rotulo": "Texto abaixo do título",
+  "valor": "Faça parte da equipe que está construindo e operando o maior complexo multieventos da América Latina no coração de Mato Grosso."
+ },
+ "onde.titulo": {
+  "pagina": "Onde estamos",
+  "rotulo": "Título",
+  "valor": "Quinhentos hectares no centro da América do Sul."
+ },
+ "onde.texto": {
+  "pagina": "Onde estamos",
+  "rotulo": "Texto",
+  "valor": "No Centro Geodésico da América do Sul, na estrada que leva à Chapada dos Guimarães, o Parque Novo Mato Grosso reúne lagos, arenas e acessos pensados para receber grandes públicos e eventos ao mesmo tempo."
+ },
+ "onde.area": {
+  "pagina": "Onde estamos",
+  "rotulo": "Número: área total",
+  "valor": "500 ha"
+ },
+ "onde.agua": {
+  "pagina": "Onde estamos",
+  "rotulo": "Número: lâmina d'água",
+  "valor": "130 ha"
+ },
+ "onde.construcao": {
+  "pagina": "Onde estamos",
+  "rotulo": "Número: construção e acessos",
+  "valor": "330 ha"
+ },
+ "onde.rotaTitulo1": {
+  "pagina": "Onde estamos",
+  "rotulo": "\"Onde fica\": título (linha 1)",
+  "valor": "A 25 minutos de Cuiabá."
+ },
+ "onde.rotaTitulo2": {
+  "pagina": "Onde estamos",
+  "rotulo": "\"Onde fica\": título (linha 2, em verde)",
+  "valor": "A caminho da Chapada."
+ },
+ "onde.rotaTexto": {
+  "pagina": "Onde estamos",
+  "rotulo": "\"Onde fica\": texto",
+  "valor": "Saindo de Cuiabá pela MT-251, a estrada da Chapada, o acesso ao parque fica à esquerda. Seguindo em frente, a Chapada dos Guimarães, o cartão-postal de Mato Grosso. Pela MT-351, o Lago de Manso."
+ },
+ "onde.distCuiaba": {
+  "pagina": "Onde estamos",
+  "rotulo": "Distância: Cuiabá",
+  "valor": "19 km · 24 min"
+ },
+ "onde.distBF": {
+  "pagina": "Onde estamos",
+  "rotulo": "Distância: Aeroporto Bom Futuro",
+  "valor": "16 km · 16 min"
+ },
+ "onde.distMR": {
+  "pagina": "Onde estamos",
+  "rotulo": "Distância: Aeroporto Marechal Rondon",
+  "valor": "25 km · 32 min"
+ },
+ "onde.distChapada": {
+  "pagina": "Onde estamos",
+  "rotulo": "Distância: Chapada dos Guimarães",
+  "valor": "58 km · 49 min"
+ },
+ "onde.distManso": {
+  "pagina": "Onde estamos",
+  "rotulo": "Distância: Lago de Manso",
+  "valor": "96 km · 1h05"
+ }
+};
